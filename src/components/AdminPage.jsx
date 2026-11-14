@@ -111,6 +111,12 @@ const MENUS = [
       { label: 'Laundry Orders', table: 'laundry_orders' },
       { label: 'Laundry Checkout Orders', table: 'laundry_order' },
     ] },
+    { label: 'Gym', children: [
+      { label: 'Gym Passes', table: 'gym_shops' },
+      { label: 'Gym Bookings', table: 'gym_bookings' },
+      { label: 'Gym Check-ins', table: 'gym_checkins' },
+      { label: 'Gym Checkout Orders', table: 'gym_order' },
+    ] },
     { label: 'Yently Kids', children: [
       { label: 'Math', children: [
         { label: 'Kids Math Passes', table: 'kids_math_shops' },
