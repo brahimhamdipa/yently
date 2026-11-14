@@ -1,0 +1,244 @@
+{
+  "topics": [
+    {
+      "id": "lib-science-b2-water",
+      "label": "Water",
+      "facts": [
+        "Water is a liquid that we drink every day.",
+        "Water covers most of the surface of Earth.",
+        "Rain is water that falls from clouds in the sky.",
+        "When water gets very cold it freezes and turns into ice."
+      ],
+      "questions": [
+        {
+          "q": "What do we drink when we are thirsty?",
+          "choices": [
+            "Water",
+            "Soup powder",
+            "Paint",
+            "Sand"
+          ],
+          "answer": 0,
+          "fact": "Water is the best drink when you are thirsty.",
+          "level": "Easy"
+        },
+        {
+          "q": "What happens to water when it gets very cold?",
+          "choices": [
+            "It turns into ice",
+            "It turns into fire",
+            "It disappears forever",
+            "It turns into wood"
+          ],
+          "answer": 0,
+          "fact": "Cold water freezes and becomes solid ice.",
+          "level": "Easy"
+        },
+        {
+          "q": "Where does rain come from?",
+          "choices": [
+            "The Moon",
+            "Cars",
+            "The ground",
+            "Clouds"
+          ],
+          "answer": 3,
+          "fact": "Rain falls from clouds when tiny water drops join together and get heavy.",
+          "level": "Easy"
+        },
+        {
+          "q": "Which of these is made mostly of water?",
+          "choices": [
+            "The ocean",
+            "A road",
+            "A brick",
+            "A mountain"
+          ],
+          "answer": 0,
+          "fact": "Oceans, lakes, and rivers are all made of water.",
+          "level": "Easy"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-b2-food",
+      "label": "Food",
+      "facts": [
+        "Food gives your body energy to play, learn, and grow.",
+        "Fruits and vegetables help keep your body healthy and strong.",
+        "Milk, cheese, and yoghurt help your bones and teeth grow strong.",
+        "Bread, rice, and pasta give your body lots of energy."
+      ],
+      "questions": [
+        {
+          "q": "What does food give your body?",
+          "choices": [
+            "Batteries",
+            "Wheels",
+            "Energy",
+            "Wings"
+          ],
+          "answer": 2,
+          "fact": "Food gives your body the energy it needs to move and grow.",
+          "level": "Easy"
+        },
+        {
+          "q": "Which of these helps keep you healthy?",
+          "choices": [
+            "A packet of crisps",
+            "An apple",
+            "A fizzy drink",
+            "A lollipop"
+          ],
+          "answer": 1,
+          "fact": "Apples are full of vitamins that help keep you healthy.",
+          "level": "Easy"
+        },
+        {
+          "q": "Which food helps your bones grow strong?",
+          "choices": [
+            "Milk",
+            "Cake",
+            "Chips",
+            "Candy"
+          ],
+          "answer": 0,
+          "fact": "Milk has calcium, which helps build strong bones and teeth.",
+          "level": "Easy"
+        },
+        {
+          "q": "Where does bread come from?",
+          "choices": [
+            "A tree",
+            "The sea",
+            "Wheat plants",
+            "A cow"
+          ],
+          "answer": 2,
+          "fact": "Bread is made from flour, and flour comes from wheat plants.",
+          "level": "Easy"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-b2-weather",
+      "label": "Weather",
+      "facts": [
+        "Weather is what the sky and air are like each day.",
+        "The Sun can make a day warm and bright.",
+        "Rain, snow, and wind are all kinds of weather.",
+        "Clouds are made of tiny drops of water floating in the sky."
+      ],
+      "questions": [
+        {
+          "q": "What do we call rain, sunshine, and wind?",
+          "choices": [
+            "Weather",
+            "Dinner",
+            "Music",
+            "Homework"
+          ],
+          "answer": 0,
+          "fact": "Weather is what the sky and air are like each day.",
+          "level": "Easy"
+        },
+        {
+          "q": "What should you wear on a rainy day?",
+          "choices": [
+            "Sunglasses",
+            "A raincoat",
+            "Sandals",
+            "Shorts"
+          ],
+          "answer": 1,
+          "fact": "A raincoat keeps you dry when it rains.",
+          "level": "Easy"
+        },
+        {
+          "q": "What makes a day warm and bright?",
+          "choices": [
+            "A cloud",
+            "The Sun",
+            "Snow",
+            "The Moon"
+          ],
+          "answer": 1,
+          "fact": "Sunshine warms the Earth and makes the day bright.",
+          "level": "Easy"
+        },
+        {
+          "q": "What are clouds made of?",
+          "choices": [
+            "Sand",
+            "Cotton wool",
+            "Smoke",
+            "Tiny drops of water"
+          ],
+          "answer": 3,
+          "fact": "Clouds are made of tiny drops of water floating in the air.",
+          "level": "Easy"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-b2-ice",
+      "label": "Ice",
+      "facts": [
+        "Ice is water that has frozen solid when it gets cold enough.",
+        "Water freezes into ice at 0 degrees Celsius, which is 32 degrees Fahrenheit.",
+        "Ice floats on water because it is slightly lighter than the same amount of liquid water.",
+        "When ice warms up, it melts and turns back into liquid water."
+      ],
+      "questions": [
+        {
+          "q": "What is ice made of?",
+          "choices": [
+            "Frozen air",
+            "Frozen water",
+            "Frozen sand",
+            "Frozen milk"
+          ],
+          "answer": 1,
+          "fact": "Ice is simply water that has frozen solid.",
+          "level": "Easy"
+        },
+        {
+          "q": "At what temperature does water freeze?",
+          "choices": [
+            "0 degrees Celsius",
+            "50 degrees Celsius",
+            "20 degrees Celsius",
+            "100 degrees Celsius"
+          ],
+          "answer": 0,
+          "fact": "Water freezes at 0 degrees Celsius.",
+          "level": "Easy"
+        },
+        {
+          "q": "Why does an ice cube float in a drink?",
+          "choices": [
+            "Ice sticks to the glass",
+            "Ice is slightly lighter than liquid water",
+            "Ice is full of air bubbles only",
+            "Ice is heavier than water"
+          ],
+          "answer": 1,
+          "fact": "Ice is less dense than liquid water, so it floats.",
+          "level": "Easy"
+        },
+        {
+          "q": "What happens when ice warms up?",
+          "choices": [
+            "It turns into snow",
+            "It gets harder",
+            "It turns into steam at once",
+            "It melts into liquid water"
+          ],
+          "answer": 3,
+          "fact": "Warm ice melts and becomes liquid water again.",
+          "level": "Easy"
+        }
+      ]
+    }
+  ]
+}

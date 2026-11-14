@@ -1,0 +1,244 @@
+{
+  "topics": [
+    {
+      "id": "lib-science-a2-body-systems",
+      "label": "Human Body Systems",
+      "facts": [
+        "Your body is made of systems that work together, like the circulatory, respiratory, digestive, and nervous systems.",
+        "The circulatory system uses the heart and blood vessels to carry oxygen and nutrients around the body.",
+        "The respiratory system takes in oxygen when you breathe in and removes carbon dioxide when you breathe out.",
+        "The nervous system uses the brain, spinal cord, and nerves to send messages around the body very quickly."
+      ],
+      "questions": [
+        {
+          "q": "Which system carries oxygen and nutrients around the body?",
+          "choices": [
+            "The circulatory system",
+            "The nervous system",
+            "The skeletal system",
+            "The digestive system"
+          ],
+          "answer": 0,
+          "fact": "The heart pumps blood through vessels, carrying oxygen and nutrients to every cell.",
+          "level": "Hard"
+        },
+        {
+          "q": "Which system takes in oxygen when you breathe?",
+          "choices": [
+            "The muscular system",
+            "The digestive system",
+            "The respiratory system",
+            "The circulatory system"
+          ],
+          "answer": 2,
+          "fact": "The respiratory system includes the lungs, where oxygen enters the blood.",
+          "level": "Hard"
+        },
+        {
+          "q": "What is the control centre of the nervous system?",
+          "choices": [
+            "The stomach",
+            "The heart",
+            "The liver",
+            "The brain"
+          ],
+          "answer": 3,
+          "fact": "The brain receives messages from nerves and tells the body what to do.",
+          "level": "Hard"
+        },
+        {
+          "q": "Which two systems work together to break down food and deliver its nutrients?",
+          "choices": [
+            "Digestive and circulatory",
+            "Nervous and skeletal",
+            "Respiratory and muscular",
+            "Circulatory and nervous"
+          ],
+          "answer": 0,
+          "fact": "The digestive system breaks food down, and the blood carries the nutrients around the body.",
+          "level": "Hard"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-a2-cells",
+      "label": "Cells",
+      "facts": [
+        "Cells are the smallest units of life, and all living things are made of them.",
+        "The nucleus is the part of a cell that controls it and holds the instructions for life.",
+        "Plant cells have a cell wall and chloroplasts, which animal cells do not have.",
+        "Mitochondria are the parts of a cell that release energy from food."
+      ],
+      "questions": [
+        {
+          "q": "What is a cell?",
+          "choices": [
+            "A kind of germ only",
+            "The smallest unit of life",
+            "A type of bone",
+            "A part of the heart"
+          ],
+          "answer": 1,
+          "fact": "All living things, from tiny bacteria to blue whales, are made of cells.",
+          "level": "Hard"
+        },
+        {
+          "q": "Which part of the cell controls it and holds the instructions for life?",
+          "choices": [
+            "The nucleus",
+            "The cell membrane",
+            "The vacuole",
+            "The cytoplasm"
+          ],
+          "answer": 0,
+          "fact": "The nucleus holds DNA, the instructions that tell the cell what to do.",
+          "level": "Hard"
+        },
+        {
+          "q": "Which part of a cell releases energy from food?",
+          "choices": [
+            "The nucleus",
+            "The mitochondria",
+            "The chloroplast",
+            "The cell wall"
+          ],
+          "answer": 1,
+          "fact": "Mitochondria release energy from food in respiration, so they are called the powerhouse of the cell.",
+          "level": "Hard"
+        },
+        {
+          "q": "Which of these do plant cells have but animal cells do not?",
+          "choices": [
+            "Mitochondria",
+            "Chloroplasts",
+            "A nucleus",
+            "A cell membrane"
+          ],
+          "answer": 1,
+          "fact": "Chloroplasts trap sunlight for photosynthesis, and only plant cells have them.",
+          "level": "Hard"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-a2-digestion",
+      "label": "Digestion",
+      "facts": [
+        "Digestion is the process of breaking food down into tiny nutrients your body can use.",
+        "Digestion starts in the mouth, where teeth chew food and saliva starts to break it down.",
+        "The stomach churns food and mixes it with acid and enzymes.",
+        "In the small intestine, nutrients pass into the blood, which carries them around the body."
+      ],
+      "questions": [
+        {
+          "q": "What is digestion?",
+          "choices": [
+            "Making blood",
+            "Breaking food down into nutrients the body can use",
+            "Chewing food only",
+            "Swallowing water"
+          ],
+          "answer": 1,
+          "fact": "Digestion turns food into tiny nutrients that can pass into the blood.",
+          "level": "Hard"
+        },
+        {
+          "q": "Where does digestion begin?",
+          "choices": [
+            "In the small intestine",
+            "In the stomach",
+            "In the mouth",
+            "In the liver"
+          ],
+          "answer": 2,
+          "fact": "Teeth chew food and saliva begins breaking it down before you even swallow.",
+          "level": "Hard"
+        },
+        {
+          "q": "What does the stomach do?",
+          "choices": [
+            "It stores water only",
+            "It churns food and mixes it with acid and enzymes",
+            "It pumps blood",
+            "It makes oxygen"
+          ],
+          "answer": 1,
+          "fact": "The stomach's acid and churning turn food into a thick soup.",
+          "level": "Hard"
+        },
+        {
+          "q": "Where do nutrients pass into the blood?",
+          "choices": [
+            "In the stomach",
+            "In the small intestine",
+            "In the mouth",
+            "In the large intestine"
+          ],
+          "answer": 1,
+          "fact": "The small intestine absorbs nutrients through its walls into the bloodstream.",
+          "level": "Hard"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-a2-heart-and-blood",
+      "label": "The Heart and Blood",
+      "facts": [
+        "Your heart is a muscle about the size of your fist, and it pumps blood around your whole body.",
+        "The heart has four chambers: two atria on top and two ventricles below.",
+        "Red blood cells carry oxygen from your lungs to every part of your body.",
+        "Blood travels through three kinds of vessels: arteries, veins, and tiny capillaries."
+      ],
+      "questions": [
+        {
+          "q": "What does your heart do?",
+          "choices": [
+            "It helps you breathe",
+            "It cleans your blood only",
+            "It makes food",
+            "It pumps blood around your body"
+          ],
+          "answer": 3,
+          "fact": "The heart is a muscle that pumps blood around the body.",
+          "level": "Hard"
+        },
+        {
+          "q": "How many chambers does the human heart have?",
+          "choices": [
+            "One",
+            "Two",
+            "Four",
+            "Six"
+          ],
+          "answer": 2,
+          "fact": "The heart has four chambers: two atria and two ventricles.",
+          "level": "Hard"
+        },
+        {
+          "q": "What do red blood cells carry?",
+          "choices": [
+            "Water only",
+            "Food only",
+            "Oxygen",
+            "Carbon dioxide to the lungs only"
+          ],
+          "answer": 2,
+          "fact": "Red blood cells pick up oxygen in the lungs and deliver it around the body.",
+          "level": "Hard"
+        },
+        {
+          "q": "Which vessels carry blood away from the heart?",
+          "choices": [
+            "Nerves",
+            "Arteries",
+            "Veins",
+            "Capillaries only"
+          ],
+          "answer": 1,
+          "fact": "Arteries carry blood away from the heart, while veins carry it back.",
+          "level": "Hard"
+        }
+      ]
+    }
+  ]
+}

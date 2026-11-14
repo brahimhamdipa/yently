@@ -1,0 +1,244 @@
+{
+  "topics": [
+    {
+      "id": "lib-science-i4-water-cycle",
+      "label": "The Water Cycle",
+      "facts": [
+        "The water cycle is the journey water takes between Earth and the sky.",
+        "The Sun's heat turns water from seas and lakes into vapour, which is called evaporation.",
+        "When water vapour cools high in the sky, it turns into tiny drops and forms clouds, which is called condensation.",
+        "When the drops get heavy, they fall as rain, which is called precipitation."
+      ],
+      "questions": [
+        {
+          "q": "What is the water cycle?",
+          "choices": [
+            "The journey water takes between Earth and the sky",
+            "A bicycle race",
+            "A water slide",
+            "A kind of boat"
+          ],
+          "answer": 0,
+          "fact": "Water evaporates, condenses into clouds, falls as rain, and collects again.",
+          "level": "Medium"
+        },
+        {
+          "q": "What is it called when the Sun turns liquid water into vapour?",
+          "choices": [
+            "Condensation",
+            "Freezing",
+            "Evaporation",
+            "Precipitation"
+          ],
+          "answer": 2,
+          "fact": "Evaporation is when heat turns liquid water into invisible water vapour.",
+          "level": "Medium"
+        },
+        {
+          "q": "What is it called when water vapour cools and forms clouds?",
+          "choices": [
+            "Evaporation",
+            "Precipitation",
+            "Melting",
+            "Condensation"
+          ],
+          "answer": 3,
+          "fact": "Condensation is when water vapour cools and turns back into tiny liquid drops.",
+          "level": "Medium"
+        },
+        {
+          "q": "What is falling rain an example of?",
+          "choices": [
+            "Condensation",
+            "Precipitation",
+            "Transpiration",
+            "Evaporation"
+          ],
+          "answer": 1,
+          "fact": "Precipitation is water falling from clouds as rain, snow, sleet, or hail.",
+          "level": "Medium"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-i4-food-chains",
+      "label": "Food Chains",
+      "facts": [
+        "A food chain shows who eats whom in nature.",
+        "Plants are producers because they make their own food using sunlight.",
+        "Animals that eat plants are called herbivores, and animals that eat other animals are called carnivores.",
+        "If one part of a food chain disappears, the animals that depend on it can go hungry."
+      ],
+      "questions": [
+        {
+          "q": "What does a food chain show?",
+          "choices": [
+            "How plants grow",
+            "Where food is sold",
+            "Who eats whom in nature",
+            "How to cook food"
+          ],
+          "answer": 2,
+          "fact": "A food chain links producers and consumers in the order they are eaten.",
+          "level": "Medium"
+        },
+        {
+          "q": "Why are plants called producers?",
+          "choices": [
+            "They produce seeds only",
+            "They make their own food using sunlight",
+            "They eat other plants",
+            "They make food for shops"
+          ],
+          "answer": 1,
+          "fact": "Plants make their own food by photosynthesis, so they start most food chains.",
+          "level": "Medium"
+        },
+        {
+          "q": "What is an animal that eats only plants called?",
+          "choices": [
+            "A carnivore",
+            "A predator",
+            "A herbivore",
+            "An omnivore"
+          ],
+          "answer": 2,
+          "fact": "Herbivores eat plants. Carnivores eat meat, and omnivores eat both.",
+          "level": "Medium"
+        },
+        {
+          "q": "In the chain grass → rabbit → fox, what eats the rabbit?",
+          "choices": [
+            "The rabbit",
+            "The fox",
+            "The grass",
+            "The Sun"
+          ],
+          "answer": 1,
+          "fact": "The fox is the predator that hunts and eats the rabbit.",
+          "level": "Medium"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-i4-habitats",
+      "label": "Habitats",
+      "facts": [
+        "A habitat is the place where a plant or animal lives and finds what it needs.",
+        "A habitat gives living things food, water, shelter, and space.",
+        "Forests, deserts, oceans, and ponds are all different habitats.",
+        "Animals are adapted to their habitats: polar bears have thick fur for the cold Arctic, and camels can go without water for a long time in the desert."
+      ],
+      "questions": [
+        {
+          "q": "What is a habitat?",
+          "choices": [
+            "A season",
+            "A kind of animal",
+            "The place where a plant or animal lives",
+            "A type of food"
+          ],
+          "answer": 2,
+          "fact": "A habitat is where a living thing finds food, water, shelter, and space.",
+          "level": "Medium"
+        },
+        {
+          "q": "Which of these is a habitat?",
+          "choices": [
+            "A car",
+            "A kitchen",
+            "A classroom",
+            "A forest"
+          ],
+          "answer": 3,
+          "fact": "Forests, deserts, oceans, and ponds are natural habitats.",
+          "level": "Medium"
+        },
+        {
+          "q": "How is a polar bear adapted to its habitat?",
+          "choices": [
+            "It has wings to fly",
+            "It sleeps all year",
+            "It has thick fur to keep warm",
+            "It has gills to breathe under water"
+          ],
+          "answer": 2,
+          "fact": "Thick fur and a layer of fat keep polar bears warm in the freezing Arctic.",
+          "level": "Medium"
+        },
+        {
+          "q": "What does every habitat need to give living things?",
+          "choices": [
+            "Cars",
+            "Electricity",
+            "Toys and games",
+            "Food, water, shelter, and space"
+          ],
+          "answer": 3,
+          "fact": "Without food, water, shelter, and space, living things cannot survive.",
+          "level": "Medium"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-i4-forests",
+      "label": "Forests",
+      "facts": [
+        "A forest is a large area of land covered mostly by trees.",
+        "Rainforests get a lot of rain and are home to more kinds of plants and animals than almost anywhere else on Earth.",
+        "Trees take in carbon dioxide from the air and release the oxygen we breathe.",
+        "Forests help keep Earth's climate steady by storing carbon in their trees and soil."
+      ],
+      "questions": [
+        {
+          "q": "What is a forest?",
+          "choices": [
+            "A sandy beach",
+            "A field of flowers",
+            "A frozen lake",
+            "A large area of land covered mostly by trees"
+          ],
+          "answer": 3,
+          "fact": "A forest is a large area where trees are the main plants.",
+          "level": "Medium"
+        },
+        {
+          "q": "Why are rainforests special for wildlife?",
+          "choices": [
+            "Only one kind of tree grows there",
+            "No animals live there",
+            "They are home to more kinds of plants and animals than almost anywhere else",
+            "It never rains there"
+          ],
+          "answer": 2,
+          "fact": "Rainforests hold a huge share of Earth's plant and animal species.",
+          "level": "Medium"
+        },
+        {
+          "q": "What do trees release into the air?",
+          "choices": [
+            "Salt",
+            "Oxygen",
+            "Carbon dioxide only",
+            "Smoke"
+          ],
+          "answer": 1,
+          "fact": "Trees take in carbon dioxide and release oxygen, which we breathe.",
+          "level": "Medium"
+        },
+        {
+          "q": "How do forests help Earth's climate?",
+          "choices": [
+            "By stopping all rain",
+            "By making the air hotter",
+            "By melting ice",
+            "By storing carbon in trees and soil"
+          ],
+          "answer": 3,
+          "fact": "Forests store carbon, which helps keep the climate steady.",
+          "level": "Medium"
+        }
+      ]
+    }
+  ]
+}

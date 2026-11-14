@@ -1,0 +1,244 @@
+{
+  "topics": [
+    {
+      "id": "lib-science-b1-animals",
+      "label": "Animals",
+      "facts": [
+        "Animals are living things that can move, eat, and grow.",
+        "Birds, fish, dogs, cats, and elephants are all animals.",
+        "Some animals eat plants, some eat other animals, and some eat both.",
+        "Baby animals grow up to look like their parents."
+      ],
+      "questions": [
+        {
+          "q": "Which of these is an animal?",
+          "choices": [
+            "A chair",
+            "A car",
+            "A dog",
+            "A rock"
+          ],
+          "answer": 2,
+          "fact": "Dogs are animals because they are living things that move and eat.",
+          "level": "Easy"
+        },
+        {
+          "q": "What do animals need to stay alive?",
+          "choices": [
+            "Plastic",
+            "Food and water",
+            "Batteries",
+            "Petrol"
+          ],
+          "answer": 1,
+          "fact": "All animals need food and water to live and grow.",
+          "level": "Easy"
+        },
+        {
+          "q": "Which animal says 'moo'?",
+          "choices": [
+            "A duck",
+            "A pig",
+            "A cow",
+            "A sheep"
+          ],
+          "answer": 2,
+          "fact": "Cows say moo, and they give us milk.",
+          "level": "Easy"
+        },
+        {
+          "q": "What do we call a baby dog?",
+          "choices": [
+            "A calf",
+            "A chick",
+            "A puppy",
+            "A kitten"
+          ],
+          "answer": 2,
+          "fact": "A baby dog is called a puppy.",
+          "level": "Easy"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-b1-my-body",
+      "label": "My Body",
+      "facts": [
+        "Your body has a head, arms, legs, hands, and feet.",
+        "Your heart beats all day and night to move blood around your body.",
+        "Your bones hold your body up and protect the soft parts inside.",
+        "You use your five senses to see, hear, smell, taste, and touch."
+      ],
+      "questions": [
+        {
+          "q": "What do you use to see?",
+          "choices": [
+            "Your eyes",
+            "Your ears",
+            "Your nose",
+            "Your toes"
+          ],
+          "answer": 0,
+          "fact": "Your eyes help you see the world around you.",
+          "level": "Easy"
+        },
+        {
+          "q": "What part of your body pumps blood?",
+          "choices": [
+            "Your elbow",
+            "Your hair",
+            "Your heart",
+            "Your knee"
+          ],
+          "answer": 2,
+          "fact": "Your heart pumps blood to every part of your body.",
+          "level": "Easy"
+        },
+        {
+          "q": "How many fingers do you have on both hands?",
+          "choices": [
+            "Eight",
+            "Five",
+            "Ten",
+            "Twelve"
+          ],
+          "answer": 2,
+          "fact": "You have five fingers on each hand, so ten in all.",
+          "level": "Easy"
+        },
+        {
+          "q": "What holds your body up?",
+          "choices": [
+            "Your bones",
+            "Your hair",
+            "Your shoes",
+            "Your skin"
+          ],
+          "answer": 0,
+          "fact": "Bones are strong and hold your body up.",
+          "level": "Easy"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-b1-plants",
+      "label": "Plants",
+      "facts": [
+        "Plants are living things that grow in soil.",
+        "Plants need sunlight, water, and air to grow.",
+        "Leaves use sunlight to make food for the plant.",
+        "Many plants grow flowers, and flowers can grow into fruits with seeds."
+      ],
+      "questions": [
+        {
+          "q": "What do plants need to grow?",
+          "choices": [
+            "Sunlight, water, and air",
+            "Batteries",
+            "Shoes and hats",
+            "Candy and juice"
+          ],
+          "answer": 0,
+          "fact": "Plants need sunlight, water, and air to stay alive and grow.",
+          "level": "Easy"
+        },
+        {
+          "q": "What part of a plant makes food using sunlight?",
+          "choices": [
+            "The stones",
+            "The pot",
+            "The leaves",
+            "The soil"
+          ],
+          "answer": 2,
+          "fact": "Leaves catch sunlight and use it to make food for the plant.",
+          "level": "Easy"
+        },
+        {
+          "q": "Where do most plants grow?",
+          "choices": [
+            "In a fridge",
+            "In a car",
+            "In the sky",
+            "In soil"
+          ],
+          "answer": 3,
+          "fact": "Most plants grow in soil, which holds their roots.",
+          "level": "Easy"
+        },
+        {
+          "q": "What grows from a seed?",
+          "choices": [
+            "A cloud",
+            "A plant",
+            "A rock",
+            "A toy"
+          ],
+          "answer": 1,
+          "fact": "A tiny seed can grow into a whole new plant.",
+          "level": "Easy"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-b1-fruit-and-vegetables",
+      "label": "Fruit and Vegetables",
+      "facts": [
+        "A tomato is really a fruit, because it grows from the flower of the plant and holds seeds inside.",
+        "Carrots grow underground, and the orange part we eat is the root of the plant.",
+        "Bananas grow in bunches on tall plants that look like trees but are really giant herbs.",
+        "Vegetables like broccoli and cauliflower are the flowers of the plant, while lettuce leaves are the leaves we eat."
+      ],
+      "questions": [
+        {
+          "q": "Which of these is really a fruit, even though we eat it like a vegetable?",
+          "choices": [
+            "A carrot",
+            "A potato",
+            "A tomato",
+            "A cabbage"
+          ],
+          "answer": 2,
+          "fact": "A tomato holds seeds and grows from a flower, so scientists call it a fruit.",
+          "level": "Easy"
+        },
+        {
+          "q": "Which part of the carrot plant do we eat?",
+          "choices": [
+            "The flower",
+            "The seed",
+            "The bark",
+            "The root"
+          ],
+          "answer": 3,
+          "fact": "A carrot is the root of the plant, growing underground.",
+          "level": "Easy"
+        },
+        {
+          "q": "Where do bananas grow?",
+          "choices": [
+            "On a bush in the desert",
+            "Inside a nut shell",
+            "In bunches on a tall plant",
+            "Underground like potatoes"
+          ],
+          "answer": 2,
+          "fact": "Bananas grow in bunches on a tall plant that is really a giant herb.",
+          "level": "Easy"
+        },
+        {
+          "q": "Which vegetable is the flower of its plant?",
+          "choices": [
+            "Carrot",
+            "Onion",
+            "Broccoli",
+            "Potato"
+          ],
+          "answer": 2,
+          "fact": "Broccoli is the flower head of its plant, picked before it opens.",
+          "level": "Easy"
+        }
+      ]
+    }
+  ]
+}

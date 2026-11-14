@@ -1,0 +1,244 @@
+{
+  "topics": [
+    {
+      "id": "lib-science-b6-birds",
+      "label": "Birds",
+      "facts": [
+        "Birds have feathers, wings, and beaks.",
+        "Most birds can fly, but some, like penguins and ostriches, cannot.",
+        "Birds lay eggs, and baby birds hatch from the eggs.",
+        "Many birds build nests to keep their eggs safe."
+      ],
+      "questions": [
+        {
+          "q": "What do birds have that helps them fly?",
+          "choices": [
+            "Shells",
+            "Scales and fins",
+            "Feathers and wings",
+            "Fur and paws"
+          ],
+          "answer": 2,
+          "fact": "Feathers and wings help most birds fly.",
+          "level": "Easy"
+        },
+        {
+          "q": "What do birds lay?",
+          "choices": [
+            "Eggs",
+            "Milk",
+            "Seeds",
+            "Leaves"
+          ],
+          "answer": 0,
+          "fact": "Birds lay eggs, and baby birds hatch out of them.",
+          "level": "Easy"
+        },
+        {
+          "q": "Which bird cannot fly?",
+          "choices": [
+            "A robin",
+            "A penguin",
+            "A sparrow",
+            "An eagle"
+          ],
+          "answer": 1,
+          "fact": "Penguins cannot fly, but they are great swimmers.",
+          "level": "Easy"
+        },
+        {
+          "q": "Where do many birds keep their eggs safe?",
+          "choices": [
+            "In a cave",
+            "In a nest",
+            "Under water",
+            "In a car"
+          ],
+          "answer": 1,
+          "fact": "Birds build nests from twigs and grass to protect their eggs.",
+          "level": "Easy"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-b6-fish",
+      "label": "Fish",
+      "facts": [
+        "Fish live in water and breathe using gills.",
+        "Fish swim with their fins and tails.",
+        "Most fish have scales covering their bodies.",
+        "Some fish live in the sea, and some live in rivers and lakes."
+      ],
+      "questions": [
+        {
+          "q": "Where do fish live?",
+          "choices": [
+            "In trees",
+            "In deserts",
+            "In the sky",
+            "In water"
+          ],
+          "answer": 3,
+          "fact": "Fish live in water, in seas, rivers, and lakes.",
+          "level": "Easy"
+        },
+        {
+          "q": "How do fish breathe under water?",
+          "choices": [
+            "They do not breathe",
+            "Using gills",
+            "Using their fins",
+            "Using lungs like us"
+          ],
+          "answer": 1,
+          "fact": "Gills take oxygen out of the water so fish can breathe.",
+          "level": "Easy"
+        },
+        {
+          "q": "What do fish use to swim?",
+          "choices": [
+            "Fins and tails",
+            "Wings",
+            "Wheels",
+            "Legs"
+          ],
+          "answer": 0,
+          "fact": "Fish push themselves through water with their fins and tails.",
+          "level": "Easy"
+        },
+        {
+          "q": "What covers most fish?",
+          "choices": [
+            "Scales",
+            "Shells",
+            "Feathers",
+            "Fur"
+          ],
+          "answer": 0,
+          "fact": "Most fish are covered in shiny scales.",
+          "level": "Easy"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-b6-insects",
+      "label": "Insects",
+      "facts": [
+        "Insects have six legs and three body parts.",
+        "Bees, ants, butterflies, and ladybirds are insects.",
+        "Butterflies start life as caterpillars.",
+        "Bees help flowers by carrying pollen from one flower to another."
+      ],
+      "questions": [
+        {
+          "q": "How many legs does an insect have?",
+          "choices": [
+            "Ten",
+            "Eight",
+            "Six",
+            "Four"
+          ],
+          "answer": 2,
+          "fact": "Insects have six legs.",
+          "level": "Easy"
+        },
+        {
+          "q": "Which of these is an insect?",
+          "choices": [
+            "A worm",
+            "A bee",
+            "A snail",
+            "A spider"
+          ],
+          "answer": 1,
+          "fact": "Bees are insects. Spiders have eight legs, so they are not insects.",
+          "level": "Easy"
+        },
+        {
+          "q": "What does a caterpillar turn into?",
+          "choices": [
+            "A bird",
+            "A fish",
+            "A butterfly",
+            "A frog"
+          ],
+          "answer": 2,
+          "fact": "A caterpillar changes into a butterfly inside a chrysalis.",
+          "level": "Easy"
+        },
+        {
+          "q": "How do bees help flowers?",
+          "choices": [
+            "They carry pollen between flowers",
+            "They eat the flowers",
+            "They paint the flowers",
+            "They water the flowers"
+          ],
+          "answer": 0,
+          "fact": "When bees visit flowers, pollen sticks to them and helps new seeds grow.",
+          "level": "Easy"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-b6-butterflies",
+      "label": "Butterflies",
+      "facts": [
+        "A butterfly starts life as a tiny egg, then becomes a caterpillar, then a chrysalis, then a butterfly.",
+        "Butterflies taste with their feet, using special sensors on their legs.",
+        "A butterfly's wings are covered in tiny scales, like dust, which give them their colours.",
+        "Monarch butterflies travel thousands of kilometres every year to reach warmer places."
+      ],
+      "questions": [
+        {
+          "q": "What does a caterpillar turn into inside a chrysalis?",
+          "choices": [
+            "A butterfly",
+            "A bee",
+            "A fish",
+            "A bird"
+          ],
+          "answer": 0,
+          "fact": "Inside the chrysalis, a caterpillar changes into a butterfly.",
+          "level": "Easy"
+        },
+        {
+          "q": "How do butterflies taste their food?",
+          "choices": [
+            "With their eyes",
+            "With their wings",
+            "With their feet",
+            "With their antennae only"
+          ],
+          "answer": 2,
+          "fact": "Butterflies have taste sensors on their feet.",
+          "level": "Easy"
+        },
+        {
+          "q": "What covers a butterfly's wings and gives them colour?",
+          "choices": [
+            "Paint",
+            "Feathers",
+            "Tiny scales",
+            "Fur"
+          ],
+          "answer": 2,
+          "fact": "Butterfly wings are covered in tiny coloured scales.",
+          "level": "Easy"
+        },
+        {
+          "q": "Which butterfly travels thousands of kilometres every year?",
+          "choices": [
+            "The dragonfly",
+            "The monarch butterfly",
+            "The ladybird",
+            "The honeybee"
+          ],
+          "answer": 1,
+          "fact": "Monarch butterflies migrate thousands of kilometres to warmer places.",
+          "level": "Easy"
+        }
+      ]
+    }
+  ]
+}

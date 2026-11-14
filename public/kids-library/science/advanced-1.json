@@ -1,0 +1,244 @@
+{
+  "topics": [
+    {
+      "id": "lib-science-a1-energy",
+      "label": "Energy",
+      "facts": [
+        "Energy is the ability to do work, and it can change from one form to another but is never created or destroyed.",
+        "Kinetic energy is the energy of movement, and potential energy is stored energy waiting to be used.",
+        "A stretched rubber band has elastic potential energy, and a ball at the top of a hill has gravitational potential energy.",
+        "The Sun is Earth's main source of energy, powering weather, plant growth, and the water cycle."
+      ],
+      "questions": [
+        {
+          "q": "What is energy?",
+          "choices": [
+            "A kind of gas",
+            "A type of rock",
+            "A force that pulls down",
+            "The ability to do work"
+          ],
+          "answer": 3,
+          "fact": "Energy is the ability to make things happen, like moving, heating, or lighting.",
+          "level": "Hard"
+        },
+        {
+          "q": "What happens to energy when it changes form?",
+          "choices": [
+            "It doubles",
+            "It is never created or destroyed, only changed",
+            "It turns into matter",
+            "It disappears"
+          ],
+          "answer": 1,
+          "fact": "The law of conservation of energy says energy can change form but the total stays the same.",
+          "level": "Hard"
+        },
+        {
+          "q": "Which of these has kinetic energy?",
+          "choices": [
+            "A stretched rubber band",
+            "A book sitting on a shelf",
+            "A rolling ball",
+            "A ball resting on the ground"
+          ],
+          "answer": 2,
+          "fact": "Kinetic energy is the energy of movement, so a rolling ball has it.",
+          "level": "Hard"
+        },
+        {
+          "q": "Which of these has gravitational potential energy?",
+          "choices": [
+            "A ball in a box",
+            "A ball under water",
+            "A ball at the top of a hill",
+            "A ball rolling on flat ground"
+          ],
+          "answer": 2,
+          "fact": "A ball held high up stores gravitational potential energy, which turns into movement as it rolls down.",
+          "level": "Hard"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-a1-electricity",
+      "label": "Electricity",
+      "facts": [
+        "Electricity is the flow of tiny particles called electrons through a material.",
+        "A complete circuit is a loop that lets electricity flow from a battery, through a device, and back again.",
+        "Conductors, like copper wire, let electricity flow easily, while insulators, like rubber, block it.",
+        "A switch opens or closes a circuit: when it is closed, current flows and a bulb can light up."
+      ],
+      "questions": [
+        {
+          "q": "What flows through a wire to make electricity?",
+          "choices": [
+            "Electrons",
+            "Air",
+            "Water",
+            "Light"
+          ],
+          "answer": 0,
+          "fact": "Electric current is a flow of electrons through a conductor.",
+          "level": "Hard"
+        },
+        {
+          "q": "What does a circuit need to be for a bulb to light?",
+          "choices": [
+            "Two batteries facing the wrong way",
+            "No switch at all",
+            "A complete loop from the battery and back",
+            "A broken wire"
+          ],
+          "answer": 2,
+          "fact": "Electricity can only flow in a complete, unbroken loop called a closed circuit.",
+          "level": "Hard"
+        },
+        {
+          "q": "Which material is a good conductor of electricity?",
+          "choices": [
+            "Plastic",
+            "Copper",
+            "Wood",
+            "Rubber"
+          ],
+          "answer": 1,
+          "fact": "Copper lets electrons flow easily, which is why wires are made of copper.",
+          "level": "Hard"
+        },
+        {
+          "q": "What does a switch do in a circuit?",
+          "choices": [
+            "It changes electricity into light",
+            "It makes more electricity",
+            "It opens or closes the circuit",
+            "It stores electricity"
+          ],
+          "answer": 2,
+          "fact": "Closing a switch completes the circuit so current can flow; opening it stops the flow.",
+          "level": "Hard"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-a1-forces",
+      "label": "Forces",
+      "facts": [
+        "A force is a push or a pull that can change how something moves.",
+        "Friction is a force that slows things down when surfaces rub together.",
+        "Air resistance is a force that pushes against things moving through air, like a falling parachute.",
+        "Balanced forces keep an object still or moving steadily, while unbalanced forces change its speed or direction."
+      ],
+      "questions": [
+        {
+          "q": "What is a force?",
+          "choices": [
+            "A kind of rock",
+            "A push or a pull",
+            "A type of energy",
+            "A sound"
+          ],
+          "answer": 1,
+          "fact": "Forces are pushes and pulls that can speed things up, slow them down, or change their direction.",
+          "level": "Hard"
+        },
+        {
+          "q": "What does friction do?",
+          "choices": [
+            "It slows things down when surfaces rub together",
+            "It makes things glow",
+            "It makes things float",
+            "It speeds things up"
+          ],
+          "answer": 0,
+          "fact": "Friction acts against movement, which is why a sliding box eventually stops.",
+          "level": "Hard"
+        },
+        {
+          "q": "What force slows a falling parachute?",
+          "choices": [
+            "Air resistance",
+            "Magnetism",
+            "Friction with the ground",
+            "Gravity pushing up"
+          ],
+          "answer": 0,
+          "fact": "Air resistance pushes up against the parachute, slowing its fall.",
+          "level": "Hard"
+        },
+        {
+          "q": "What happens when forces on an object are balanced?",
+          "choices": [
+            "It gets hotter",
+            "It stays still or keeps moving steadily",
+            "It falls over",
+            "It speeds up"
+          ],
+          "answer": 1,
+          "fact": "Balanced forces cancel out, so there is no change in movement.",
+          "level": "Hard"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-a1-renewable-energy",
+      "label": "Renewable Energy",
+      "facts": [
+        "Renewable energy comes from sources that nature replaces, like sunlight, wind, and flowing water.",
+        "Solar panels turn sunlight directly into electricity.",
+        "Wind turbines use moving air to spin blades and make electricity.",
+        "Unlike coal and oil, renewable sources do not run out and do not release carbon dioxide when they make power."
+      ],
+      "questions": [
+        {
+          "q": "Which of these is a renewable energy source?",
+          "choices": [
+            "Natural gas",
+            "Oil",
+            "Sunlight",
+            "Coal"
+          ],
+          "answer": 2,
+          "fact": "Sunlight is replaced by nature every day, so it is renewable.",
+          "level": "Hard"
+        },
+        {
+          "q": "What do solar panels do?",
+          "choices": [
+            "Store rainwater",
+            "Turn sunlight directly into electricity",
+            "Burn coal",
+            "Make wind"
+          ],
+          "answer": 1,
+          "fact": "Solar panels convert sunlight into electrical energy.",
+          "level": "Hard"
+        },
+        {
+          "q": "How do wind turbines make electricity?",
+          "choices": [
+            "They burn fuel",
+            "Moving air spins their blades",
+            "They use magnets only",
+            "They collect rain"
+          ],
+          "answer": 1,
+          "fact": "Wind spins the turbine blades, and a generator turns that motion into electricity.",
+          "level": "Hard"
+        },
+        {
+          "q": "What is one advantage of renewable energy over coal?",
+          "choices": [
+            "It works only at night",
+            "It does not run out and releases no carbon dioxide while making power",
+            "It is more polluting",
+            "It needs to be dug from mines"
+          ],
+          "answer": 1,
+          "fact": "Renewables keep coming from nature and produce power without carbon dioxide emissions.",
+          "level": "Hard"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,244 @@
+{
+  "topics": [
+    {
+      "id": "lib-science-b4-earth",
+      "label": "Earth",
+      "facts": [
+        "Earth is the planet we live on.",
+        "Earth is round like a ball.",
+        "Most of Earth is covered by water, and the rest is land.",
+        "Earth spins around once every day, which makes day and night."
+      ],
+      "questions": [
+        {
+          "q": "What planet do we live on?",
+          "choices": [
+            "Earth",
+            "Venus",
+            "Mars",
+            "Jupiter"
+          ],
+          "answer": 0,
+          "fact": "Earth is our home planet.",
+          "level": "Easy"
+        },
+        {
+          "q": "What shape is Earth?",
+          "choices": [
+            "Long like a rope",
+            "Square like a box",
+            "Flat like a plate",
+            "Round like a ball"
+          ],
+          "answer": 3,
+          "fact": "Earth is round, like a giant ball.",
+          "level": "Easy"
+        },
+        {
+          "q": "What covers most of Earth?",
+          "choices": [
+            "Ice cream",
+            "Sand",
+            "Water",
+            "Grass"
+          ],
+          "answer": 2,
+          "fact": "Oceans cover about 70 out of every 100 parts of Earth's surface.",
+          "level": "Easy"
+        },
+        {
+          "q": "What makes day and night?",
+          "choices": [
+            "Stars turning off",
+            "The Moon sleeping",
+            "Earth spinning around",
+            "Clouds moving"
+          ],
+          "answer": 2,
+          "fact": "Earth spins once every day, so part of it faces the Sun while the other part is dark.",
+          "level": "Easy"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-b4-moon",
+      "label": "The Moon",
+      "facts": [
+        "The Moon is a big round rock that travels around Earth.",
+        "The Moon does not make its own light; it shines by sunlight bouncing off it.",
+        "The Moon looks different in the sky because we see different parts of its sunny side.",
+        "People have walked on the Moon."
+      ],
+      "questions": [
+        {
+          "q": "What is the Moon?",
+          "choices": [
+            "A big rock that travels around Earth",
+            "A star",
+            "A planet with people on it",
+            "A cloud"
+          ],
+          "answer": 0,
+          "fact": "The Moon is Earth's natural satellite, a big rocky ball.",
+          "level": "Easy"
+        },
+        {
+          "q": "Where does the Moon's light come from?",
+          "choices": [
+            "A giant lamp inside it",
+            "Fire on the Moon",
+            "Sunlight bouncing off it",
+            "Stars behind it"
+          ],
+          "answer": 2,
+          "fact": "The Moon has no light of its own; it reflects light from the Sun.",
+          "level": "Easy"
+        },
+        {
+          "q": "When do we see the Moon in the sky?",
+          "choices": [
+            "Never",
+            "Only when it rains",
+            "Only in summer",
+            "Mostly at night"
+          ],
+          "answer": 3,
+          "fact": "We usually see the Moon shining at night.",
+          "level": "Easy"
+        },
+        {
+          "q": "Have people walked on the Moon?",
+          "choices": [
+            "Yes",
+            "Only animals have",
+            "Only robots have",
+            "No, never"
+          ],
+          "answer": 0,
+          "fact": "Astronauts first walked on the Moon in 1969.",
+          "level": "Easy"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-b4-stars",
+      "label": "Stars",
+      "facts": [
+        "Stars are giant balls of hot, glowing gas far away in space.",
+        "The Sun is the closest star to Earth.",
+        "Stars look small because they are so far away.",
+        "At night, when the sky is dark and clear, you can see many stars."
+      ],
+      "questions": [
+        {
+          "q": "What is a star?",
+          "choices": [
+            "A tiny light bulb",
+            "A hole in the sky",
+            "A giant ball of hot, glowing gas",
+            "A shiny rock"
+          ],
+          "answer": 2,
+          "fact": "Stars are huge balls of hot gas that glow with their own light.",
+          "level": "Easy"
+        },
+        {
+          "q": "Which star is closest to Earth?",
+          "choices": [
+            "The Moon",
+            "The North Star",
+            "The Sun",
+            "A shooting star"
+          ],
+          "answer": 2,
+          "fact": "The Sun is our closest star, and its light takes about 8 minutes to reach us.",
+          "level": "Easy"
+        },
+        {
+          "q": "Why do stars look so small?",
+          "choices": [
+            "Because they are very far away",
+            "Because they hide",
+            "Because they are tiny",
+            "Because they are cold"
+          ],
+          "answer": 0,
+          "fact": "Stars are enormous, but they look tiny because they are trillions of kilometres away.",
+          "level": "Easy"
+        },
+        {
+          "q": "When can you see stars best?",
+          "choices": [
+            "In a bright room",
+            "On a cloudy day",
+            "At midday",
+            "On a dark, clear night"
+          ],
+          "answer": 3,
+          "fact": "Stars are easiest to see on dark, clear nights away from bright lights.",
+          "level": "Easy"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-b4-sky",
+      "label": "The Sky",
+      "facts": [
+        "The sky looks blue in the daytime because sunlight is scattered by tiny bits of air.",
+        "At sunset the sky can turn orange and pink because the sunlight travels through more air.",
+        "The sky looks dark at night because our part of Earth has turned away from the Sun.",
+        "On a clear night you can see stars, planets, and sometimes the Moon in the sky."
+      ],
+      "questions": [
+        {
+          "q": "Why does the sky look blue in the daytime?",
+          "choices": [
+            "The sea colours the sky",
+            "Clouds make it blue",
+            "The sky is painted blue",
+            "Sunlight is scattered by tiny bits of air"
+          ],
+          "answer": 3,
+          "fact": "Air scatters blue sunlight more than other colours, so the sky looks blue.",
+          "level": "Easy"
+        },
+        {
+          "q": "Why can the sky turn orange at sunset?",
+          "choices": [
+            "Sunlight travels through more air",
+            "The Sun gets hotter",
+            "Clouds turn orange at night",
+            "The Moon colours the sky"
+          ],
+          "answer": 0,
+          "fact": "At sunset, sunlight passes through more air, which scatters away the blue light.",
+          "level": "Easy"
+        },
+        {
+          "q": "Why is the sky dark at night?",
+          "choices": [
+            "Clouds cover the Sun",
+            "The Moon blocks the sky",
+            "Our part of Earth has turned away from the Sun",
+            "The Sun goes out"
+          ],
+          "answer": 2,
+          "fact": "Night happens when Earth spins and our side faces away from the Sun.",
+          "level": "Easy"
+        },
+        {
+          "q": "What can you see in a clear night sky?",
+          "choices": [
+            "Stars, planets, and sometimes the Moon",
+            "Birds flying",
+            "The Sun and rainbows",
+            "Clouds only"
+          ],
+          "answer": 0,
+          "fact": "On a clear night you can spot stars, bright planets, and often the Moon.",
+          "level": "Easy"
+        }
+      ]
+    }
+  ]
+}

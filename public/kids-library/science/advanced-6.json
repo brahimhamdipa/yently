@@ -1,0 +1,244 @@
+{
+  "topics": [
+    {
+      "id": "lib-science-a6-atoms",
+      "label": "Atoms",
+      "facts": [
+        "Atoms are the tiny building blocks that make up all matter.",
+        "An atom has a nucleus in the middle, made of protons and neutrons, with electrons moving around it.",
+        "Protons have a positive charge, electrons have a negative charge, and neutrons have no charge.",
+        "Different elements have different numbers of protons: hydrogen has one, and oxygen has eight."
+      ],
+      "questions": [
+        {
+          "q": "What is an atom?",
+          "choices": [
+            "A very small animal",
+            "A type of cell",
+            "The tiny building block of all matter",
+            "A piece of dust"
+          ],
+          "answer": 2,
+          "fact": "Everything around you is made of atoms, far too small to see.",
+          "level": "Hard"
+        },
+        {
+          "q": "What is in the middle of an atom?",
+          "choices": [
+            "A tiny sun",
+            "Nothing at all",
+            "A nucleus made of protons and neutrons",
+            "A cell"
+          ],
+          "answer": 2,
+          "fact": "The nucleus sits at the centre of the atom, with electrons moving around it.",
+          "level": "Hard"
+        },
+        {
+          "q": "Which particle in an atom has a negative charge?",
+          "choices": [
+            "A proton",
+            "A neutron",
+            "A photon",
+            "An electron"
+          ],
+          "answer": 3,
+          "fact": "Electrons carry a negative charge, while protons are positive and neutrons are neutral.",
+          "level": "Hard"
+        },
+        {
+          "q": "How many protons does a hydrogen atom have?",
+          "choices": [
+            "Two",
+            "One",
+            "Six",
+            "Eight"
+          ],
+          "answer": 1,
+          "fact": "Hydrogen, the simplest element, has just one proton in its nucleus.",
+          "level": "Hard"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-a6-chemical-reactions",
+      "label": "Chemical Reactions",
+      "facts": [
+        "A chemical reaction happens when substances change into new substances.",
+        "In a chemical reaction, atoms are rearranged but never created or destroyed.",
+        "Burning, rusting, and cooking are all chemical reactions.",
+        "Some reactions give out heat, like burning wood, and some take in heat, like baking a cake."
+      ],
+      "questions": [
+        {
+          "q": "What happens in a chemical reaction?",
+          "choices": [
+            "Substances disappear",
+            "Nothing changes",
+            "Substances change into new substances",
+            "Things only get hotter"
+          ],
+          "answer": 2,
+          "fact": "In a chemical reaction, atoms join together in new ways to make new substances.",
+          "level": "Hard"
+        },
+        {
+          "q": "What happens to atoms during a chemical reaction?",
+          "choices": [
+            "They are rearranged, never created or destroyed",
+            "They double in number",
+            "They turn into energy",
+            "They disappear"
+          ],
+          "answer": 0,
+          "fact": "Atoms are conserved in a reaction: the same atoms exist before and after, just joined differently.",
+          "level": "Hard"
+        },
+        {
+          "q": "Which of these is a chemical reaction?",
+          "choices": [
+            "Salt dissolving in water",
+            "Ice melting",
+            "Water boiling",
+            "Iron rusting"
+          ],
+          "answer": 3,
+          "fact": "Rusting makes a new substance, iron oxide, while melting and dissolving are physical changes.",
+          "level": "Hard"
+        },
+        {
+          "q": "What does burning wood give out?",
+          "choices": [
+            "Water only",
+            "Heat and light",
+            "Cold and darkness",
+            "Electricity"
+          ],
+          "answer": 1,
+          "fact": "Burning is a reaction that releases heat and light.",
+          "level": "Hard"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-a6-periodic-table",
+      "label": "The Periodic Table",
+      "facts": [
+        "The periodic table organises all the known elements in order of their atomic number.",
+        "Elements in the same column, called a group, often behave in similar ways.",
+        "Hydrogen, oxygen, carbon, and nitrogen are some of the most important elements for life.",
+        "Gold, silver, and iron are elements that are metals, while oxygen and helium are gases."
+      ],
+      "questions": [
+        {
+          "q": "What does the periodic table organise?",
+          "choices": [
+            "All the animals",
+            "All the planets",
+            "All the rocks",
+            "All the known elements"
+          ],
+          "answer": 3,
+          "fact": "The periodic table lists every known element, from hydrogen to the heaviest made in labs.",
+          "level": "Hard"
+        },
+        {
+          "q": "What are elements in the same column of the periodic table called?",
+          "choices": [
+            "A family of planets",
+            "A molecule",
+            "A row",
+            "A group"
+          ],
+          "answer": 3,
+          "fact": "Elements in the same group share similar chemical behaviour.",
+          "level": "Hard"
+        },
+        {
+          "q": "Which of these is the chemical symbol for gold?",
+          "choices": [
+            "Gd",
+            "Go",
+            "Au",
+            "Ag"
+          ],
+          "answer": 2,
+          "fact": "Gold's symbol is Au, from its Latin name aurum. Ag is silver.",
+          "level": "Hard"
+        },
+        {
+          "q": "Which of these elements is a gas at room temperature?",
+          "choices": [
+            "Copper",
+            "Gold",
+            "Iron",
+            "Oxygen"
+          ],
+          "answer": 3,
+          "fact": "Oxygen is a gas, while iron, gold, and copper are metals that are solid at room temperature.",
+          "level": "Hard"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-a6-acids-and-bases",
+      "label": "Acids and Bases",
+      "facts": [
+        "An acid is a substance that can donate hydrogen ions, and lemon juice and vinegar are common acids.",
+        "A base, also called an alkali when it dissolves in water, can neutralise an acid.",
+        "The pH scale runs from 0 to 14: below 7 is acidic, 7 is neutral, and above 7 is basic.",
+        "Pure water is neutral, with a pH of 7."
+      ],
+      "questions": [
+        {
+          "q": "Which of these is an acid?",
+          "choices": [
+            "Lemon juice",
+            "Soap solution",
+            "Baking soda solution",
+            "Pure water"
+          ],
+          "answer": 0,
+          "fact": "Lemon juice contains citric acid.",
+          "level": "Hard"
+        },
+        {
+          "q": "What can a base do to an acid?",
+          "choices": [
+            "Turn it into a metal",
+            "Neutralise it",
+            "Freeze it",
+            "Make it stronger forever"
+          ],
+          "answer": 1,
+          "fact": "A base reacts with an acid to neutralise it, often making a salt and water.",
+          "level": "Hard"
+        },
+        {
+          "q": "What is the pH of a neutral substance?",
+          "choices": [
+            "0",
+            "7",
+            "1",
+            "14"
+          ],
+          "answer": 1,
+          "fact": "On the pH scale, 7 is neutral, like pure water.",
+          "level": "Hard"
+        },
+        {
+          "q": "Which pH value is acidic?",
+          "choices": [
+            "3",
+            "12",
+            "9",
+            "7"
+          ],
+          "answer": 0,
+          "fact": "Values below 7 on the pH scale are acidic.",
+          "level": "Hard"
+        }
+      ]
+    }
+  ]
+}

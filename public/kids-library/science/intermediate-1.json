@@ -1,0 +1,244 @@
+{
+  "topics": [
+    {
+      "id": "lib-science-i1-rocks",
+      "label": "Rocks",
+      "facts": [
+        "Rocks are made of minerals, which are natural materials found in Earth.",
+        "Igneous rocks form when hot melted rock cools and hardens.",
+        "Sedimentary rocks form from layers of sand, mud, and small stones pressed together over a long time.",
+        "Metamorphic rocks form when other rocks are squeezed and heated deep inside Earth."
+      ],
+      "questions": [
+        {
+          "q": "What are rocks made of?",
+          "choices": [
+            "Paper",
+            "Minerals",
+            "Glass",
+            "Plastic"
+          ],
+          "answer": 1,
+          "fact": "Rocks are made of minerals, natural materials found in the Earth.",
+          "level": "Medium"
+        },
+        {
+          "q": "How do igneous rocks form?",
+          "choices": [
+            "Water freezes",
+            "Hot melted rock cools and hardens",
+            "Sand blows in the wind",
+            "Plants die"
+          ],
+          "answer": 1,
+          "fact": "When melted rock called magma cools, it hardens into igneous rock.",
+          "level": "Medium"
+        },
+        {
+          "q": "Which rock forms from layers pressed together over a long time?",
+          "choices": [
+            "Igneous rock",
+            "Moon rock",
+            "Sedimentary rock",
+            "Metamorphic rock"
+          ],
+          "answer": 2,
+          "fact": "Sedimentary rocks form when layers of sand and mud are pressed together.",
+          "level": "Medium"
+        },
+        {
+          "q": "What can change one rock into a metamorphic rock?",
+          "choices": [
+            "Sunlight",
+            "Rain",
+            "Heat and pressure deep inside Earth",
+            "Wind"
+          ],
+          "answer": 2,
+          "fact": "Deep inside Earth, heat and squeezing pressure change rocks into metamorphic rocks.",
+          "level": "Medium"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-i1-volcanoes",
+      "label": "Volcanoes",
+      "facts": [
+        "A volcano is a mountain that can erupt with hot melted rock called lava.",
+        "The melted rock inside Earth is called magma, and it is called lava once it flows out.",
+        "Volcanoes form where Earth's plates move apart or push together.",
+        "When a volcano erupts, it can send out lava, ash, and gases."
+      ],
+      "questions": [
+        {
+          "q": "What is the hot melted rock that flows out of a volcano called?",
+          "choices": [
+            "Lava",
+            "Water",
+            "Ice",
+            "Sand"
+          ],
+          "answer": 0,
+          "fact": "Melted rock is called magma inside Earth and lava once it flows out.",
+          "level": "Medium"
+        },
+        {
+          "q": "What is a volcano?",
+          "choices": [
+            "A mountain that can erupt with lava",
+            "A kind of cloud",
+            "A tall building",
+            "A hole full of water"
+          ],
+          "answer": 0,
+          "fact": "A volcano is an opening in Earth's crust where lava, ash, and gases can escape.",
+          "level": "Medium"
+        },
+        {
+          "q": "What do we call melted rock while it is still inside Earth?",
+          "choices": [
+            "Glass",
+            "Steam",
+            "Lava",
+            "Magma"
+          ],
+          "answer": 3,
+          "fact": "Magma is melted rock below the surface; it becomes lava when it erupts.",
+          "level": "Medium"
+        },
+        {
+          "q": "What else can a volcano send out besides lava?",
+          "choices": [
+            "Rainbows",
+            "Ash and gases",
+            "Flowers",
+            "Snow"
+          ],
+          "answer": 1,
+          "fact": "Eruptions can throw out ash clouds and hot gases as well as lava.",
+          "level": "Medium"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-i1-earthquakes",
+      "label": "Earthquakes",
+      "facts": [
+        "An earthquake is a sudden shaking of the ground.",
+        "Earthquakes happen when rocks deep inside Earth suddenly move along a crack called a fault.",
+        "Scientists measure earthquakes with a tool called a seismograph.",
+        "The strength of an earthquake is often given as a number on a scale."
+      ],
+      "questions": [
+        {
+          "q": "What is an earthquake?",
+          "choices": [
+            "A flood",
+            "A big storm",
+            "A volcano erupting",
+            "A sudden shaking of the ground"
+          ],
+          "answer": 3,
+          "fact": "An earthquake is a sudden shaking of the ground caused by rocks moving deep inside Earth.",
+          "level": "Medium"
+        },
+        {
+          "q": "What is the crack in Earth's crust where rocks move called?",
+          "choices": [
+            "A valley",
+            "A cave",
+            "A river",
+            "A fault"
+          ],
+          "answer": 3,
+          "fact": "Faults are cracks in Earth's crust where rocks can suddenly slip.",
+          "level": "Medium"
+        },
+        {
+          "q": "What tool do scientists use to measure earthquakes?",
+          "choices": [
+            "A telescope",
+            "A microscope",
+            "A thermometer",
+            "A seismograph"
+          ],
+          "answer": 3,
+          "fact": "A seismograph records the shaking of the ground during an earthquake.",
+          "level": "Medium"
+        },
+        {
+          "q": "What should you do during an earthquake indoors?",
+          "choices": [
+            "Stand under a window",
+            "Drop, cover, and hold on",
+            "Hide in a lift",
+            "Run outside at once"
+          ],
+          "answer": 1,
+          "fact": "Drop under a strong table, cover your head, and hold on until the shaking stops.",
+          "level": "Medium"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-i1-soil",
+      "label": "Soil",
+      "facts": [
+        "Soil is made of tiny pieces of rock, dead plants and animals, water, and air.",
+        "It can take hundreds of years for just a few centimetres of soil to form.",
+        "Earthworms help soil by tunnelling through it and breaking dead leaves into rich earth.",
+        "Plants need soil to hold them up and to give them water and nutrients to grow."
+      ],
+      "questions": [
+        {
+          "q": "What is soil made of?",
+          "choices": [
+            "Paint and glue",
+            "Glass and plastic",
+            "Tiny rock pieces, dead plants, water, and air",
+            "Sand only"
+          ],
+          "answer": 2,
+          "fact": "Soil is a mix of broken rock, decayed plants and animals, water, and air.",
+          "level": "Medium"
+        },
+        {
+          "q": "How long can it take for a few centimetres of soil to form?",
+          "choices": [
+            "Hundreds of years",
+            "One day",
+            "One minute",
+            "One hour"
+          ],
+          "answer": 0,
+          "fact": "Soil forms very slowly, over hundreds of years.",
+          "level": "Medium"
+        },
+        {
+          "q": "Which animal helps make soil healthy?",
+          "choices": [
+            "An eagle",
+            "An earthworm",
+            "A penguin",
+            "A shark"
+          ],
+          "answer": 1,
+          "fact": "Earthworms tunnel through soil and turn dead leaves into rich earth.",
+          "level": "Medium"
+        },
+        {
+          "q": "What does soil give plants?",
+          "choices": [
+            "Water and nutrients, and something to hold onto",
+            "Seeds only",
+            "Sunlight only",
+            "Flowers only"
+          ],
+          "answer": 0,
+          "fact": "Soil holds plants in place and supplies them with water and nutrients.",
+          "level": "Medium"
+        }
+      ]
+    }
+  ]
+}

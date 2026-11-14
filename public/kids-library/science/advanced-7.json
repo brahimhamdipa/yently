@@ -1,0 +1,244 @@
+{
+  "topics": [
+    {
+      "id": "lib-science-a7-evolution",
+      "label": "Evolution",
+      "facts": [
+        "Evolution is the change in living things over many generations.",
+        "Charles Darwin explained evolution by natural selection: living things with helpful traits are more likely to survive and have young.",
+        "Fossils show that life on Earth has changed over millions of years.",
+        "All living things on Earth share a common ancestor from long ago."
+      ],
+      "questions": [
+        {
+          "q": "What is evolution?",
+          "choices": [
+            "Change in living things over many generations",
+            "Change in the weather",
+            "Growing up",
+            "Moving to a new home"
+          ],
+          "answer": 0,
+          "fact": "Evolution is how species change slowly over many generations.",
+          "level": "Hard"
+        },
+        {
+          "q": "Who explained evolution by natural selection?",
+          "choices": [
+            "Charles Darwin",
+            "Albert Einstein",
+            "Isaac Newton",
+            "Marie Curie"
+          ],
+          "answer": 0,
+          "fact": "Darwin showed that helpful traits are passed on because their owners survive and reproduce.",
+          "level": "Hard"
+        },
+        {
+          "q": "What do fossils tell us about evolution?",
+          "choices": [
+            "That life on Earth has changed over millions of years",
+            "That rocks are alive",
+            "That the Moon is old",
+            "That animals never change"
+          ],
+          "answer": 0,
+          "fact": "Fossils record how species appeared, changed, and sometimes died out over time.",
+          "level": "Hard"
+        },
+        {
+          "q": "What is natural selection?",
+          "choices": [
+            "Living things with helpful traits are more likely to survive and have young",
+            "People choosing pets",
+            "Animals choosing their food",
+            "Plants choosing where to grow"
+          ],
+          "answer": 0,
+          "fact": "Natural selection is nature favouring traits that help survival and reproduction.",
+          "level": "Hard"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-a7-genetics",
+      "label": "Genetics",
+      "facts": [
+        "Genetics is the study of how traits are passed from parents to their children.",
+        "DNA is the molecule that carries the instructions for building a living thing.",
+        "Genes are sections of DNA that control traits like eye colour.",
+        "You get half of your DNA from each of your parents."
+      ],
+      "questions": [
+        {
+          "q": "What is genetics?",
+          "choices": [
+            "The study of weather",
+            "The study of stars",
+            "The study of how traits are passed from parents to children",
+            "The study of rocks"
+          ],
+          "answer": 2,
+          "fact": "Genetics explains why children often look like their parents.",
+          "level": "Hard"
+        },
+        {
+          "q": "What molecule carries the instructions for building a living thing?",
+          "choices": [
+            "Oxygen",
+            "Sugar",
+            "DNA",
+            "Water"
+          ],
+          "answer": 2,
+          "fact": "DNA holds the instructions for making every part of a living thing.",
+          "level": "Hard"
+        },
+        {
+          "q": "What is a gene?",
+          "choices": [
+            "A section of DNA that controls a trait",
+            "A type of cell",
+            "A part of the brain",
+            "A kind of protein only"
+          ],
+          "answer": 0,
+          "fact": "Genes are stretches of DNA that carry instructions for traits like eye colour.",
+          "level": "Hard"
+        },
+        {
+          "q": "How much of your DNA comes from each parent?",
+          "choices": [
+            "A quarter",
+            "None of it",
+            "Half",
+            "All of it"
+          ],
+          "answer": 2,
+          "fact": "You inherit half your DNA from your mother and half from your father.",
+          "level": "Hard"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-a7-photosynthesis",
+      "label": "Photosynthesis",
+      "facts": [
+        "Photosynthesis is how plants make food using sunlight, water, and carbon dioxide.",
+        "Photosynthesis happens in chloroplasts, the green parts inside plant cells.",
+        "During photosynthesis, plants make glucose, a sugar, and release oxygen.",
+        "Almost all life on Earth depends on photosynthesis, directly or indirectly, for food and oxygen."
+      ],
+      "questions": [
+        {
+          "q": "What is photosynthesis?",
+          "choices": [
+            "How animals breathe",
+            "How plants drink water",
+            "How plants grow roots",
+            "How plants make food using sunlight, water, and carbon dioxide"
+          ],
+          "answer": 3,
+          "fact": "Photosynthesis turns light energy into chemical energy stored in food.",
+          "level": "Hard"
+        },
+        {
+          "q": "Where does photosynthesis happen in a plant cell?",
+          "choices": [
+            "In the vacuole",
+            "In chloroplasts",
+            "In the nucleus",
+            "In the mitochondria"
+          ],
+          "answer": 1,
+          "fact": "Chloroplasts contain chlorophyll, the green pigment that traps sunlight.",
+          "level": "Hard"
+        },
+        {
+          "q": "What do plants release during photosynthesis?",
+          "choices": [
+            "Oxygen",
+            "Smoke",
+            "Nitrogen",
+            "Carbon dioxide"
+          ],
+          "answer": 0,
+          "fact": "Plants take in carbon dioxide and release oxygen, which animals need to breathe.",
+          "level": "Hard"
+        },
+        {
+          "q": "What sugar do plants make during photosynthesis?",
+          "choices": [
+            "Salt",
+            "Starch only",
+            "Glucose",
+            "Honey"
+          ],
+          "answer": 2,
+          "fact": "Photosynthesis makes glucose, which plants use for energy and growth.",
+          "level": "Hard"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-a7-human-brain",
+      "label": "The Human Brain",
+      "facts": [
+        "Your brain is the control centre of your body, and it is protected by your skull.",
+        "The brain is made of about 86 billion nerve cells called neurons.",
+        "The largest part of the brain, the cerebrum, is where you think, remember, and make decisions.",
+        "Even though it is only about 2 percent of your body weight, your brain uses about 20 percent of your energy."
+      ],
+      "questions": [
+        {
+          "q": "What protects your brain?",
+          "choices": [
+            "Your ribs",
+            "Your skin only",
+            "Your spine only",
+            "Your skull"
+          ],
+          "answer": 3,
+          "fact": "The skull is a hard case of bone that protects the brain.",
+          "level": "Hard"
+        },
+        {
+          "q": "What are the brain's nerve cells called?",
+          "choices": [
+            "Neurons",
+            "Muscle fibres",
+            "Red blood cells",
+            "Bones"
+          ],
+          "answer": 0,
+          "fact": "Neurons are nerve cells that carry messages in the brain and body.",
+          "level": "Hard"
+        },
+        {
+          "q": "Which part of the brain helps you think and remember?",
+          "choices": [
+            "The cerebrum",
+            "The spinal cord",
+            "The cerebellum only",
+            "The brain stem only"
+          ],
+          "answer": 0,
+          "fact": "The cerebrum is the largest part of the brain and handles thinking and memory.",
+          "level": "Hard"
+        },
+        {
+          "q": "About how much of your body's energy does your brain use?",
+          "choices": [
+            "About 90 percent",
+            "About 50 percent",
+            "About 20 percent",
+            "About 1 percent"
+          ],
+          "answer": 2,
+          "fact": "The brain uses about a fifth of the body's energy, even though it is small.",
+          "level": "Hard"
+        }
+      ]
+    }
+  ]
+}

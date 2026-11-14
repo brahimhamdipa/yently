@@ -1,0 +1,244 @@
+{
+  "topics": [
+    {
+      "id": "lib-science-i7-fossils",
+      "label": "Fossils",
+      "facts": [
+        "Fossils are the remains or traces of living things from long ago, preserved in rock.",
+        "Most fossils form when an animal or plant is buried quickly in mud or sand.",
+        "Dinosaur bones are fossils that tell scientists about animals that lived millions of years ago.",
+        "Scientists who study fossils are called palaeontologists."
+      ],
+      "questions": [
+        {
+          "q": "What is a fossil?",
+          "choices": [
+            "A shiny new rock",
+            "A piece of glass",
+            "A type of plant",
+            "The remains of a living thing from long ago, preserved in rock"
+          ],
+          "answer": 3,
+          "fact": "Fossils are remains or traces of ancient living things, like bones or footprints in rock.",
+          "level": "Medium"
+        },
+        {
+          "q": "How do most fossils form?",
+          "choices": [
+            "Water freezes",
+            "Animals hide in caves",
+            "Rocks are painted",
+            "A plant or animal is buried quickly in mud or sand"
+          ],
+          "answer": 3,
+          "fact": "Quick burial protects remains from rotting, and minerals slowly replace them with stone.",
+          "level": "Medium"
+        },
+        {
+          "q": "What do dinosaur bones tell scientists?",
+          "choices": [
+            "About animals alive now",
+            "About the Moon",
+            "About the weather today",
+            "About animals that lived millions of years ago"
+          ],
+          "answer": 3,
+          "fact": "Dinosaur fossils show how these giant animals lived and what they looked like.",
+          "level": "Medium"
+        },
+        {
+          "q": "What is a scientist who studies fossils called?",
+          "choices": [
+            "A chemist",
+            "A palaeontologist",
+            "An astronaut",
+            "A gardener"
+          ],
+          "answer": 1,
+          "fact": "Palaeontologists dig up and study fossils to learn about life long ago.",
+          "level": "Medium"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-i7-day-and-night",
+      "label": "Day and Night",
+      "facts": [
+        "Day and night happen because Earth spins on its axis.",
+        "One full spin of Earth takes about 24 hours, which is one day.",
+        "When your part of Earth faces the Sun, it is daytime; when it faces away, it is night.",
+        "Earth's axis is tilted, which is why days are longer in summer and shorter in winter."
+      ],
+      "questions": [
+        {
+          "q": "What causes day and night?",
+          "choices": [
+            "Earth spinning on its axis",
+            "The Moon moving",
+            "The Sun turning on and off",
+            "Clouds covering the Sun"
+          ],
+          "answer": 0,
+          "fact": "Earth spins once every 24 hours, so each part takes turns facing the Sun.",
+          "level": "Medium"
+        },
+        {
+          "q": "How long does one full spin of Earth take?",
+          "choices": [
+            "About 365 days",
+            "About 7 days",
+            "About 24 hours",
+            "About 30 days"
+          ],
+          "answer": 2,
+          "fact": "One spin takes about 24 hours, which is one day and one night.",
+          "level": "Medium"
+        },
+        {
+          "q": "When is it daytime where you live?",
+          "choices": [
+            "When the Moon is full",
+            "When it rains",
+            "When your part of Earth faces the Sun",
+            "When the stars are out"
+          ],
+          "answer": 2,
+          "fact": "Daytime is when your side of Earth is turned towards the Sun.",
+          "level": "Medium"
+        },
+        {
+          "q": "Why are summer days longer than winter days?",
+          "choices": [
+            "The Moon is bigger in summer",
+            "The Sun is closer in summer",
+            "Clouds are thinner in summer",
+            "Earth's axis is tilted towards the Sun in summer"
+          ],
+          "answer": 3,
+          "fact": "The tilt means the Sun stays above the horizon longer in summer.",
+          "level": "Medium"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-i7-plant-life-cycle",
+      "label": "Plant Life Cycle",
+      "facts": [
+        "A plant's life cycle is seed, germination, growth, flowering, and making new seeds.",
+        "Germination is when a seed starts to grow a root and a shoot.",
+        "Flowers are the part of the plant where seeds are made.",
+        "Pollination happens when pollen moves from one flower to another, which lets seeds form."
+      ],
+      "questions": [
+        {
+          "q": "What is the first stage of a plant's life cycle?",
+          "choices": [
+            "A tree",
+            "A seed",
+            "A fruit",
+            "A flower"
+          ],
+          "answer": 1,
+          "fact": "A plant's life starts as a seed, which holds a tiny baby plant inside.",
+          "level": "Medium"
+        },
+        {
+          "q": "What is germination?",
+          "choices": [
+            "When a seed starts to grow",
+            "When a fruit ripens",
+            "When a flower opens",
+            "When a leaf falls"
+          ],
+          "answer": 0,
+          "fact": "Germination is when a seed sprouts a root and a shoot.",
+          "level": "Medium"
+        },
+        {
+          "q": "Which part of the plant makes seeds?",
+          "choices": [
+            "The flower",
+            "The root",
+            "The leaf",
+            "The stem"
+          ],
+          "answer": 0,
+          "fact": "After pollination, the flower's ovary grows into a fruit with seeds inside.",
+          "level": "Medium"
+        },
+        {
+          "q": "What is pollination?",
+          "choices": [
+            "Watering a plant",
+            "Picking a flower",
+            "Planting a seed",
+            "Pollen moving from one flower to another"
+          ],
+          "answer": 3,
+          "fact": "Pollination lets flowers make seeds, often with help from bees.",
+          "level": "Medium"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-i7-animal-life-cycle",
+      "label": "The Life Cycle of Animals",
+      "facts": [
+        "A frog's life cycle starts as an egg, then a tadpole, then a young frog, then an adult frog.",
+        "A tadpole lives in water and breathes through gills, but an adult frog breathes with lungs and through its skin.",
+        "The change from a young animal into a very different adult is called metamorphosis.",
+        "Mammals, like dogs and humans, are born as babies that look like small versions of their parents."
+      ],
+      "questions": [
+        {
+          "q": "What is a baby frog called?",
+          "choices": [
+            "A tadpole",
+            "A caterpillar",
+            "A calf",
+            "A chick"
+          ],
+          "answer": 0,
+          "fact": "A baby frog is a tadpole, which lives in water.",
+          "level": "Medium"
+        },
+        {
+          "q": "How does a tadpole breathe?",
+          "choices": [
+            "Through lungs only",
+            "It does not breathe",
+            "Through gills",
+            "Through its tail"
+          ],
+          "answer": 2,
+          "fact": "Tadpoles live in water and breathe through gills.",
+          "level": "Medium"
+        },
+        {
+          "q": "What is metamorphosis?",
+          "choices": [
+            "A change from a young animal into a very different adult",
+            "A way of flying",
+            "A kind of sleep",
+            "A type of food"
+          ],
+          "answer": 0,
+          "fact": "Metamorphosis is the big change from a young form, like a tadpole, into a different adult form.",
+          "level": "Medium"
+        },
+        {
+          "q": "Which of these animals is born looking like a small version of its parent?",
+          "choices": [
+            "A ladybird",
+            "A frog",
+            "A dog",
+            "A butterfly"
+          ],
+          "answer": 2,
+          "fact": "Mammals like dogs are born as babies that look like small versions of their parents.",
+          "level": "Medium"
+        }
+      ]
+    }
+  ]
+}

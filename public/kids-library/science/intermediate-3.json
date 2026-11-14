@@ -1,0 +1,244 @@
+{
+  "topics": [
+    {
+      "id": "lib-science-i3-oceans",
+      "label": "Oceans",
+      "facts": [
+        "Oceans cover about 70 percent of Earth's surface.",
+        "There are five oceans: Pacific, Atlantic, Indian, Southern, and Arctic.",
+        "The Pacific Ocean is the largest ocean on Earth.",
+        "Ocean water is salty, and the salt comes from rocks and minerals washed into the sea."
+      ],
+      "questions": [
+        {
+          "q": "About how much of Earth's surface is covered by oceans?",
+          "choices": [
+            "About 70 percent",
+            "About 100 percent",
+            "About 10 percent",
+            "About 30 percent"
+          ],
+          "answer": 0,
+          "fact": "Oceans cover roughly 70 out of every 100 parts of Earth's surface.",
+          "level": "Medium"
+        },
+        {
+          "q": "Which is the largest ocean?",
+          "choices": [
+            "The Arctic Ocean",
+            "The Pacific Ocean",
+            "The Indian Ocean",
+            "The Atlantic Ocean"
+          ],
+          "answer": 1,
+          "fact": "The Pacific is the biggest ocean, larger than all Earth's land put together.",
+          "level": "Medium"
+        },
+        {
+          "q": "Why is ocean water salty?",
+          "choices": [
+            "People add salt",
+            "Salt from rocks is washed into the sea",
+            "Rain is salty",
+            "Fish make the salt"
+          ],
+          "answer": 1,
+          "fact": "Rivers carry tiny amounts of salt from rocks into the sea, where it builds up.",
+          "level": "Medium"
+        },
+        {
+          "q": "How many oceans are there on Earth?",
+          "choices": [
+            "Three",
+            "Seven",
+            "Five",
+            "Two"
+          ],
+          "answer": 2,
+          "fact": "The five oceans are the Pacific, Atlantic, Indian, Southern, and Arctic.",
+          "level": "Medium"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-i3-magnets",
+      "label": "Magnets",
+      "facts": [
+        "A magnet pulls some metals towards it, especially iron, nickel, and cobalt.",
+        "Every magnet has a north pole and a south pole.",
+        "Opposite poles attract each other, and like poles push each other away.",
+        "Earth itself acts like a giant magnet, which is why compass needles point north."
+      ],
+      "questions": [
+        {
+          "q": "Which metal does a magnet pull strongly?",
+          "choices": [
+            "Iron",
+            "Aluminium foil",
+            "Plastic",
+            "Copper"
+          ],
+          "answer": 0,
+          "fact": "Magnets pull iron, nickel, and cobalt most strongly.",
+          "level": "Medium"
+        },
+        {
+          "q": "What happens when two north poles are pushed together?",
+          "choices": [
+            "They melt",
+            "They push each other away",
+            "They stick together",
+            "They disappear"
+          ],
+          "answer": 1,
+          "fact": "Like poles repel each other, while opposite poles attract.",
+          "level": "Medium"
+        },
+        {
+          "q": "What are the two ends of a magnet called?",
+          "choices": [
+            "The top and the bottom",
+            "The head and the tail",
+            "The north pole and the south pole",
+            "The left and the right"
+          ],
+          "answer": 2,
+          "fact": "Every magnet has a north pole and a south pole.",
+          "level": "Medium"
+        },
+        {
+          "q": "Why does a compass needle point north?",
+          "choices": [
+            "The Sun pulls it",
+            "Earth acts like a giant magnet",
+            "Wind pushes it",
+            "The needle is heavy"
+          ],
+          "answer": 1,
+          "fact": "Earth's magnetic field pulls the compass needle towards the magnetic north.",
+          "level": "Medium"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-i3-simple-machines",
+      "label": "Simple Machines",
+      "facts": [
+        "Simple machines are tools that make work easier, like levers, pulleys, wheels, and ramps.",
+        "A lever is a bar that turns on a fixed point called a fulcrum.",
+        "A wheel and axle lets things roll instead of sliding, which takes much less effort.",
+        "A ramp, or inclined plane, lets you move heavy things up slowly instead of lifting them straight up."
+      ],
+      "questions": [
+        {
+          "q": "Which of these is a simple machine?",
+          "choices": [
+            "A battery",
+            "A computer",
+            "A lever",
+            "A television"
+          ],
+          "answer": 2,
+          "fact": "Levers, pulleys, wheels and axles, ramps, screws, and wedges are simple machines.",
+          "level": "Medium"
+        },
+        {
+          "q": "What is the fixed point a lever turns on called?",
+          "choices": [
+            "A wheel",
+            "A hinge",
+            "A rope",
+            "A fulcrum"
+          ],
+          "answer": 3,
+          "fact": "A lever turns on its fulcrum, like a seesaw turning on its middle point.",
+          "level": "Medium"
+        },
+        {
+          "q": "Why is a wheel helpful?",
+          "choices": [
+            "It makes things hotter",
+            "It makes things louder",
+            "It makes things heavier",
+            "It lets things roll instead of sliding"
+          ],
+          "answer": 3,
+          "fact": "Rolling takes much less effort than dragging something along the ground.",
+          "level": "Medium"
+        },
+        {
+          "q": "What does a ramp help you do?",
+          "choices": [
+            "Move heavy things up more easily",
+            "Cut things",
+            "Make things lighter",
+            "Move things faster"
+          ],
+          "answer": 0,
+          "fact": "A ramp lets you push a heavy load up slowly instead of lifting it all at once.",
+          "level": "Medium"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-i3-rivers-and-lakes",
+      "label": "Rivers and Lakes",
+      "facts": [
+        "A river is water that flows across land, usually starting in hills or mountains and ending in a sea or ocean.",
+        "A lake is a large area of still water surrounded by land.",
+        "The Amazon River carries more water than any other river in the world.",
+        "Many animals and plants depend on rivers and lakes for drinking water, food, and a place to live."
+      ],
+      "questions": [
+        {
+          "q": "Where does a river usually end?",
+          "choices": [
+            "In a desert with no water",
+            "In the sky",
+            "In a sea or ocean",
+            "On top of a mountain"
+          ],
+          "answer": 2,
+          "fact": "Rivers flow downhill until they reach a sea, an ocean, or a lake.",
+          "level": "Medium"
+        },
+        {
+          "q": "What is a lake?",
+          "choices": [
+            "A small sea wave",
+            "A large area of still water surrounded by land",
+            "A waterfall",
+            "A fast river"
+          ],
+          "answer": 1,
+          "fact": "A lake is a large body of water that is surrounded by land.",
+          "level": "Medium"
+        },
+        {
+          "q": "Which river carries more water than any other?",
+          "choices": [
+            "The Amazon River",
+            "The Seine",
+            "The Nile",
+            "The Thames"
+          ],
+          "answer": 0,
+          "fact": "The Amazon carries more water than any other river on Earth.",
+          "level": "Medium"
+        },
+        {
+          "q": "Why are rivers and lakes important for wildlife?",
+          "choices": [
+            "They give animals drinking water, food, and homes",
+            "They stop animals from moving",
+            "They keep fish out",
+            "They make the water salty"
+          ],
+          "answer": 0,
+          "fact": "Rivers and lakes provide water, food, and habitats for many living things.",
+          "level": "Medium"
+        }
+      ]
+    }
+  ]
+}

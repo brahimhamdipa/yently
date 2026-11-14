@@ -1,0 +1,244 @@
+{
+  "topics": [
+    {
+      "id": "lib-science-b5-senses",
+      "label": "My Five Senses",
+      "facts": [
+        "Your five senses are sight, hearing, smell, taste, and touch.",
+        "Your eyes help you see colours, shapes, and movement.",
+        "Your ears help you hear sounds like music and voices.",
+        "Your tongue helps you taste sweet, sour, salty, and bitter foods."
+      ],
+      "questions": [
+        {
+          "q": "How many senses do you have?",
+          "choices": [
+            "Three",
+            "Ten",
+            "Seven",
+            "Five"
+          ],
+          "answer": 3,
+          "fact": "Your five senses are sight, hearing, smell, taste, and touch.",
+          "level": "Easy"
+        },
+        {
+          "q": "Which sense do you use to hear music?",
+          "choices": [
+            "Hearing",
+            "Smell",
+            "Sight",
+            "Taste"
+          ],
+          "answer": 0,
+          "fact": "Your ears help you hear sounds.",
+          "level": "Easy"
+        },
+        {
+          "q": "Which part of your body helps you taste food?",
+          "choices": [
+            "Your elbow",
+            "Your tongue",
+            "Your nose",
+            "Your knee"
+          ],
+          "answer": 1,
+          "fact": "Your tongue has tiny taste buds that tell you how food tastes.",
+          "level": "Easy"
+        },
+        {
+          "q": "Which sense do you use to smell a flower?",
+          "choices": [
+            "Hearing",
+            "Taste",
+            "Smell",
+            "Touch"
+          ],
+          "answer": 2,
+          "fact": "Your nose helps you smell flowers, food, and many other things.",
+          "level": "Easy"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-b5-teeth",
+      "label": "Teeth",
+      "facts": [
+        "Teeth help you bite and chew your food.",
+        "Children have 20 baby teeth, and grown-ups have 32 teeth.",
+        "Brushing your teeth twice a day keeps them clean and strong.",
+        "Too many sweets can give your teeth holes called cavities."
+      ],
+      "questions": [
+        {
+          "q": "What do teeth help you do?",
+          "choices": [
+            "Run fast",
+            "See better",
+            "Bite and chew food",
+            "Hear sounds"
+          ],
+          "answer": 2,
+          "fact": "Teeth bite and chew food so you can swallow it safely.",
+          "level": "Easy"
+        },
+        {
+          "q": "How many times a day should you brush your teeth?",
+          "choices": [
+            "Ten times",
+            "Twice",
+            "Once a week",
+            "Never"
+          ],
+          "answer": 1,
+          "fact": "Brushing twice a day, morning and night, keeps teeth healthy.",
+          "level": "Easy"
+        },
+        {
+          "q": "What can too many sweets do to your teeth?",
+          "choices": [
+            "Make them disappear",
+            "Make them grow longer",
+            "Give them holes called cavities",
+            "Turn them blue"
+          ],
+          "answer": 2,
+          "fact": "Sugar feeds tiny germs that can make holes in teeth.",
+          "level": "Easy"
+        },
+        {
+          "q": "How many baby teeth do children have?",
+          "choices": [
+            "32",
+            "10",
+            "20",
+            "5"
+          ],
+          "answer": 2,
+          "fact": "Children have 20 baby teeth, which later fall out to make room for adult teeth.",
+          "level": "Easy"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-b5-trees",
+      "label": "Trees",
+      "facts": [
+        "Trees are big plants with a trunk, branches, and leaves.",
+        "Trees make the oxygen we breathe.",
+        "Some trees grow fruit, like apples and oranges.",
+        "Trees give shade and homes to birds and other animals."
+      ],
+      "questions": [
+        {
+          "q": "What is the thick middle part of a tree called?",
+          "choices": [
+            "The trunk",
+            "The leaf",
+            "The flower",
+            "The root"
+          ],
+          "answer": 0,
+          "fact": "The trunk holds the tree up and carries water to the branches.",
+          "level": "Easy"
+        },
+        {
+          "q": "What do trees make that we breathe?",
+          "choices": [
+            "Smoke",
+            "Sand",
+            "Oxygen",
+            "Rain"
+          ],
+          "answer": 2,
+          "fact": "Trees take in carbon dioxide and release oxygen into the air.",
+          "level": "Easy"
+        },
+        {
+          "q": "Which of these grows on a tree?",
+          "choices": [
+            "A potato",
+            "A carrot",
+            "A mushroom",
+            "An apple"
+          ],
+          "answer": 3,
+          "fact": "Apples grow on apple trees.",
+          "level": "Easy"
+        },
+        {
+          "q": "What do trees give birds?",
+          "choices": [
+            "A phone",
+            "A home",
+            "A car",
+            "A school"
+          ],
+          "answer": 1,
+          "fact": "Many birds build their nests in trees.",
+          "level": "Easy"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-b5-healthy-habits",
+      "label": "Healthy Habits",
+      "facts": [
+        "Washing your hands with soap helps wash away germs that can make you sick.",
+        "Children need lots of sleep to grow and learn, usually around 9 to 11 hours each night.",
+        "Moving your body every day, by playing, running, or dancing, keeps your muscles and heart strong.",
+        "Brushing your teeth twice a day helps keep them clean and strong."
+      ],
+      "questions": [
+        {
+          "q": "Why should you wash your hands with soap?",
+          "choices": [
+            "To warm them up",
+            "To wash away germs",
+            "To make them bigger",
+            "To make them smell nice only"
+          ],
+          "answer": 1,
+          "fact": "Soap and water wash away germs that can make you sick.",
+          "level": "Easy"
+        },
+        {
+          "q": "How much sleep do children usually need each night?",
+          "choices": [
+            "Around 20 hours",
+            "No sleep at all",
+            "Around 9 to 11 hours",
+            "Around 2 hours"
+          ],
+          "answer": 2,
+          "fact": "Most children need about 9 to 11 hours of sleep each night.",
+          "level": "Easy"
+        },
+        {
+          "q": "What does playing and running every day do for your body?",
+          "choices": [
+            "It keeps your muscles and heart strong",
+            "It stops you growing",
+            "It makes your bones soft",
+            "It makes you tired forever"
+          ],
+          "answer": 0,
+          "fact": "Daily play and exercise keep muscles, bones, and your heart strong.",
+          "level": "Easy"
+        },
+        {
+          "q": "How often should you brush your teeth?",
+          "choices": [
+            "Never",
+            "Twice a day",
+            "Once a month",
+            "Once a year"
+          ],
+          "answer": 1,
+          "fact": "Brushing twice a day keeps teeth clean and helps stop tooth decay.",
+          "level": "Easy"
+        }
+      ]
+    }
+  ]
+}

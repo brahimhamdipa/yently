@@ -1,0 +1,244 @@
+{
+  "topics": [
+    {
+      "id": "lib-science-b3-sun",
+      "label": "The Sun",
+      "facts": [
+        "The Sun is a star, and it gives Earth light and heat.",
+        "The Sun rises in the morning and sets in the evening.",
+        "Plants use sunlight to grow.",
+        "You should never look straight at the Sun because it can hurt your eyes."
+      ],
+      "questions": [
+        {
+          "q": "What is the Sun?",
+          "choices": [
+            "A star",
+            "A cloud",
+            "A mountain",
+            "A planet"
+          ],
+          "answer": 0,
+          "fact": "The Sun is a star, the closest star to Earth.",
+          "level": "Easy"
+        },
+        {
+          "q": "What does the Sun give Earth?",
+          "choices": [
+            "Wind and ice",
+            "Sand and rocks",
+            "Light and heat",
+            "Rain and snow"
+          ],
+          "answer": 2,
+          "fact": "The Sun's light and heat warm our planet.",
+          "level": "Easy"
+        },
+        {
+          "q": "When does the Sun rise?",
+          "choices": [
+            "In the morning",
+            "In the middle of the night",
+            "At midnight",
+            "Never"
+          ],
+          "answer": 0,
+          "fact": "The Sun rises in the morning and sets in the evening.",
+          "level": "Easy"
+        },
+        {
+          "q": "What should you wear on a very sunny day?",
+          "choices": [
+            "Gloves",
+            "A scarf",
+            "A hat and sunscreen",
+            "A thick coat"
+          ],
+          "answer": 2,
+          "fact": "A hat and sunscreen protect your skin from strong sunlight.",
+          "level": "Easy"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-b3-pets",
+      "label": "Pets",
+      "facts": [
+        "Pets are animals that live with people at home.",
+        "Dogs and cats are two of the most popular pets.",
+        "Pets need food, water, a clean home, and love every day.",
+        "Some people keep fish, birds, rabbits, or hamsters as pets."
+      ],
+      "questions": [
+        {
+          "q": "What is a pet?",
+          "choices": [
+            "A picture of an animal",
+            "A wild animal in the jungle",
+            "An animal that lives with people at home",
+            "A toy animal"
+          ],
+          "answer": 2,
+          "fact": "Pets are animals that live with people and are cared for at home.",
+          "level": "Easy"
+        },
+        {
+          "q": "What do pets need every day?",
+          "choices": [
+            "Food and water",
+            "A phone",
+            "A car",
+            "A television"
+          ],
+          "answer": 0,
+          "fact": "Pets need food, water, and care every single day.",
+          "level": "Easy"
+        },
+        {
+          "q": "Which of these is a popular pet?",
+          "choices": [
+            "A cat",
+            "An elephant",
+            "A lion",
+            "A shark"
+          ],
+          "answer": 0,
+          "fact": "Cats are one of the most popular pets in the world.",
+          "level": "Easy"
+        },
+        {
+          "q": "What do goldfish live in?",
+          "choices": [
+            "A tree",
+            "A cage",
+            "A dog bed",
+            "A fish tank with water"
+          ],
+          "answer": 3,
+          "fact": "Goldfish live in a tank or bowl full of clean water.",
+          "level": "Easy"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-b3-seasons",
+      "label": "Seasons",
+      "facts": [
+        "There are four seasons: spring, summer, autumn, and winter.",
+        "Summer is usually the warmest season.",
+        "Winter is usually the coldest season, and it can snow.",
+        "In autumn, many leaves change colour and fall from the trees."
+      ],
+      "questions": [
+        {
+          "q": "How many seasons are there?",
+          "choices": [
+            "Four",
+            "Three",
+            "Seven",
+            "Two"
+          ],
+          "answer": 0,
+          "fact": "The four seasons are spring, summer, autumn, and winter.",
+          "level": "Easy"
+        },
+        {
+          "q": "Which season is usually the warmest?",
+          "choices": [
+            "Summer",
+            "Winter",
+            "Spring",
+            "Autumn"
+          ],
+          "answer": 0,
+          "fact": "Summer is usually the warmest season of the year.",
+          "level": "Easy"
+        },
+        {
+          "q": "In which season do many leaves fall from trees?",
+          "choices": [
+            "Winter",
+            "Autumn",
+            "Spring",
+            "Summer"
+          ],
+          "answer": 1,
+          "fact": "In autumn, leaves turn orange, red, and yellow, then fall.",
+          "level": "Easy"
+        },
+        {
+          "q": "What can fall from the sky in winter?",
+          "choices": [
+            "Leaves",
+            "Flowers",
+            "Snow",
+            "Sand"
+          ],
+          "answer": 2,
+          "fact": "Snow falls in winter when the air is very cold.",
+          "level": "Easy"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-b3-clouds",
+      "label": "Clouds",
+      "facts": [
+        "Clouds are made of tiny drops of water or tiny bits of ice floating high in the sky.",
+        "Puffy white clouds are called cumulus clouds, and they often appear on sunny days.",
+        "Dark grey clouds are usually full of water and can bring rain.",
+        "Clouds form when warm, wet air rises and cools down high in the sky."
+      ],
+      "questions": [
+        {
+          "q": "What are clouds made of?",
+          "choices": [
+            "Tiny drops of water or bits of ice",
+            "Cotton wool",
+            "Smoke from fires",
+            "Pieces of paper"
+          ],
+          "answer": 0,
+          "fact": "Clouds are made of tiny water droplets or ice crystals floating in the air.",
+          "level": "Easy"
+        },
+        {
+          "q": "Which clouds are puffy and white?",
+          "choices": [
+            "Cumulus clouds",
+            "Night clouds",
+            "Storm clouds",
+            "Rain clouds"
+          ],
+          "answer": 0,
+          "fact": "Cumulus clouds are the puffy white ones you often see on sunny days.",
+          "level": "Easy"
+        },
+        {
+          "q": "Which clouds are most likely to bring rain?",
+          "choices": [
+            "Thin wispy clouds",
+            "Dark grey clouds",
+            "Small white clouds",
+            "Pink clouds at sunset"
+          ],
+          "answer": 1,
+          "fact": "Dark grey clouds are heavy with water and often bring rain.",
+          "level": "Easy"
+        },
+        {
+          "q": "How do clouds form?",
+          "choices": [
+            "Wind blows them from the sea only",
+            "The Sun paints them in the sky",
+            "Birds make them",
+            "Warm, wet air rises and cools down"
+          ],
+          "answer": 3,
+          "fact": "When warm, wet air rises and cools, the water in it forms tiny droplets: a cloud.",
+          "level": "Easy"
+        }
+      ]
+    }
+  ]
+}

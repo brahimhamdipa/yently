@@ -1,0 +1,244 @@
+{
+  "topics": [
+    {
+      "id": "lib-science-b7-rain",
+      "label": "Rain",
+      "facts": [
+        "Rain is water falling from clouds in the sky.",
+        "Rain gives water to plants, animals, and rivers.",
+        "Rain happens when tiny drops of water in clouds join together and get heavy.",
+        "After rain, you can sometimes see a rainbow in the sky."
+      ],
+      "questions": [
+        {
+          "q": "What is rain?",
+          "choices": [
+            "Light falling from stars",
+            "Sand falling from trees",
+            "Water falling from clouds",
+            "Snow falling from the Moon"
+          ],
+          "answer": 2,
+          "fact": "Rain is water that falls from clouds when the drops get heavy.",
+          "level": "Easy"
+        },
+        {
+          "q": "What does rain give to plants?",
+          "choices": [
+            "Shoes",
+            "Toys",
+            "Sunglasses",
+            "Water to drink and grow"
+          ],
+          "answer": 3,
+          "fact": "Plants drink rainwater through their roots.",
+          "level": "Easy"
+        },
+        {
+          "q": "Where does rain come from?",
+          "choices": [
+            "Clouds",
+            "Mountains",
+            "The sea floor",
+            "The ground"
+          ],
+          "answer": 0,
+          "fact": "Rain falls from clouds in the sky.",
+          "level": "Easy"
+        },
+        {
+          "q": "What can you sometimes see in the sky after rain?",
+          "choices": [
+            "A black cloud of smoke",
+            "A star at noon",
+            "A second Moon",
+            "A rainbow"
+          ],
+          "answer": 3,
+          "fact": "Sunlight shining through rain drops makes a rainbow.",
+          "level": "Easy"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-b7-snow",
+      "label": "Snow",
+      "facts": [
+        "Snow is made of tiny ice crystals that fall from clouds.",
+        "Snow falls when the air is very cold.",
+        "Each snowflake has six sides, and no two snowflakes are exactly alike.",
+        "Snow covers the ground like a white blanket and can be used to build snowmen."
+      ],
+      "questions": [
+        {
+          "q": "What is snow made of?",
+          "choices": [
+            "Tiny ice crystals",
+            "White sand",
+            "Sugar",
+            "Cotton wool"
+          ],
+          "answer": 0,
+          "fact": "Snow is made of tiny ice crystals that form in cold clouds.",
+          "level": "Easy"
+        },
+        {
+          "q": "When does snow fall?",
+          "choices": [
+            "When the Sun is strongest",
+            "On hot summer days",
+            "When the air is very cold",
+            "Only at night in summer"
+          ],
+          "answer": 2,
+          "fact": "Snow falls when the air is cold enough for water drops to freeze.",
+          "level": "Easy"
+        },
+        {
+          "q": "How many sides does a snowflake have?",
+          "choices": [
+            "Eight",
+            "Three",
+            "Six",
+            "Four"
+          ],
+          "answer": 2,
+          "fact": "Snowflakes have six sides, and every one has its own shape.",
+          "level": "Easy"
+        },
+        {
+          "q": "What can you build with snow?",
+          "choices": [
+            "A snowman",
+            "A boat",
+            "A treehouse",
+            "A sandcastle"
+          ],
+          "answer": 0,
+          "fact": "Snow sticks together, so you can roll it into balls and build a snowman.",
+          "level": "Easy"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-b7-wind",
+      "label": "Wind",
+      "facts": [
+        "Wind is air that is moving.",
+        "Wind can blow leaves, clouds, and kites through the sky.",
+        "Strong wind can bend trees and make waves on the sea.",
+        "Wind turbines use wind to make electricity."
+      ],
+      "questions": [
+        {
+          "q": "What is wind?",
+          "choices": [
+            "Cold ice",
+            "Moving air",
+            "Hot sunshine",
+            "Falling rain"
+          ],
+          "answer": 1,
+          "fact": "Wind is air moving from one place to another.",
+          "level": "Easy"
+        },
+        {
+          "q": "What can the wind blow through the sky?",
+          "choices": [
+            "A kite",
+            "A house",
+            "A mountain",
+            "A rock"
+          ],
+          "answer": 0,
+          "fact": "Wind can lift a kite and carry it through the sky.",
+          "level": "Easy"
+        },
+        {
+          "q": "What do wind turbines use wind to make?",
+          "choices": [
+            "Bread",
+            "Electricity",
+            "Water",
+            "Clothes"
+          ],
+          "answer": 1,
+          "fact": "Wind turbines turn in the wind and make electricity.",
+          "level": "Easy"
+        },
+        {
+          "q": "What can strong wind do to trees?",
+          "choices": [
+            "Bend them",
+            "Make them grow taller at once",
+            "Turn them into flowers",
+            "Make them disappear"
+          ],
+          "answer": 0,
+          "fact": "Strong wind can bend trees and even break branches.",
+          "level": "Easy"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-b7-thunder-and-lightning",
+      "label": "Thunder and Lightning",
+      "facts": [
+        "Lightning is a big spark of electricity that jumps between clouds or between a cloud and the ground.",
+        "Thunder is the loud sound that lightning makes when it heats the air around it very quickly.",
+        "You see lightning before you hear thunder because light travels faster than sound.",
+        "During a thunderstorm, the safest place to be is indoors, away from tall trees and water."
+      ],
+      "questions": [
+        {
+          "q": "What is lightning?",
+          "choices": [
+            "A kind of rain",
+            "A big spark of electricity in the sky",
+            "A loud cloud",
+            "A falling star"
+          ],
+          "answer": 1,
+          "fact": "Lightning is a huge spark of electricity between clouds or to the ground.",
+          "level": "Easy"
+        },
+        {
+          "q": "What is thunder?",
+          "choices": [
+            "A cloud falling down",
+            "Wind blowing trees",
+            "Rain hitting the ground",
+            "The loud sound lightning makes"
+          ],
+          "answer": 3,
+          "fact": "Thunder is the sound of air heating and expanding quickly around lightning.",
+          "level": "Easy"
+        },
+        {
+          "q": "Why do you see lightning before you hear thunder?",
+          "choices": [
+            "Thunder comes from another storm",
+            "Lightning is louder",
+            "Light travels faster than sound",
+            "Sound travels faster than light"
+          ],
+          "answer": 2,
+          "fact": "Light reaches your eyes almost instantly, while sound takes longer to travel.",
+          "level": "Easy"
+        },
+        {
+          "q": "Where is the safest place during a thunderstorm?",
+          "choices": [
+            "In a swimming pool",
+            "Indoors",
+            "On top of a hill",
+            "Under a tall tree"
+          ],
+          "answer": 1,
+          "fact": "Staying indoors keeps you safe from lightning during a storm.",
+          "level": "Easy"
+        }
+      ]
+    }
+  ]
+}

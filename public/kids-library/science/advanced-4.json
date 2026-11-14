@@ -1,0 +1,244 @@
+{
+  "topics": [
+    {
+      "id": "lib-science-a4-solar-system-in-depth",
+      "label": "The Solar System in Depth",
+      "facts": [
+        "The Solar System formed about 4.6 billion years ago from a cloud of gas and dust.",
+        "The Sun holds more than 99 percent of all the mass in the Solar System.",
+        "Saturn is famous for its wide, bright rings made of ice and rock.",
+        "Neptune is the farthest planet from the Sun, and it is a cold, windy world."
+      ],
+      "questions": [
+        {
+          "q": "About how old is the Solar System?",
+          "choices": [
+            "About 46 billion years",
+            "About 4.6 million years",
+            "About 4,600 years",
+            "About 4.6 billion years"
+          ],
+          "answer": 3,
+          "fact": "The Solar System formed from a collapsing cloud of gas and dust about 4.6 billion years ago.",
+          "level": "Hard"
+        },
+        {
+          "q": "How much of the Solar System's mass is in the Sun?",
+          "choices": [
+            "About 50 percent",
+            "Less than 1 percent",
+            "More than 99 percent",
+            "About 10 percent"
+          ],
+          "answer": 2,
+          "fact": "The Sun is so massive that it holds over 99 percent of the Solar System's mass.",
+          "level": "Hard"
+        },
+        {
+          "q": "Which planet is famous for its wide, bright rings?",
+          "choices": [
+            "Venus",
+            "Saturn",
+            "Mercury",
+            "Mars"
+          ],
+          "answer": 1,
+          "fact": "Saturn's rings are made of billions of pieces of ice and rock.",
+          "level": "Hard"
+        },
+        {
+          "q": "Which planet is farthest from the Sun?",
+          "choices": [
+            "Uranus",
+            "Jupiter",
+            "Neptune",
+            "Pluto"
+          ],
+          "answer": 2,
+          "fact": "Neptune is the eighth and farthest planet from the Sun.",
+          "level": "Hard"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-a4-galaxies",
+      "label": "Galaxies",
+      "facts": [
+        "A galaxy is a huge group of stars, gas, and dust held together by gravity.",
+        "Our galaxy is called the Milky Way, and it holds hundreds of billions of stars.",
+        "The Milky Way is a spiral galaxy, shaped like a giant spinning pinwheel.",
+        "Light from the nearest galaxy beyond our own takes about 2.5 million years to reach us."
+      ],
+      "questions": [
+        {
+          "q": "What is a galaxy?",
+          "choices": [
+            "A single star",
+            "A planet",
+            "A huge group of stars, gas, and dust held together by gravity",
+            "A black hole"
+          ],
+          "answer": 2,
+          "fact": "Galaxies are enormous star systems, and there are billions of them in the universe.",
+          "level": "Hard"
+        },
+        {
+          "q": "What is our galaxy called?",
+          "choices": [
+            "The Big Dipper",
+            "The Andromeda Galaxy",
+            "The Milky Way",
+            "The Solar System"
+          ],
+          "answer": 2,
+          "fact": "We live in the Milky Way galaxy, which you can see as a milky band across a dark night sky.",
+          "level": "Hard"
+        },
+        {
+          "q": "What shape is the Milky Way?",
+          "choices": [
+            "A triangle",
+            "A straight line",
+            "A square",
+            "A spiral"
+          ],
+          "answer": 3,
+          "fact": "The Milky Way is a spiral galaxy with arms curving out from its centre.",
+          "level": "Hard"
+        },
+        {
+          "q": "How long does light from the nearest big galaxy take to reach us?",
+          "choices": [
+            "About 2.5 days",
+            "About 2.5 million years",
+            "About 2.5 hours",
+            "About 2.5 seconds"
+          ],
+          "answer": 1,
+          "fact": "The Andromeda Galaxy is so far away that its light takes 2.5 million years to reach Earth.",
+          "level": "Hard"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-a4-black-holes",
+      "label": "Black Holes",
+      "facts": [
+        "A black hole is a place in space where gravity is so strong that not even light can escape.",
+        "Black holes form when very massive stars run out of fuel and collapse.",
+        "The edge of a black hole is called the event horizon, and nothing that crosses it can come back.",
+        "Scientists have photographed the shadow of a black hole, and a giant one sits at the centre of our galaxy."
+      ],
+      "questions": [
+        {
+          "q": "What is a black hole?",
+          "choices": [
+            "A type of star",
+            "A place where gravity is so strong not even light can escape",
+            "A dark planet",
+            "A hole in Earth"
+          ],
+          "answer": 1,
+          "fact": "A black hole's gravity is so strong that light itself cannot escape from it.",
+          "level": "Hard"
+        },
+        {
+          "q": "How do black holes form?",
+          "choices": [
+            "When very massive stars collapse",
+            "When a star gets cold",
+            "When planets crash",
+            "When the Moon disappears"
+          ],
+          "answer": 0,
+          "fact": "When a huge star runs out of fuel, its core collapses under its own gravity.",
+          "level": "Hard"
+        },
+        {
+          "q": "What is the edge of a black hole called?",
+          "choices": [
+            "The event horizon",
+            "The surface",
+            "The front door",
+            "The ring"
+          ],
+          "answer": 0,
+          "fact": "The event horizon is the point of no return around a black hole.",
+          "level": "Hard"
+        },
+        {
+          "q": "What sits at the centre of our Milky Way galaxy?",
+          "choices": [
+            "A giant black hole",
+            "A huge planet",
+            "The Sun",
+            "A bright star"
+          ],
+          "answer": 0,
+          "fact": "A black hole millions of times heavier than the Sun sits at the Milky Way's centre.",
+          "level": "Hard"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-a4-universe",
+      "label": "The Universe",
+      "facts": [
+        "The universe is everything that exists: all space, all stars, all galaxies, and all matter and energy.",
+        "Scientists think the universe began about 13.8 billion years ago with an event called the Big Bang.",
+        "The universe is still expanding, and galaxies are moving farther apart from each other.",
+        "A light-year is the distance light travels in one year, about 9.5 trillion kilometres."
+      ],
+      "questions": [
+        {
+          "q": "What is the universe?",
+          "choices": [
+            "Only planet Earth",
+            "Only our Solar System",
+            "Everything that exists: all space, stars, galaxies, matter, and energy",
+            "Only the Milky Way"
+          ],
+          "answer": 2,
+          "fact": "The universe includes everything that exists.",
+          "level": "Hard"
+        },
+        {
+          "q": "About how old is the universe?",
+          "choices": [
+            "About 13.8 billion years",
+            "About 13.8 million years",
+            "About 13,800 years",
+            "About 138 billion years"
+          ],
+          "answer": 0,
+          "fact": "Scientists estimate the universe began about 13.8 billion years ago.",
+          "level": "Hard"
+        },
+        {
+          "q": "What is the universe doing now?",
+          "choices": [
+            "It is shrinking to nothing",
+            "It is still expanding",
+            "It has stopped changing",
+            "It is spinning around Earth"
+          ],
+          "answer": 1,
+          "fact": "The universe is still expanding, with galaxies moving farther apart.",
+          "level": "Hard"
+        },
+        {
+          "q": "What is a light-year?",
+          "choices": [
+            "The distance light travels in one year",
+            "One year on the Sun",
+            "The time it takes light to reach the Moon",
+            "The brightness of a star"
+          ],
+          "answer": 0,
+          "fact": "A light-year is a distance: about 9.5 trillion kilometres.",
+          "level": "Hard"
+        }
+      ]
+    }
+  ]
+}

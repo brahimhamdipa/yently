@@ -1,0 +1,244 @@
+{
+  "topics": [
+    {
+      "id": "lib-science-i5-solar-system",
+      "label": "The Solar System",
+      "facts": [
+        "The Solar System is the Sun and everything that travels around it, including eight planets.",
+        "The four planets closest to the Sun are rocky: Mercury, Venus, Earth, and Mars.",
+        "Jupiter is the largest planet in the Solar System.",
+        "It takes Earth about 365 days to travel once around the Sun."
+      ],
+      "questions": [
+        {
+          "q": "How many planets are in our Solar System?",
+          "choices": [
+            "Eight",
+            "Five",
+            "Nine",
+            "Twelve"
+          ],
+          "answer": 0,
+          "fact": "The eight planets are Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, and Neptune.",
+          "level": "Medium"
+        },
+        {
+          "q": "Which planet is the largest?",
+          "choices": [
+            "Saturn",
+            "Jupiter",
+            "Earth",
+            "Mars"
+          ],
+          "answer": 1,
+          "fact": "Jupiter is so big that more than 1,300 Earths could fit inside it.",
+          "level": "Medium"
+        },
+        {
+          "q": "Which planet is closest to the Sun?",
+          "choices": [
+            "Mars",
+            "Venus",
+            "Mercury",
+            "Earth"
+          ],
+          "answer": 2,
+          "fact": "Mercury is the closest planet to the Sun.",
+          "level": "Medium"
+        },
+        {
+          "q": "Which planet do we live on?",
+          "choices": [
+            "Venus",
+            "Mars",
+            "Jupiter",
+            "Earth"
+          ],
+          "answer": 3,
+          "fact": "Earth is the third planet from the Sun and the only one known to have life.",
+          "level": "Medium"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-i5-gravity",
+      "label": "Gravity",
+      "facts": [
+        "Gravity is a force that pulls things towards each other.",
+        "Earth's gravity pulls everything down towards the ground.",
+        "The Moon's gravity is weaker than Earth's, so astronauts can jump higher there.",
+        "Gravity keeps the Moon travelling around Earth and Earth travelling around the Sun."
+      ],
+      "questions": [
+        {
+          "q": "What is gravity?",
+          "choices": [
+            "A force that pulls things towards each other",
+            "A sound",
+            "A type of light",
+            "A kind of wind"
+          ],
+          "answer": 0,
+          "fact": "Gravity pulls objects towards each other, and bigger objects pull more strongly.",
+          "level": "Medium"
+        },
+        {
+          "q": "What does Earth's gravity do to a ball you drop?",
+          "choices": [
+            "It makes it float",
+            "It makes it disappear",
+            "It pushes it up",
+            "It pulls it down to the ground"
+          ],
+          "answer": 3,
+          "fact": "Gravity pulls the ball down towards the centre of Earth.",
+          "level": "Medium"
+        },
+        {
+          "q": "Why can astronauts jump higher on the Moon?",
+          "choices": [
+            "Astronauts are stronger there",
+            "There is no air on the Moon",
+            "The Moon's gravity is weaker than Earth's",
+            "The Moon has no ground"
+          ],
+          "answer": 2,
+          "fact": "The Moon is smaller than Earth, so its gravity is only about one sixth as strong.",
+          "level": "Medium"
+        },
+        {
+          "q": "What keeps the Moon travelling around Earth?",
+          "choices": [
+            "Gravity",
+            "Ropes",
+            "Magnets",
+            "Wind"
+          ],
+          "answer": 0,
+          "fact": "Earth's gravity keeps the Moon in orbit around our planet.",
+          "level": "Medium"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-i5-light",
+      "label": "Light",
+      "facts": [
+        "Light travels in straight lines and moves incredibly fast.",
+        "Light from the Sun takes about 8 minutes to reach Earth.",
+        "We see things because light bounces off them and into our eyes.",
+        "White light is made of many colours, which you can see in a rainbow."
+      ],
+      "questions": [
+        {
+          "q": "How does light travel?",
+          "choices": [
+            "In circles",
+            "In zigzags",
+            "In straight lines",
+            "In waves of water"
+          ],
+          "answer": 2,
+          "fact": "Light travels in straight lines until it hits something or passes into a new material.",
+          "level": "Medium"
+        },
+        {
+          "q": "About how long does sunlight take to reach Earth?",
+          "choices": [
+            "About 8 minutes",
+            "About 8 days",
+            "About 8 hours",
+            "About 8 seconds"
+          ],
+          "answer": 0,
+          "fact": "Light travels so fast that it crosses the 150 million kilometres from the Sun in about 8 minutes.",
+          "level": "Medium"
+        },
+        {
+          "q": "Why can we see an object?",
+          "choices": [
+            "Our eyes send out light",
+            "Light bounces off it and into our eyes",
+            "The object is warm",
+            "The object makes its own sound"
+          ],
+          "answer": 1,
+          "fact": "We see because light reflects off objects and enters our eyes.",
+          "level": "Medium"
+        },
+        {
+          "q": "What colours are hidden in white light?",
+          "choices": [
+            "Only red and blue",
+            "No colours at all",
+            "All the colours of the rainbow",
+            "Only black and white"
+          ],
+          "answer": 2,
+          "fact": "White light splits into red, orange, yellow, green, blue, indigo, and violet.",
+          "level": "Medium"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-i5-planets",
+      "label": "The Planets",
+      "facts": [
+        "There are eight planets in our Solar System, and Earth is the third one from the Sun.",
+        "Mercury is the smallest planet and the closest one to the Sun.",
+        "Jupiter is the largest planet, and it is bigger than all the other planets put together.",
+        "Mars looks red because its surface is covered in rusty, iron-rich dust."
+      ],
+      "questions": [
+        {
+          "q": "How many planets are in our Solar System?",
+          "choices": [
+            "Three",
+            "Eight",
+            "Twelve",
+            "Five"
+          ],
+          "answer": 1,
+          "fact": "There are eight planets in our Solar System.",
+          "level": "Medium"
+        },
+        {
+          "q": "Which planet is closest to the Sun?",
+          "choices": [
+            "Mars",
+            "Venus",
+            "Mercury",
+            "Earth"
+          ],
+          "answer": 2,
+          "fact": "Mercury is the planet nearest the Sun.",
+          "level": "Medium"
+        },
+        {
+          "q": "Which planet is the largest?",
+          "choices": [
+            "Neptune",
+            "Mars",
+            "Saturn",
+            "Jupiter"
+          ],
+          "answer": 3,
+          "fact": "Jupiter is the largest planet in the Solar System.",
+          "level": "Medium"
+        },
+        {
+          "q": "Why does Mars look red?",
+          "choices": [
+            "Its surface is covered in rusty, iron-rich dust",
+            "It is painted red",
+            "It reflects the Sun's red light only",
+            "It is on fire"
+          ],
+          "answer": 0,
+          "fact": "Mars is red because of iron-rich dust on its surface, like rust.",
+          "level": "Medium"
+        }
+      ]
+    }
+  ]
+}

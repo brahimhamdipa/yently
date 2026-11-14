@@ -1,0 +1,244 @@
+{
+  "topics": [
+    {
+      "id": "lib-science-a3-ecosystems",
+      "label": "Ecosystems",
+      "facts": [
+        "An ecosystem is a community of living things and the non-living things around them, all interacting.",
+        "Producers, consumers, and decomposers all play roles in an ecosystem.",
+        "Decomposers, like fungi and bacteria, break down dead plants and animals and return nutrients to the soil.",
+        "A food web is a set of linked food chains that shows how feeding relationships connect in an ecosystem."
+      ],
+      "questions": [
+        {
+          "q": "What is an ecosystem?",
+          "choices": [
+            "A type of plant",
+            "A single animal",
+            "A weather pattern",
+            "A community of living things and their surroundings, all interacting"
+          ],
+          "answer": 3,
+          "fact": "An ecosystem includes everything living and non-living in an area and how they affect each other.",
+          "level": "Hard"
+        },
+        {
+          "q": "What do decomposers do?",
+          "choices": [
+            "Break down dead plants and animals and return nutrients to the soil",
+            "Hunt other animals",
+            "Make food from sunlight",
+            "Eat living plants"
+          ],
+          "answer": 0,
+          "fact": "Fungi and bacteria decompose dead matter, recycling nutrients for new life.",
+          "level": "Hard"
+        },
+        {
+          "q": "What is a food web?",
+          "choices": [
+            "A spider's web",
+            "A fishing net",
+            "Linked food chains showing how feeding relationships connect",
+            "A type of plant"
+          ],
+          "answer": 2,
+          "fact": "A food web joins many food chains together, showing that most animals eat more than one thing.",
+          "level": "Hard"
+        },
+        {
+          "q": "In an ecosystem, what do we call animals that eat plants and animals?",
+          "choices": [
+            "Producers",
+            "Omnivores",
+            "Decomposers",
+            "Herbivores"
+          ],
+          "answer": 1,
+          "fact": "Omnivores eat both plants and other animals.",
+          "level": "Hard"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-a3-climate",
+      "label": "Climate",
+      "facts": [
+        "Climate is the usual pattern of weather in a place over a long time, while weather is what happens day to day.",
+        "Earth's climate is warming because greenhouse gases, like carbon dioxide, trap heat in the atmosphere.",
+        "Burning coal, oil, and gas releases carbon dioxide into the air.",
+        "Melting ice and rising sea levels are signs that Earth's climate is changing."
+      ],
+      "questions": [
+        {
+          "q": "What is the difference between weather and climate?",
+          "choices": [
+            "Climate changes every hour",
+            "Weather is day to day; climate is the usual pattern over a long time",
+            "Weather is only rain; climate is only heat",
+            "They are the same thing"
+          ],
+          "answer": 1,
+          "fact": "Weather is short-term, while climate describes the usual weather of a place over many years.",
+          "level": "Hard"
+        },
+        {
+          "q": "Which gas is the main greenhouse gas warming Earth's climate?",
+          "choices": [
+            "Carbon dioxide",
+            "Oxygen",
+            "Hydrogen",
+            "Nitrogen"
+          ],
+          "answer": 0,
+          "fact": "Carbon dioxide traps heat in the atmosphere, warming the planet.",
+          "level": "Hard"
+        },
+        {
+          "q": "What releases carbon dioxide into the air?",
+          "choices": [
+            "Planting trees",
+            "Riding a bicycle",
+            "Burning coal, oil, and gas",
+            "Using solar panels"
+          ],
+          "answer": 2,
+          "fact": "Burning fossil fuels for energy releases stored carbon as carbon dioxide.",
+          "level": "Hard"
+        },
+        {
+          "q": "Which of these is a sign that Earth's climate is changing?",
+          "choices": [
+            "More snow in deserts",
+            "Fewer storms",
+            "Colder summers everywhere",
+            "Melting ice and rising sea levels"
+          ],
+          "answer": 3,
+          "fact": "As the planet warms, glaciers melt and the seas rise.",
+          "level": "Hard"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-a3-carbon-cycle",
+      "label": "The Carbon Cycle",
+      "facts": [
+        "The carbon cycle is the movement of carbon between the air, living things, the oceans, and rocks.",
+        "Plants take carbon dioxide out of the air during photosynthesis and store the carbon in their bodies.",
+        "Animals get carbon by eating plants or other animals, and release carbon dioxide when they breathe out.",
+        "Burning fossil fuels moves carbon that was stored underground for millions of years into the air very quickly."
+      ],
+      "questions": [
+        {
+          "q": "What is the carbon cycle?",
+          "choices": [
+            "The water cycle",
+            "A type of rock",
+            "A bicycle race",
+            "The movement of carbon between the air, living things, oceans, and rocks"
+          ],
+          "answer": 3,
+          "fact": "Carbon moves around the planet in a cycle, from air to living things and back again.",
+          "level": "Hard"
+        },
+        {
+          "q": "How do plants take carbon out of the air?",
+          "choices": [
+            "By making flowers",
+            "By growing roots",
+            "By photosynthesis",
+            "By drinking water"
+          ],
+          "answer": 2,
+          "fact": "In photosynthesis, plants take in carbon dioxide and use its carbon to grow.",
+          "level": "Hard"
+        },
+        {
+          "q": "How do animals release carbon dioxide?",
+          "choices": [
+            "When they eat",
+            "When they drink",
+            "When they breathe out",
+            "When they sleep"
+          ],
+          "answer": 2,
+          "fact": "Respiration releases carbon dioxide back into the air.",
+          "level": "Hard"
+        },
+        {
+          "q": "Why does burning fossil fuels add carbon dioxide to the air quickly?",
+          "choices": [
+            "It releases carbon stored underground for millions of years",
+            "It stops plants growing",
+            "It creates new carbon",
+            "It heats the air"
+          ],
+          "answer": 0,
+          "fact": "Coal, oil, and gas hold carbon from ancient living things, and burning them frees it as carbon dioxide.",
+          "level": "Hard"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-a3-biodiversity",
+      "label": "Biodiversity",
+      "facts": [
+        "Biodiversity means the variety of all living things on Earth, from tiny bacteria to huge whales.",
+        "Rainforests and coral reefs have some of the highest biodiversity on the planet.",
+        "When a species becomes extinct, it is gone forever, and the food web it belonged to can weaken.",
+        "Protecting habitats is the most important way to protect biodiversity."
+      ],
+      "questions": [
+        {
+          "q": "What does biodiversity mean?",
+          "choices": [
+            "The variety of all living things on Earth",
+            "The number of trees only",
+            "The size of the ocean",
+            "The age of rocks"
+          ],
+          "answer": 0,
+          "fact": "Biodiversity is the variety of life, including all species and ecosystems.",
+          "level": "Hard"
+        },
+        {
+          "q": "Which places have some of the highest biodiversity?",
+          "choices": [
+            "Deep caves with no light",
+            "City car parks",
+            "Frozen deserts",
+            "Rainforests and coral reefs"
+          ],
+          "answer": 3,
+          "fact": "Rainforests and coral reefs support a huge number of different species.",
+          "level": "Hard"
+        },
+        {
+          "q": "What happens when a species becomes extinct?",
+          "choices": [
+            "It is gone forever",
+            "It comes back after a year",
+            "It moves to another planet",
+            "It turns into a different species"
+          ],
+          "answer": 0,
+          "fact": "Extinction is permanent: once a species is gone, it never returns.",
+          "level": "Hard"
+        },
+        {
+          "q": "What is the most important way to protect biodiversity?",
+          "choices": [
+            "Polluting rivers",
+            "Building more roads",
+            "Cutting down forests",
+            "Protecting habitats"
+          ],
+          "answer": 3,
+          "fact": "Protecting habitats keeps the places species need to live and survive.",
+          "level": "Hard"
+        }
+      ]
+    }
+  ]
+}

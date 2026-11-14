@@ -1,0 +1,244 @@
+{
+  "topics": [
+    {
+      "id": "lib-science-a5-plate-tectonics",
+      "label": "Plate Tectonics",
+      "facts": [
+        "Earth's outer layer is broken into huge pieces called tectonic plates that move very slowly.",
+        "The plates float on hot, soft rock deep inside Earth.",
+        "Where plates push together, mountains can form, and where they pull apart, new crust can form.",
+        "Most earthquakes and volcanoes happen at the edges where plates meet."
+      ],
+      "questions": [
+        {
+          "q": "What are tectonic plates?",
+          "choices": [
+            "Flat rocks on the ground",
+            "Parts of the Moon",
+            "Layers of the ocean",
+            "Huge pieces of Earth's outer layer that move very slowly"
+          ],
+          "answer": 3,
+          "fact": "Earth's crust and upper mantle are broken into plates that drift a few centimetres a year.",
+          "level": "Hard"
+        },
+        {
+          "q": "What do plates float on?",
+          "choices": [
+            "Hot, soft rock deep inside Earth",
+            "Air",
+            "Empty space",
+            "Water"
+          ],
+          "answer": 0,
+          "fact": "Below the plates is the mantle, hot rock that can flow very slowly.",
+          "level": "Hard"
+        },
+        {
+          "q": "What can form where two plates push together?",
+          "choices": [
+            "Oceans",
+            "Rivers",
+            "Deserts",
+            "Mountains"
+          ],
+          "answer": 3,
+          "fact": "When plates collide, the crust crumples upwards and forms mountain ranges like the Himalayas.",
+          "level": "Hard"
+        },
+        {
+          "q": "Where do most earthquakes and volcanoes happen?",
+          "choices": [
+            "Under the sea only",
+            "On the Moon",
+            "In the middle of plates",
+            "At plate edges"
+          ],
+          "answer": 3,
+          "fact": "Plate boundaries are where most of Earth's earthquakes and volcanoes occur.",
+          "level": "Hard"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-a5-volcano-types",
+      "label": "Types of Volcanoes",
+      "facts": [
+        "Volcanoes erupt when magma rises from below Earth's crust and escapes at the surface.",
+        "Shield volcanoes have gentle slopes and runny lava, while stratovolcanoes are steep and can erupt explosively.",
+        "Volcanic ash can block sunlight and cool the climate for months after a huge eruption.",
+        "New islands, like those in Hawaii, are built by volcanoes erupting under the sea."
+      ],
+      "questions": [
+        {
+          "q": "Why do volcanoes erupt?",
+          "choices": [
+            "Rain fills the mountain",
+            "The Sun heats the ground",
+            "Magma rises and escapes at the surface",
+            "Wind blows the top off"
+          ],
+          "answer": 2,
+          "fact": "Pressure builds as magma rises, and when it finds a crack it erupts.",
+          "level": "Hard"
+        },
+        {
+          "q": "Which volcano has gentle slopes and runny lava?",
+          "choices": [
+            "A cinder cone",
+            "A shield volcano",
+            "A crater lake",
+            "A stratovolcano"
+          ],
+          "answer": 1,
+          "fact": "Shield volcanoes, like those in Hawaii, are built by runny lava flowing long distances.",
+          "level": "Hard"
+        },
+        {
+          "q": "What can volcanic ash do after a huge eruption?",
+          "choices": [
+            "Stop all rain forever",
+            "Melt all the ice",
+            "Block sunlight and cool the climate",
+            "Make the Sun brighter"
+          ],
+          "answer": 2,
+          "fact": "Ash high in the sky reflects sunlight, cooling Earth for months.",
+          "level": "Hard"
+        },
+        {
+          "q": "How were the Hawaiian islands built?",
+          "choices": [
+            "By earthquakes only",
+            "By rivers carrying sand",
+            "By people",
+            "By volcanoes erupting under the sea"
+          ],
+          "answer": 3,
+          "fact": "Lava from underwater volcanoes piled up over millions of years to form the islands.",
+          "level": "Hard"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-a5-how-earthquakes-work",
+      "label": "How Earthquakes Work",
+      "facts": [
+        "Earthquakes happen when stress builds up along a fault and the rocks suddenly slip.",
+        "The point inside Earth where an earthquake starts is called the focus, and the point on the surface above it is the epicentre.",
+        "Seismic waves are the vibrations that travel through Earth during an earthquake.",
+        "The Richter scale and the moment magnitude scale measure how much energy an earthquake releases."
+      ],
+      "questions": [
+        {
+          "q": "What causes an earthquake?",
+          "choices": [
+            "The Moon pulling the ground",
+            "Strong wind",
+            "Heavy rain",
+            "Rocks suddenly slipping along a fault"
+          ],
+          "answer": 3,
+          "fact": "Stress builds up in rocks until they suddenly slip, releasing energy as seismic waves.",
+          "level": "Hard"
+        },
+        {
+          "q": "What is the point on Earth's surface directly above where an earthquake starts?",
+          "choices": [
+            "The crater",
+            "The focus",
+            "The epicentre",
+            "The fault"
+          ],
+          "answer": 2,
+          "fact": "The focus is where the quake starts underground; the epicentre is the point above it on the surface.",
+          "level": "Hard"
+        },
+        {
+          "q": "What are seismic waves?",
+          "choices": [
+            "Sound waves from thunder",
+            "Ocean waves",
+            "Light waves",
+            "Vibrations that travel through Earth during an earthquake"
+          ],
+          "answer": 3,
+          "fact": "Seismic waves carry the energy of an earthquake through the ground.",
+          "level": "Hard"
+        },
+        {
+          "q": "What do the Richter and moment magnitude scales measure?",
+          "choices": [
+            "How deep the ocean is",
+            "How hot a volcano is",
+            "How much energy an earthquake releases",
+            "How fast the wind blows"
+          ],
+          "answer": 2,
+          "fact": "Magnitude scales measure the energy released by an earthquake.",
+          "level": "Hard"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-a5-mountains",
+      "label": "Mountains",
+      "facts": [
+        "Mountains are tall landforms that rise high above the land around them.",
+        "Many mountains form where tectonic plates push together and the crust is forced upwards.",
+        "Mount Everest is the highest mountain on Earth, about 8,849 metres above sea level.",
+        "Mountain climates are colder at the top, and snow can stay on high peaks all year."
+      ],
+      "questions": [
+        {
+          "q": "How do many mountains form?",
+          "choices": [
+            "Tectonic plates push together and force the crust upwards",
+            "Rivers dig them out",
+            "Wind piles up sand",
+            "Volcanoes melt them"
+          ],
+          "answer": 0,
+          "fact": "Colliding plates crumple the crust upwards into mountain ranges.",
+          "level": "Hard"
+        },
+        {
+          "q": "Which is the highest mountain on Earth?",
+          "choices": [
+            "Mount Kilimanjaro",
+            "Mount Everest",
+            "Mount Fuji",
+            "Mont Blanc"
+          ],
+          "answer": 1,
+          "fact": "Mount Everest is the highest mountain above sea level, at about 8,849 metres.",
+          "level": "Hard"
+        },
+        {
+          "q": "Why is it colder at the top of a mountain?",
+          "choices": [
+            "The air is thinner and holds less heat",
+            "Snow makes the air cold",
+            "The Sun is farther away",
+            "Wind stops at the top"
+          ],
+          "answer": 0,
+          "fact": "Higher up, the air is thinner and cannot hold as much heat.",
+          "level": "Hard"
+        },
+        {
+          "q": "What can stay on high mountain peaks all year?",
+          "choices": [
+            "Snow",
+            "Rain",
+            "Sand",
+            "Warm air"
+          ],
+          "answer": 0,
+          "fact": "On high peaks it stays cold enough for snow to last all year.",
+          "level": "Hard"
+        }
+      ]
+    }
+  ]
+}

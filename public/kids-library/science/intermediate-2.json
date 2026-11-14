@@ -1,0 +1,244 @@
+{
+  "topics": [
+    {
+      "id": "lib-science-i2-moon-orbit-tides",
+      "label": "The Moon's Orbit and Tides",
+      "facts": [
+        "The Moon is Earth's only natural satellite, and it takes about 27 days to travel around Earth.",
+        "The Moon's gravity pulls on Earth's oceans and causes the tides.",
+        "The Moon has no air and no weather, so footprints left by astronauts stay there for a very long time.",
+        "The same side of the Moon always faces Earth."
+      ],
+      "questions": [
+        {
+          "q": "How long does the Moon take to travel around Earth?",
+          "choices": [
+            "About 1 day",
+            "About 27 days",
+            "About 365 days",
+            "About 7 days"
+          ],
+          "answer": 1,
+          "fact": "The Moon orbits Earth once in about 27 days.",
+          "level": "Medium"
+        },
+        {
+          "q": "What does the Moon's gravity cause on Earth?",
+          "choices": [
+            "The tides",
+            "Day and night",
+            "Rain",
+            "The seasons"
+          ],
+          "answer": 0,
+          "fact": "The Moon's gravity pulls ocean water, making high and low tides.",
+          "level": "Medium"
+        },
+        {
+          "q": "Why do astronauts' footprints stay on the Moon for so long?",
+          "choices": [
+            "Nobody walks there",
+            "The footprints are painted",
+            "There is no air or weather to wash them away",
+            "The Moon is made of glue"
+          ],
+          "answer": 2,
+          "fact": "With no wind or rain, footprints on the Moon can last millions of years.",
+          "level": "Medium"
+        },
+        {
+          "q": "Which side of the Moon do we always see from Earth?",
+          "choices": [
+            "The same side",
+            "The back side",
+            "A different side every night",
+            "No side at all"
+          ],
+          "answer": 0,
+          "fact": "The Moon spins at the same speed as it orbits, so the same side always faces us.",
+          "level": "Medium"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-i2-earth-tilt-seasons",
+      "label": "Earth's Tilt and the Seasons",
+      "facts": [
+        "Seasons happen because Earth's axis is tilted as it travels around the Sun.",
+        "When your part of Earth tilts towards the Sun, you get summer; when it tilts away, you get winter.",
+        "At the North Pole, the Sun can stay up for months in summer and stay down for months in winter.",
+        "Spring and autumn happen when Earth is tilted neither towards nor away from the Sun."
+      ],
+      "questions": [
+        {
+          "q": "What causes the seasons?",
+          "choices": [
+            "Earth's tilted axis as it orbits the Sun",
+            "The Sun getting bigger and smaller",
+            "The Moon changing shape",
+            "Clouds moving"
+          ],
+          "answer": 0,
+          "fact": "Earth's axis is tilted, so different parts get more or less sunlight through the year.",
+          "level": "Medium"
+        },
+        {
+          "q": "When your part of Earth tilts towards the Sun, which season is it?",
+          "choices": [
+            "Summer",
+            "Spring",
+            "Autumn",
+            "Winter"
+          ],
+          "answer": 0,
+          "fact": "Tilting towards the Sun gives longer days and warmer weather: summer.",
+          "level": "Medium"
+        },
+        {
+          "q": "How long does Earth take to travel once around the Sun?",
+          "choices": [
+            "One month",
+            "One year",
+            "One week",
+            "One day"
+          ],
+          "answer": 1,
+          "fact": "Earth's trip around the Sun takes about 365 days, which is one year.",
+          "level": "Medium"
+        },
+        {
+          "q": "Which season comes between summer and winter?",
+          "choices": [
+            "Summer",
+            "Autumn",
+            "Winter",
+            "Spring"
+          ],
+          "answer": 1,
+          "fact": "Autumn comes after summer, when leaves fall and days get shorter.",
+          "level": "Medium"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-i2-weather-systems",
+      "label": "Weather Systems",
+      "facts": [
+        "Weather is driven by the Sun heating Earth's air and water unevenly.",
+        "Warm air rises and cool air sinks, and this movement makes wind.",
+        "High-pressure areas usually bring calm, clear weather, while low-pressure areas often bring clouds and rain.",
+        "Meteorologists use satellites, radar, and weather stations to forecast the weather."
+      ],
+      "questions": [
+        {
+          "q": "What mainly drives Earth's weather?",
+          "choices": [
+            "Ocean animals",
+            "The Sun heating air and water unevenly",
+            "Mountains",
+            "The Moon"
+          ],
+          "answer": 1,
+          "fact": "Uneven heating by the Sun makes air move, which creates wind and weather.",
+          "level": "Medium"
+        },
+        {
+          "q": "What does warm air do?",
+          "choices": [
+            "It rises",
+            "It stops moving",
+            "It sinks",
+            "It freezes"
+          ],
+          "answer": 0,
+          "fact": "Warm air is lighter, so it rises, while cool air sinks.",
+          "level": "Medium"
+        },
+        {
+          "q": "Which kind of pressure area usually brings clear, calm weather?",
+          "choices": [
+            "No pressure",
+            "Storm pressure",
+            "High pressure",
+            "Low pressure"
+          ],
+          "answer": 2,
+          "fact": "High-pressure air sinks and usually brings settled, clear weather.",
+          "level": "Medium"
+        },
+        {
+          "q": "Who forecasts the weather?",
+          "choices": [
+            "Chefs",
+            "Pilots only",
+            "Meteorologists",
+            "Astronauts"
+          ],
+          "answer": 2,
+          "fact": "Meteorologists study the atmosphere and predict the weather.",
+          "level": "Medium"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-i2-eclipses",
+      "label": "Eclipses",
+      "facts": [
+        "A solar eclipse happens when the Moon passes between Earth and the Sun and blocks the Sun's light.",
+        "A lunar eclipse happens when Earth passes between the Sun and the Moon, and Earth's shadow falls on the Moon.",
+        "During a total solar eclipse, the sky goes dark in the middle of the day for a few minutes.",
+        "You must never look straight at the Sun during a solar eclipse without special eclipse glasses."
+      ],
+      "questions": [
+        {
+          "q": "What happens during a solar eclipse?",
+          "choices": [
+            "The Moon passes between Earth and the Sun",
+            "The Sun goes out",
+            "Earth passes between the Sun and the Moon",
+            "The Moon disappears forever"
+          ],
+          "answer": 0,
+          "fact": "In a solar eclipse, the Moon blocks the Sun's light from reaching Earth.",
+          "level": "Medium"
+        },
+        {
+          "q": "What happens during a lunar eclipse?",
+          "choices": [
+            "The Moon blocks the Sun",
+            "The Moon turns into a star",
+            "Earth stops spinning",
+            "Earth's shadow falls on the Moon"
+          ],
+          "answer": 3,
+          "fact": "In a lunar eclipse, Earth sits between the Sun and the Moon and casts its shadow on the Moon.",
+          "level": "Medium"
+        },
+        {
+          "q": "What happens to the sky during a total solar eclipse?",
+          "choices": [
+            "It stays exactly the same",
+            "It rains every time",
+            "It turns bright pink",
+            "It goes dark for a few minutes"
+          ],
+          "answer": 3,
+          "fact": "During totality, the Moon fully covers the Sun and the sky darkens.",
+          "level": "Medium"
+        },
+        {
+          "q": "How should you watch a solar eclipse?",
+          "choices": [
+            "Through a normal camera only",
+            "By staring straight at the Sun",
+            "With special eclipse glasses",
+            "With sunglasses only"
+          ],
+          "answer": 2,
+          "fact": "Special eclipse glasses protect your eyes; looking straight at the Sun can hurt them.",
+          "level": "Medium"
+        }
+      ]
+    }
+  ]
+}
