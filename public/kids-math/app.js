@@ -90,7 +90,7 @@
     { name: 'Medium', blurb: 'Numbers to 50 · adding, taking away, and × 2, 3, 5' },
     { name: 'Hard', blurb: 'Numbers to 100 · all four operations' }
   ];
-  var GAMES = ['Addition', 'Subtraction', 'Multiplication', 'Division'];
+  var GAMES = ['Addition', 'Subtraction', 'Multiplication', 'Division', 'Word problems'];
   var CHEERS = ['Great job! 🎉', 'Well done! ⭐', 'You did it! 🌟', 'Amazing! 👏', 'Super work! 🚀', 'Brilliant! 💪'];
 
   function $(id) { return document.getElementById(id); }
@@ -149,7 +149,21 @@
      whole-number answer. Subtraction never goes below zero. */
   function makeQuestion(game, level) {
     var a, b, ans, text;
-    if (game === 'Addition') {
+    if (game === 'Word problems') {
+      /* A story problem from the school's own list, at the picked
+         level. Nothing listed for this level (or a bad answer) falls
+         back to a generated Addition question, so the game never
+         breaks on empty data. Wrong choices are built the same way
+         as for the generated questions below. */
+      var pool = ((data && data.wordProblems) || []).filter(function (wp) {
+        return wp && String(wp.q || '').trim() !== '' && (wp.level || 'Easy') === level;
+      });
+      if (!pool.length) return makeQuestion('Addition', level);
+      var prob = pool[Math.floor(Math.random() * pool.length)];
+      ans = Number(prob.answer);
+      if (!isFinite(ans) || ans < 0) return makeQuestion('Addition', level);
+      text = String(prob.q).trim();
+    } else if (game === 'Addition') {
       var max = level === 'Easy' ? 10 : (level === 'Medium' ? 50 : 100);
       a = randInt(0, max); b = randInt(0, max);
       ans = a + b; text = a + ' + ' + b + ' = ?';
@@ -428,6 +442,7 @@
     rpc('get_kids_math_draft', { p_slug: SLUG, p_username: staffCreds.u, p_password: staffCreds.p }).then(function (res) {
       draft = res.data || {};
       draft.students = draft.students || [];
+      draft.wordProblems = draft.wordProblems || [];
       if (!draft.questionsPerRound) draft.questionsPerRound = 10;
       draftStatus = res.status || 'editing';
       renderSetup();
@@ -483,6 +498,10 @@
       '<div class="row"><input id="setup-new-student" type="text" placeholder="New student name" style="flex:1;margin:0">' +
       '<button id="setup-add-student" class="secondary">+ Add student</button></div>' +
       '<div id="setup-student-out" style="margin-top:8px"></div></div>' +
+      '<h2>Word problems</h2><div class="card">' +
+      '<p class="info">Short story problems for the Word problems game. Each one needs a question, a number answer, and a level.</p>' +
+      '<div id="setup-word-problems"></div>' +
+      '<button id="setup-add-word-problem" class="secondary">+ Add word problem</button></div>' +
       '<div class="row" style="margin-top:16px"><button id="setup-save" class="secondary">Save draft</button>' +
       '<button id="setup-upload">Upload for approval</button></div>' +
       '<div id="setup-out" style="margin-top:12px"></div>' +
@@ -490,6 +509,17 @@
       '<div class="row"><button id="setup-chats-toggle" class="secondary">💬 Chats — المحادثات</button></div>' +
       '<div id="setup-chats"></div>';
     el.innerHTML = html;
+    /* Yently content library: ready-to-use levels for this subject.
+       Mounts only here in Setup, never in public play. The library
+       adds items to the school's own list — nothing is removed. */
+    if (window.KidsLibrary) {
+      var libBox = document.createElement('div');
+      libBox.id = 'setup-library';
+      var saveRow = $('setup-save') && $('setup-save').parentNode;
+      if (saveRow && saveRow.parentNode) saveRow.parentNode.insertBefore(libBox, saveRow);
+      else el.appendChild(libBox);
+      window.KidsLibrary.mount({ subject: 'math', slug: SLUG, creds: staffCreds, container: libBox, onAdded: function () { openSetup(); } });
+    }
     /* Per-shop live chat: owner inbox, behind the owner login.
        Opens on tap; tapping again (or leaving Setup) stops its poll. */
     $('setup-chats-toggle').addEventListener('click', function () {
@@ -537,6 +567,47 @@
       out.innerHTML = '';
       drawStudents();
     });
+    /* Word problems: one card per problem — question, number answer
+       and level — following the same row pattern as the word list in
+       the language apps. Edits write straight into draft, exactly
+       like the student list above. */
+    var wpEl = $('setup-word-problems');
+    function wordProblemRow(item, i) {
+      var row = document.createElement('div');
+      row.className = 'card';
+      row.innerHTML =
+        '<label>Question</label><input data-f="q" type="text" value="' + esc(item.q || '') + '" placeholder="Sara has 3 apples and buys 2 more. How many apples does she have?">' +
+        '<label>Answer (a number)</label><input data-f="answer" type="number" value="' + esc(item.answer == null ? '' : item.answer) + '">' +
+        '<label>Level</label><select data-f="level">' +
+        '<option value="Easy"' + (item.level === 'Easy' ? ' selected' : '') + '>Easy</option>' +
+        '<option value="Medium"' + (item.level === 'Medium' ? ' selected' : '') + '>Medium</option>' +
+        '<option value="Hard"' + (item.level === 'Hard' ? ' selected' : '') + '>Hard</option>' +
+        '</select>' +
+        '<button class="small danger" data-remove="' + i + '">Remove word problem</button>';
+      row.querySelectorAll('[data-f]').forEach(function (input) {
+        function sync() { item[input.getAttribute('data-f')] = input.value; }
+        input.addEventListener('input', sync);
+        input.addEventListener('change', sync);
+      });
+      row.querySelector('[data-remove]').addEventListener('click', function () {
+        draft.wordProblems.splice(i, 1);
+        drawWordProblems();
+      });
+      return row;
+    }
+    function drawWordProblems() {
+      wpEl.innerHTML = '';
+      if (!draft.wordProblems.length) {
+        wpEl.innerHTML = '<p class="info">No word problems yet — add the first one below, or add a ready-made level from the content library further down.</p>';
+        return;
+      }
+      draft.wordProblems.forEach(function (item, i) { wpEl.appendChild(wordProblemRow(item, i)); });
+    }
+    drawWordProblems();
+    $('setup-add-word-problem').addEventListener('click', function () {
+      draft.wordProblems.push({ q: '', answer: '', level: 'Easy' });
+      drawWordProblems();
+    });
     function collectDraft() {
       var qpr = Number($('setup-qpr').value);
       if (!qpr || qpr < 1) qpr = 10;
@@ -545,6 +616,11 @@
         name: $('setup-name').value.trim() || draft.name,
         about: $('setup-about').value,
         students: draft.students.filter(function (n) { return String(n).trim() !== ''; }),
+        wordProblems: draft.wordProblems.filter(function (wp) { return wp && String(wp.q || '').trim() !== ''; }).map(function (wp) {
+          var lv = String(wp.level || 'Easy');
+          if (lv !== 'Easy' && lv !== 'Medium' && lv !== 'Hard') lv = 'Easy';
+          return { q: String(wp.q).trim(), answer: Number(wp.answer) || 0, level: lv };
+        }),
         questionsPerRound: qpr
       };
     }
@@ -607,6 +683,7 @@
         window.ShopChat.mountBubble(chatBox, { ownerType: 'kids-math', ownerKey: SLUG, shopName: data.name || 'Kids Math', ownerEmail: '' });
       }
       data.students = data.students || [];
+      data.wordProblems = data.wordProblems || [];
       if (!data.questionsPerRound) data.questionsPerRound = 10;
       document.title = data.name || 'Kids Math';
       var logo = $('site-logo');
