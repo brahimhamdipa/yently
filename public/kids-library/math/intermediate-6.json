@@ -1,0 +1,154 @@
+{
+  "wordProblems": [
+    {
+      "q": "Mason has 24 balloons. Mason buys twice as many balloons as Mason already has, plus 9 more. How many balloons does Mason have now?",
+      "answer": 81,
+      "level": "Medium"
+    },
+    {
+      "q": "Lily, Owen and Liam each have 5 pencils. Their teacher gives them 4 more pencils to share. How many pencils do they have in all?",
+      "answer": 19,
+      "level": "Medium"
+    },
+    {
+      "q": "Zoe has 26 stickers. Zoe gives away 16 stickers, then buys 4 packs with the same number of stickers left in each pack. How many stickers does Zoe buy?",
+      "answer": 40,
+      "level": "Medium"
+    },
+    {
+      "q": "There are 54 red cars and 23 blue cars in a car park. 42 cars drive away. How many cars are left in the car park?",
+      "answer": 35,
+      "level": "Medium"
+    },
+    {
+      "q": "A ticket costs $7. Isabella buys 3 tickets and a snack for $15. How many dollars does Isabella spend in all?",
+      "answer": 36,
+      "level": "Medium"
+    },
+    {
+      "q": "Zoe buys 5 packs of 6 pens and 4 packs of 5 pencils. How many pens and pencils does Zoe buy in all?",
+      "answer": 50,
+      "level": "Medium"
+    },
+    {
+      "q": "66 children go on a school trip. 12 children ride in the first bus. The rest ride in the second bus. How many children ride in the second bus?",
+      "answer": 54,
+      "level": "Medium"
+    },
+    {
+      "q": "A baker makes 6 trays with 10 cookies on each tray. Her family eats 13 cookies. How many cookies are left?",
+      "answer": 47,
+      "level": "Medium"
+    },
+    {
+      "q": "Adam plants 8 rows of carrots with 9 carrots in each row. Then Adam plants 6 more carrots. How many carrots did Adam plant in all?",
+      "answer": 78,
+      "level": "Medium"
+    },
+    {
+      "q": "Ben saves $5 every week for 3 weeks. Then Ben spends $6 on a game. How many dollars does Ben have left?",
+      "answer": 9,
+      "level": "Medium"
+    },
+    {
+      "q": "A library has 4 shelves with 8 books on each shelf. The librarian adds 8 more books. How many books are there in all?",
+      "answer": 40,
+      "level": "Medium"
+    },
+    {
+      "q": "A shop has 4 boxes with 8 apples in each box. The shop sells 17 apples. How many apples are left?",
+      "answer": 15,
+      "level": "Medium"
+    },
+    {
+      "q": "Layla has 50 red beads and 24 blue beads. Layla uses 40 beads to make a necklace. How many beads does Layla have left?",
+      "answer": 34,
+      "level": "Medium"
+    },
+    {
+      "q": "A cook has 3 cartons with 12 eggs in each carton. She uses 15 eggs to bake cakes. How many eggs are left?",
+      "answer": 21,
+      "level": "Medium"
+    },
+    {
+      "q": "Liam scores 34 points in the first game and 18 points in the second game. Liam gets 15 bonus points. How many points does Liam have in all?",
+      "answer": 67,
+      "level": "Medium"
+    },
+    {
+      "q": "A farmer fills 5 baskets with 7 oranges in each basket. He gives 23 oranges to his neighbours. How many oranges are left?",
+      "answer": 12,
+      "level": "Medium"
+    },
+    {
+      "q": "Nora is reading a book with 82 pages. Nora reads 32 pages on Monday and 41 pages on Tuesday. How many pages are left to read?",
+      "answer": 9,
+      "level": "Medium"
+    },
+    {
+      "q": "A class has 6 groups with 8 children in each group. 37 children are away today. How many children are at school?",
+      "answer": 11,
+      "level": "Medium"
+    },
+    {
+      "q": "Isabella has 3 bags with 5 marbles in each bag. Isabella gives 4 marbles to a friend. How many marbles does Isabella have left?",
+      "answer": 11,
+      "level": "Medium"
+    },
+    {
+      "q": "A baker packs 3 boxes with 7 cookies in each box. Then she bakes 7 more cookies. How many cookies are there in all?",
+      "answer": 28,
+      "level": "Medium"
+    },
+    {
+      "q": "A shop has 3 crates with 6 bottles of juice in each crate. The shop sells 10 bottles. How many bottles are left?",
+      "answer": 8,
+      "level": "Medium"
+    },
+    {
+      "q": "Sophia scores 32 points on Monday, 16 points on Tuesday and 11 points on Wednesday. How many points does Sophia score in all?",
+      "answer": 59,
+      "level": "Medium"
+    },
+    {
+      "q": "Lucas plants 8 rows of beans with 8 seeds in each row. 49 seeds grow into plants. How many seeds do not grow?",
+      "answer": 15,
+      "level": "Medium"
+    },
+    {
+      "q": "An adult ticket costs $10 and a child ticket costs $5. Emma buys 3 adult tickets and 4 child tickets. How many dollars does Emma spend in all?",
+      "answer": 50,
+      "level": "Medium"
+    },
+    {
+      "q": "Zoe is reading a book with 76 pages. Zoe reads 14 pages on Friday and 40 pages on Saturday. How many pages are left to read?",
+      "answer": 22,
+      "level": "Medium"
+    },
+    {
+      "q": "A market has 6 baskets with 9 apples in each basket and 3 baskets with 9 pears in each basket. The market sells 51 pieces of fruit. How many pieces of fruit are left?",
+      "answer": 30,
+      "level": "Medium"
+    },
+    {
+      "q": "A cook bakes 3 trays with 8 cupcakes on each tray. The children eat 12 cupcakes. How many cupcakes are left?",
+      "answer": 12,
+      "level": "Medium"
+    },
+    {
+      "q": "Chloe has $53. Chloe buys a ball for $9 and a hat for $19. How many dollars does Chloe have left?",
+      "answer": 25,
+      "level": "Medium"
+    },
+    {
+      "q": "Isabella fills 3 jars with 5 strawberries in each jar. Then Isabella picks 8 more strawberries. How many strawberries does Isabella have in all?",
+      "answer": 23,
+      "level": "Medium"
+    },
+    {
+      "q": "Adam saves $10 every week for 3 weeks. Then Adam buys a kite for $8 and a puzzle for $6. How many dollars does Adam have left?",
+      "answer": 16,
+      "level": "Medium"
+    }
+  ]
+}

@@ -1,0 +1,154 @@
+{
+  "wordProblems": [
+    {
+      "q": "Grace watches a cartoon for 34 minutes and then plays outside for 45 minutes. How many minutes did Grace spend in all?",
+      "answer": 79,
+      "level": "Hard"
+    },
+    {
+      "q": "Ruby needs 90 minutes to finish a puzzle. Ruby has already worked for 75 minutes. How many more minutes does Ruby need?",
+      "answer": 15,
+      "level": "Hard"
+    },
+    {
+      "q": "Sam buys 5 packs with 6 stickers in each pack, then shares all the stickers equally with 4 friends, so 5 children share them. How many stickers does each child get?",
+      "answer": 6,
+      "level": "Hard"
+    },
+    {
+      "q": "A garden is 5 metres long and 8 metres wide. How many square metres is the garden?",
+      "answer": 40,
+      "level": "Hard"
+    },
+    {
+      "q": "Leo earns $12 each week for 4 weeks. Leo buys a ball for $39. How many dollars does Leo have left?",
+      "answer": 9,
+      "level": "Hard"
+    },
+    {
+      "q": "Ella puts 30 marbles into bags of 10 marbles each. Ella finds 14 more marbles. How many marbles does Ella have in all?",
+      "answer": 44,
+      "level": "Hard"
+    },
+    {
+      "q": "Each bus holds 37 children. 3 buses are full, and 20 more children walk. How many children are going on the trip?",
+      "answer": 131,
+      "level": "Hard"
+    },
+    {
+      "q": "A recipe needs 6 eggs for one cake. A baker makes 5 cakes and uses 23 eggs for something else from the same box. How many eggs does the baker use in all?",
+      "answer": 53,
+      "level": "Hard"
+    },
+    {
+      "q": "Each pizza has 8 slices. There are 5 pizzas. The family eats 8 slices. How many slices are left?",
+      "answer": 32,
+      "level": "Hard"
+    },
+    {
+      "q": "Omar buys 4 books for $5 each and 2 pens for $8 each. How many dollars does Omar spend in all?",
+      "answer": 36,
+      "level": "Hard"
+    },
+    {
+      "q": "Ava practises piano for 5 hours and then for 17 more minutes. How many minutes did Ava practise in all?",
+      "answer": 317,
+      "level": "Hard"
+    },
+    {
+      "q": "A theatre has 10 rows with 9 seats in each row. 34 seats are taken. How many seats are empty?",
+      "answer": 56,
+      "level": "Hard"
+    },
+    {
+      "q": "A teacher has 4 packs with 6 crayons in each pack. She shares all the crayons equally among 3 tables. How many crayons does each table get?",
+      "answer": 8,
+      "level": "Hard"
+    },
+    {
+      "q": "James gets $8 pocket money every day for 6 days. James spends $14 on a toy. How many dollars does James have left?",
+      "answer": 34,
+      "level": "Hard"
+    },
+    {
+      "q": "A cyclist rides 35 kilometres each day for 2 days. After 39 kilometres, how many kilometres are left to ride?",
+      "answer": 31,
+      "level": "Hard"
+    },
+    {
+      "q": "A garden is 12 metres long and 4 metres wide. How many metres of fence are needed to go all the way around it?",
+      "answer": 32,
+      "level": "Hard"
+    },
+    {
+      "q": "A shop buys toy cars for $3 each and sells them for $9 each. How many dollars of profit does the shop make on 8 toy cars?",
+      "answer": 48,
+      "level": "Hard"
+    },
+    {
+      "q": "Jack plans to read 16 pages every day for 6 days. Jack has already read 25 pages. How many pages are left to read?",
+      "answer": 71,
+      "level": "Hard"
+    },
+    {
+      "q": "There are 4 teams with 7 players in each team. How many players are there in all?",
+      "answer": 28,
+      "level": "Hard"
+    },
+    {
+      "q": "A baker makes 4 trays with 6 cookies on each tray. She shares all the cookies equally among 6 classes. How many cookies does each class get?",
+      "answer": 4,
+      "level": "Hard"
+    },
+    {
+      "q": "A table is 5 metres long and 7 metres wide. How many metres of ribbon are needed to go all the way around the table?",
+      "answer": 24,
+      "level": "Hard"
+    },
+    {
+      "q": "Sara buys 2 rulers for $6 each and 3 erasers for $8 each. Sara pays with $40. How many dollars of change does Sara get?",
+      "answer": 4,
+      "level": "Hard"
+    },
+    {
+      "q": "A runner runs 24 kilometres each day for 4 days. After running 65 kilometres, how many kilometres are left to run?",
+      "answer": 31,
+      "level": "Hard"
+    },
+    {
+      "q": "A child buys cups of lemonade for $5 each and sells them for $9 each. How much profit does the child make on 6 cups?",
+      "answer": 24,
+      "level": "Hard"
+    },
+    {
+      "q": "A baker makes 4 trays with 8 scones on each tray. She shares all the scones equally among 4 friends. How many scones does each friend get?",
+      "answer": 8,
+      "level": "Hard"
+    },
+    {
+      "q": "Ella practises violin for 3 hours and 23 minutes on Saturday and for 1 hour and 39 minutes on Sunday. How many minutes did Ella practise in all?",
+      "answer": 302,
+      "level": "Hard"
+    },
+    {
+      "q": "Chloe earns $9 each week for 5 weeks and then spends $35 on a board game. How many dollars does Chloe have left?",
+      "answer": 10,
+      "level": "Hard"
+    },
+    {
+      "q": "A classroom library has 4 shelves with 12 books on each shelf. The teacher lends 34 books to another class. How many books are left in the library?",
+      "answer": 14,
+      "level": "Hard"
+    },
+    {
+      "q": "Leo and 2 friends earn $36 washing cars together. They share the money equally. How many dollars does each child get?",
+      "answer": 12,
+      "level": "Hard"
+    },
+    {
+      "q": "A teacher buys 5 packs with 10 pencils in each pack. She shares all the pencils equally among 5 classes. How many pencils does each class get?",
+      "answer": 10,
+      "level": "Hard"
+    }
+  ]
+}
