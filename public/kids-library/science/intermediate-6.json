@@ -1,0 +1,244 @@
+{
+  "topics": [
+    {
+      "id": "lib-science-i6-sound",
+      "label": "Sound",
+      "facts": [
+        "Sound is made by vibrations, which are tiny back-and-forth movements.",
+        "Sound travels through air, water, and solid things, but it cannot travel through empty space.",
+        "Sound travels faster through water than through air.",
+        "The pitch of a sound depends on how fast something vibrates: fast vibrations make high sounds."
+      ],
+      "questions": [
+        {
+          "q": "What makes sound?",
+          "choices": [
+            "Vibrations",
+            "Magnets",
+            "Heat",
+            "Light"
+          ],
+          "answer": 0,
+          "fact": "When something vibrates, it shakes the air around it and makes sound waves.",
+          "level": "Medium"
+        },
+        {
+          "q": "Can sound travel through empty space?",
+          "choices": [
+            "Yes, it travels faster there",
+            "Only at night",
+            "No, it needs air, water, or a solid to travel through",
+            "Yes, but only loud sounds"
+          ],
+          "answer": 2,
+          "fact": "Sound needs something to vibrate through, so space is silent.",
+          "level": "Medium"
+        },
+        {
+          "q": "What makes a high-pitched sound?",
+          "choices": [
+            "Big vibrations",
+            "Fast vibrations",
+            "No vibrations",
+            "Slow vibrations"
+          ],
+          "answer": 1,
+          "fact": "Fast vibrations make high sounds, and slow vibrations make low sounds.",
+          "level": "Medium"
+        },
+        {
+          "q": "Through which does sound travel fastest?",
+          "choices": [
+            "Empty space",
+            "It is the same everywhere",
+            "Water",
+            "Air"
+          ],
+          "answer": 2,
+          "fact": "Sound travels about four times faster in water than in air.",
+          "level": "Medium"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-i6-heat",
+      "label": "Heat",
+      "facts": [
+        "Heat is energy that moves from something warm to something cooler.",
+        "Heat can travel by conduction, convection, and radiation.",
+        "Metals are good conductors of heat, which is why saucepans are made of metal.",
+        "Insulators, like wool and wood, slow down the movement of heat."
+      ],
+      "questions": [
+        {
+          "q": "Which way does heat move?",
+          "choices": [
+            "From cold things to warm things",
+            "Only upwards",
+            "It never moves",
+            "From warm things to cooler things"
+          ],
+          "answer": 3,
+          "fact": "Heat always flows from warmer objects to cooler ones until they are the same temperature.",
+          "level": "Medium"
+        },
+        {
+          "q": "Which material is a good conductor of heat?",
+          "choices": [
+            "Wool",
+            "Wood",
+            "Metal",
+            "Plastic"
+          ],
+          "answer": 2,
+          "fact": "Metals let heat pass through them easily, which is why metal spoons get hot in soup.",
+          "level": "Medium"
+        },
+        {
+          "q": "What do we call a material that slows heat down?",
+          "choices": [
+            "A battery",
+            "A conductor",
+            "A magnet",
+            "An insulator"
+          ],
+          "answer": 3,
+          "fact": "Insulators like wool, wood, and plastic slow the flow of heat.",
+          "level": "Medium"
+        },
+        {
+          "q": "Why do we wear a woolly jumper in winter?",
+          "choices": [
+            "Wool is heavy",
+            "Wool insulates and keeps body heat in",
+            "Wool makes heat",
+            "Wool blocks the Sun"
+          ],
+          "answer": 1,
+          "fact": "Wool traps air and slows heat escaping from your body, keeping you warm.",
+          "level": "Medium"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-i6-states-of-matter",
+      "label": "States of Matter",
+      "facts": [
+        "Matter is anything that has mass and takes up space, and it can be a solid, a liquid, or a gas.",
+        "In a solid, the tiny particles are packed tightly and stay in place.",
+        "In a liquid, the particles can slide past each other, so a liquid flows and takes the shape of its container.",
+        "In a gas, the particles move freely and spread out to fill the whole container."
+      ],
+      "questions": [
+        {
+          "q": "What are the three states of matter?",
+          "choices": [
+            "Hard, soft, and wet",
+            "Hot, cold, and warm",
+            "Big, medium, and small",
+            "Solid, liquid, and gas"
+          ],
+          "answer": 3,
+          "fact": "Most matter is a solid, a liquid, or a gas.",
+          "level": "Medium"
+        },
+        {
+          "q": "Which state of matter flows and takes the shape of its container?",
+          "choices": [
+            "A solid",
+            "A gas",
+            "A liquid",
+            "None of them"
+          ],
+          "answer": 2,
+          "fact": "Liquids flow and take the shape of the bottom of their container.",
+          "level": "Medium"
+        },
+        {
+          "q": "What happens to water when it is heated and boils?",
+          "choices": [
+            "It turns into ice",
+            "It turns into a solid",
+            "It disappears forever",
+            "It turns into a gas called steam"
+          ],
+          "answer": 3,
+          "fact": "Boiling water turns into water vapour, a gas.",
+          "level": "Medium"
+        },
+        {
+          "q": "In which state are the particles packed tightly in place?",
+          "choices": [
+            "A plasma",
+            "A liquid",
+            "A gas",
+            "A solid"
+          ],
+          "answer": 3,
+          "fact": "In a solid, particles are held tightly together and can only vibrate in place.",
+          "level": "Medium"
+        }
+      ]
+    },
+    {
+      "id": "lib-science-i6-friction",
+      "label": "Friction",
+      "facts": [
+        "Friction is the force that slows things down when two surfaces rub against each other.",
+        "Rough surfaces, like sandpaper, create more friction than smooth surfaces, like ice.",
+        "Friction can make heat: rubbing your hands together quickly warms them up.",
+        "Car tyres use friction to grip the road, which helps cars stop and turn safely."
+      ],
+      "questions": [
+        {
+          "q": "What is friction?",
+          "choices": [
+            "A type of light",
+            "A force that slows things down when surfaces rub together",
+            "A gas in the air",
+            "A kind of magnet"
+          ],
+          "answer": 1,
+          "fact": "Friction is the force that resists motion when two surfaces rub against each other.",
+          "level": "Medium"
+        },
+        {
+          "q": "Which surface creates the most friction?",
+          "choices": [
+            "Smooth ice",
+            "Sandpaper",
+            "Polished glass",
+            "Oiled metal"
+          ],
+          "answer": 1,
+          "fact": "Rough surfaces like sandpaper create more friction than smooth ones.",
+          "level": "Medium"
+        },
+        {
+          "q": "What can friction make when you rub your hands together?",
+          "choices": [
+            "Rain",
+            "Ice",
+            "Lightning",
+            "Heat"
+          ],
+          "answer": 3,
+          "fact": "Rubbing hands together uses friction, which makes heat.",
+          "level": "Medium"
+        },
+        {
+          "q": "Why do car tyres need friction?",
+          "choices": [
+            "To grip the road so cars can stop and turn safely",
+            "To make the wheels spin freely",
+            "To make the car go faster on ice",
+            "To keep the car floating"
+          ],
+          "answer": 0,
+          "fact": "Tyre friction grips the road, letting cars brake and steer.",
+          "level": "Medium"
+        }
+      ]
+    }
+  ]
+}
