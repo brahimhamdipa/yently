@@ -1,0 +1,56 @@
+{
+  "books": [
+    {
+      "id": "lib-reading-b1-the-red-ball",
+      "title": "The Red Ball",
+      "author": "Yently Kids",
+      "emoji": "🔴",
+      "pages": [
+        "Sam has a red ball. It is big and round.",
+        "Sam kicks the ball. The ball rolls down the hill.",
+        "The ball rolls to a big tree. A dog sits by the tree.",
+        "The dog picks up the ball. Sam runs to the dog.",
+        "Sam and the dog play with the red ball all day."
+      ]
+    },
+    {
+      "id": "lib-reading-b1-sam-and-the-cat",
+      "title": "Sam and the Cat",
+      "author": "Yently Kids",
+      "emoji": "🐱",
+      "pages": [
+        "Sam sees a small cat. The cat is black and white.",
+        "The cat says, 'Mew, mew.' Sam smiles at the cat.",
+        "Sam gives the cat some milk. The cat drinks it all up.",
+        "The cat jumps on Sam's lap. It purrs and purrs.",
+        "Now the cat lives with Sam. They are best friends."
+      ]
+    },
+    {
+      "id": "lib-reading-b1-my-little-dog",
+      "title": "My Little Dog",
+      "author": "Yently Kids",
+      "emoji": "🐶",
+      "pages": [
+        "I have a little dog. His name is Rex.",
+        "Rex likes to run. He runs fast in the park.",
+        "Rex sees a stick. He picks it up in his mouth.",
+        "I throw the stick. Rex runs and brings it back.",
+        "Rex is my best friend. I love my little dog."
+      ]
+    },
+    {
+      "id": "lib-reading-b1-the-little-pig",
+      "title": "The Little Pig",
+      "author": "Yently Kids",
+      "emoji": "🐷",
+      "pages": [
+        "A little pig lives on a farm. His name is Pip.",
+        "Pip likes mud. He jumps in the mud all day.",
+        "One day, Pip sees a big red apple. It is on a tree.",
+        "Pip jumps up, up, up. He gets the apple!",
+        "Pip eats the apple. Yum, yum! Pip is happy."
+      ]
+    }
+  ]
+}

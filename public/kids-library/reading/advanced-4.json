@@ -1,0 +1,62 @@
+{
+  "books": [
+    {
+      "id": "lib-reading-a4-the-winter-market",
+      "title": "The Winter Market",
+      "author": "Yently Kids",
+      "emoji": "🏮",
+      "pages": [
+        "Every December, the town square filled with stalls for the Winter Market. There were lanterns, hot chocolate, and the smell of fresh bread.",
+        "This year, a girl called Hana had her own stall for the first time. She had made scarves, hats, and mittens with her grandmother.",
+        "'What if nobody buys anything?' Hana whispered nervously as the market opened. Her grandmother smiled. 'Just be kind, and the rest will follow.'",
+        "A cold wind blew, and an old man stopped at Hana's stall. He had no gloves, and his hands were red with cold. Hana gave him a pair of mittens for free.",
+        "The old man thanked her with tears in his eyes. Word spread through the market, and soon people were queuing at Hana's little stall.",
+        "By sunset, Hana had sold every scarf and hat. She used the money to buy wool, so she and her grandmother could make more for next year.",
+        "That night, Hana hung a lantern in her window. It glowed warm and bright, just like the kindness she had shared at the Winter Market."
+      ]
+    },
+    {
+      "id": "lib-reading-a4-the-storm-runner",
+      "title": "The Storm Runner",
+      "author": "Yently Kids",
+      "emoji": "⛈️",
+      "pages": [
+        "In a village by the sea lived a girl called Ines, who was the fastest runner in the whole county. She could outrun the wind itself, people said.",
+        "One evening, a great storm gathered over the sea. The fishermen were still out in their boats, and the village bell began to ring in alarm.",
+        "Someone had to run to the next village for help, but the road was long and the storm was already breaking. 'I will go,' said Ines.",
+        "She ran through the rain and the wind, over the hill and across the old bridge, her feet barely touching the ground.",
+        "When she reached the next village, she gasped, 'The boats... the storm... help!' The villagers launched their rescue boat at once.",
+        "The fishermen were brought safely home, and the whole village cheered for Ines. 'You ran faster than the storm,' they said.",
+        "From that day on, Ines was known as the Storm Runner, and whenever the bell rang, everyone knew that help was already on its way."
+      ]
+    },
+    {
+      "id": "lib-reading-a4-the-girl-and-the-sea-turtle",
+      "title": "The Girl and the Sea Turtle",
+      "author": "Yently Kids",
+      "emoji": "🐢",
+      "pages": [
+        "On a quiet beach in summer, a girl called Layla found a sea turtle tangled in an old fishing net.",
+        "'Poor turtle,' she said softly. 'Hold still. I will set you free.' Carefully, she cut the net with her pocket scissors.",
+        "The turtle looked up at her with wise old eyes, then swam slowly out to sea. Layla watched until it disappeared beneath the waves.",
+        "That night, Layla dreamed of the turtle swimming through coral gardens and deep blue caves, free at last.",
+        "Every summer after that, Layla returned to the same beach, and every summer she saw a turtle with a small mark on its shell, swimming close to the shore.",
+        "'Hello, old friend,' Layla would say, and the turtle would lift its head above the water, as if it remembered her too.",
+        "Layla grew up to study the sea, and she spent her life protecting turtles and their beaches, because one small act of kindness had changed everything."
+      ]
+    },
+    {
+      "id": "lib-reading-a4-the-mirror-of-the-moon",
+      "title": "The Mirror of the Moon",
+      "author": "Yently Kids",
+      "emoji": "🌙",
+      "pages": [
+        "Deep in the forest, beside a still lake, there stood a mirror made of silver. It was said that the mirror showed not what you were, but what you could become.",
+        "One night, a shy boy named Felix walked to the lake. He was afraid to speak in front of his class, and he wished he could be brave like his older brother.",
+        "\"Show me who I can be,\" Felix whispered to the mirror. The surface shimmered, and he saw himself standing on a stage, speaking clearly while a crowd listened and smiled.",
+        "Felix returned to the mirror every night. Each time, he saw himself a little braver: asking a question in class, helping a lost child, singing a song for his friends.",
+        "One morning, Felix raised his hand in class for the first time. His voice shook, but he spoke, and his classmates listened. He realised the mirror had not changed him — it had only shown him what was already inside."
+      ]
+    }
+  ]
+}

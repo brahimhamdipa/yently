@@ -1,0 +1,56 @@
+{
+  "books": [
+    {
+      "id": "lib-reading-b4-the-green-frog",
+      "title": "The Green Frog",
+      "author": "Yently Kids",
+      "emoji": "🐸",
+      "pages": [
+        "A green frog sits on a log. His name is Fred.",
+        "Fred hops into the pond. Splash! The water is cool.",
+        "Fred sees a fly. He sticks out his long tongue.",
+        "Fred eats the fly. Yum! That was a good lunch.",
+        "Fred hops back to his log. He sings a happy frog song."
+      ]
+    },
+    {
+      "id": "lib-reading-b4-mias-apple-tree",
+      "title": "Mia's Apple Tree",
+      "author": "Yently Kids",
+      "emoji": "🍎",
+      "pages": [
+        "Mia has an apple tree. It grows in her garden.",
+        "In spring the tree has pink flowers. Mia smells them.",
+        "In summer the apples grow big and red. Mia waits and waits.",
+        "Mia picks an apple. She takes a big bite. Crunch!",
+        "Mia shares the apples with her friends. They all say, 'Yum!'"
+      ]
+    },
+    {
+      "id": "lib-reading-b4-the-blue-bird",
+      "title": "The Blue Bird",
+      "author": "Yently Kids",
+      "emoji": "🐦",
+      "pages": [
+        "A blue bird lives in a tall tree. Her name is Bella.",
+        "Every morning Bella sings. Her song wakes up the sun.",
+        "One day Bella finds a small red feather. She puts it in her nest.",
+        "Bella's nest is soft and warm. She lays three little eggs.",
+        "Soon three baby birds hatch. Bella sings them a sweet song."
+      ]
+    },
+    {
+      "id": "lib-reading-b4-the-white-rabbit",
+      "title": "The White Rabbit",
+      "author": "Yently Kids",
+      "emoji": "🐇",
+      "pages": [
+        "A white rabbit lives in a hole. Her name is Snow.",
+        "Snow hops in the grass. Hop, hop, hop!",
+        "Snow sees a big carrot. It is orange and sweet.",
+        "She pulls the carrot out. Crunch, crunch! Yum!",
+        "Snow hops home to her little ones. They eat the carrot too."
+      ]
+    }
+  ]
+}

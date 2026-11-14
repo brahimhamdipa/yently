@@ -1,0 +1,61 @@
+{
+  "books": [
+    {
+      "id": "lib-reading-a2-the-boy-who-spoke-to-birds",
+      "title": "The Boy Who Spoke to Birds",
+      "author": "Yently Kids",
+      "emoji": "🕊️",
+      "pages": [
+        "Leo was a boy who loved birds more than anything. He could tell a robin from a blackbird by its song alone.",
+        "One spring morning, Leo found a young sparrow with a hurt wing under the oak tree. 'Do not be afraid,' he whispered. 'I will help you.'",
+        "Leo carried the sparrow home and made it a soft nest in a shoebox. Every day he fed it seeds and fresh water.",
+        "As the sparrow grew stronger, Leo talked to it, and the bird seemed to listen. Soon it began to answer him with cheerful chirps.",
+        "'You understand me!' laughed Leo. 'And I understand you!' From then on, Leo and the sparrow were the best of friends.",
+        "When the wing had healed, Leo opened the window. The sparrow flew out, circled the garden three times, and sang a sweet goodbye song.",
+        "Every spring since, the sparrow returns to Leo's garden with its own young ones, and Leo smiles, knowing that kindness is a language every creature understands."
+      ]
+    },
+    {
+      "id": "lib-reading-a2-the-river-of-stars",
+      "title": "The River of Stars",
+      "author": "Yently Kids",
+      "emoji": "✨",
+      "pages": [
+        "In a small village between two mountains, there was a river that people said was made of stars.",
+        "Nobody believed the story except a girl called Aisha, who loved the night sky and knew every constellation by name.",
+        "One clear night, Aisha followed the river upstream. The further she walked, the brighter the water became, until it sparkled like the Milky Way.",
+        "At the source of the river, Aisha found a pool where the stars themselves came down to bathe. 'Why do you shine in our river?' she asked.",
+        "A tiny star answered, 'Because your village is kind, and kind places deserve a little light.' Then it gave Aisha a single drop of starlight.",
+        "Aisha carried the drop home in a glass jar. It lit her whole house, and she used its light to read to the village children every night.",
+        "To this day, the river sparkles on clear nights, and the children of the village say that Aisha's kindness keeps the stars shining."
+      ]
+    },
+    {
+      "id": "lib-reading-a2-the-girl-who-mapped-the-sky",
+      "title": "The Girl Who Mapped the Sky",
+      "author": "Yently Kids",
+      "emoji": "🔭",
+      "pages": [
+        "Sofia lived in a city where the street lights were so bright that nobody could see the stars. She dreamed of mapping the whole sky.",
+        "Her grandfather gave her an old telescope and a notebook. 'The stars are still there,' he said. 'You only need to look carefully.'",
+        "Every clear night, Sofia climbed to the rooftop and drew what she saw: the moon, the planets, and the constellations her grandfather taught her.",
+        "One night she spotted a small, bright object moving slowly across the sky. It was a comet, and nobody in the city had seen it yet.",
+        "Sofia wrote to the observatory, and the astronomers confirmed her discovery. They named the comet after her: Comet Sofia.",
+        "Years later, Sofia became an astronomer. She still keeps her first notebook, and on its cover it says, 'The sky belongs to everyone who looks up.'"
+      ]
+    },
+    {
+      "id": "lib-reading-a2-the-keeper-of-time",
+      "title": "The Keeper of Time",
+      "author": "Yently Kids",
+      "emoji": "⏳",
+      "pages": [
+        "High in the mountains stood a tower with a great clock, and in the tower lived an old man named Aldous, the Keeper of Time. Every day, he wound the clock and kept the hours in order.",
+        "One morning, Aldous woke to silence. The great clock had stopped. \"If the clock does not tick,\" he whispered, \"time itself will stand still.\"",
+        "Aldous searched the tower for the problem. He found a tiny golden gear, cracked and worn after a hundred years of turning. There was no spare gear anywhere in the tower.",
+        "Just then, a young girl named Nia arrived, carrying a box of her grandfather's tools. \"My grandfather was a clockmaker,\" she said. \"He taught me everything he knew.\" Together, they worked through the night.",
+        "At dawn, Nia fitted the new gear into place. The clock began to tick, the bells rang out across the valley, and time flowed again. Aldous smiled at Nia. \"You are the new Keeper of Time,\" he said, and she accepted with pride."
+      ]
+    }
+  ]
+}

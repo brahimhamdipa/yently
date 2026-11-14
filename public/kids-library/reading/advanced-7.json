@@ -1,0 +1,62 @@
+{
+  "books": [
+    {
+      "id": "lib-reading-a7-the-secret-of-the-silver-key",
+      "title": "The Secret of the Silver Key",
+      "author": "Yently Kids",
+      "emoji": "🔑",
+      "pages": [
+        "When Grandma Rosa moved to a smaller house, she gave her grandson, Milo, a small silver key. 'This opens something special,' she said. 'You will know it when you see it.'",
+        "Milo searched the house for a lock that matched the key. He tried the front door, the garden shed, and even the old chest in the attic. Nothing fitted.",
+        "Then, behind a bookshelf, Milo found a tiny door he had never noticed before. It was no taller than his knee, and it had a small silver lock.",
+        "His hands trembling, Milo turned the key. The little door opened onto a room full of toys, books, and games — Grandma Rosa's childhood treasures, kept safe for fifty years.",
+        "'I played here when I was your age,' said Grandma Rosa, smiling. 'Now it is yours, and one day you will pass the key to someone you love.'",
+        "Milo spent the whole summer playing in the secret room, and every evening he and Grandma Rosa sat together, sharing stories of their childhoods.",
+        "Years later, when Milo had children of his own, he gave the silver key to his daughter, and said exactly what his grandmother had said: 'You will know it when you see it.'"
+      ]
+    },
+    {
+      "id": "lib-reading-a7-the-journey-home",
+      "title": "The Journey Home",
+      "author": "Yently Kids",
+      "emoji": "🧭",
+      "pages": [
+        "When the war ended, a young sailor called Yusuf began the long journey home to his village across the sea.",
+        "His ship was small and his compass was old, but Yusuf was patient. He steered by the stars at night and by the sun during the day.",
+        "On the third day, a storm rose and tossed the little ship like a toy. Yusuf held the tiller tight and whispered, 'Hold on. Home is waiting.'",
+        "When the storm passed, Yusuf found that his compass was broken. He felt afraid for the first time — until he remembered his grandmother's words.",
+        "'When you are lost,' she had said, 'follow the birds. They always know the way home.' And so Yusuf watched the birds and followed them east.",
+        "On the seventh morning, he saw the white cliffs of his home shore. His family was waiting on the beach, waving and cheering.",
+        "Yusuf stepped onto the sand and hugged his mother. 'I am home,' he said, and he knew that no journey is too long when home is waiting at the end."
+      ]
+    },
+    {
+      "id": "lib-reading-a7-the-song-of-the-ocean",
+      "title": "The Song of the Ocean",
+      "author": "Yently Kids",
+      "emoji": "🎵",
+      "pages": [
+        "Mara was a girl who lived by the sea, and she loved to listen to the waves. She believed the ocean was singing a song, and she wanted to learn it.",
+        "Every morning she sat on the rocks with her notebook, writing down the sounds: the crash of the waves, the cry of the gulls, and the soft whisper of the wind.",
+        "One day, an old fisherman heard her humming. 'You have a good ear,' he said. 'The ocean sings a different song every day. You must listen with your heart.'",
+        "Mara listened more carefully than ever. She heard joy in the morning waves, sadness in the evening tide, and hope in the sound of the rain on the water.",
+        "She wrote a song from everything she had heard, and she sang it at the village festival. The whole village fell silent, and then everyone cheered.",
+        "The old fisherman wiped a tear from his eye. 'That is the song of the ocean,' he said. 'You have learned it well.'",
+        "Mara still sits on the rocks every morning, listening to the sea. And every day, the ocean sings her a brand-new song."
+      ]
+    },
+    {
+      "id": "lib-reading-a7-the-last-voyage",
+      "title": "The Last Voyage",
+      "author": "Yently Kids",
+      "emoji": "🚢",
+      "pages": [
+        "Captain Elias had sailed the seas for fifty years. His ship, the Silver Gull, had carried him to every corner of the world. Now, old and tired, he planned one last voyage.",
+        "His crew was young, and they laughed when he said, \"We will sail to the island that appears only once every hundred years.\" But Elias showed them his father's old map, and they agreed to follow him.",
+        "For weeks they sailed through storms and calm seas. The food ran low, and some sailors wanted to turn back. \"Trust the stars,\" Elias told them, \"and trust each other.\"",
+        "On the hundredth morning, a green island rose from the mist. Its beaches were covered in shells that sang when the waves touched them, and its trees bore fruit that glowed like lanterns.",
+        "The crew filled the ship with the island's treasures, but the greatest treasure was the journey itself. When they sailed home, Elias smiled at the sea. \"This was my last voyage,\" he said, \"and it was the finest one of all.\""
+      ]
+    }
+  ]
+}

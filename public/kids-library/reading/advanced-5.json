@@ -1,0 +1,62 @@
+{
+  "books": [
+    {
+      "id": "lib-reading-a5-the-clockwork-city",
+      "title": "The Clockwork City",
+      "author": "Yently Kids",
+      "emoji": "🏙️",
+      "pages": [
+        "Beyond the desert, travellers spoke of a city where everything ran on clockwork: the fountains, the street lamps, even the birds in the trees.",
+        "A young engineer called Marco had dreamed of the Clockwork City since he was a boy, so one spring he packed his tools and set out to find it.",
+        "When he arrived, the city was silent. Its great gears had stopped, and its people walked the streets in the dark, waiting for someone to help.",
+        "'The heart of the city is broken,' said an old woman. 'It lies beneath the square, and no one has been brave enough to fix it.'",
+        "Marco climbed down into the dark chamber and found the great clockwork heart, its mainspring snapped in two. He worked through the night, mending it piece by piece.",
+        "At dawn, he turned the winding key. The heart began to beat, the gears began to turn, and the whole city woke up with a whirr and a chime.",
+        "The fountains sang, the lamps glowed, and the clockwork birds sang from the trees. The people cheered, and Marco knew he had found the place where he belonged."
+      ]
+    },
+    {
+      "id": "lib-reading-a5-the-whispering-woods",
+      "title": "The Whispering Woods",
+      "author": "Yently Kids",
+      "emoji": "🌲",
+      "pages": [
+        "At the edge of the village stood the Whispering Woods, where the trees seemed to talk to one another when the wind blew.",
+        "Most children were afraid to enter, but a boy called Finn was curious. 'Trees cannot really talk,' he said. 'I will find out what they are saying.'",
+        "Finn walked into the woods and listened. The leaves whispered, 'Water... water... we are thirsty.' The stream that fed the woods had dried up.",
+        "Finn followed the dry stream bed and found a fallen tree blocking the water. He ran back to the village and told the grown-ups what he had heard.",
+        "Together they moved the fallen tree, and the water flowed again, cool and clear, into the heart of the woods.",
+        "That evening, the trees whispered a new word: 'Thank you.' Finn smiled, because he had learned that listening carefully is sometimes the bravest thing of all.",
+        "From then on, Finn visited the woods every week, and the trees always had something to tell him — if only he took the time to listen."
+      ]
+    },
+    {
+      "id": "lib-reading-a5-the-bridge-between-worlds",
+      "title": "The Bridge Between Worlds",
+      "author": "Yently Kids",
+      "emoji": "🌉",
+      "pages": [
+        "In the middle of a great river stood a bridge that nobody used, because it led to a land that nobody could see.",
+        "A girl called Nour was the only one who believed the stories. 'There is a world on the other side,' she told her friends. 'I am going to find it.'",
+        "One misty morning, Nour walked onto the bridge. With every step, the mist grew thicker, until she could not see the river below.",
+        "When the mist cleared, Nour gasped. Before her lay a land of floating islands, silver trees, and rivers that flowed upward into the sky.",
+        "The people of that land welcomed her. 'We have waited a long time for a visitor,' said their queen. 'Will you tell us about your world?'",
+        "Nour stayed for three days, sharing stories and songs, and learning about the floating islands in return.",
+        "When she crossed back over the bridge, the mist closed behind her. Her friends did not believe her — until she showed them the silver leaf she had brought home."
+      ]
+    },
+    {
+      "id": "lib-reading-a5-the-song-of-the-forest",
+      "title": "The Song of the Forest",
+      "author": "Yently Kids",
+      "emoji": "🎵",
+      "pages": [
+        "In the heart of an ancient forest, every tree, bird, and stream had its own song. Together, they made a beautiful music that could be heard only by those who listened with their hearts.",
+        "Amara, a young musician from the city, came to the forest to find a new melody. She sat by the river and listened, but all she heard was wind and rustling leaves.",
+        "\"You are listening with your ears,\" said an old woman who lived in a wooden hut. \"Close your eyes and listen with your heart.\"",
+        "Amara closed her eyes. Slowly, she began to hear it: the deep hum of the old oak trees, the bright notes of the birds, and the gentle rhythm of the flowing water.",
+        "She took out her violin and played along with the forest. The music rose through the trees like sunlight. When Amara returned to the city, she played the song of the forest for everyone, and all who heard it felt peace in their hearts."
+      ]
+    }
+  ]
+}

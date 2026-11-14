@@ -1,0 +1,59 @@
+{
+  "books": [
+    {
+      "id": "lib-reading-i3-the-night-train",
+      "title": "The Night Train",
+      "author": "Yently Kids",
+      "emoji": "🚂",
+      "pages": [
+        "Nina was going to visit her grandparents, and the train left at night. She had never slept on a train before.",
+        "The train was long and silver, with warm lights in every window. Nina found her little bed and pulled the curtain closed.",
+        "'Chug, chug, chug,' sang the wheels as the train rolled through the dark countryside.",
+        "Nina peeked out of the window. She saw sleepy villages, dark forests, and the moon following the train.",
+        "In the morning the sun came up, and the train stopped at a small station. Her grandparents were waiting on the platform.",
+        "Nina hugged them tight. The night train had been the most exciting journey of her life."
+      ]
+    },
+    {
+      "id": "lib-reading-i3-the-clever-rabbit",
+      "title": "The Clever Rabbit",
+      "author": "Yently Kids",
+      "emoji": "🐰",
+      "pages": [
+        "Ruby the rabbit lived in a burrow under a big oak tree. She was the cleverest rabbit in the meadow.",
+        "One summer the meadow was very dry, and the rabbits could not find enough food. Everyone was worried.",
+        "Ruby remembered a garden on the other side of the hill. 'Follow me,' she said to the other rabbits.",
+        "She led them through a gap in the fence to a garden full of carrots and lettuce. There was food for everyone.",
+        "The rabbits ate their fill and carried some home for the little ones. They thanked Ruby again and again.",
+        "From then on, whenever there was a problem, the rabbits asked Ruby first, because clever friends are the best kind."
+      ]
+    },
+    {
+      "id": "lib-reading-i3-the-singing-whale",
+      "title": "The Singing Whale",
+      "author": "Yently Kids",
+      "emoji": "🐳",
+      "pages": [
+        "Deep in the ocean lived a young whale called Willa. Willa loved to sing, but her songs were quiet and shy.",
+        "The other whales sang loud, beautiful songs that travelled for miles. Willa wished she could sing like them.",
+        "One day a little lost dolphin heard Willa's soft song and followed it home. 'Your song saved me,' said the dolphin.",
+        "Willa realised her quiet song was special. It was gentle, and it helped animals who were lost or afraid.",
+        "Soon whales from all over the ocean came to hear Willa sing. Her soft voice made everyone feel calm and safe.",
+        "Willa still sings every evening, and now she sings proudly, because the kindest songs are often the quietest ones."
+      ]
+    },
+    {
+      "id": "lib-reading-i3-the-friendly-ghost",
+      "title": "The Friendly Ghost",
+      "author": "Yently Kids",
+      "emoji": "👻",
+      "pages": [
+        "In an old house on the hill lived a friendly ghost named Boo. He was not scary at all. He just wanted a friend.",
+        "One evening, a new family moved into the house. Boo was so excited that he knocked over a vase, and the little boy, Max, heard the noise.",
+        "\"Who is there?\" Max called out. Boo floated down slowly and said, \"It is only me, Boo. I am a friendly ghost.\"",
+        "Max was not scared. He showed Boo his toys, and Boo showed Max how to float through the ceiling. They laughed all night long.",
+        "From then on, Boo was part of the family. Every evening, Max and Boo played together, and the old house was full of laughter again."
+      ]
+    }
+  ]
+}

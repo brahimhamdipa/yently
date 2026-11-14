@@ -1,0 +1,59 @@
+{
+  "books": [
+    {
+      "id": "lib-reading-i6-the-lighthouse-keeper",
+      "title": "The Lighthouse Keeper",
+      "author": "Yently Kids",
+      "emoji": "💡",
+      "pages": [
+        "Old Tom was the keeper of the lighthouse on Grey Rock. Every evening he climbed the winding stairs to light the great lamp.",
+        "The lamp's light swept across the dark sea, guiding ships safely home. Tom was proud of his job.",
+        "One wild winter night, a terrible storm blew in. The wind howled, and the waves crashed against the rocks.",
+        "Tom's lamp flickered and went out! He worked quickly, his hands shaking, until at last the light shone again.",
+        "Down below, a fishing boat saw the light just in time and turned away from the rocks. The crew waved up at the lighthouse.",
+        "Tom smiled as the storm passed. A lighthouse keeper's light is small, but on a dark night it can save a whole crew."
+      ]
+    },
+    {
+      "id": "lib-reading-i6-the-winter-wolf",
+      "title": "The Winter Wolf",
+      "author": "Yently Kids",
+      "emoji": "🐺",
+      "pages": [
+        "High in the snowy mountains lived a young wolf called Ash. He was the smallest wolf in his pack.",
+        "When winter came, food was hard to find. The pack searched for days, but the snow was deep and the deer were far away.",
+        "Ash remembered a valley he had found in the summer, where the snow was shallow and rabbits hid under the bushes.",
+        "He led the pack through the forest and over the frozen stream to the valley. There, under the bushes, were rabbits.",
+        "The pack ate well that night, and the old wolf said, 'Ash, you may be small, but you have a sharp mind and a brave heart.'",
+        "From that winter on, Ash was the pack's scout. He always remembered the hidden places, and the pack never went hungry again."
+      ]
+    },
+    {
+      "id": "lib-reading-i6-the-garden-of-giants",
+      "title": "The Garden of Giants",
+      "author": "Yently Kids",
+      "emoji": "🌱",
+      "pages": [
+        "Behind the school was a walled garden that nobody ever entered. The children said giants lived there.",
+        "One spring, the new teacher, Miss Rose, found the key and opened the rusty gate. The children followed her inside.",
+        "The garden was wild and wonderful. Sunflowers taller than the children grew beside pumpkins as big as chairs.",
+        "Miss Rose said, 'This garden needs friends.' So the children pulled weeds, watered the plants, and planted new seeds.",
+        "By summer the garden was full of vegetables and flowers. The children shared the harvest with the whole school.",
+        "Nobody calls it the garden of giants any more. Now it is the school garden, and every child helps it grow."
+      ]
+    },
+    {
+      "id": "lib-reading-i6-the-snowy-mountain",
+      "title": "The Snowy Mountain",
+      "author": "Yently Kids",
+      "emoji": "🏔️",
+      "pages": [
+        "Emma lived at the foot of a tall, snowy mountain. Every winter she watched the mountain shine white in the sun, and she dreamed of climbing to the top.",
+        "One spring morning, Emma packed her bag with food, water, and a warm coat. Her friend Leo came with her, and together they began the long climb.",
+        "The path was steep and rocky, and the wind was cold. Emma's legs were tired, but she kept going, one step at a time.",
+        "At last, they reached the top. From there they could see the whole valley below, with rivers, forests, and tiny houses in the distance.",
+        "Emma and Leo sat down and ate their lunch in the sunshine. Emma smiled and said, \"We did it!\" It was the best day of her life."
+      ]
+    }
+  ]
+}

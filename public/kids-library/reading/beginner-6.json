@@ -1,0 +1,56 @@
+{
+  "books": [
+    {
+      "id": "lib-reading-b6-the-snow-day",
+      "title": "The Snow Day",
+      "author": "Yently Kids",
+      "emoji": "❄️",
+      "pages": [
+        "It snows all night. In the morning the world is white.",
+        "Emma puts on her coat, hat, and gloves. She runs outside.",
+        "Emma makes a big snowman. She gives him a carrot nose.",
+        "Emma throws a snowball at her brother. He laughs and throws one back.",
+        "Emma goes inside for hot chocolate. It is the best snow day ever."
+      ]
+    },
+    {
+      "id": "lib-reading-b6-lilys-garden",
+      "title": "Lily's Garden",
+      "author": "Yently Kids",
+      "emoji": "🌸",
+      "pages": [
+        "Lily has a little garden. She plants some seeds in the soil.",
+        "Lily waters the seeds every day. She waits and waits.",
+        "One day a tiny green shoot comes up. Lily claps her hands.",
+        "The shoot grows and grows. Soon it has pink flowers.",
+        "Lily picks the flowers and gives them to her mum. Her mum smiles."
+      ]
+    },
+    {
+      "id": "lib-reading-b6-the-happy-bee",
+      "title": "The Happy Bee",
+      "author": "Yently Kids",
+      "emoji": "🐝",
+      "pages": [
+        "A happy bee buzzes in the garden. Her name is Bella Bee.",
+        "Bella Bee flies from flower to flower. She hums a buzzing song.",
+        "She drinks the sweet nectar. Then she flies back to her hive.",
+        "In the hive, Bella Bee makes honey. The honey is sweet and gold.",
+        "The bees share the honey. Bella Bee is the happiest bee of all."
+      ]
+    },
+    {
+      "id": "lib-reading-b6-the-rainy-day",
+      "title": "The Rainy Day",
+      "author": "Yently Kids",
+      "emoji": "🌧️",
+      "pages": [
+        "It is a rainy day. Rain falls on the roof.",
+        "Anna has a red umbrella. She opens it up.",
+        "Anna jumps in the puddles. Splash, splash!",
+        "The sun comes out now. The rain is gone.",
+        "Anna sees a big rainbow. It is red, yellow and blue!"
+      ]
+    }
+  ]
+}

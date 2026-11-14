@@ -1,0 +1,60 @@
+{
+  "books": [
+    {
+      "id": "lib-reading-i4-the-mystery-of-the-old-clock",
+      "title": "The Mystery of the Old Clock",
+      "author": "Yently Kids",
+      "emoji": "🕰️",
+      "pages": [
+        "In the corner of Grandpa's workshop stood an old clock that had not ticked for fifty years.",
+        "One rainy afternoon, Sara asked, 'Grandpa, why does the clock never tick?' Grandpa smiled and said, 'Let us find out.'",
+        "They opened the back of the clock and found a tiny brass key, a feather, and a note that said, 'For the one who listens.'",
+        "Sara put her ear close to the clock and listened. Very faintly, she heard a soft tick... tock... tick... tock.",
+        "'It was never broken,' whispered Grandpa. 'It was only waiting for someone patient enough to listen.'",
+        "Sara turned the little key, and the clock began to tick loudly and happily. It has ticked every day since.",
+        "Now Sara visits Grandpa every week, and the first thing she does is listen to the old clock's happy song."
+      ]
+    },
+    {
+      "id": "lib-reading-i4-the-little-inventor",
+      "title": "The Little Inventor",
+      "author": "Yently Kids",
+      "emoji": "🔧",
+      "pages": [
+        "Theo loved to invent things. His bedroom was full of boxes, wires, wheels, and bits of string.",
+        "One morning his little sister could not reach the top shelf where her toys were kept. 'Theo, help!' she cried.",
+        "Theo thought hard. Then he built a clever grabbing arm from a broom handle, a rope, and a kitchen tong.",
+        "He tested it again and again. The first time it dropped the toy, the second time it wobbled, but the third time it worked!",
+        "His sister clapped her hands. 'You are the best inventor in the world!' she said.",
+        "Theo smiled and wrote in his notebook: 'Invention number twelve: the Great Toy Grabber. It works!'"
+      ]
+    },
+    {
+      "id": "lib-reading-i4-the-rainbow-bridge",
+      "title": "The Rainbow Bridge",
+      "author": "Yently Kids",
+      "emoji": "🌈",
+      "pages": [
+        "After a big storm, a rainbow appeared over the river near Ella's house. It was the brightest rainbow she had ever seen.",
+        "Ella wished she could walk across it. To her surprise, the end of the rainbow touched the grass right in front of her.",
+        "She stepped onto the rainbow, and it felt soft and warm, like walking on a cloud. Up she went, higher and higher.",
+        "From the top, Ella could see the whole valley: the river, the fields, and her little house far below.",
+        "At the other end she found a meadow full of flowers that had never been seen before. She picked one to take home.",
+        "When Ella told her friends about the rainbow bridge, they did not believe her. But the strange flower in her hand proved it was real."
+      ]
+    },
+    {
+      "id": "lib-reading-i4-the-lost-treasure",
+      "title": "The Lost Treasure",
+      "author": "Yently Kids",
+      "emoji": "💎",
+      "pages": [
+        "Jake found an old map in his grandfather's attic. The map showed a big red X on a small island, and under it were the words: \"The treasure is here.\"",
+        "The next morning, Jake took his little boat and sailed to the island. The sea was calm, and the sun was warm on his face.",
+        "On the island, Jake followed the map past tall palm trees and over sandy hills. At last, he saw a big rock with a red X painted on it.",
+        "Jake dug under the rock with his shovel. Clang! His shovel hit a wooden box. Inside the box were gold coins, jewels, and a note from his grandfather.",
+        "The note said, \"The real treasure is a brave heart.\" Jake smiled and sailed home, proud of his adventure and ready to share the treasure with his whole family."
+      ]
+    }
+  ]
+}

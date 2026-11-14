@@ -1,0 +1,64 @@
+{
+  "books": [
+    {
+      "id": "lib-reading-a1-the-secret-garden",
+      "title": "The Secret Garden",
+      "author": "Yently Kids",
+      "emoji": "🌿",
+      "pages": [
+        "Mary was a quiet girl who had just moved to a big old house in the countryside. The house had many rooms, but one door in the garden wall was always locked.",
+        "'What is behind that door?' Mary asked the gardener one morning. He shook his head. 'A garden nobody has entered for ten years,' he said.",
+        "Mary could not stop thinking about the locked garden. She searched the house until, in an old drawer, she found a small rusty key.",
+        "Her heart beating fast, Mary turned the key in the lock. The door creaked open, and she stepped into a garden full of sleeping roses and tangled vines.",
+        "'It is beautiful,' she whispered, 'but it needs someone to care for it.' So Mary began to clear the weeds and water the dry earth.",
+        "Day by day, the garden woke up. Green shoots appeared, then buds, then hundreds of roses in pink, red, and white.",
+        "Soon Mary was not alone. Her cousin Colin, who had never left his room, came to see the garden, and the fresh air and sunshine made him strong and happy.",
+        "The secret garden was secret no more. It became the family's favourite place, and Mary knew she had found her true home."
+      ]
+    },
+    {
+      "id": "lib-reading-a1-the-clockmakers-daughter",
+      "title": "The Clockmaker's Daughter",
+      "author": "Yently Kids",
+      "emoji": "⏰",
+      "pages": [
+        "In a narrow street in the old town lived a clockmaker called Mr. Hale, and his clever daughter, Ada.",
+        "Ada could take apart any clock and put it back together again. 'You have your mother's hands,' her father often said, 'and your own bright mind.'",
+        "One winter, the great town clock stopped. The townspeople were worried, for the clock had told the time for a hundred years, and no one knew how to fix it.",
+        "'Let me try,' said Ada. Her father hesitated, then nodded. 'I trust you,' he said.",
+        "Ada climbed the tall tower and studied the great clock. She found a tiny gear, worn thin with age, and made a new one in her father's workshop.",
+        "At noon the next day, the great clock struck twelve, and the whole town cheered. 'Three cheers for Ada!' shouted the mayor.",
+        "From that day on, Ada worked beside her father, and everyone in the town knew that the best clockmaker was the clockmaker's daughter."
+      ]
+    },
+    {
+      "id": "lib-reading-a1-the-last-lighthouse",
+      "title": "The Last Lighthouse",
+      "author": "Yently Kids",
+      "emoji": "🌊",
+      "pages": [
+        "On a rocky island far from the shore stood the last lighthouse that was still lit by hand. Its keeper was a woman called Elena.",
+        "Every evening Elena climbed the iron stairs, lit the great lamp, and watched its beam sweep across the dark sea.",
+        "One autumn night, the worst storm in fifty years struck the island. The wind tore at the roof, and the waves shook the tower.",
+        "Elena knew the lamp must not go out. She stayed at her post all night, feeding the flame and turning the great lens by hand.",
+        "At dawn, a ship that had lost its way saw the light and steered safely past the rocks. The captain saluted the lighthouse as he passed.",
+        "When the storm ended, the town sent Elena a letter. 'You saved our ship and our crew,' it said. 'Thank you, keeper of the light.'",
+        "Elena smiled and hung the letter on the wall. Then, as evening came, she climbed the stairs once more to light the lamp, as she always did."
+      ]
+    },
+    {
+      "id": "lib-reading-a1-the-painter-of-dreams",
+      "title": "The Painter of Dreams",
+      "author": "Yently Kids",
+      "emoji": "🎨",
+      "pages": [
+        "In a small village by the sea, there lived an old painter named Elena. Every night she dreamed of wonderful worlds, and every morning she painted them on her canvas.",
+        "\"Why do you paint your dreams?\" a young boy named Theo asked her one day. Elena smiled and said, \"Because dreams are too beautiful to keep only in my head.\"",
+        "One morning, Elena woke up but could not remember her dream. Her canvas stayed empty, and for the first time in years, she felt sad. Theo saw her tears and had an idea.",
+        "\"Tell me about your village,\" Theo said, \"and I will tell you my dream.\" That night, Theo dreamed of a sky full of flying whales, and in the morning he described every detail to Elena.",
+        "Elena painted the flying whales, and the painting was so beautiful that people came from far away to see it. From that day on, Theo told Elena his dreams every morning.",
+        "Together, the old painter and the young boy filled the village with colour and wonder. Elena learned that dreams are even better when they are shared."
+      ]
+    }
+  ]
+}

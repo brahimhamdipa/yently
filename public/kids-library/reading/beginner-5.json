@@ -1,0 +1,56 @@
+{
+  "books": [
+    {
+      "id": "lib-reading-b5-a-day-at-the-farm",
+      "title": "A Day at the Farm",
+      "author": "Yently Kids",
+      "emoji": "🚜",
+      "pages": [
+        "Liam goes to the farm. He sees a cow, a pig, and a hen.",
+        "The cow says, 'Moo!' The pig says, 'Oink!' The hen says, 'Cluck!'",
+        "Liam feeds the hens. They peck at the corn.",
+        "Liam rides on the tractor with the farmer. It goes bump, bump, bump.",
+        "At the end of the day, Liam waves goodbye. He loves the farm."
+      ]
+    },
+    {
+      "id": "lib-reading-b5-the-little-star",
+      "title": "The Little Star",
+      "author": "Yently Kids",
+      "emoji": "⭐",
+      "pages": [
+        "A little star lives high in the sky. Her name is Twinkle.",
+        "Every night Twinkle shines. She lights up the dark sky.",
+        "One night the moon says, 'Twinkle, you shine so bright!'",
+        "Twinkle smiles. She shines even brighter than before.",
+        "All the children look up and say, 'Look! The little star!'"
+      ]
+    },
+    {
+      "id": "lib-reading-b5-dan-and-the-duck",
+      "title": "Dan and the Duck",
+      "author": "Yently Kids",
+      "emoji": "🦆",
+      "pages": [
+        "Dan goes to the pond. He sees a yellow duck.",
+        "The duck swims to Dan. It says, 'Quack, quack!'",
+        "Dan gives the duck some bread. The duck eats it up.",
+        "The duck flaps its wings. It swims in a big circle.",
+        "Dan waves goodbye to the duck. He will come back tomorrow."
+      ]
+    },
+    {
+      "id": "lib-reading-b5-the-little-cow",
+      "title": "The Little Cow",
+      "author": "Yently Kids",
+      "emoji": "🐄",
+      "pages": [
+        "A little cow lives on a green farm. Her name is Daisy.",
+        "Daisy eats green grass all day. Munch, munch, munch!",
+        "One morning, Daisy sees a big red barn. She walks to it.",
+        "In the barn, Daisy finds a soft bed of hay. It is warm.",
+        "Daisy sleeps in the hay. She has a good nap."
+      ]
+    }
+  ]
+}

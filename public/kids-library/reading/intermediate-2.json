@@ -1,0 +1,59 @@
+{
+  "books": [
+    {
+      "id": "lib-reading-i2-the-secret-treehouse",
+      "title": "The Secret Treehouse",
+      "author": "Yently Kids",
+      "emoji": "🌳",
+      "pages": [
+        "Behind Maya's house stood a giant oak tree. High in its branches, Maya and her brother built a treehouse.",
+        "They hammered wooden boards, painted a sign that said 'Maya and Leo's Club', and hung a rope ladder.",
+        "Every afternoon they climbed up with books, biscuits, and a pair of binoculars to watch the birds.",
+        "One day they found a tiny wooden box hidden under a floorboard. Inside was a map of the garden.",
+        "The map led them to a spot under the rose bush, where they dug up a tin full of shiny marbles.",
+        "Maya and Leo kept the marbles in the treehouse. It was their secret treasure, and the treehouse was their favourite place in the world."
+      ]
+    },
+    {
+      "id": "lib-reading-i2-the-friendly-dragon",
+      "title": "The Friendly Dragon",
+      "author": "Yently Kids",
+      "emoji": "🐉",
+      "pages": [
+        "In a village at the foot of a mountain lived a dragon called Dara. Unlike other dragons, Dara was kind and gentle.",
+        "Dara loved to help the villagers. She carried heavy baskets, lit the lanterns with her warm breath, and warmed the school on cold days.",
+        "But some villagers were afraid of her. 'Dragons breathe fire!' they whispered. 'She might be dangerous.'",
+        "One stormy night, a fire started in the old barn. The villagers shouted for help, and Dara flew down at once.",
+        "Dara scooped up water from the river in her great wings and poured it over the flames until the fire was out.",
+        "From that night on, nobody was afraid of Dara. She was the hero of the village, and the children loved to ride on her back."
+      ]
+    },
+    {
+      "id": "lib-reading-i2-the-magic-backpack",
+      "title": "The Magic Backpack",
+      "author": "Yently Kids",
+      "emoji": "🎒",
+      "pages": [
+        "On his first day of school, Jay received a bright yellow backpack from his aunt. It looked ordinary, but it was not.",
+        "When Jay opened it in class, he found a pencil, a notebook, and a shiny red apple, even though he had packed nothing.",
+        "The next day he wished for a book about space. When he opened the backpack, there it was!",
+        "Jay soon learned the backpack only gave him things he truly needed. When he wished for a hundred sweets, it gave him just one.",
+        "'You only get what you need,' Jay thought. 'That is fair.'",
+        "Jay shared his apple with a new friend that day, and he decided the magic backpack was the best gift he had ever received."
+      ]
+    },
+    {
+      "id": "lib-reading-i2-the-magic-garden",
+      "title": "The Magic Garden",
+      "author": "Yently Kids",
+      "emoji": "🌸",
+      "pages": [
+        "Behind Lila's house there was an old garden that nobody ever visited. The gate was rusty, and the plants had grown wild.",
+        "One morning, Lila found a small silver key under a stone. She tried it in the gate, and to her surprise, the lock opened with a click.",
+        "Inside the garden, the flowers glowed in every colour. When Lila watered them, they sang soft, happy songs.",
+        "Lila came back every day to care for the garden. She pulled the weeds, planted new seeds, and talked to the flowers.",
+        "Soon the whole village came to see the magic garden. Lila smiled, because she had turned a forgotten place into the most beautiful garden in the world."
+      ]
+    }
+  ]
+}

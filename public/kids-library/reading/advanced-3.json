@@ -1,0 +1,62 @@
+{
+  "books": [
+    {
+      "id": "lib-reading-a3-the-forgotten-library",
+      "title": "The Forgotten Library",
+      "author": "Yently Kids",
+      "emoji": "📚",
+      "pages": [
+        "Behind the old school, down a staircase nobody used, was a library that everyone had forgotten. Its shelves were covered in dust, and its books were silent.",
+        "One day, a new student called Ben pushed open the heavy door. 'Hello?' he called. Only his echo answered.",
+        "Ben pulled a book from the shelf and blew the dust off its cover. It was a book of adventures, and as he read, the library seemed to wake up.",
+        "He came back every day after school, reading one book after another. Soon his friends followed him, curious about the dusty room.",
+        "Together they cleaned the shelves, mended the torn pages, and painted a sign that said, 'The Forgotten Library — now open to everyone.'",
+        "The headteacher was amazed. 'You have brought our library back to life,' she said, and she gave the children the key to keep.",
+        "Now the library is the busiest room in the school, and every book on its shelves is read, loved, and never forgotten again."
+      ]
+    },
+    {
+      "id": "lib-reading-a3-the-mountain-of-echoes",
+      "title": "The Mountain of Echoes",
+      "author": "Yently Kids",
+      "emoji": "🏔️",
+      "pages": [
+        "Far beyond the village stood a mountain that people called the Mountain of Echoes, because every shout came back a hundred times.",
+        "A boy called Karim wanted to hear his own echo. He packed bread and water and climbed the steep path, his little sister following close behind.",
+        "'Hello, mountain!' he shouted at the top. 'Hello... hello... hello...' the mountain answered, and Karim laughed with delight.",
+        "Then his sister whispered, 'Thank you, mountain,' and the mountain whispered back, soft and kind, 'Thank you... thank you...'",
+        "Karim understood then that the mountain gave back exactly what you gave it. Shout angrily, and anger returned. Speak kindly, and kindness returned.",
+        "When they walked home, Karim told everyone in the village what he had learned. 'The mountain is like people,' he said. 'It gives back what you give.'",
+        "From that day on, the villagers spoke more kindly to one another, and the Mountain of Echoes became the friendliest mountain in the world."
+      ]
+    },
+    {
+      "id": "lib-reading-a3-the-inventors-last-gift",
+      "title": "The Inventor's Last Gift",
+      "author": "Yently Kids",
+      "emoji": "🎁",
+      "pages": [
+        "Professor Alden was the greatest inventor in the city, and his workshop was full of wonderful machines.",
+        "When he grew old, he called his granddaughter, June, to his side. 'I have one last invention,' he said, 'but it is not finished. You must finish it for me.'",
+        "The invention was a small brass bird with folded wings. A note beside it read, 'It will fly when it is given a reason to.'",
+        "June worked for weeks. She oiled the gears, polished the feathers, and wound the tiny spring. Still, the bird did not fly.",
+        "Then one morning, June saw a sad little boy in the park who had lost his kite. She wound the brass bird and whispered, 'Fly, and make him smile.'",
+        "The bird's wings opened, and it soared into the sky, singing a sweet mechanical song. The boy laughed and clapped his hands.",
+        "June understood at last. The bird flew when it had a reason to — and the best reason of all was to bring joy to someone else."
+      ]
+    },
+    {
+      "id": "lib-reading-a3-the-city-of-clouds",
+      "title": "The City of Clouds",
+      "author": "Yently Kids",
+      "emoji": "☁️",
+      "pages": [
+        "Above the highest mountains, hidden among the clouds, there was a city that floated in the sky. Its streets were made of soft white mist, and its houses shone like silver in the sun.",
+        "Lina, a curious girl from the valley below, had always dreamed of visiting the city. One evening, a great white bird landed on her window and said, \"Climb on my back, and I will take you there.\"",
+        "In the city of clouds, Lina met people who walked on air and gardens that grew upside down. She tasted cloudberry cakes and listened to music played on instruments made of rain.",
+        "But as the sun began to set, the city started to fade. \"The city only appears when someone believes in it,\" the bird explained. \"You must carry its memory back to the valley.\"",
+        "Lina returned home and told everyone about the floating city. Some people laughed, but the children believed her. And on quiet evenings, when the clouds were low, they all looked up together and dreamed of the city in the sky."
+      ]
+    }
+  ]
+}

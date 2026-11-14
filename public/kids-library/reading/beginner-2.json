@@ -1,0 +1,56 @@
+{
+  "books": [
+    {
+      "id": "lib-reading-b2-the-big-sun",
+      "title": "The Big Sun",
+      "author": "Yently Kids",
+      "emoji": "☀️",
+      "pages": [
+        "The sun is big and hot. It shines in the sky.",
+        "Ana puts on her hat. She goes out to play.",
+        "Ana plays in the sand. The sand is warm and soft.",
+        "Ana drinks cold water. It makes her feel good.",
+        "At night the sun goes down. Ana says, 'Good night, sun.'"
+      ]
+    },
+    {
+      "id": "lib-reading-b2-a-cup-of-milk",
+      "title": "A Cup of Milk",
+      "author": "Yently Kids",
+      "emoji": "🥛",
+      "pages": [
+        "Mum pours a cup of milk. The milk is white and cold.",
+        "Leo drinks the milk. He likes the taste.",
+        "Leo sees a cookie on the plate. He takes one cookie.",
+        "Leo eats the cookie. It is sweet and good.",
+        "Leo says, 'Thank you, Mum.' Then he goes to play."
+      ]
+    },
+    {
+      "id": "lib-reading-b2-ben-and-the-bus",
+      "title": "Ben and the Bus",
+      "author": "Yently Kids",
+      "emoji": "🚌",
+      "pages": [
+        "Ben waits for the bus. The bus is big and yellow.",
+        "The bus stops. Ben gets on the bus.",
+        "Ben sits by the window. He sees trees and houses.",
+        "The bus stops at school. Ben gets off the bus.",
+        "Ben runs to his class. He is happy to be at school."
+      ]
+    },
+    {
+      "id": "lib-reading-b2-the-big-egg",
+      "title": "The Big Egg",
+      "author": "Yently Kids",
+      "emoji": "🥚",
+      "pages": [
+        "A hen has a big egg. The egg is white and round.",
+        "The hen sits on the egg. She sits all day long.",
+        "Crack! Crack! The egg moves. The egg opens!",
+        "A little chick comes out. The chick says, \"Cheep, cheep!\"",
+        "The hen is happy. She has a new little chick."
+      ]
+    }
+  ]
+}

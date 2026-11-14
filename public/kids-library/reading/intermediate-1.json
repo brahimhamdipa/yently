@@ -1,0 +1,59 @@
+{
+  "books": [
+    {
+      "id": "lib-reading-i1-the-brave-fox",
+      "title": "The Brave Fox",
+      "author": "Yently Kids",
+      "emoji": "🦊",
+      "pages": [
+        "Felix the fox lived in a forest full of tall pine trees. He was small, but he was very brave.",
+        "One autumn morning, Felix heard a cry for help. A little rabbit was stuck in a thorny bush.",
+        "The rabbit was scared. 'Please help me,' she cried. 'I cannot get out!'",
+        "Felix was careful. He pushed the branches aside with his paws and freed the rabbit.",
+        "The rabbit thanked Felix with a basket of carrots. 'You are the bravest fox in the forest!' she said.",
+        "From that day on, Felix and the rabbit were the best of friends, and everyone in the forest knew the brave fox."
+      ]
+    },
+    {
+      "id": "lib-reading-i1-the-lost-kite",
+      "title": "The Lost Kite",
+      "author": "Yently Kids",
+      "emoji": "🪁",
+      "pages": [
+        "On a windy Saturday, Omar took his red kite to the park. It was shaped like a dragon.",
+        "Omar ran across the grass, and the kite flew higher and higher. 'Look at it go!' he shouted.",
+        "Suddenly a strong gust of wind pulled the string from his hand. The kite flew away over the trees.",
+        "Omar felt sad, but he did not give up. He followed the kite all the way to the other side of the park.",
+        "There it was, caught in a low branch. Omar climbed up carefully and set his kite free.",
+        "That evening Omar flew his kite again, holding the string extra tight. It was the best flight yet."
+      ]
+    },
+    {
+      "id": "lib-reading-i1-the-talking-parrot",
+      "title": "The Talking Parrot",
+      "author": "Yently Kids",
+      "emoji": "🦜",
+      "pages": [
+        "Lina's grandmother had a green parrot called Coco. Coco could say more than twenty words.",
+        "Every morning Coco said, 'Good morning, Lina!' and Lina always answered, 'Good morning, Coco!'",
+        "One day Lina lost her favourite blue hair ribbon. She looked under the bed and behind the sofa, but it was gone.",
+        "Then Coco flapped his wings and said, 'Under the chair! Under the chair!'",
+        "Lina looked under the chair, and there was her ribbon. 'Coco, you are so clever!' she laughed.",
+        "Now Lina tells everyone that Coco is not just a parrot. He is the best detective in the whole house."
+      ]
+    },
+    {
+      "id": "lib-reading-i1-the-brave-little-mouse",
+      "title": "The Brave Little Mouse",
+      "author": "Yently Kids",
+      "emoji": "🐭",
+      "pages": [
+        "Milo was a little mouse who lived in a hole under an old oak tree. He was the smallest mouse in his family, but he had a very big heart.",
+        "One stormy night, the wind blew down the bridge over the river, and the mice could not cross to the field where their food grew.",
+        "All the big mice were too scared to swim across the cold, fast river. But Milo took a deep breath and said, \"I will try!\"",
+        "Milo jumped onto a big leaf and used a stick to row across the water. The waves were strong, but he did not give up.",
+        "At last, Milo reached the other side and brought back seeds for everyone. From that day on, the little mouse was the bravest mouse in the whole forest."
+      ]
+    }
+  ]
+}

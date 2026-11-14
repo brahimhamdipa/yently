@@ -1,0 +1,56 @@
+{
+  "books": [
+    {
+      "id": "lib-reading-b7-the-little-boat",
+      "title": "The Little Boat",
+      "author": "Yently Kids",
+      "emoji": "⛵",
+      "pages": [
+        "A little boat sails on the sea. Its name is Sunny.",
+        "The wind blows the sail. Sunny goes fast over the waves.",
+        "Sunny sees a dolphin. The dolphin jumps out of the water.",
+        "Sunny sails past a sandy island. The palm trees wave in the wind.",
+        "At sunset Sunny sails home. It was a very good day."
+      ]
+    },
+    {
+      "id": "lib-reading-b7-max-and-the-moon",
+      "title": "Max and the Moon",
+      "author": "Yently Kids",
+      "emoji": "🌙",
+      "pages": [
+        "Max looks out of his window. The moon is big and round.",
+        "Max waves at the moon. 'Hello, Moon!' he says.",
+        "The moon shines on Max's bed. Max feels safe and warm.",
+        "Max closes his eyes. He dreams of flying to the moon.",
+        "In the morning Max wakes up. He says, 'Thank you, Moon.'"
+      ]
+    },
+    {
+      "id": "lib-reading-b7-the-big-cake",
+      "title": "The Big Cake",
+      "author": "Yently Kids",
+      "emoji": "🎂",
+      "pages": [
+        "Today is Sara's birthday. Mum bakes a big cake.",
+        "The cake has pink icing and six candles. It looks so good.",
+        "Sara's friends come to the party. They sing a birthday song.",
+        "Sara blows out the candles. She makes a secret wish.",
+        "Everyone eats the cake. It is sweet and soft. Happy birthday, Sara!"
+      ]
+    },
+    {
+      "id": "lib-reading-b7-the-funny-monkey",
+      "title": "The Funny Monkey",
+      "author": "Yently Kids",
+      "emoji": "🐵",
+      "pages": [
+        "A funny monkey lives in a big tree. His name is Milo.",
+        "Milo swings from branch to branch. Whee!",
+        "Milo sees a yellow banana. He grabs it fast.",
+        "Milo peels the banana. He eats it all up. Yum!",
+        "Then Milo sleeps in his tree. What a fun day!"
+      ]
+    }
+  ]
+}

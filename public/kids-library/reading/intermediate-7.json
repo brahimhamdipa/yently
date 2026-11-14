@@ -1,0 +1,59 @@
+{
+  "books": [
+    {
+      "id": "lib-reading-i7-the-map-to-nowhere",
+      "title": "The Map to Nowhere",
+      "author": "Yently Kids",
+      "emoji": "🗺️",
+      "pages": [
+        "In the attic, Noah found an old map in a dusty trunk. At the bottom it said, 'The Map to Nowhere.'",
+        "Noah laughed. 'A map to nowhere? That sounds like an adventure!' He packed a sandwich and set off.",
+        "The map led him over the hill, across the stream, and into a wood he had never explored before.",
+        "At the end of the path, Noah found a tiny cottage with a blue door. An old lady waved from the window.",
+        "'Welcome, traveller,' she said. 'I have been waiting for someone to follow my map.' She gave him tea and cake.",
+        "Noah stayed for the afternoon and heard wonderful stories about the wood. When he left, the old lady said, 'Nowhere is the best place to find something new.'"
+      ]
+    },
+    {
+      "id": "lib-reading-i7-the-moonlight-picnic",
+      "title": "The Moonlight Picnic",
+      "author": "Yently Kids",
+      "emoji": "🧺",
+      "pages": [
+        "On the night of the full moon, the whole family packed a picnic and walked up the hill behind their house.",
+        "They spread a blanket on the grass and opened the basket. There were sandwiches, apples, and a big thermos of hot chocolate.",
+        "As they ate, the moon rose higher and higher. It was so bright that they could see the whole valley below.",
+        "'Look!' whispered Dad. 'Owls!' Two owls flew silently across the moonlit sky.",
+        "The children told stories and sang songs until the moon was high above them. Then they packed up and walked home.",
+        "That night, tucked in bed, Lily thought about the moonlight picnic. It was the best dinner she had ever had."
+      ]
+    },
+    {
+      "id": "lib-reading-i7-the-kind-giant",
+      "title": "The Kind Giant",
+      "author": "Yently Kids",
+      "emoji": "👣",
+      "pages": [
+        "At the top of the hill lived a giant called Bruno. He was so tall that his head touched the clouds.",
+        "The villagers were afraid of Bruno, so he lived alone. He was lonely, but he was kind, and he helped lost birds find their way home.",
+        "One day a little girl called Ana climbed the hill. 'Hello,' she said. 'Why do you live all alone?'",
+        "Bruno told her he was lonely. Ana smiled. 'Come to the village with me. Everyone will love you once they know you.'",
+        "Bruno was nervous, but he followed Ana down the hill. The children cheered when they saw him, and he helped them pick apples from the tallest trees.",
+        "From that day on, Bruno lived in the village. He was still the tallest, but he was never lonely again."
+      ]
+    },
+    {
+      "id": "lib-reading-i7-the-birthday-surprise",
+      "title": "The Birthday Surprise",
+      "author": "Yently Kids",
+      "emoji": "🎂",
+      "pages": [
+        "It was Sara's birthday, but Sara did not know that her friends were planning a big surprise party for her.",
+        "Her best friend Mia decorated the house with balloons and ribbons while Sara was at school. Her mother baked a chocolate cake with pink candles.",
+        "When Sara came home, the house was dark and quiet. \"Hello?\" she called. Suddenly, all the lights came on, and everyone shouted, \"Surprise! Happy birthday!\"",
+        "Sara laughed and clapped her hands. They played games, sang songs, and ate the delicious cake together.",
+        "At the end of the day, Sara hugged her friends and said, \"This is the best birthday ever. Thank you for the wonderful surprise!\""
+      ]
+    }
+  ]
+}

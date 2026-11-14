@@ -1,0 +1,62 @@
+{
+  "books": [
+    {
+      "id": "lib-reading-a6-the-last-dragon-egg",
+      "title": "The Last Dragon Egg",
+      "author": "Yently Kids",
+      "emoji": "🥚",
+      "pages": [
+        "High in the mountains, in a cave of warm stones, lay the last dragon egg in the world. It had been waiting a hundred years to hatch.",
+        "A shepherd boy called Tomas found the cave while looking for a lost lamb. 'What a strange stone,' he thought, until the egg moved.",
+        "Tomas carried the egg home and kept it warm by the fire. He read to it every night, telling it stories of the world outside.",
+        "One spring morning, the egg cracked. Out came a tiny dragon with emerald scales and eyes like gold coins. 'Hello, little one,' whispered Tomas.",
+        "The dragon grew quickly, and Tomas taught it to fly, to fish in the mountain lakes, and to sing with the birds at dawn.",
+        "When the dragon was fully grown, it spread its great wings and flew in a circle around the mountain, breathing a rainbow of fire into the sky.",
+        "Tomas watched it soar away, and though he was sad, he was glad too. The last dragon was free, and the world had magic in it once more."
+      ]
+    },
+    {
+      "id": "lib-reading-a6-the-star-collector",
+      "title": "The Star Collector",
+      "author": "Yently Kids",
+      "emoji": "🌟",
+      "pages": [
+        "Every night, an old man called Elias climbed to the top of his hill with a glass jar, to collect the stars that fell from the sky.",
+        "He kept each fallen star in a jar on his windowsill, and on dark nights their gentle light lit up the whole village.",
+        "One evening, a little girl called Pia followed him up the hill. 'Why do you collect the stars?' she asked.",
+        "'Because every star has a wish inside it,' said Elias, 'and a wish should never be wasted.'",
+        "That night, a bright star fell right at Pia's feet. Elias picked it up carefully and handed it to her. 'This one is yours,' he said. 'Make a wish.'",
+        "Pia closed her eyes and wished that her grandmother, who was ill, would feel better. The star glowed warmly in her hands.",
+        "The next morning, her grandmother was sitting up in bed, smiling and asking for breakfast. Pia ran to thank Elias, but he only smiled and said, 'The stars heard you.'"
+      ]
+    },
+    {
+      "id": "lib-reading-a6-the-house-on-the-hill",
+      "title": "The House on the Hill",
+      "author": "Yently Kids",
+      "emoji": "🏠",
+      "pages": [
+        "On the top of the hill stood an empty house with blue shutters and a garden full of wild roses. Nobody had lived there for years.",
+        "When the Alvarez family moved to the village, they bought the house. The children, Diego and Lucia, were excited — and a little bit nervous.",
+        "'It is just a house,' said their mother. 'We will make it a home.' So they cleaned, painted, and planted flowers in the garden.",
+        "One rainy afternoon, Diego found a box in the attic. Inside were letters, photographs, and a map of the village from long ago.",
+        "The letters told the story of the family who had lived there before them, and the map showed a hidden well in the garden, long forgotten.",
+        "The Alvarez family cleared the well and planted a rose bush beside it, in memory of the family who had loved the house before them.",
+        "Now the house on the hill is full of laughter, light, and the smell of fresh bread, and everyone in the village says it is the happiest house of all."
+      ]
+    },
+    {
+      "id": "lib-reading-a6-the-girl-who-chased-the-wind",
+      "title": "The Girl Who Chased the Wind",
+      "author": "Yently Kids",
+      "emoji": "💨",
+      "pages": [
+        "Nora was a girl who loved the wind. She ran after it through fields and over hills, trying to catch it in her hands, but the wind always slipped away, laughing.",
+        "\"Why do you chase me?\" the wind asked one day, swirling around her. \"Because I want to know where you go,\" Nora replied. \"Take me with you.\"",
+        "The wind lifted Nora gently into the air. They flew over green valleys, across wide oceans, and above snowy mountains. Nora saw deserts, forests, and cities she had never imagined.",
+        "At last, the wind set her down in a field of golden wheat. \"The wind never stays in one place,\" it whispered, \"but it always comes back to those who love it.\"",
+        "Nora walked home with the wind playing in her hair. She knew she would never catch the wind, but she would chase it forever — and that was enough."
+      ]
+    }
+  ]
+}

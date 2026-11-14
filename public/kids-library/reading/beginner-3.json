@@ -1,0 +1,56 @@
+{
+  "books": [
+    {
+      "id": "lib-reading-b3-the-little-fish",
+      "title": "The Little Fish",
+      "author": "Yently Kids",
+      "emoji": "🐟",
+      "pages": [
+        "A little fish lives in the blue sea. Her name is Bubbles.",
+        "Bubbles swims all day. She swims up and down.",
+        "Bubbles sees a big rock. She hides behind the rock.",
+        "A big fish swims by. Bubbles stays very still.",
+        "The big fish goes away. Bubbles swims home to her mum."
+      ]
+    },
+    {
+      "id": "lib-reading-b3-rose-and-the-rain",
+      "title": "Rose and the Rain",
+      "author": "Yently Kids",
+      "emoji": "🌧️",
+      "pages": [
+        "Rose looks out of the window. It is raining.",
+        "Rose puts on her red boots. She takes her umbrella.",
+        "Rose jumps in a puddle. Splash! The water goes up.",
+        "Rose laughs and jumps again. Splash, splash, splash!",
+        "The rain stops. The sun comes out. Rose is happy."
+      ]
+    },
+    {
+      "id": "lib-reading-b3-toms-new-hat",
+      "title": "Tom's New Hat",
+      "author": "Yently Kids",
+      "emoji": "🎩",
+      "pages": [
+        "Tom has a new hat. It is blue with a red band.",
+        "Tom puts on his hat. He looks in the mirror.",
+        "Tom goes to the park in his hat. The wind blows.",
+        "Oh no! The wind takes Tom's hat. It flies up high.",
+        "The hat lands in a tree. Tom climbs up and gets it back."
+      ]
+    },
+    {
+      "id": "lib-reading-b3-the-small-ant",
+      "title": "The Small Ant",
+      "author": "Yently Kids",
+      "emoji": "🐜",
+      "pages": [
+        "A small ant walks on the grass. He looks for food.",
+        "The ant sees a big crumb. It is too big for him!",
+        "The ant calls his friends. \"Help me, please!\" he says.",
+        "All the ants push the crumb. Push, push, push!",
+        "They take the crumb home. Now they all have food."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "books": [
+    {
+      "id": "lib-reading-i5-the-runaway-robot",
+      "title": "The Runaway Robot",
+      "author": "Yently Kids",
+      "emoji": "🤖",
+      "pages": [
+        "Dr. Patel built a small robot called Bolt to help in her workshop. Bolt could sweep, sort screws, and make tea.",
+        "One day Bolt saw the open door and wondered what was outside. Before anyone could stop him, he rolled out into the garden.",
+        "Bolt rolled down the street, past the bakery and the park, waving at everyone he met. The children followed him, laughing.",
+        "At the park, Bolt helped an old man carry his shopping and picked up litter with his long arms. Everyone cheered.",
+        "When Dr. Patel found him, she was not angry. 'You wanted an adventure,' she said. 'And you helped people too.'",
+        "Now Bolt goes out every Saturday with Dr. Patel. He still helps in the workshop, but he never misses his walk in the park."
+      ]
+    },
+    {
+      "id": "lib-reading-i5-the-hidden-cave",
+      "title": "The Hidden Cave",
+      "author": "Yently Kids",
+      "emoji": "🕳️",
+      "pages": [
+        "While hiking in the hills, Adam and his cousin Zoe found a small opening behind a waterfall.",
+        "'It is a cave!' whispered Zoe. 'Shall we look inside?' Adam nodded, and they stepped in carefully with their torches.",
+        "Inside, the cave was full of sparkling crystals. They glittered blue, pink, and gold in the torchlight.",
+        "In the middle of the cave they found a pool of clear water. Tiny silver fish swam in circles, shining like stars.",
+        "Adam and Zoe sat quietly and listened to the water dripping. It was the most peaceful place they had ever found.",
+        "They promised to keep the cave a secret, so it would stay beautiful and safe. Some treasures are best left exactly where they are."
+      ]
+    },
+    {
+      "id": "lib-reading-i5-the-brave-little-firefighter",
+      "title": "The Brave Little Firefighter",
+      "author": "Yently Kids",
+      "emoji": "🚒",
+      "pages": [
+        "Sam wanted to be a firefighter when he grew up, just like his mum. He practised every day with his toy fire truck.",
+        "One evening, the smoke alarm in the kitchen started to beep. Sam's mum was outside, and Sam was alone in the living room.",
+        "Sam remembered what his mum had taught him. He stayed low, covered his mouth, and walked calmly to the front door.",
+        "Outside, he called his neighbour, who rang for the fire engine. The firefighters came quickly and put out the small fire.",
+        "The fire chief said, 'You did exactly the right thing, Sam. Staying calm and getting out saved the day.'",
+        "Sam smiled. He knew that being brave was not about fighting fires. It was about knowing what to do and staying calm."
+      ]
+    },
+    {
+      "id": "lib-reading-i5-the-little-sailor",
+      "title": "The Little Sailor",
+      "author": "Yently Kids",
+      "emoji": "⛵",
+      "pages": [
+        "Tom lived in a small village by the sea, and he dreamed of becoming a sailor. Every day he watched the big ships sail away to faraway lands.",
+        "One sunny morning, Captain Rose came to the village and said, \"I need a young sailor to help me on my ship. Who wants to come?\" Tom jumped up at once.",
+        "On the ship, Tom learned to tie knots, climb the mast, and read the stars at night. The work was hard, but Tom loved every minute of it.",
+        "Suddenly, a great storm came. The waves were huge, and the wind howled. Tom held the rope tight and helped the captain steer the ship to safety.",
+        "When the storm passed, Captain Rose smiled at Tom. \"You are a true sailor now,\" she said. Tom sailed home proud, knowing his dream had come true."
+      ]
+    }
+  ]
+}
