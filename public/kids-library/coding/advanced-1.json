@@ -1,0 +1,218 @@
+{
+  "puzzles": [
+    {
+      "id": "lib-coding-a1-mighty-mountain-race",
+      "name": "Mighty Mountain Race",
+      "rows": 6,
+      "cols": 6,
+      "walls": [
+        "0,0",
+        "1,3",
+        "1,5",
+        "3,1",
+        "3,4",
+        "4,2",
+        "5,3"
+      ],
+      "start": {
+        "r": 0,
+        "c": 3,
+        "dir": 3
+      },
+      "goal": {
+        "r": 4,
+        "c": 1
+      },
+      "par": 12,
+      "hint": "Go forward 2 steps, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-a1-speedy-rainbow-twist",
+      "name": "Speedy Rainbow Twist",
+      "rows": 6,
+      "cols": 6,
+      "walls": [
+        "0,2",
+        "2,3",
+        "2,4",
+        "4,1",
+        "4,3",
+        "4,4",
+        "5,1"
+      ],
+      "start": {
+        "r": 5,
+        "c": 0,
+        "dir": 3
+      },
+      "goal": {
+        "r": 5,
+        "c": 4
+      },
+      "par": 12,
+      "hint": "Turn right, then go forward 2 steps \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-a1-peppy-castle-spin",
+      "name": "Peppy Castle Spin",
+      "rows": 7,
+      "cols": 7,
+      "walls": [
+        "3,2",
+        "3,5",
+        "3,6",
+        "4,1",
+        "4,4",
+        "4,6",
+        "5,4",
+        "6,0"
+      ],
+      "start": {
+        "r": 4,
+        "c": 0,
+        "dir": 3
+      },
+      "goal": {
+        "r": 6,
+        "c": 6
+      },
+      "par": 12,
+      "hint": "Turn right, then go forward 1 step \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-a1-gentle-forest-quest",
+      "name": "Gentle Forest Quest",
+      "rows": 7,
+      "cols": 7,
+      "walls": [
+        "1,3",
+        "2,3",
+        "2,5",
+        "3,2",
+        "4,1",
+        "4,3",
+        "6,3",
+        "6,4"
+      ],
+      "start": {
+        "r": 6,
+        "c": 0,
+        "dir": 1
+      },
+      "goal": {
+        "r": 3,
+        "c": 3
+      },
+      "par": 12,
+      "hint": "Go forward 2 steps, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-a1-sunny-comet-race",
+      "name": "Sunny Comet Race",
+      "rows": 6,
+      "cols": 6,
+      "walls": [
+        "0,4",
+        "1,0",
+        "2,1",
+        "2,2",
+        "2,4",
+        "3,1",
+        "5,2",
+        "5,5"
+      ],
+      "start": {
+        "r": 5,
+        "c": 1,
+        "dir": 2
+      },
+      "goal": {
+        "r": 1,
+        "c": 5
+      },
+      "par": 12,
+      "hint": "Turn right, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-a1-dizzy-star-run",
+      "name": "Dizzy Star Run",
+      "rows": 6,
+      "cols": 6,
+      "walls": [
+        "0,3",
+        "1,5",
+        "2,0",
+        "4,2",
+        "4,3",
+        "4,4",
+        "5,2",
+        "5,3"
+      ],
+      "start": {
+        "r": 5,
+        "c": 0,
+        "dir": 1
+      },
+      "goal": {
+        "r": 5,
+        "c": 4
+      },
+      "par": 14,
+      "hint": "Go forward 1 step, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-a1-happy-puppy-run",
+      "name": "Happy Puppy Run",
+      "rows": 7,
+      "cols": 7,
+      "walls": [
+        "1,6",
+        "2,0",
+        "2,5",
+        "2,6",
+        "3,0",
+        "3,5",
+        "4,2",
+        "6,5"
+      ],
+      "start": {
+        "r": 1,
+        "c": 0,
+        "dir": 0
+      },
+      "goal": {
+        "r": 3,
+        "c": 6
+      },
+      "par": 14,
+      "hint": "Turn right, then go forward 4 steps \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-a1-zippy-ocean-jump",
+      "name": "Zippy Ocean Jump",
+      "rows": 7,
+      "cols": 7,
+      "walls": [
+        "0,5",
+        "1,5",
+        "2,0",
+        "2,5",
+        "4,2",
+        "5,6",
+        "6,1",
+        "6,6"
+      ],
+      "start": {
+        "r": 1,
+        "c": 0,
+        "dir": 3
+      },
+      "goal": {
+        "r": 6,
+        "c": 5
+      },
+      "par": 14,
+      "hint": "Turn right, then turn right \u2014 can you find the rest of the way to the star?"
+    }
+  ]
+}

@@ -1,0 +1,240 @@
+{
+  "puzzles": [
+    {
+      "id": "lib-coding-a5-zippy-comet-turn",
+      "name": "Zippy Comet Turn",
+      "rows": 7,
+      "cols": 7,
+      "walls": [
+        "0,2",
+        "1,4",
+        "2,0",
+        "2,1",
+        "2,2",
+        "3,2",
+        "3,3",
+        "5,3",
+        "6,2",
+        "6,4"
+      ],
+      "start": {
+        "r": 5,
+        "c": 0,
+        "dir": 1
+      },
+      "goal": {
+        "r": 1,
+        "c": 2
+      },
+      "par": 16,
+      "hint": "Go forward 2 steps, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-a5-peppy-star-dash",
+      "name": "Peppy Star Dash",
+      "rows": 7,
+      "cols": 7,
+      "walls": [
+        "1,3",
+        "2,2",
+        "2,6",
+        "3,4",
+        "3,5",
+        "4,3",
+        "4,4",
+        "4,6",
+        "5,6",
+        "6,5"
+      ],
+      "start": {
+        "r": 6,
+        "c": 3,
+        "dir": 3
+      },
+      "goal": {
+        "r": 1,
+        "c": 6
+      },
+      "par": 16,
+      "hint": "Go forward 1 step, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-a5-silly-robot-quest",
+      "name": "Silly Robot Quest",
+      "rows": 7,
+      "cols": 7,
+      "walls": [
+        "0,3",
+        "0,6",
+        "1,1",
+        "2,0",
+        "2,5",
+        "3,0",
+        "3,2",
+        "4,5",
+        "5,1",
+        "5,3"
+      ],
+      "start": {
+        "r": 1,
+        "c": 0,
+        "dir": 0
+      },
+      "goal": {
+        "r": 5,
+        "c": 0
+      },
+      "par": 16,
+      "hint": "Go forward 1 step, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-a5-happy-river-trail",
+      "name": "Happy River Trail",
+      "rows": 7,
+      "cols": 7,
+      "walls": [
+        "0,2",
+        "0,3",
+        "1,1",
+        "1,3",
+        "2,1",
+        "2,5",
+        "3,6",
+        "4,1",
+        "6,2",
+        "6,4",
+        "6,6"
+      ],
+      "start": {
+        "r": 0,
+        "c": 1,
+        "dir": 2
+      },
+      "goal": {
+        "r": 0,
+        "c": 5
+      },
+      "par": 17,
+      "hint": "Turn right, then go forward 1 step \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-a5-zippy-star-trip",
+      "name": "Zippy Star Trip",
+      "rows": 7,
+      "cols": 7,
+      "walls": [
+        "1,0",
+        "1,3",
+        "2,0",
+        "2,3",
+        "2,4",
+        "2,5",
+        "4,1",
+        "4,3",
+        "5,1",
+        "6,2",
+        "6,4",
+        "6,6"
+      ],
+      "start": {
+        "r": 6,
+        "c": 1,
+        "dir": 3
+      },
+      "goal": {
+        "r": 1,
+        "c": 4
+      },
+      "par": 17,
+      "hint": "Go forward 1 step, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-a5-cosmic-ocean-jump",
+      "name": "Cosmic Ocean Jump",
+      "rows": 7,
+      "cols": 7,
+      "walls": [
+        "1,3",
+        "2,2",
+        "2,3",
+        "2,4",
+        "3,2",
+        "3,5",
+        "4,3",
+        "4,5",
+        "6,1",
+        "6,2"
+      ],
+      "start": {
+        "r": 0,
+        "c": 4,
+        "dir": 2
+      },
+      "goal": {
+        "r": 3,
+        "c": 3
+      },
+      "par": 17,
+      "hint": "Go forward 1 step, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-a5-clever-rocket-race",
+      "name": "Clever Rocket Race",
+      "rows": 7,
+      "cols": 7,
+      "walls": [
+        "1,1",
+        "2,0",
+        "3,0",
+        "3,5",
+        "4,4",
+        "5,0",
+        "5,4",
+        "6,2",
+        "6,5"
+      ],
+      "start": {
+        "r": 6,
+        "c": 4,
+        "dir": 2
+      },
+      "goal": {
+        "r": 5,
+        "c": 5
+      },
+      "par": 17,
+      "hint": "Turn right, then go forward 1 step \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-a5-sunny-kitten-dash",
+      "name": "Sunny Kitten Dash",
+      "rows": 7,
+      "cols": 7,
+      "walls": [
+        "0,0",
+        "0,1",
+        "1,2",
+        "2,1",
+        "2,5",
+        "3,5",
+        "3,6",
+        "4,2",
+        "4,3",
+        "4,4",
+        "6,3",
+        "6,5"
+      ],
+      "start": {
+        "r": 0,
+        "c": 6,
+        "dir": 2
+      },
+      "goal": {
+        "r": 6,
+        "c": 2
+      },
+      "par": 17,
+      "hint": "Go forward 1 step, then turn right \u2014 can you find the rest of the way to the star?"
+    }
+  ]
+}

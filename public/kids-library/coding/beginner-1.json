@@ -1,0 +1,160 @@
+{
+  "puzzles": [
+    {
+      "id": "lib-coding-b1-gentle-moon-trip",
+      "name": "Gentle Moon Trip",
+      "rows": 5,
+      "cols": 5,
+      "walls": [
+        "1,1"
+      ],
+      "start": {
+        "r": 0,
+        "c": 0,
+        "dir": 2
+      },
+      "goal": {
+        "r": 3,
+        "c": 0
+      },
+      "par": 3,
+      "hint": "Go forward 3 steps \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-b1-zippy-robot-trip",
+      "name": "Zippy Robot Trip",
+      "rows": 5,
+      "cols": 5,
+      "walls": [
+        "1,2"
+      ],
+      "start": {
+        "r": 3,
+        "c": 4,
+        "dir": 0
+      },
+      "goal": {
+        "r": 0,
+        "c": 4
+      },
+      "par": 3,
+      "hint": "Go forward 3 steps \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-b1-sunny-robot-dash",
+      "name": "Sunny Robot Dash",
+      "rows": 5,
+      "cols": 5,
+      "walls": [],
+      "start": {
+        "r": 0,
+        "c": 4,
+        "dir": 3
+      },
+      "goal": {
+        "r": 0,
+        "c": 1
+      },
+      "par": 3,
+      "hint": "Go forward 3 steps \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-b1-speedy-rocket-twist",
+      "name": "Speedy Rocket Twist",
+      "rows": 5,
+      "cols": 5,
+      "walls": [
+        "4,0"
+      ],
+      "start": {
+        "r": 0,
+        "c": 2,
+        "dir": 1
+      },
+      "goal": {
+        "r": 1,
+        "c": 4
+      },
+      "par": 4,
+      "hint": "Go forward 2 steps, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-b1-clever-river-run",
+      "name": "Clever River Run",
+      "rows": 5,
+      "cols": 5,
+      "walls": [
+        "2,2"
+      ],
+      "start": {
+        "r": 4,
+        "c": 4,
+        "dir": 0
+      },
+      "goal": {
+        "r": 3,
+        "c": 2
+      },
+      "par": 4,
+      "hint": "Go forward 1 step, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-b1-mighty-mountain-jump",
+      "name": "Mighty Mountain Jump",
+      "rows": 5,
+      "cols": 5,
+      "walls": [
+        "3,4"
+      ],
+      "start": {
+        "r": 2,
+        "c": 4,
+        "dir": 0
+      },
+      "goal": {
+        "r": 0,
+        "c": 3
+      },
+      "par": 4,
+      "hint": "Go forward 2 steps, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-b1-bright-ocean-hop",
+      "name": "Bright Ocean Hop",
+      "rows": 5,
+      "cols": 5,
+      "walls": [],
+      "start": {
+        "r": 0,
+        "c": 3,
+        "dir": 2
+      },
+      "goal": {
+        "r": 2,
+        "c": 4
+      },
+      "par": 4,
+      "hint": "Go forward 2 steps, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-b1-jolly-river-quest",
+      "name": "Jolly River Quest",
+      "rows": 5,
+      "cols": 5,
+      "walls": [
+        "1,1"
+      ],
+      "start": {
+        "r": 2,
+        "c": 4,
+        "dir": 2
+      },
+      "goal": {
+        "r": 4,
+        "c": 3
+      },
+      "par": 4,
+      "hint": "Go forward 2 steps, then turn right \u2014 can you find the rest of the way to the star?"
+    }
+  ]
+}

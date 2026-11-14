@@ -1,0 +1,237 @@
+{
+  "puzzles": [
+    {
+      "id": "lib-coding-a4-sunny-rainbow-quest",
+      "name": "Sunny Rainbow Quest",
+      "rows": 7,
+      "cols": 7,
+      "walls": [
+        "0,2",
+        "0,3",
+        "1,2",
+        "2,4",
+        "3,2",
+        "4,0",
+        "4,2",
+        "5,3",
+        "5,4"
+      ],
+      "start": {
+        "r": 5,
+        "c": 0,
+        "dir": 0
+      },
+      "goal": {
+        "r": 0,
+        "c": 4
+      },
+      "par": 15,
+      "hint": "Turn right, then go forward 1 step \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-a4-happy-river-trail",
+      "name": "Happy River Trail",
+      "rows": 7,
+      "cols": 7,
+      "walls": [
+        "0,2",
+        "1,3",
+        "1,5",
+        "2,5",
+        "3,3",
+        "3,4",
+        "4,3",
+        "5,1",
+        "5,5",
+        "6,4",
+        "6,5"
+      ],
+      "start": {
+        "r": 5,
+        "c": 6,
+        "dir": 3
+      },
+      "goal": {
+        "r": 6,
+        "c": 0
+      },
+      "par": 15,
+      "hint": "Turn right, then go forward 1 step \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-a4-happy-desert-twist",
+      "name": "Happy Desert Twist",
+      "rows": 7,
+      "cols": 7,
+      "walls": [
+        "1,4",
+        "2,5",
+        "3,0",
+        "4,1",
+        "4,5",
+        "4,6",
+        "5,1",
+        "5,4",
+        "6,2"
+      ],
+      "start": {
+        "r": 0,
+        "c": 4,
+        "dir": 1
+      },
+      "goal": {
+        "r": 5,
+        "c": 6
+      },
+      "par": 16,
+      "hint": "Turn right, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-a4-gentle-ocean-run",
+      "name": "Gentle Ocean Run",
+      "rows": 7,
+      "cols": 7,
+      "walls": [
+        "0,4",
+        "1,0",
+        "1,6",
+        "2,0",
+        "2,4",
+        "2,5",
+        "3,0",
+        "4,3",
+        "5,3",
+        "6,1",
+        "6,3"
+      ],
+      "start": {
+        "r": 5,
+        "c": 0,
+        "dir": 0
+      },
+      "goal": {
+        "r": 0,
+        "c": 6
+      },
+      "par": 16,
+      "hint": "Go forward 1 step, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-a4-happy-mountain-trail",
+      "name": "Happy Mountain Trail",
+      "rows": 7,
+      "cols": 7,
+      "walls": [
+        "0,4",
+        "0,5",
+        "1,0",
+        "3,0",
+        "4,5",
+        "5,0",
+        "5,2",
+        "5,4",
+        "5,5",
+        "6,3"
+      ],
+      "start": {
+        "r": 6,
+        "c": 5,
+        "dir": 0
+      },
+      "goal": {
+        "r": 4,
+        "c": 0
+      },
+      "par": 16,
+      "hint": "Turn right, then go forward 1 step \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-a4-zippy-star-trip",
+      "name": "Zippy Star Trip",
+      "rows": 7,
+      "cols": 7,
+      "walls": [
+        "1,0",
+        "1,1",
+        "2,1",
+        "2,5",
+        "3,3",
+        "3,5",
+        "4,0",
+        "4,4",
+        "4,6",
+        "6,4"
+      ],
+      "start": {
+        "r": 3,
+        "c": 6,
+        "dir": 3
+      },
+      "goal": {
+        "r": 2,
+        "c": 0
+      },
+      "par": 16,
+      "hint": "Turn right, then go forward 2 steps \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-a4-cosmic-puppy-hop",
+      "name": "Cosmic Puppy Hop",
+      "rows": 7,
+      "cols": 7,
+      "walls": [
+        "1,4",
+        "2,4",
+        "2,5",
+        "2,6",
+        "3,3",
+        "4,3",
+        "5,1",
+        "5,5",
+        "6,2",
+        "6,3",
+        "6,4"
+      ],
+      "start": {
+        "r": 6,
+        "c": 5,
+        "dir": 1
+      },
+      "goal": {
+        "r": 0,
+        "c": 2
+      },
+      "par": 18,
+      "hint": "Go forward 1 step, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-a4-gentle-rocket-jump",
+      "name": "Gentle Rocket Jump",
+      "rows": 7,
+      "cols": 7,
+      "walls": [
+        "0,5",
+        "2,4",
+        "3,0",
+        "3,1",
+        "3,5",
+        "4,3",
+        "5,1",
+        "5,2",
+        "5,4",
+        "6,6"
+      ],
+      "start": {
+        "r": 1,
+        "c": 0,
+        "dir": 0
+      },
+      "goal": {
+        "r": 6,
+        "c": 4
+      },
+      "par": 18,
+      "hint": "Turn right, then go forward 6 steps \u2014 can you find the rest of the way to the star?"
+    }
+  ]
+}

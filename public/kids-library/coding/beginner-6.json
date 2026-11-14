@@ -1,0 +1,191 @@
+{
+  "puzzles": [
+    {
+      "id": "lib-coding-b6-peppy-island-jump",
+      "name": "Peppy Island Jump",
+      "rows": 6,
+      "cols": 6,
+      "walls": [
+        "0,5",
+        "2,1",
+        "2,5",
+        "4,3"
+      ],
+      "start": {
+        "r": 3,
+        "c": 0,
+        "dir": 2
+      },
+      "goal": {
+        "r": 4,
+        "c": 5
+      },
+      "par": 8,
+      "hint": "Turn right, then go forward 5 steps \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-b6-happy-desert-run",
+      "name": "Happy Desert Run",
+      "rows": 6,
+      "cols": 6,
+      "walls": [
+        "0,0",
+        "0,1",
+        "2,2",
+        "3,1"
+      ],
+      "start": {
+        "r": 2,
+        "c": 0,
+        "dir": 0
+      },
+      "goal": {
+        "r": 0,
+        "c": 4
+      },
+      "par": 8,
+      "hint": "Go forward 1 step, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-b6-zippy-mountain-trail",
+      "name": "Zippy Mountain Trail",
+      "rows": 6,
+      "cols": 6,
+      "walls": [
+        "4,5",
+        "5,3",
+        "5,4",
+        "5,5"
+      ],
+      "start": {
+        "r": 0,
+        "c": 1,
+        "dir": 3
+      },
+      "goal": {
+        "r": 2,
+        "c": 5
+      },
+      "par": 8,
+      "hint": "Turn right, then go forward 2 steps \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-b6-sunny-star-dash",
+      "name": "Sunny Star Dash",
+      "rows": 6,
+      "cols": 6,
+      "walls": [
+        "0,3",
+        "1,2",
+        "2,5",
+        "4,3",
+        "4,5"
+      ],
+      "start": {
+        "r": 5,
+        "c": 0,
+        "dir": 1
+      },
+      "goal": {
+        "r": 2,
+        "c": 3
+      },
+      "par": 8,
+      "hint": "Go forward 2 steps, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-b6-silly-kitten-run",
+      "name": "Silly Kitten Run",
+      "rows": 6,
+      "cols": 6,
+      "walls": [
+        "1,2",
+        "3,0",
+        "3,2",
+        "3,4",
+        "4,5"
+      ],
+      "start": {
+        "r": 1,
+        "c": 0,
+        "dir": 1
+      },
+      "goal": {
+        "r": 4,
+        "c": 3
+      },
+      "par": 8,
+      "hint": "Go forward 1 step, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-b6-dizzy-rainbow-turn",
+      "name": "Dizzy Rainbow Turn",
+      "rows": 6,
+      "cols": 6,
+      "walls": [
+        "1,2",
+        "1,3",
+        "3,3",
+        "5,1"
+      ],
+      "start": {
+        "r": 0,
+        "c": 3,
+        "dir": 1
+      },
+      "goal": {
+        "r": 3,
+        "c": 2
+      },
+      "par": 9,
+      "hint": "Go forward 1 step, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-b6-peppy-river-run",
+      "name": "Peppy River Run",
+      "rows": 6,
+      "cols": 6,
+      "walls": [
+        "1,1",
+        "1,3",
+        "3,5",
+        "4,2"
+      ],
+      "start": {
+        "r": 0,
+        "c": 5,
+        "dir": 3
+      },
+      "goal": {
+        "r": 5,
+        "c": 2
+      },
+      "par": 10,
+      "hint": "Go forward 1 step, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-b6-clever-desert-run",
+      "name": "Clever Desert Run",
+      "rows": 6,
+      "cols": 6,
+      "walls": [
+        "1,2",
+        "2,1",
+        "2,2",
+        "3,3",
+        "5,2"
+      ],
+      "start": {
+        "r": 0,
+        "c": 4,
+        "dir": 3
+      },
+      "goal": {
+        "r": 3,
+        "c": 1
+      },
+      "par": 10,
+      "hint": "Go forward 4 steps, then turn right \u2014 can you find the rest of the way to the star?"
+    }
+  ]
+}

@@ -1,0 +1,166 @@
+{
+  "puzzles": [
+    {
+      "id": "lib-coding-b2-sunny-rocket-hop",
+      "name": "Sunny Rocket Hop",
+      "rows": 5,
+      "cols": 5,
+      "walls": [
+        "3,2"
+      ],
+      "start": {
+        "r": 1,
+        "c": 4,
+        "dir": 0
+      },
+      "goal": {
+        "r": 2,
+        "c": 3
+      },
+      "par": 4,
+      "hint": "Turn right, then go forward 1 step \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-b2-bright-ocean-hop",
+      "name": "Bright Ocean Hop",
+      "rows": 5,
+      "cols": 5,
+      "walls": [
+        "0,2",
+        "4,2"
+      ],
+      "start": {
+        "r": 0,
+        "c": 1,
+        "dir": 2
+      },
+      "goal": {
+        "r": 3,
+        "c": 0
+      },
+      "par": 5,
+      "hint": "Go forward 3 steps, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-b2-jolly-river-quest",
+      "name": "Jolly River Quest",
+      "rows": 5,
+      "cols": 5,
+      "walls": [
+        "4,4"
+      ],
+      "start": {
+        "r": 0,
+        "c": 0,
+        "dir": 2
+      },
+      "goal": {
+        "r": 2,
+        "c": 2
+      },
+      "par": 5,
+      "hint": "Go forward 2 steps, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-b2-mighty-castle-trail",
+      "name": "Mighty Castle Trail",
+      "rows": 5,
+      "cols": 5,
+      "walls": [
+        "3,3"
+      ],
+      "start": {
+        "r": 2,
+        "c": 4,
+        "dir": 2
+      },
+      "goal": {
+        "r": 4,
+        "c": 2
+      },
+      "par": 5,
+      "hint": "Go forward 2 steps, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-b2-sunny-moon-dash",
+      "name": "Sunny Moon Dash",
+      "rows": 5,
+      "cols": 5,
+      "walls": [
+        "0,2"
+      ],
+      "start": {
+        "r": 2,
+        "c": 4,
+        "dir": 3
+      },
+      "goal": {
+        "r": 4,
+        "c": 2
+      },
+      "par": 5,
+      "hint": "Go forward 2 steps, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-b2-mighty-star-dash",
+      "name": "Mighty Star Dash",
+      "rows": 5,
+      "cols": 5,
+      "walls": [
+        "1,4",
+        "4,1"
+      ],
+      "start": {
+        "r": 0,
+        "c": 1,
+        "dir": 3
+      },
+      "goal": {
+        "r": 3,
+        "c": 0
+      },
+      "par": 5,
+      "hint": "Go forward 1 step, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-b2-happy-river-dash",
+      "name": "Happy River Dash",
+      "rows": 5,
+      "cols": 5,
+      "walls": [
+        "3,0"
+      ],
+      "start": {
+        "r": 3,
+        "c": 4,
+        "dir": 3
+      },
+      "goal": {
+        "r": 2,
+        "c": 1
+      },
+      "par": 5,
+      "hint": "Go forward 3 steps, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-b2-happy-moon-turn",
+      "name": "Happy Moon Turn",
+      "rows": 5,
+      "cols": 5,
+      "walls": [
+        "1,1"
+      ],
+      "start": {
+        "r": 1,
+        "c": 0,
+        "dir": 0
+      },
+      "goal": {
+        "r": 1,
+        "c": 2
+      },
+      "par": 6,
+      "hint": "Go forward 1 step, then turn right \u2014 can you find the rest of the way to the star?"
+    }
+  ]
+}

@@ -1,0 +1,244 @@
+{
+  "puzzles": [
+    {
+      "id": "lib-coding-a6-clever-rocket-race",
+      "name": "Clever Rocket Race",
+      "rows": 7,
+      "cols": 7,
+      "walls": [
+        "1,3",
+        "2,6",
+        "3,0",
+        "3,5",
+        "4,1",
+        "4,6",
+        "5,4",
+        "6,1",
+        "6,4",
+        "6,5",
+        "6,6"
+      ],
+      "start": {
+        "r": 6,
+        "c": 0,
+        "dir": 3
+      },
+      "goal": {
+        "r": 1,
+        "c": 6
+      },
+      "par": 17,
+      "hint": "Turn right, then go forward 1 step \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-a6-sunny-kitten-dash",
+      "name": "Sunny Kitten Dash",
+      "rows": 7,
+      "cols": 7,
+      "walls": [
+        "2,0",
+        "2,6",
+        "3,0",
+        "3,4",
+        "4,2",
+        "4,3",
+        "4,4",
+        "5,2",
+        "5,5",
+        "6,6"
+      ],
+      "start": {
+        "r": 5,
+        "c": 6,
+        "dir": 3
+      },
+      "goal": {
+        "r": 4,
+        "c": 0
+      },
+      "par": 17,
+      "hint": "Turn right, then go forward 2 steps \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-a6-clever-moon-spin",
+      "name": "Clever Moon Spin",
+      "rows": 7,
+      "cols": 7,
+      "walls": [
+        "0,0",
+        "0,1",
+        "1,2",
+        "1,3",
+        "2,1",
+        "3,0",
+        "3,1",
+        "4,3",
+        "5,2",
+        "5,4"
+      ],
+      "start": {
+        "r": 5,
+        "c": 0,
+        "dir": 1
+      },
+      "goal": {
+        "r": 0,
+        "c": 2
+      },
+      "par": 17,
+      "hint": "Go forward 1 step, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-a6-cosmic-rainbow-walk",
+      "name": "Cosmic Rainbow Walk",
+      "rows": 7,
+      "cols": 7,
+      "walls": [
+        "0,2",
+        "0,4",
+        "1,5",
+        "2,1",
+        "2,2",
+        "2,6",
+        "3,3",
+        "3,5",
+        "4,0",
+        "4,3",
+        "4,4",
+        "5,4"
+      ],
+      "start": {
+        "r": 6,
+        "c": 0,
+        "dir": 0
+      },
+      "goal": {
+        "r": 0,
+        "c": 3
+      },
+      "par": 17,
+      "hint": "Go forward 1 step, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-a6-lucky-river-race",
+      "name": "Lucky River Race",
+      "rows": 7,
+      "cols": 7,
+      "walls": [
+        "0,1",
+        "1,2",
+        "1,3",
+        "2,4",
+        "2,5",
+        "3,2",
+        "4,6",
+        "5,3",
+        "6,4",
+        "6,6"
+      ],
+      "start": {
+        "r": 0,
+        "c": 4,
+        "dir": 2
+      },
+      "goal": {
+        "r": 5,
+        "c": 2
+      },
+      "par": 17,
+      "hint": "Go forward 1 step, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-a6-jolly-robot-race",
+      "name": "Jolly Robot Race",
+      "rows": 7,
+      "cols": 7,
+      "walls": [
+        "1,4",
+        "2,1",
+        "2,5",
+        "2,6",
+        "3,2",
+        "4,4",
+        "4,5",
+        "5,0",
+        "5,3",
+        "5,5",
+        "6,4"
+      ],
+      "start": {
+        "r": 6,
+        "c": 5,
+        "dir": 0
+      },
+      "goal": {
+        "r": 1,
+        "c": 5
+      },
+      "par": 19,
+      "hint": "Turn right, then go forward 1 step \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-a6-dizzy-desert-twist",
+      "name": "Dizzy Desert Twist",
+      "rows": 7,
+      "cols": 7,
+      "walls": [
+        "0,3",
+        "0,4",
+        "1,1",
+        "1,3",
+        "1,4",
+        "1,5",
+        "2,2",
+        "2,5",
+        "3,5",
+        "4,3",
+        "5,4",
+        "6,4"
+      ],
+      "start": {
+        "r": 6,
+        "c": 2,
+        "dir": 3
+      },
+      "goal": {
+        "r": 0,
+        "c": 5
+      },
+      "par": 19,
+      "hint": "Turn right, then go forward 3 steps \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-a6-sunny-kitten-turn",
+      "name": "Sunny Kitten Turn",
+      "rows": 7,
+      "cols": 7,
+      "walls": [
+        "0,4",
+        "1,2",
+        "1,5",
+        "2,1",
+        "2,2",
+        "2,3",
+        "2,4",
+        "4,0",
+        "4,1",
+        "4,2",
+        "5,4",
+        "6,3"
+      ],
+      "start": {
+        "r": 6,
+        "c": 2,
+        "dir": 3
+      },
+      "goal": {
+        "r": 0,
+        "c": 3
+      },
+      "par": 19,
+      "hint": "Turn right, then go forward 1 step \u2014 can you find the rest of the way to the star?"
+    }
+  ]
+}

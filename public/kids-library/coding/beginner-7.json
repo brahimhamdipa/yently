@@ -1,0 +1,192 @@
+{
+  "puzzles": [
+    {
+      "id": "lib-coding-b7-peppy-river-run",
+      "name": "Peppy River Run",
+      "rows": 6,
+      "cols": 6,
+      "walls": [
+        "3,0",
+        "3,2",
+        "3,4",
+        "4,5"
+      ],
+      "start": {
+        "r": 5,
+        "c": 5,
+        "dir": 3
+      },
+      "goal": {
+        "r": 2,
+        "c": 5
+      },
+      "par": 9,
+      "hint": "Go forward 2 steps, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-b7-cosmic-comet-spin",
+      "name": "Cosmic Comet Spin",
+      "rows": 6,
+      "cols": 6,
+      "walls": [
+        "0,3",
+        "0,4",
+        "1,1",
+        "5,0",
+        "5,2"
+      ],
+      "start": {
+        "r": 5,
+        "c": 5,
+        "dir": 3
+      },
+      "goal": {
+        "r": 3,
+        "c": 0
+      },
+      "par": 9,
+      "hint": "Go forward 2 steps, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-b7-peppy-garden-quest",
+      "name": "Peppy Garden Quest",
+      "rows": 6,
+      "cols": 6,
+      "walls": [
+        "0,5",
+        "2,1",
+        "2,4",
+        "3,2"
+      ],
+      "start": {
+        "r": 5,
+        "c": 0,
+        "dir": 0
+      },
+      "goal": {
+        "r": 2,
+        "c": 2
+      },
+      "par": 9,
+      "hint": "Go forward 4 steps, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-b7-bright-puppy-trail",
+      "name": "Bright Puppy Trail",
+      "rows": 6,
+      "cols": 6,
+      "walls": [
+        "0,2",
+        "2,0",
+        "2,5",
+        "4,4"
+      ],
+      "start": {
+        "r": 5,
+        "c": 0,
+        "dir": 1
+      },
+      "goal": {
+        "r": 0,
+        "c": 0
+      },
+      "par": 9,
+      "hint": "Go forward 1 step, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-b7-peppy-kitten-jump",
+      "name": "Peppy Kitten Jump",
+      "rows": 6,
+      "cols": 6,
+      "walls": [
+        "1,1",
+        "2,1",
+        "2,3",
+        "2,4",
+        "4,1"
+      ],
+      "start": {
+        "r": 0,
+        "c": 3,
+        "dir": 1
+      },
+      "goal": {
+        "r": 4,
+        "c": 4
+      },
+      "par": 9,
+      "hint": "Go forward 2 steps, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-b7-dizzy-garden-trip",
+      "name": "Dizzy Garden Trip",
+      "rows": 6,
+      "cols": 5,
+      "walls": [
+        "0,2",
+        "1,4",
+        "3,1",
+        "5,0"
+      ],
+      "start": {
+        "r": 3,
+        "c": 4,
+        "dir": 0
+      },
+      "goal": {
+        "r": 0,
+        "c": 0
+      },
+      "par": 9,
+      "hint": "Go forward 1 step, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-b7-brave-mountain-turn",
+      "name": "Brave Mountain Turn",
+      "rows": 6,
+      "cols": 5,
+      "walls": [
+        "0,3",
+        "1,4",
+        "3,4",
+        "4,2",
+        "5,3"
+      ],
+      "start": {
+        "r": 5,
+        "c": 2,
+        "dir": 3
+      },
+      "goal": {
+        "r": 1,
+        "c": 3
+      },
+      "par": 9,
+      "hint": "Go forward 1 step, then turn right \u2014 can you find the rest of the way to the star?"
+    },
+    {
+      "id": "lib-coding-b7-clever-desert-run",
+      "name": "Clever Desert Run",
+      "rows": 6,
+      "cols": 6,
+      "walls": [
+        "0,1",
+        "0,5",
+        "1,4",
+        "2,1",
+        "3,2"
+      ],
+      "start": {
+        "r": 5,
+        "c": 0,
+        "dir": 0
+      },
+      "goal": {
+        "r": 0,
+        "c": 4
+      },
+      "par": 12,
+      "hint": "Go forward 4 steps, then turn right \u2014 can you find the rest of the way to the star?"
+    }
+  ]
+}
