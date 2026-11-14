@@ -440,6 +440,17 @@
       '<div class="row"><button id="setup-chats-toggle" class="secondary">💬 Chats — المحادثات</button></div>' +
       '<div id="setup-chats"></div>';
     el.innerHTML = html;
+    /* Yently content library: ready-to-use levels for this subject.
+       Mounts only here in Setup, never in public play. The library
+       adds items to the school's own list — nothing is removed. */
+    if (window.KidsLibrary) {
+      var libBox = document.createElement('div');
+      libBox.id = 'setup-library';
+      var saveRow = $('setup-save') && $('setup-save').parentNode;
+      if (saveRow && saveRow.parentNode) saveRow.parentNode.insertBefore(libBox, saveRow);
+      else el.appendChild(libBox);
+      window.KidsLibrary.mount({ subject: 'geography', slug: SLUG, creds: staffCreds, container: libBox, onAdded: function () { openSetup(); } });
+    }
     /* Per-shop live chat: owner inbox, behind the owner login.
        Opens on tap; tapping again (or leaving Setup) stops its poll. */
     $('setup-chats-toggle').addEventListener('click', function () {
