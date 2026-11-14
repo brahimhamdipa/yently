@@ -1,0 +1,144 @@
+{
+  "countries": [
+    {
+      "name": "Algeria",
+      "capital": "Algiers",
+      "continent": "Africa",
+      "flag": "🇩🇿",
+      "easy": true
+    },
+    {
+      "name": "Tunisia",
+      "capital": "Tunis",
+      "continent": "Africa",
+      "flag": "🇹🇳",
+      "easy": true
+    },
+    {
+      "name": "Libya",
+      "capital": "Tripoli",
+      "continent": "Africa",
+      "flag": "🇱🇾",
+      "easy": false
+    },
+    {
+      "name": "Sudan",
+      "capital": "Khartoum",
+      "continent": "Africa",
+      "flag": "🇸🇩",
+      "easy": false
+    },
+    {
+      "name": "Senegal",
+      "capital": "Dakar",
+      "continent": "Africa",
+      "flag": "🇸🇳",
+      "easy": true
+    },
+    {
+      "name": "Ivory Coast",
+      "capital": "Yamoussoukro",
+      "continent": "Africa",
+      "flag": "🇨🇮",
+      "easy": false
+    },
+    {
+      "name": "Cameroon",
+      "capital": "Yaoundé",
+      "continent": "Africa",
+      "flag": "🇨🇲",
+      "easy": false
+    },
+    {
+      "name": "Uganda",
+      "capital": "Kampala",
+      "continent": "Africa",
+      "flag": "🇺🇬",
+      "easy": false
+    },
+    {
+      "name": "Tanzania",
+      "capital": "Dodoma",
+      "continent": "Africa",
+      "flag": "🇹🇿",
+      "easy": false
+    },
+    {
+      "name": "Zambia",
+      "capital": "Lusaka",
+      "continent": "Africa",
+      "flag": "🇿🇲",
+      "easy": false
+    },
+    {
+      "name": "Zimbabwe",
+      "capital": "Harare",
+      "continent": "Africa",
+      "flag": "🇿🇼",
+      "easy": false
+    },
+    {
+      "name": "Angola",
+      "capital": "Luanda",
+      "continent": "Africa",
+      "flag": "🇦🇴",
+      "easy": false
+    },
+    {
+      "name": "Madagascar",
+      "capital": "Antananarivo",
+      "continent": "Africa",
+      "flag": "🇲🇬",
+      "easy": false
+    },
+    {
+      "name": "Mauritius",
+      "capital": "Port Louis",
+      "continent": "Africa",
+      "flag": "🇲🇺",
+      "easy": false
+    },
+    {
+      "name": "Kenya",
+      "capital": "Nairobi",
+      "continent": "Africa",
+      "flag": "🇰🇪",
+      "easy": true
+    },
+    {
+      "name": "Sweden",
+      "capital": "Stockholm",
+      "continent": "Europe",
+      "flag": "🇸🇪",
+      "easy": true
+    },
+    {
+      "name": "Netherlands",
+      "capital": "Amsterdam",
+      "continent": "Europe",
+      "flag": "🇳🇱",
+      "easy": true
+    },
+    {
+      "name": "Belgium",
+      "capital": "Brussels",
+      "continent": "Europe",
+      "flag": "🇧🇪",
+      "easy": true
+    },
+    {
+      "name": "Switzerland",
+      "capital": "Bern",
+      "continent": "Europe",
+      "flag": "🇨🇭",
+      "easy": true
+    },
+    {
+      "name": "Austria",
+      "capital": "Vienna",
+      "continent": "Europe",
+      "flag": "🇦🇹",
+      "easy": true
+    }
+  ]
+}

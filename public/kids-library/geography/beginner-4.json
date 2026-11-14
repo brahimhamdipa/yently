@@ -1,0 +1,144 @@
+{
+  "countries": [
+    {
+      "name": "North Korea",
+      "capital": "Pyongyang",
+      "continent": "Asia",
+      "flag": "🇰🇵",
+      "easy": true
+    },
+    {
+      "name": "Indonesia",
+      "capital": "Jakarta",
+      "continent": "Asia",
+      "flag": "🇮🇩",
+      "easy": true
+    },
+    {
+      "name": "Vietnam",
+      "capital": "Hanoi",
+      "continent": "Asia",
+      "flag": "🇻🇳",
+      "easy": true
+    },
+    {
+      "name": "Philippines",
+      "capital": "Manila",
+      "continent": "Asia",
+      "flag": "🇵🇭",
+      "easy": true
+    },
+    {
+      "name": "Malaysia",
+      "capital": "Kuala Lumpur",
+      "continent": "Asia",
+      "flag": "🇲🇾",
+      "easy": true
+    },
+    {
+      "name": "Pakistan",
+      "capital": "Islamabad",
+      "continent": "Asia",
+      "flag": "🇵🇰",
+      "easy": true
+    },
+    {
+      "name": "Ukraine",
+      "capital": "Kyiv",
+      "continent": "Europe",
+      "flag": "🇺🇦",
+      "easy": true
+    },
+    {
+      "name": "Czech Republic",
+      "capital": "Prague",
+      "continent": "Europe",
+      "flag": "🇨🇿",
+      "easy": true
+    },
+    {
+      "name": "Hungary",
+      "capital": "Budapest",
+      "continent": "Europe",
+      "flag": "🇭🇺",
+      "easy": true
+    },
+    {
+      "name": "Romania",
+      "capital": "Bucharest",
+      "continent": "Europe",
+      "flag": "🇷🇴",
+      "easy": true
+    },
+    {
+      "name": "Bulgaria",
+      "capital": "Sofia",
+      "continent": "Europe",
+      "flag": "🇧🇬",
+      "easy": true
+    },
+    {
+      "name": "Croatia",
+      "capital": "Zagreb",
+      "continent": "Europe",
+      "flag": "🇭🇷",
+      "easy": true
+    },
+    {
+      "name": "Serbia",
+      "capital": "Belgrade",
+      "continent": "Europe",
+      "flag": "🇷🇸",
+      "easy": true
+    },
+    {
+      "name": "Cuba",
+      "capital": "Havana",
+      "continent": "North America",
+      "flag": "🇨🇺",
+      "easy": true
+    },
+    {
+      "name": "Jamaica",
+      "capital": "Kingston",
+      "continent": "North America",
+      "flag": "🇯🇲",
+      "easy": true
+    },
+    {
+      "name": "Estonia",
+      "capital": "Tallinn",
+      "continent": "Europe",
+      "flag": "🇪🇪",
+      "easy": true
+    },
+    {
+      "name": "Slovakia",
+      "capital": "Bratislava",
+      "continent": "Europe",
+      "flag": "🇸🇰",
+      "easy": true
+    },
+    {
+      "name": "Slovenia",
+      "capital": "Ljubljana",
+      "continent": "Europe",
+      "flag": "🇸🇮",
+      "easy": true
+    },
+    {
+      "name": "Luxembourg",
+      "capital": "Luxembourg City",
+      "continent": "Europe",
+      "flag": "🇱🇺",
+      "easy": true
+    },
+    {
+      "name": "Malta",
+      "capital": "Valletta",
+      "continent": "Europe",
+      "flag": "🇲🇹",
+      "easy": true
+    }
+  ]
+}

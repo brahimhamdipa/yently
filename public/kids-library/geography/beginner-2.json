@@ -1,0 +1,144 @@
+{
+  "countries": [
+    {
+      "name": "Morocco",
+      "capital": "Rabat",
+      "continent": "Africa",
+      "flag": "🇲🇦",
+      "easy": true
+    },
+    {
+      "name": "Turkey",
+      "capital": "Ankara",
+      "continent": "Asia",
+      "flag": "🇹🇷",
+      "easy": true
+    },
+    {
+      "name": "Argentina",
+      "capital": "Buenos Aires",
+      "continent": "South America",
+      "flag": "🇦🇷",
+      "easy": true
+    },
+    {
+      "name": "Thailand",
+      "capital": "Bangkok",
+      "continent": "Asia",
+      "flag": "🇹🇭",
+      "easy": true
+    },
+    {
+      "name": "Kenya",
+      "capital": "Nairobi",
+      "continent": "Africa",
+      "flag": "🇰🇪",
+      "easy": true
+    },
+    {
+      "name": "Peru",
+      "capital": "Lima",
+      "continent": "South America",
+      "flag": "🇵🇪",
+      "easy": true
+    },
+    {
+      "name": "New Zealand",
+      "capital": "Wellington",
+      "continent": "Oceania",
+      "flag": "🇳🇿",
+      "easy": true
+    },
+    {
+      "name": "South Africa",
+      "capital": "Pretoria",
+      "continent": "Africa",
+      "flag": "🇿🇦",
+      "easy": true
+    },
+    {
+      "name": "Norway",
+      "capital": "Oslo",
+      "continent": "Europe",
+      "flag": "🇳🇴",
+      "easy": true
+    },
+    {
+      "name": "Sweden",
+      "capital": "Stockholm",
+      "continent": "Europe",
+      "flag": "🇸🇪",
+      "easy": true
+    },
+    {
+      "name": "Netherlands",
+      "capital": "Amsterdam",
+      "continent": "Europe",
+      "flag": "🇳🇱",
+      "easy": true
+    },
+    {
+      "name": "Belgium",
+      "capital": "Brussels",
+      "continent": "Europe",
+      "flag": "🇧🇪",
+      "easy": true
+    },
+    {
+      "name": "Switzerland",
+      "capital": "Bern",
+      "continent": "Europe",
+      "flag": "🇨🇭",
+      "easy": true
+    },
+    {
+      "name": "Austria",
+      "capital": "Vienna",
+      "continent": "Europe",
+      "flag": "🇦🇹",
+      "easy": true
+    },
+    {
+      "name": "Greece",
+      "capital": "Athens",
+      "continent": "Europe",
+      "flag": "🇬🇷",
+      "easy": true
+    },
+    {
+      "name": "Guatemala",
+      "capital": "Guatemala City",
+      "continent": "North America",
+      "flag": "🇬🇹",
+      "easy": true
+    },
+    {
+      "name": "Honduras",
+      "capital": "Tegucigalpa",
+      "continent": "North America",
+      "flag": "🇭🇳",
+      "easy": true
+    },
+    {
+      "name": "Dominican Republic",
+      "capital": "Santo Domingo",
+      "continent": "North America",
+      "flag": "🇩🇴",
+      "easy": true
+    },
+    {
+      "name": "Haiti",
+      "capital": "Port-au-Prince",
+      "continent": "North America",
+      "flag": "🇭🇹",
+      "easy": true
+    },
+    {
+      "name": "Bahamas",
+      "capital": "Nassau",
+      "continent": "North America",
+      "flag": "🇧🇸",
+      "easy": true
+    }
+  ]
+}

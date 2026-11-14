@@ -1,0 +1,144 @@
+{
+  "countries": [
+    {
+      "name": "Grenada",
+      "capital": "St. George's",
+      "continent": "North America",
+      "flag": "🇬🇩",
+      "easy": false
+    },
+    {
+      "name": "Saint Lucia",
+      "capital": "Castries",
+      "continent": "North America",
+      "flag": "🇱🇨",
+      "easy": false
+    },
+    {
+      "name": "Saint Vincent and the Grenadines",
+      "capital": "Kingstown",
+      "continent": "North America",
+      "flag": "🇻🇨",
+      "easy": false
+    },
+    {
+      "name": "Antigua and Barbuda",
+      "capital": "St. John's",
+      "continent": "North America",
+      "flag": "🇦🇬",
+      "easy": false
+    },
+    {
+      "name": "Dominica",
+      "capital": "Roseau",
+      "continent": "North America",
+      "flag": "🇩🇲",
+      "easy": false
+    },
+    {
+      "name": "Saint Kitts and Nevis",
+      "capital": "Basseterre",
+      "continent": "North America",
+      "flag": "🇰🇳",
+      "easy": false
+    },
+    {
+      "name": "Solomon Islands",
+      "capital": "Honiara",
+      "continent": "Oceania",
+      "flag": "🇸🇧",
+      "easy": false
+    },
+    {
+      "name": "Vanuatu",
+      "capital": "Port Vila",
+      "continent": "Oceania",
+      "flag": "🇻🇺",
+      "easy": false
+    },
+    {
+      "name": "Kiribati",
+      "capital": "Tarawa",
+      "continent": "Oceania",
+      "flag": "🇰🇮",
+      "easy": false
+    },
+    {
+      "name": "Tuvalu",
+      "capital": "Funafuti",
+      "continent": "Oceania",
+      "flag": "🇹🇻",
+      "easy": false
+    },
+    {
+      "name": "Nauru",
+      "capital": "Yaren",
+      "continent": "Oceania",
+      "flag": "🇳🇷",
+      "easy": false
+    },
+    {
+      "name": "Palau",
+      "capital": "Ngerulmud",
+      "continent": "Oceania",
+      "flag": "🇵🇼",
+      "easy": false
+    },
+    {
+      "name": "Marshall Islands",
+      "capital": "Majuro",
+      "continent": "Oceania",
+      "flag": "🇲🇭",
+      "easy": false
+    },
+    {
+      "name": "Micronesia",
+      "capital": "Palikir",
+      "continent": "Oceania",
+      "flag": "🇫🇲",
+      "easy": false
+    },
+    {
+      "name": "Suriname",
+      "capital": "Paramaribo",
+      "continent": "South America",
+      "flag": "🇸🇷",
+      "easy": false
+    },
+    {
+      "name": "United States",
+      "capital": "Washington, D.C.",
+      "continent": "North America",
+      "flag": "🇺🇸",
+      "easy": false
+    },
+    {
+      "name": "Canada",
+      "capital": "Ottawa",
+      "continent": "North America",
+      "flag": "🇨🇦",
+      "easy": false
+    },
+    {
+      "name": "Mexico",
+      "capital": "Mexico City",
+      "continent": "North America",
+      "flag": "🇲🇽",
+      "easy": false
+    },
+    {
+      "name": "Australia",
+      "capital": "Canberra",
+      "continent": "Oceania",
+      "flag": "🇦🇺",
+      "easy": false
+    },
+    {
+      "name": "Egypt",
+      "capital": "Cairo",
+      "continent": "Africa",
+      "flag": "🇪🇬",
+      "easy": false
+    }
+  ]
+}

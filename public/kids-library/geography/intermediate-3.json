@@ -1,0 +1,144 @@
+{
+  "countries": [
+    {
+      "name": "Seychelles",
+      "capital": "Victoria",
+      "continent": "Africa",
+      "flag": "🇸🇨",
+      "easy": false
+    },
+    {
+      "name": "Ecuador",
+      "capital": "Quito",
+      "continent": "South America",
+      "flag": "🇪🇨",
+      "easy": true
+    },
+    {
+      "name": "Bolivia",
+      "capital": "Sucre",
+      "continent": "South America",
+      "flag": "🇧🇴",
+      "easy": false
+    },
+    {
+      "name": "Paraguay",
+      "capital": "Asunción",
+      "continent": "South America",
+      "flag": "🇵🇾",
+      "easy": false
+    },
+    {
+      "name": "Uruguay",
+      "capital": "Montevideo",
+      "continent": "South America",
+      "flag": "🇺🇾",
+      "easy": false
+    },
+    {
+      "name": "Guyana",
+      "capital": "Georgetown",
+      "continent": "South America",
+      "flag": "🇬🇾",
+      "easy": false
+    },
+    {
+      "name": "Costa Rica",
+      "capital": "San José",
+      "continent": "North America",
+      "flag": "🇨🇷",
+      "easy": true
+    },
+    {
+      "name": "Panama",
+      "capital": "Panama City",
+      "continent": "North America",
+      "flag": "🇵🇦",
+      "easy": true
+    },
+    {
+      "name": "Guatemala",
+      "capital": "Guatemala City",
+      "continent": "North America",
+      "flag": "🇬🇹",
+      "easy": false
+    },
+    {
+      "name": "Honduras",
+      "capital": "Tegucigalpa",
+      "continent": "North America",
+      "flag": "🇭🇳",
+      "easy": false
+    },
+    {
+      "name": "El Salvador",
+      "capital": "San Salvador",
+      "continent": "North America",
+      "flag": "🇸🇻",
+      "easy": false
+    },
+    {
+      "name": "Nicaragua",
+      "capital": "Managua",
+      "continent": "North America",
+      "flag": "🇳🇮",
+      "easy": false
+    },
+    {
+      "name": "Belize",
+      "capital": "Belmopan",
+      "continent": "North America",
+      "flag": "🇧🇿",
+      "easy": false
+    },
+    {
+      "name": "Dominican Republic",
+      "capital": "Santo Domingo",
+      "continent": "North America",
+      "flag": "🇩🇴",
+      "easy": false
+    },
+    {
+      "name": "Peru",
+      "capital": "Lima",
+      "continent": "South America",
+      "flag": "🇵🇪",
+      "easy": true
+    },
+    {
+      "name": "Greece",
+      "capital": "Athens",
+      "continent": "Europe",
+      "flag": "🇬🇷",
+      "easy": true
+    },
+    {
+      "name": "Portugal",
+      "capital": "Lisbon",
+      "continent": "Europe",
+      "flag": "🇵🇹",
+      "easy": true
+    },
+    {
+      "name": "Poland",
+      "capital": "Warsaw",
+      "continent": "Europe",
+      "flag": "🇵🇱",
+      "easy": true
+    },
+    {
+      "name": "Ireland",
+      "capital": "Dublin",
+      "continent": "Europe",
+      "flag": "🇮🇪",
+      "easy": true
+    },
+    {
+      "name": "Denmark",
+      "capital": "Copenhagen",
+      "continent": "Europe",
+      "flag": "🇩🇰",
+      "easy": true
+    }
+  ]
+}

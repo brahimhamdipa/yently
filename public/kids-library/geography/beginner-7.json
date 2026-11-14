@@ -1,0 +1,144 @@
+{
+  "countries": [
+    {
+      "name": "Libya",
+      "capital": "Tripoli",
+      "continent": "Africa",
+      "flag": "🇱🇾",
+      "easy": true
+    },
+    {
+      "name": "Sudan",
+      "capital": "Khartoum",
+      "continent": "Africa",
+      "flag": "🇸🇩",
+      "easy": true
+    },
+    {
+      "name": "Senegal",
+      "capital": "Dakar",
+      "continent": "Africa",
+      "flag": "🇸🇳",
+      "easy": true
+    },
+    {
+      "name": "Ivory Coast",
+      "capital": "Yamoussoukro",
+      "continent": "Africa",
+      "flag": "🇨🇮",
+      "easy": true
+    },
+    {
+      "name": "Cameroon",
+      "capital": "Yaoundé",
+      "continent": "Africa",
+      "flag": "🇨🇲",
+      "easy": true
+    },
+    {
+      "name": "Uganda",
+      "capital": "Kampala",
+      "continent": "Africa",
+      "flag": "🇺🇬",
+      "easy": true
+    },
+    {
+      "name": "Tanzania",
+      "capital": "Dodoma",
+      "continent": "Africa",
+      "flag": "🇹🇿",
+      "easy": true
+    },
+    {
+      "name": "Zambia",
+      "capital": "Lusaka",
+      "continent": "Africa",
+      "flag": "🇿🇲",
+      "easy": true
+    },
+    {
+      "name": "Zimbabwe",
+      "capital": "Harare",
+      "continent": "Africa",
+      "flag": "🇿🇼",
+      "easy": true
+    },
+    {
+      "name": "Angola",
+      "capital": "Luanda",
+      "continent": "Africa",
+      "flag": "🇦🇴",
+      "easy": true
+    },
+    {
+      "name": "Madagascar",
+      "capital": "Antananarivo",
+      "continent": "Africa",
+      "flag": "🇲🇬",
+      "easy": true
+    },
+    {
+      "name": "Mauritius",
+      "capital": "Port Louis",
+      "continent": "Africa",
+      "flag": "🇲🇺",
+      "easy": true
+    },
+    {
+      "name": "Seychelles",
+      "capital": "Victoria",
+      "continent": "Africa",
+      "flag": "🇸🇨",
+      "easy": true
+    },
+    {
+      "name": "Ecuador",
+      "capital": "Quito",
+      "continent": "South America",
+      "flag": "🇪🇨",
+      "easy": true
+    },
+    {
+      "name": "Bolivia",
+      "capital": "Sucre",
+      "continent": "South America",
+      "flag": "🇧🇴",
+      "easy": true
+    },
+    {
+      "name": "Chad",
+      "capital": "N'Djamena",
+      "continent": "Africa",
+      "flag": "🇹🇩",
+      "easy": true
+    },
+    {
+      "name": "Somalia",
+      "capital": "Mogadishu",
+      "continent": "Africa",
+      "flag": "🇸🇴",
+      "easy": true
+    },
+    {
+      "name": "Rwanda",
+      "capital": "Kigali",
+      "continent": "Africa",
+      "flag": "🇷🇼",
+      "easy": true
+    },
+    {
+      "name": "Botswana",
+      "capital": "Gaborone",
+      "continent": "Africa",
+      "flag": "🇧🇼",
+      "easy": true
+    },
+    {
+      "name": "Namibia",
+      "capital": "Windhoek",
+      "continent": "Africa",
+      "flag": "🇳🇦",
+      "easy": true
+    }
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "countries": [
+    {
+      "name": "Togo",
+      "capital": "Lomé",
+      "continent": "Africa",
+      "flag": "🇹🇬",
+      "easy": false
+    },
+    {
+      "name": "Benin",
+      "capital": "Porto-Novo",
+      "continent": "Africa",
+      "flag": "🇧🇯",
+      "easy": false
+    },
+    {
+      "name": "Gabon",
+      "capital": "Libreville",
+      "continent": "Africa",
+      "flag": "🇬🇦",
+      "easy": false
+    },
+    {
+      "name": "Congo",
+      "capital": "Brazzaville",
+      "continent": "Africa",
+      "flag": "🇨🇬",
+      "easy": false
+    },
+    {
+      "name": "DR Congo",
+      "capital": "Kinshasa",
+      "continent": "Africa",
+      "flag": "🇨🇩",
+      "easy": false
+    },
+    {
+      "name": "Chad",
+      "capital": "N'Djamena",
+      "continent": "Africa",
+      "flag": "🇹🇩",
+      "easy": false
+    },
+    {
+      "name": "Central African Republic",
+      "capital": "Bangui",
+      "continent": "Africa",
+      "flag": "🇨🇫",
+      "easy": false
+    },
+    {
+      "name": "South Sudan",
+      "capital": "Juba",
+      "continent": "Africa",
+      "flag": "🇸🇸",
+      "easy": false
+    },
+    {
+      "name": "Somalia",
+      "capital": "Mogadishu",
+      "continent": "Africa",
+      "flag": "🇸🇴",
+      "easy": false
+    },
+    {
+      "name": "Eritrea",
+      "capital": "Asmara",
+      "continent": "Africa",
+      "flag": "🇪🇷",
+      "easy": false
+    },
+    {
+      "name": "Djibouti",
+      "capital": "Djibouti",
+      "continent": "Africa",
+      "flag": "🇩🇯",
+      "easy": false
+    },
+    {
+      "name": "Rwanda",
+      "capital": "Kigali",
+      "continent": "Africa",
+      "flag": "🇷🇼",
+      "easy": false
+    },
+    {
+      "name": "Burundi",
+      "capital": "Gitega",
+      "continent": "Africa",
+      "flag": "🇧🇮",
+      "easy": false
+    },
+    {
+      "name": "Malawi",
+      "capital": "Lilongwe",
+      "continent": "Africa",
+      "flag": "🇲🇼",
+      "easy": false
+    },
+    {
+      "name": "Mozambique",
+      "capital": "Maputo",
+      "continent": "Africa",
+      "flag": "🇲🇿",
+      "easy": false
+    },
+    {
+      "name": "Czech Republic",
+      "capital": "Prague",
+      "continent": "Europe",
+      "flag": "🇨🇿",
+      "easy": false
+    },
+    {
+      "name": "Hungary",
+      "capital": "Budapest",
+      "continent": "Europe",
+      "flag": "🇭🇺",
+      "easy": false
+    },
+    {
+      "name": "Romania",
+      "capital": "Bucharest",
+      "continent": "Europe",
+      "flag": "🇷🇴",
+      "easy": false
+    },
+    {
+      "name": "Bulgaria",
+      "capital": "Sofia",
+      "continent": "Europe",
+      "flag": "🇧🇬",
+      "easy": false
+    },
+    {
+      "name": "Croatia",
+      "capital": "Zagreb",
+      "continent": "Europe",
+      "flag": "🇭🇷",
+      "easy": false
+    }
+  ]
+}

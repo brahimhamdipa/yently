@@ -1,0 +1,144 @@
+{
+  "countries": [
+    {
+      "name": "Cyprus",
+      "capital": "Nicosia",
+      "continent": "Europe",
+      "flag": "🇨🇾",
+      "easy": true
+    },
+    {
+      "name": "Albania",
+      "capital": "Tirana",
+      "continent": "Europe",
+      "flag": "🇦🇱",
+      "easy": true
+    },
+    {
+      "name": "Bosnia and Herzegovina",
+      "capital": "Sarajevo",
+      "continent": "Europe",
+      "flag": "🇧🇦",
+      "easy": false
+    },
+    {
+      "name": "Montenegro",
+      "capital": "Podgorica",
+      "continent": "Europe",
+      "flag": "🇲🇪",
+      "easy": false
+    },
+    {
+      "name": "North Macedonia",
+      "capital": "Skopje",
+      "continent": "Europe",
+      "flag": "🇲🇰",
+      "easy": false
+    },
+    {
+      "name": "Moldova",
+      "capital": "Chișinău",
+      "continent": "Europe",
+      "flag": "🇲🇩",
+      "easy": false
+    },
+    {
+      "name": "Belarus",
+      "capital": "Minsk",
+      "continent": "Europe",
+      "flag": "🇧🇾",
+      "easy": false
+    },
+    {
+      "name": "Andorra",
+      "capital": "Andorra la Vella",
+      "continent": "Europe",
+      "flag": "🇦🇩",
+      "easy": false
+    },
+    {
+      "name": "Monaco",
+      "capital": "Monaco",
+      "continent": "Europe",
+      "flag": "🇲🇨",
+      "easy": false
+    },
+    {
+      "name": "San Marino",
+      "capital": "San Marino",
+      "continent": "Europe",
+      "flag": "🇸🇲",
+      "easy": false
+    },
+    {
+      "name": "Liechtenstein",
+      "capital": "Vaduz",
+      "continent": "Europe",
+      "flag": "🇱🇮",
+      "easy": false
+    },
+    {
+      "name": "Vatican City",
+      "capital": "Vatican City",
+      "continent": "Europe",
+      "flag": "🇻🇦",
+      "easy": false
+    },
+    {
+      "name": "Mali",
+      "capital": "Bamako",
+      "continent": "Africa",
+      "flag": "🇲🇱",
+      "easy": true
+    },
+    {
+      "name": "Niger",
+      "capital": "Niamey",
+      "continent": "Africa",
+      "flag": "🇳🇪",
+      "easy": false
+    },
+    {
+      "name": "New Zealand",
+      "capital": "Wellington",
+      "continent": "Oceania",
+      "flag": "🇳🇿",
+      "easy": true
+    },
+    {
+      "name": "Bhutan",
+      "capital": "Thimphu",
+      "continent": "Asia",
+      "flag": "🇧🇹",
+      "easy": false
+    },
+    {
+      "name": "Maldives",
+      "capital": "Malé",
+      "continent": "Asia",
+      "flag": "🇲🇻",
+      "easy": true
+    },
+    {
+      "name": "Timor-Leste",
+      "capital": "Dili",
+      "continent": "Asia",
+      "flag": "🇹🇱",
+      "easy": false
+    },
+    {
+      "name": "Afghanistan",
+      "capital": "Kabul",
+      "continent": "Asia",
+      "flag": "🇦🇫",
+      "easy": true
+    },
+    {
+      "name": "Guinea-Bissau",
+      "capital": "Bissau",
+      "continent": "Africa",
+      "flag": "🇬🇼",
+      "easy": false
+    }
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "countries": [
+    {
+      "name": "Bolivia",
+      "capital": "Sucre",
+      "continent": "South America",
+      "flag": "🇧🇴",
+      "easy": false
+    },
+    {
+      "name": "Paraguay",
+      "capital": "Asunción",
+      "continent": "South America",
+      "flag": "🇵🇾",
+      "easy": false
+    },
+    {
+      "name": "Uruguay",
+      "capital": "Montevideo",
+      "continent": "South America",
+      "flag": "🇺🇾",
+      "easy": false
+    },
+    {
+      "name": "Guyana",
+      "capital": "Georgetown",
+      "continent": "South America",
+      "flag": "🇬🇾",
+      "easy": false
+    },
+    {
+      "name": "Costa Rica",
+      "capital": "San José",
+      "continent": "North America",
+      "flag": "🇨🇷",
+      "easy": false
+    },
+    {
+      "name": "Panama",
+      "capital": "Panama City",
+      "continent": "North America",
+      "flag": "🇵🇦",
+      "easy": false
+    },
+    {
+      "name": "Guatemala",
+      "capital": "Guatemala City",
+      "continent": "North America",
+      "flag": "🇬🇹",
+      "easy": false
+    },
+    {
+      "name": "Honduras",
+      "capital": "Tegucigalpa",
+      "continent": "North America",
+      "flag": "🇭🇳",
+      "easy": false
+    },
+    {
+      "name": "El Salvador",
+      "capital": "San Salvador",
+      "continent": "North America",
+      "flag": "🇸🇻",
+      "easy": false
+    },
+    {
+      "name": "Nicaragua",
+      "capital": "Managua",
+      "continent": "North America",
+      "flag": "🇳🇮",
+      "easy": false
+    },
+    {
+      "name": "Belize",
+      "capital": "Belmopan",
+      "continent": "North America",
+      "flag": "🇧🇿",
+      "easy": false
+    },
+    {
+      "name": "Dominican Republic",
+      "capital": "Santo Domingo",
+      "continent": "North America",
+      "flag": "🇩🇴",
+      "easy": false
+    },
+    {
+      "name": "Haiti",
+      "capital": "Port-au-Prince",
+      "continent": "North America",
+      "flag": "🇭🇹",
+      "easy": false
+    },
+    {
+      "name": "Bahamas",
+      "capital": "Nassau",
+      "continent": "North America",
+      "flag": "🇧🇸",
+      "easy": false
+    },
+    {
+      "name": "Trinidad and Tobago",
+      "capital": "Port of Spain",
+      "continent": "North America",
+      "flag": "🇹🇹",
+      "easy": false
+    },
+    {
+      "name": "Russia",
+      "capital": "Moscow",
+      "continent": "Europe",
+      "flag": "🇷🇺",
+      "easy": false
+    },
+    {
+      "name": "Norway",
+      "capital": "Oslo",
+      "continent": "Europe",
+      "flag": "🇳🇴",
+      "easy": false
+    },
+    {
+      "name": "Sweden",
+      "capital": "Stockholm",
+      "continent": "Europe",
+      "flag": "🇸🇪",
+      "easy": false
+    },
+    {
+      "name": "Netherlands",
+      "capital": "Amsterdam",
+      "continent": "Europe",
+      "flag": "🇳🇱",
+      "easy": false
+    },
+    {
+      "name": "Belgium",
+      "capital": "Brussels",
+      "continent": "Europe",
+      "flag": "🇧🇪",
+      "easy": false
+    }
+  ]
+}

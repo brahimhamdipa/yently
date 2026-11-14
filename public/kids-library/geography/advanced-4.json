@@ -1,0 +1,144 @@
+{
+  "countries": [
+    {
+      "name": "North Macedonia",
+      "capital": "Skopje",
+      "continent": "Europe",
+      "flag": "🇲🇰",
+      "easy": false
+    },
+    {
+      "name": "Moldova",
+      "capital": "Chișinău",
+      "continent": "Europe",
+      "flag": "🇲🇩",
+      "easy": false
+    },
+    {
+      "name": "Belarus",
+      "capital": "Minsk",
+      "continent": "Europe",
+      "flag": "🇧🇾",
+      "easy": false
+    },
+    {
+      "name": "Andorra",
+      "capital": "Andorra la Vella",
+      "continent": "Europe",
+      "flag": "🇦🇩",
+      "easy": false
+    },
+    {
+      "name": "Monaco",
+      "capital": "Monaco",
+      "continent": "Europe",
+      "flag": "🇲🇨",
+      "easy": false
+    },
+    {
+      "name": "San Marino",
+      "capital": "San Marino",
+      "continent": "Europe",
+      "flag": "🇸🇲",
+      "easy": false
+    },
+    {
+      "name": "Liechtenstein",
+      "capital": "Vaduz",
+      "continent": "Europe",
+      "flag": "🇱🇮",
+      "easy": false
+    },
+    {
+      "name": "Vatican City",
+      "capital": "Vatican City",
+      "continent": "Europe",
+      "flag": "🇻🇦",
+      "easy": false
+    },
+    {
+      "name": "Mali",
+      "capital": "Bamako",
+      "continent": "Africa",
+      "flag": "🇲🇱",
+      "easy": false
+    },
+    {
+      "name": "Niger",
+      "capital": "Niamey",
+      "continent": "Africa",
+      "flag": "🇳🇪",
+      "easy": false
+    },
+    {
+      "name": "Burkina Faso",
+      "capital": "Ouagadougou",
+      "continent": "Africa",
+      "flag": "🇧🇫",
+      "easy": false
+    },
+    {
+      "name": "Guinea",
+      "capital": "Conakry",
+      "continent": "Africa",
+      "flag": "🇬🇳",
+      "easy": false
+    },
+    {
+      "name": "Gambia",
+      "capital": "Banjul",
+      "continent": "Africa",
+      "flag": "🇬🇲",
+      "easy": false
+    },
+    {
+      "name": "Sierra Leone",
+      "capital": "Freetown",
+      "continent": "Africa",
+      "flag": "🇸🇱",
+      "easy": false
+    },
+    {
+      "name": "Liberia",
+      "capital": "Monrovia",
+      "continent": "Africa",
+      "flag": "🇱🇷",
+      "easy": false
+    },
+    {
+      "name": "Ireland",
+      "capital": "Dublin",
+      "continent": "Europe",
+      "flag": "🇮🇪",
+      "easy": false
+    },
+    {
+      "name": "Denmark",
+      "capital": "Copenhagen",
+      "continent": "Europe",
+      "flag": "🇩🇰",
+      "easy": false
+    },
+    {
+      "name": "Finland",
+      "capital": "Helsinki",
+      "continent": "Europe",
+      "flag": "🇫🇮",
+      "easy": false
+    },
+    {
+      "name": "Iceland",
+      "capital": "Reykjavik",
+      "continent": "Europe",
+      "flag": "🇮🇸",
+      "easy": false
+    },
+    {
+      "name": "Ukraine",
+      "capital": "Kyiv",
+      "continent": "Europe",
+      "flag": "🇺🇦",
+      "easy": false
+    }
+  ]
+}

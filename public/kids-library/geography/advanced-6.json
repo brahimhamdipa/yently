@@ -1,0 +1,144 @@
+{
+  "countries": [
+    {
+      "name": "Botswana",
+      "capital": "Gaborone",
+      "continent": "Africa",
+      "flag": "🇧🇼",
+      "easy": false
+    },
+    {
+      "name": "Namibia",
+      "capital": "Windhoek",
+      "continent": "Africa",
+      "flag": "🇳🇦",
+      "easy": false
+    },
+    {
+      "name": "Lesotho",
+      "capital": "Maseru",
+      "continent": "Africa",
+      "flag": "🇱🇸",
+      "easy": false
+    },
+    {
+      "name": "Eswatini",
+      "capital": "Mbabane",
+      "continent": "Africa",
+      "flag": "🇸🇿",
+      "easy": false
+    },
+    {
+      "name": "Mauritania",
+      "capital": "Nouakchott",
+      "continent": "Africa",
+      "flag": "🇲🇷",
+      "easy": false
+    },
+    {
+      "name": "Equatorial Guinea",
+      "capital": "Malabo",
+      "continent": "Africa",
+      "flag": "🇬🇶",
+      "easy": false
+    },
+    {
+      "name": "Guinea-Bissau",
+      "capital": "Bissau",
+      "continent": "Africa",
+      "flag": "🇬🇼",
+      "easy": false
+    },
+    {
+      "name": "Cape Verde",
+      "capital": "Praia",
+      "continent": "Africa",
+      "flag": "🇨🇻",
+      "easy": false
+    },
+    {
+      "name": "São Tomé and Príncipe",
+      "capital": "São Tomé",
+      "continent": "Africa",
+      "flag": "🇸🇹",
+      "easy": false
+    },
+    {
+      "name": "Comoros",
+      "capital": "Moroni",
+      "continent": "Africa",
+      "flag": "🇰🇲",
+      "easy": false
+    },
+    {
+      "name": "Bhutan",
+      "capital": "Thimphu",
+      "continent": "Asia",
+      "flag": "🇧🇹",
+      "easy": false
+    },
+    {
+      "name": "Maldives",
+      "capital": "Malé",
+      "continent": "Asia",
+      "flag": "🇲🇻",
+      "easy": false
+    },
+    {
+      "name": "Timor-Leste",
+      "capital": "Dili",
+      "continent": "Asia",
+      "flag": "🇹🇱",
+      "easy": false
+    },
+    {
+      "name": "Afghanistan",
+      "capital": "Kabul",
+      "continent": "Asia",
+      "flag": "🇦🇫",
+      "easy": false
+    },
+    {
+      "name": "Barbados",
+      "capital": "Bridgetown",
+      "continent": "North America",
+      "flag": "🇧🇧",
+      "easy": false
+    },
+    {
+      "name": "Serbia",
+      "capital": "Belgrade",
+      "continent": "Europe",
+      "flag": "🇷🇸",
+      "easy": false
+    },
+    {
+      "name": "Japan",
+      "capital": "Tokyo",
+      "continent": "Asia",
+      "flag": "🇯🇵",
+      "easy": false
+    },
+    {
+      "name": "China",
+      "capital": "Beijing",
+      "continent": "Asia",
+      "flag": "🇨🇳",
+      "easy": false
+    },
+    {
+      "name": "India",
+      "capital": "New Delhi",
+      "continent": "Asia",
+      "flag": "🇮🇳",
+      "easy": false
+    },
+    {
+      "name": "Brazil",
+      "capital": "Brasília",
+      "continent": "South America",
+      "flag": "🇧🇷",
+      "easy": false
+    }
+  ]
+}

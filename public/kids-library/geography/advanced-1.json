@@ -1,0 +1,144 @@
+{
+  "countries": [
+    {
+      "name": "Tunisia",
+      "capital": "Tunis",
+      "continent": "Africa",
+      "flag": "🇹🇳",
+      "easy": false
+    },
+    {
+      "name": "Libya",
+      "capital": "Tripoli",
+      "continent": "Africa",
+      "flag": "🇱🇾",
+      "easy": false
+    },
+    {
+      "name": "Sudan",
+      "capital": "Khartoum",
+      "continent": "Africa",
+      "flag": "🇸🇩",
+      "easy": false
+    },
+    {
+      "name": "Senegal",
+      "capital": "Dakar",
+      "continent": "Africa",
+      "flag": "🇸🇳",
+      "easy": false
+    },
+    {
+      "name": "Ivory Coast",
+      "capital": "Yamoussoukro",
+      "continent": "Africa",
+      "flag": "🇨🇮",
+      "easy": false
+    },
+    {
+      "name": "Cameroon",
+      "capital": "Yaoundé",
+      "continent": "Africa",
+      "flag": "🇨🇲",
+      "easy": false
+    },
+    {
+      "name": "Uganda",
+      "capital": "Kampala",
+      "continent": "Africa",
+      "flag": "🇺🇬",
+      "easy": false
+    },
+    {
+      "name": "Tanzania",
+      "capital": "Dodoma",
+      "continent": "Africa",
+      "flag": "🇹🇿",
+      "easy": false
+    },
+    {
+      "name": "Zambia",
+      "capital": "Lusaka",
+      "continent": "Africa",
+      "flag": "🇿🇲",
+      "easy": false
+    },
+    {
+      "name": "Zimbabwe",
+      "capital": "Harare",
+      "continent": "Africa",
+      "flag": "🇿🇼",
+      "easy": false
+    },
+    {
+      "name": "Angola",
+      "capital": "Luanda",
+      "continent": "Africa",
+      "flag": "🇦🇴",
+      "easy": false
+    },
+    {
+      "name": "Madagascar",
+      "capital": "Antananarivo",
+      "continent": "Africa",
+      "flag": "🇲🇬",
+      "easy": false
+    },
+    {
+      "name": "Mauritius",
+      "capital": "Port Louis",
+      "continent": "Africa",
+      "flag": "🇲🇺",
+      "easy": false
+    },
+    {
+      "name": "Seychelles",
+      "capital": "Victoria",
+      "continent": "Africa",
+      "flag": "🇸🇨",
+      "easy": false
+    },
+    {
+      "name": "Ecuador",
+      "capital": "Quito",
+      "continent": "South America",
+      "flag": "🇪🇨",
+      "easy": false
+    },
+    {
+      "name": "France",
+      "capital": "Paris",
+      "continent": "Europe",
+      "flag": "🇫🇷",
+      "easy": false
+    },
+    {
+      "name": "Germany",
+      "capital": "Berlin",
+      "continent": "Europe",
+      "flag": "🇩🇪",
+      "easy": false
+    },
+    {
+      "name": "Italy",
+      "capital": "Rome",
+      "continent": "Europe",
+      "flag": "🇮🇹",
+      "easy": false
+    },
+    {
+      "name": "Spain",
+      "capital": "Madrid",
+      "continent": "Europe",
+      "flag": "🇪🇸",
+      "easy": false
+    },
+    {
+      "name": "United Kingdom",
+      "capital": "London",
+      "continent": "Europe",
+      "flag": "🇬🇧",
+      "easy": false
+    }
+  ]
+}

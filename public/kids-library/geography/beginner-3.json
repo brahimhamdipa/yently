@@ -1,0 +1,144 @@
+{
+  "countries": [
+    {
+      "name": "Portugal",
+      "capital": "Lisbon",
+      "continent": "Europe",
+      "flag": "🇵🇹",
+      "easy": true
+    },
+    {
+      "name": "Poland",
+      "capital": "Warsaw",
+      "continent": "Europe",
+      "flag": "🇵🇱",
+      "easy": true
+    },
+    {
+      "name": "Ireland",
+      "capital": "Dublin",
+      "continent": "Europe",
+      "flag": "🇮🇪",
+      "easy": true
+    },
+    {
+      "name": "Denmark",
+      "capital": "Copenhagen",
+      "continent": "Europe",
+      "flag": "🇩🇰",
+      "easy": true
+    },
+    {
+      "name": "Finland",
+      "capital": "Helsinki",
+      "continent": "Europe",
+      "flag": "🇫🇮",
+      "easy": true
+    },
+    {
+      "name": "Iceland",
+      "capital": "Reykjavik",
+      "continent": "Europe",
+      "flag": "🇮🇸",
+      "easy": true
+    },
+    {
+      "name": "Chile",
+      "capital": "Santiago",
+      "continent": "South America",
+      "flag": "🇨🇱",
+      "easy": true
+    },
+    {
+      "name": "Colombia",
+      "capital": "Bogotá",
+      "continent": "South America",
+      "flag": "🇨🇴",
+      "easy": true
+    },
+    {
+      "name": "Venezuela",
+      "capital": "Caracas",
+      "continent": "South America",
+      "flag": "🇻🇪",
+      "easy": true
+    },
+    {
+      "name": "Nigeria",
+      "capital": "Abuja",
+      "continent": "Africa",
+      "flag": "🇳🇬",
+      "easy": true
+    },
+    {
+      "name": "Ghana",
+      "capital": "Accra",
+      "continent": "Africa",
+      "flag": "🇬🇭",
+      "easy": true
+    },
+    {
+      "name": "Ethiopia",
+      "capital": "Addis Ababa",
+      "continent": "Africa",
+      "flag": "🇪🇹",
+      "easy": true
+    },
+    {
+      "name": "Saudi Arabia",
+      "capital": "Riyadh",
+      "continent": "Asia",
+      "flag": "🇸🇦",
+      "easy": true
+    },
+    {
+      "name": "United Arab Emirates",
+      "capital": "Abu Dhabi",
+      "continent": "Asia",
+      "flag": "🇦🇪",
+      "easy": true
+    },
+    {
+      "name": "South Korea",
+      "capital": "Seoul",
+      "continent": "Asia",
+      "flag": "🇰🇷",
+      "easy": true
+    },
+    {
+      "name": "Trinidad and Tobago",
+      "capital": "Port of Spain",
+      "continent": "North America",
+      "flag": "🇹🇹",
+      "easy": true
+    },
+    {
+      "name": "Barbados",
+      "capital": "Bridgetown",
+      "continent": "North America",
+      "flag": "🇧🇧",
+      "easy": true
+    },
+    {
+      "name": "Fiji",
+      "capital": "Suva",
+      "continent": "Oceania",
+      "flag": "🇫🇯",
+      "easy": true
+    },
+    {
+      "name": "Lithuania",
+      "capital": "Vilnius",
+      "continent": "Europe",
+      "flag": "🇱🇹",
+      "easy": true
+    },
+    {
+      "name": "Latvia",
+      "capital": "Riga",
+      "continent": "Europe",
+      "flag": "🇱🇻",
+      "easy": true
+    }
+  ]
+}

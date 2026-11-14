@@ -1,0 +1,144 @@
+{
+  "countries": [
+    {
+      "name": "Somalia",
+      "capital": "Mogadishu",
+      "continent": "Africa",
+      "flag": "🇸🇴",
+      "easy": false
+    },
+    {
+      "name": "Eritrea",
+      "capital": "Asmara",
+      "continent": "Africa",
+      "flag": "🇪🇷",
+      "easy": false
+    },
+    {
+      "name": "Djibouti",
+      "capital": "Djibouti",
+      "continent": "Africa",
+      "flag": "🇩🇯",
+      "easy": false
+    },
+    {
+      "name": "Rwanda",
+      "capital": "Kigali",
+      "continent": "Africa",
+      "flag": "🇷🇼",
+      "easy": false
+    },
+    {
+      "name": "Burundi",
+      "capital": "Gitega",
+      "continent": "Africa",
+      "flag": "🇧🇮",
+      "easy": false
+    },
+    {
+      "name": "Malawi",
+      "capital": "Lilongwe",
+      "continent": "Africa",
+      "flag": "🇲🇼",
+      "easy": false
+    },
+    {
+      "name": "Mozambique",
+      "capital": "Maputo",
+      "continent": "Africa",
+      "flag": "🇲🇿",
+      "easy": false
+    },
+    {
+      "name": "Botswana",
+      "capital": "Gaborone",
+      "continent": "Africa",
+      "flag": "🇧🇼",
+      "easy": true
+    },
+    {
+      "name": "Namibia",
+      "capital": "Windhoek",
+      "continent": "Africa",
+      "flag": "🇳🇦",
+      "easy": true
+    },
+    {
+      "name": "Lesotho",
+      "capital": "Maseru",
+      "continent": "Africa",
+      "flag": "🇱🇸",
+      "easy": false
+    },
+    {
+      "name": "Eswatini",
+      "capital": "Mbabane",
+      "continent": "Africa",
+      "flag": "🇸🇿",
+      "easy": false
+    },
+    {
+      "name": "Mauritania",
+      "capital": "Nouakchott",
+      "continent": "Africa",
+      "flag": "🇲🇷",
+      "easy": false
+    },
+    {
+      "name": "Equatorial Guinea",
+      "capital": "Malabo",
+      "continent": "Africa",
+      "flag": "🇬🇶",
+      "easy": false
+    },
+    {
+      "name": "Chile",
+      "capital": "Santiago",
+      "continent": "South America",
+      "flag": "🇨🇱",
+      "easy": true
+    },
+    {
+      "name": "Colombia",
+      "capital": "Bogotá",
+      "continent": "South America",
+      "flag": "🇨🇴",
+      "easy": true
+    },
+    {
+      "name": "Saint Vincent and the Grenadines",
+      "capital": "Kingstown",
+      "continent": "North America",
+      "flag": "🇻🇨",
+      "easy": false
+    },
+    {
+      "name": "Antigua and Barbuda",
+      "capital": "St. John's",
+      "continent": "North America",
+      "flag": "🇦🇬",
+      "easy": false
+    },
+    {
+      "name": "Dominica",
+      "capital": "Roseau",
+      "continent": "North America",
+      "flag": "🇩🇲",
+      "easy": false
+    },
+    {
+      "name": "Saint Kitts and Nevis",
+      "capital": "Basseterre",
+      "continent": "North America",
+      "flag": "🇰🇳",
+      "easy": false
+    },
+    {
+      "name": "Suriname",
+      "capital": "Paramaribo",
+      "continent": "South America",
+      "flag": "🇸🇷",
+      "easy": false
+    }
+  ]
+}

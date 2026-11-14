@@ -1,0 +1,144 @@
+{
+  "countries": [
+    {
+      "name": "Israel",
+      "capital": "Jerusalem",
+      "continent": "Asia",
+      "flag": "🇮🇱",
+      "easy": true
+    },
+    {
+      "name": "Jordan",
+      "capital": "Amman",
+      "continent": "Asia",
+      "flag": "🇯🇴",
+      "easy": true
+    },
+    {
+      "name": "Lebanon",
+      "capital": "Beirut",
+      "continent": "Asia",
+      "flag": "🇱🇧",
+      "easy": true
+    },
+    {
+      "name": "Iraq",
+      "capital": "Baghdad",
+      "continent": "Asia",
+      "flag": "🇮🇶",
+      "easy": true
+    },
+    {
+      "name": "Iran",
+      "capital": "Tehran",
+      "continent": "Asia",
+      "flag": "🇮🇷",
+      "easy": true
+    },
+    {
+      "name": "Qatar",
+      "capital": "Doha",
+      "continent": "Asia",
+      "flag": "🇶🇦",
+      "easy": true
+    },
+    {
+      "name": "Kuwait",
+      "capital": "Kuwait City",
+      "continent": "Asia",
+      "flag": "🇰🇼",
+      "easy": true
+    },
+    {
+      "name": "Oman",
+      "capital": "Muscat",
+      "continent": "Asia",
+      "flag": "🇴🇲",
+      "easy": true
+    },
+    {
+      "name": "Bahrain",
+      "capital": "Manama",
+      "continent": "Asia",
+      "flag": "🇧🇭",
+      "easy": true
+    },
+    {
+      "name": "Syria",
+      "capital": "Damascus",
+      "continent": "Asia",
+      "flag": "🇸🇾",
+      "easy": true
+    },
+    {
+      "name": "Yemen",
+      "capital": "Sanaa",
+      "continent": "Asia",
+      "flag": "🇾🇪",
+      "easy": true
+    },
+    {
+      "name": "Mongolia",
+      "capital": "Ulaanbaatar",
+      "continent": "Asia",
+      "flag": "🇲🇳",
+      "easy": true
+    },
+    {
+      "name": "Nepal",
+      "capital": "Kathmandu",
+      "continent": "Asia",
+      "flag": "🇳🇵",
+      "easy": true
+    },
+    {
+      "name": "Sri Lanka",
+      "capital": "Colombo",
+      "continent": "Asia",
+      "flag": "🇱🇰",
+      "easy": true
+    },
+    {
+      "name": "Bangladesh",
+      "capital": "Dhaka",
+      "continent": "Asia",
+      "flag": "🇧🇩",
+      "easy": true
+    },
+    {
+      "name": "Cyprus",
+      "capital": "Nicosia",
+      "continent": "Europe",
+      "flag": "🇨🇾",
+      "easy": true
+    },
+    {
+      "name": "Albania",
+      "capital": "Tirana",
+      "continent": "Europe",
+      "flag": "🇦🇱",
+      "easy": true
+    },
+    {
+      "name": "Bosnia and Herzegovina",
+      "capital": "Sarajevo",
+      "continent": "Europe",
+      "flag": "🇧🇦",
+      "easy": true
+    },
+    {
+      "name": "Montenegro",
+      "capital": "Podgorica",
+      "continent": "Europe",
+      "flag": "🇲🇪",
+      "easy": true
+    },
+    {
+      "name": "North Macedonia",
+      "capital": "Skopje",
+      "continent": "Europe",
+      "flag": "🇲🇰",
+      "easy": true
+    }
+  ]
+}

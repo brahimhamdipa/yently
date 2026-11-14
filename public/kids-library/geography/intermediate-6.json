@@ -1,0 +1,144 @@
+{
+  "countries": [
+    {
+      "name": "Burkina Faso",
+      "capital": "Ouagadougou",
+      "continent": "Africa",
+      "flag": "🇧🇫",
+      "easy": false
+    },
+    {
+      "name": "Guinea",
+      "capital": "Conakry",
+      "continent": "Africa",
+      "flag": "🇬🇳",
+      "easy": false
+    },
+    {
+      "name": "Gambia",
+      "capital": "Banjul",
+      "continent": "Africa",
+      "flag": "🇬🇲",
+      "easy": false
+    },
+    {
+      "name": "Sierra Leone",
+      "capital": "Freetown",
+      "continent": "Africa",
+      "flag": "🇸🇱",
+      "easy": false
+    },
+    {
+      "name": "Liberia",
+      "capital": "Monrovia",
+      "continent": "Africa",
+      "flag": "🇱🇷",
+      "easy": false
+    },
+    {
+      "name": "Togo",
+      "capital": "Lomé",
+      "continent": "Africa",
+      "flag": "🇹🇬",
+      "easy": false
+    },
+    {
+      "name": "Benin",
+      "capital": "Porto-Novo",
+      "continent": "Africa",
+      "flag": "🇧🇯",
+      "easy": false
+    },
+    {
+      "name": "Gabon",
+      "capital": "Libreville",
+      "continent": "Africa",
+      "flag": "🇬🇦",
+      "easy": false
+    },
+    {
+      "name": "Congo",
+      "capital": "Brazzaville",
+      "continent": "Africa",
+      "flag": "🇨🇬",
+      "easy": false
+    },
+    {
+      "name": "DR Congo",
+      "capital": "Kinshasa",
+      "continent": "Africa",
+      "flag": "🇨🇩",
+      "easy": false
+    },
+    {
+      "name": "Chad",
+      "capital": "N'Djamena",
+      "continent": "Africa",
+      "flag": "🇹🇩",
+      "easy": false
+    },
+    {
+      "name": "Central African Republic",
+      "capital": "Bangui",
+      "continent": "Africa",
+      "flag": "🇨🇫",
+      "easy": false
+    },
+    {
+      "name": "South Sudan",
+      "capital": "Juba",
+      "continent": "Africa",
+      "flag": "🇸🇸",
+      "easy": false
+    },
+    {
+      "name": "Argentina",
+      "capital": "Buenos Aires",
+      "continent": "South America",
+      "flag": "🇦🇷",
+      "easy": true
+    },
+    {
+      "name": "South Africa",
+      "capital": "Pretoria",
+      "continent": "Africa",
+      "flag": "🇿🇦",
+      "easy": true
+    },
+    {
+      "name": "Cape Verde",
+      "capital": "Praia",
+      "continent": "Africa",
+      "flag": "🇨🇻",
+      "easy": false
+    },
+    {
+      "name": "São Tomé and Príncipe",
+      "capital": "São Tomé",
+      "continent": "Africa",
+      "flag": "🇸🇹",
+      "easy": false
+    },
+    {
+      "name": "Comoros",
+      "capital": "Moroni",
+      "continent": "Africa",
+      "flag": "🇰🇲",
+      "easy": false
+    },
+    {
+      "name": "Grenada",
+      "capital": "St. George's",
+      "continent": "North America",
+      "flag": "🇬🇩",
+      "easy": false
+    },
+    {
+      "name": "Saint Lucia",
+      "capital": "Castries",
+      "continent": "North America",
+      "flag": "🇱🇨",
+      "easy": false
+    }
+  ]
+}

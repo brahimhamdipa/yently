@@ -1,0 +1,144 @@
+{
+  "countries": [
+    {
+      "name": "Haiti",
+      "capital": "Port-au-Prince",
+      "continent": "North America",
+      "flag": "🇭🇹",
+      "easy": false
+    },
+    {
+      "name": "Bahamas",
+      "capital": "Nassau",
+      "continent": "North America",
+      "flag": "🇧🇸",
+      "easy": false
+    },
+    {
+      "name": "Trinidad and Tobago",
+      "capital": "Port of Spain",
+      "continent": "North America",
+      "flag": "🇹🇹",
+      "easy": false
+    },
+    {
+      "name": "Fiji",
+      "capital": "Suva",
+      "continent": "Oceania",
+      "flag": "🇫🇯",
+      "easy": true
+    },
+    {
+      "name": "Papua New Guinea",
+      "capital": "Port Moresby",
+      "continent": "Oceania",
+      "flag": "🇵🇬",
+      "easy": false
+    },
+    {
+      "name": "Samoa",
+      "capital": "Apia",
+      "continent": "Oceania",
+      "flag": "🇼🇸",
+      "easy": false
+    },
+    {
+      "name": "Tonga",
+      "capital": "Nuku'alofa",
+      "continent": "Oceania",
+      "flag": "🇹🇴",
+      "easy": false
+    },
+    {
+      "name": "Lithuania",
+      "capital": "Vilnius",
+      "continent": "Europe",
+      "flag": "🇱🇹",
+      "easy": true
+    },
+    {
+      "name": "Latvia",
+      "capital": "Riga",
+      "continent": "Europe",
+      "flag": "🇱🇻",
+      "easy": true
+    },
+    {
+      "name": "Estonia",
+      "capital": "Tallinn",
+      "continent": "Europe",
+      "flag": "🇪🇪",
+      "easy": true
+    },
+    {
+      "name": "Slovakia",
+      "capital": "Bratislava",
+      "continent": "Europe",
+      "flag": "🇸🇰",
+      "easy": false
+    },
+    {
+      "name": "Slovenia",
+      "capital": "Ljubljana",
+      "continent": "Europe",
+      "flag": "🇸🇮",
+      "easy": false
+    },
+    {
+      "name": "Luxembourg",
+      "capital": "Luxembourg City",
+      "continent": "Europe",
+      "flag": "🇱🇺",
+      "easy": false
+    },
+    {
+      "name": "Malta",
+      "capital": "Valletta",
+      "continent": "Europe",
+      "flag": "🇲🇹",
+      "easy": false
+    },
+    {
+      "name": "Thailand",
+      "capital": "Bangkok",
+      "continent": "Asia",
+      "flag": "🇹🇭",
+      "easy": true
+    },
+    {
+      "name": "Finland",
+      "capital": "Helsinki",
+      "continent": "Europe",
+      "flag": "🇫🇮",
+      "easy": true
+    },
+    {
+      "name": "Iceland",
+      "capital": "Reykjavik",
+      "continent": "Europe",
+      "flag": "🇮🇸",
+      "easy": true
+    },
+    {
+      "name": "Ukraine",
+      "capital": "Kyiv",
+      "continent": "Europe",
+      "flag": "🇺🇦",
+      "easy": true
+    },
+    {
+      "name": "Czech Republic",
+      "capital": "Prague",
+      "continent": "Europe",
+      "flag": "🇨🇿",
+      "easy": true
+    },
+    {
+      "name": "Hungary",
+      "capital": "Budapest",
+      "continent": "Europe",
+      "flag": "🇭🇺",
+      "easy": true
+    }
+  ]
+}

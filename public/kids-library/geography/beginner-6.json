@@ -1,0 +1,144 @@
+{
+  "countries": [
+    {
+      "name": "Myanmar",
+      "capital": "Naypyidaw",
+      "continent": "Asia",
+      "flag": "🇲🇲",
+      "easy": true
+    },
+    {
+      "name": "Cambodia",
+      "capital": "Phnom Penh",
+      "continent": "Asia",
+      "flag": "🇰🇭",
+      "easy": true
+    },
+    {
+      "name": "Laos",
+      "capital": "Vientiane",
+      "continent": "Asia",
+      "flag": "🇱🇦",
+      "easy": true
+    },
+    {
+      "name": "Singapore",
+      "capital": "Singapore",
+      "continent": "Asia",
+      "flag": "🇸🇬",
+      "easy": true
+    },
+    {
+      "name": "Brunei",
+      "capital": "Bandar Seri Begawan",
+      "continent": "Asia",
+      "flag": "🇧🇳",
+      "easy": true
+    },
+    {
+      "name": "Kazakhstan",
+      "capital": "Astana",
+      "continent": "Asia",
+      "flag": "🇰🇿",
+      "easy": true
+    },
+    {
+      "name": "Uzbekistan",
+      "capital": "Tashkent",
+      "continent": "Asia",
+      "flag": "🇺🇿",
+      "easy": true
+    },
+    {
+      "name": "Georgia",
+      "capital": "Tbilisi",
+      "continent": "Asia",
+      "flag": "🇬🇪",
+      "easy": true
+    },
+    {
+      "name": "Armenia",
+      "capital": "Yerevan",
+      "continent": "Asia",
+      "flag": "🇦🇲",
+      "easy": true
+    },
+    {
+      "name": "Azerbaijan",
+      "capital": "Baku",
+      "continent": "Asia",
+      "flag": "🇦🇿",
+      "easy": true
+    },
+    {
+      "name": "Kyrgyzstan",
+      "capital": "Bishkek",
+      "continent": "Asia",
+      "flag": "🇰🇬",
+      "easy": true
+    },
+    {
+      "name": "Tajikistan",
+      "capital": "Dushanbe",
+      "continent": "Asia",
+      "flag": "🇹🇯",
+      "easy": true
+    },
+    {
+      "name": "Turkmenistan",
+      "capital": "Ashgabat",
+      "continent": "Asia",
+      "flag": "🇹🇲",
+      "easy": true
+    },
+    {
+      "name": "Algeria",
+      "capital": "Algiers",
+      "continent": "Africa",
+      "flag": "🇩🇿",
+      "easy": true
+    },
+    {
+      "name": "Tunisia",
+      "capital": "Tunis",
+      "continent": "Africa",
+      "flag": "🇹🇳",
+      "easy": true
+    },
+    {
+      "name": "Moldova",
+      "capital": "Chișinău",
+      "continent": "Europe",
+      "flag": "🇲🇩",
+      "easy": true
+    },
+    {
+      "name": "Belarus",
+      "capital": "Minsk",
+      "continent": "Europe",
+      "flag": "🇧🇾",
+      "easy": true
+    },
+    {
+      "name": "Gabon",
+      "capital": "Libreville",
+      "continent": "Africa",
+      "flag": "🇬🇦",
+      "easy": true
+    },
+    {
+      "name": "Congo",
+      "capital": "Brazzaville",
+      "continent": "Africa",
+      "flag": "🇨🇬",
+      "easy": true
+    },
+    {
+      "name": "DR Congo",
+      "capital": "Kinshasa",
+      "continent": "Africa",
+      "flag": "🇨🇩",
+      "easy": true
+    }
+  ]
+}

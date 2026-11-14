@@ -1,0 +1,144 @@
+{
+  "countries": [
+    {
+      "name": "Bangladesh",
+      "capital": "Dhaka",
+      "continent": "Asia",
+      "flag": "🇧🇩",
+      "easy": false
+    },
+    {
+      "name": "Myanmar",
+      "capital": "Naypyidaw",
+      "continent": "Asia",
+      "flag": "🇲🇲",
+      "easy": false
+    },
+    {
+      "name": "Cambodia",
+      "capital": "Phnom Penh",
+      "continent": "Asia",
+      "flag": "🇰🇭",
+      "easy": false
+    },
+    {
+      "name": "Laos",
+      "capital": "Vientiane",
+      "continent": "Asia",
+      "flag": "🇱🇦",
+      "easy": false
+    },
+    {
+      "name": "Singapore",
+      "capital": "Singapore",
+      "continent": "Asia",
+      "flag": "🇸🇬",
+      "easy": true
+    },
+    {
+      "name": "Brunei",
+      "capital": "Bandar Seri Begawan",
+      "continent": "Asia",
+      "flag": "🇧🇳",
+      "easy": false
+    },
+    {
+      "name": "Kazakhstan",
+      "capital": "Astana",
+      "continent": "Asia",
+      "flag": "🇰🇿",
+      "easy": true
+    },
+    {
+      "name": "Uzbekistan",
+      "capital": "Tashkent",
+      "continent": "Asia",
+      "flag": "🇺🇿",
+      "easy": false
+    },
+    {
+      "name": "Georgia",
+      "capital": "Tbilisi",
+      "continent": "Asia",
+      "flag": "🇬🇪",
+      "easy": true
+    },
+    {
+      "name": "Armenia",
+      "capital": "Yerevan",
+      "continent": "Asia",
+      "flag": "🇦🇲",
+      "easy": false
+    },
+    {
+      "name": "Azerbaijan",
+      "capital": "Baku",
+      "continent": "Asia",
+      "flag": "🇦🇿",
+      "easy": false
+    },
+    {
+      "name": "Kyrgyzstan",
+      "capital": "Bishkek",
+      "continent": "Asia",
+      "flag": "🇰🇬",
+      "easy": false
+    },
+    {
+      "name": "Tajikistan",
+      "capital": "Dushanbe",
+      "continent": "Asia",
+      "flag": "🇹🇯",
+      "easy": false
+    },
+    {
+      "name": "Turkmenistan",
+      "capital": "Ashgabat",
+      "continent": "Asia",
+      "flag": "🇹🇲",
+      "easy": false
+    },
+    {
+      "name": "Norway",
+      "capital": "Oslo",
+      "continent": "Europe",
+      "flag": "🇳🇴",
+      "easy": true
+    },
+    {
+      "name": "France",
+      "capital": "Paris",
+      "continent": "Europe",
+      "flag": "🇫🇷",
+      "easy": true
+    },
+    {
+      "name": "Germany",
+      "capital": "Berlin",
+      "continent": "Europe",
+      "flag": "🇩🇪",
+      "easy": true
+    },
+    {
+      "name": "Italy",
+      "capital": "Rome",
+      "continent": "Europe",
+      "flag": "🇮🇹",
+      "easy": true
+    },
+    {
+      "name": "Spain",
+      "capital": "Madrid",
+      "continent": "Europe",
+      "flag": "🇪🇸",
+      "easy": true
+    },
+    {
+      "name": "United Kingdom",
+      "capital": "London",
+      "continent": "Europe",
+      "flag": "🇬🇧",
+      "easy": true
+    }
+  ]
+}

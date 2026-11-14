@@ -1,0 +1,144 @@
+{
+  "countries": [
+    {
+      "name": "Fiji",
+      "capital": "Suva",
+      "continent": "Oceania",
+      "flag": "🇫🇯",
+      "easy": false
+    },
+    {
+      "name": "Papua New Guinea",
+      "capital": "Port Moresby",
+      "continent": "Oceania",
+      "flag": "🇵🇬",
+      "easy": false
+    },
+    {
+      "name": "Samoa",
+      "capital": "Apia",
+      "continent": "Oceania",
+      "flag": "🇼🇸",
+      "easy": false
+    },
+    {
+      "name": "Tonga",
+      "capital": "Nuku'alofa",
+      "continent": "Oceania",
+      "flag": "🇹🇴",
+      "easy": false
+    },
+    {
+      "name": "Lithuania",
+      "capital": "Vilnius",
+      "continent": "Europe",
+      "flag": "🇱🇹",
+      "easy": false
+    },
+    {
+      "name": "Latvia",
+      "capital": "Riga",
+      "continent": "Europe",
+      "flag": "🇱🇻",
+      "easy": false
+    },
+    {
+      "name": "Estonia",
+      "capital": "Tallinn",
+      "continent": "Europe",
+      "flag": "🇪🇪",
+      "easy": false
+    },
+    {
+      "name": "Slovakia",
+      "capital": "Bratislava",
+      "continent": "Europe",
+      "flag": "🇸🇰",
+      "easy": false
+    },
+    {
+      "name": "Slovenia",
+      "capital": "Ljubljana",
+      "continent": "Europe",
+      "flag": "🇸🇮",
+      "easy": false
+    },
+    {
+      "name": "Luxembourg",
+      "capital": "Luxembourg City",
+      "continent": "Europe",
+      "flag": "🇱🇺",
+      "easy": false
+    },
+    {
+      "name": "Malta",
+      "capital": "Valletta",
+      "continent": "Europe",
+      "flag": "🇲🇹",
+      "easy": false
+    },
+    {
+      "name": "Cyprus",
+      "capital": "Nicosia",
+      "continent": "Europe",
+      "flag": "🇨🇾",
+      "easy": false
+    },
+    {
+      "name": "Albania",
+      "capital": "Tirana",
+      "continent": "Europe",
+      "flag": "🇦🇱",
+      "easy": false
+    },
+    {
+      "name": "Bosnia and Herzegovina",
+      "capital": "Sarajevo",
+      "continent": "Europe",
+      "flag": "🇧🇦",
+      "easy": false
+    },
+    {
+      "name": "Montenegro",
+      "capital": "Podgorica",
+      "continent": "Europe",
+      "flag": "🇲🇪",
+      "easy": false
+    },
+    {
+      "name": "Switzerland",
+      "capital": "Bern",
+      "continent": "Europe",
+      "flag": "🇨🇭",
+      "easy": false
+    },
+    {
+      "name": "Austria",
+      "capital": "Vienna",
+      "continent": "Europe",
+      "flag": "🇦🇹",
+      "easy": false
+    },
+    {
+      "name": "Greece",
+      "capital": "Athens",
+      "continent": "Europe",
+      "flag": "🇬🇷",
+      "easy": false
+    },
+    {
+      "name": "Portugal",
+      "capital": "Lisbon",
+      "continent": "Europe",
+      "flag": "🇵🇹",
+      "easy": false
+    },
+    {
+      "name": "Poland",
+      "capital": "Warsaw",
+      "continent": "Europe",
+      "flag": "🇵🇱",
+      "easy": false
+    }
+  ]
+}
