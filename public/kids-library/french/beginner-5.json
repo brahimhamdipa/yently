@@ -1,0 +1,244 @@
+{
+  "words": [
+    {
+      "word": "un",
+      "meaning": "one"
+    },
+    {
+      "word": "deux",
+      "meaning": "two"
+    },
+    {
+      "word": "trois",
+      "meaning": "three"
+    },
+    {
+      "word": "quatre",
+      "meaning": "four"
+    },
+    {
+      "word": "cinq",
+      "meaning": "five"
+    },
+    {
+      "word": "six",
+      "meaning": "six"
+    },
+    {
+      "word": "sept",
+      "meaning": "seven"
+    },
+    {
+      "word": "huit",
+      "meaning": "eight"
+    },
+    {
+      "word": "neuf",
+      "meaning": "nine"
+    },
+    {
+      "word": "dix",
+      "meaning": "ten"
+    },
+    {
+      "word": "onze",
+      "meaning": "eleven"
+    },
+    {
+      "word": "douze",
+      "meaning": "twelve"
+    },
+    {
+      "word": "vingt",
+      "meaning": "twenty"
+    },
+    {
+      "word": "cent",
+      "meaning": "one hundred"
+    },
+    {
+      "word": "lundi",
+      "meaning": "Monday"
+    },
+    {
+      "word": "mardi",
+      "meaning": "Tuesday"
+    },
+    {
+      "word": "mercredi",
+      "meaning": "Wednesday"
+    },
+    {
+      "word": "jeudi",
+      "meaning": "Thursday"
+    },
+    {
+      "word": "vendredi",
+      "meaning": "Friday"
+    },
+    {
+      "word": "samedi",
+      "meaning": "Saturday"
+    },
+    {
+      "word": "dimanche",
+      "meaning": "Sunday"
+    },
+    {
+      "word": "matin",
+      "meaning": "morning"
+    },
+    {
+      "word": "soir",
+      "meaning": "evening"
+    },
+    {
+      "word": "nuit",
+      "meaning": "night"
+    },
+    {
+      "word": "jour",
+      "meaning": "day"
+    },
+    {
+      "word": "semaine",
+      "meaning": "week"
+    },
+    {
+      "word": "mois",
+      "meaning": "month"
+    },
+    {
+      "word": "année",
+      "meaning": "year"
+    },
+    {
+      "word": "printemps",
+      "meaning": "spring"
+    },
+    {
+      "word": "été",
+      "meaning": "summer"
+    },
+    {
+      "word": "automne",
+      "meaning": "autumn"
+    },
+    {
+      "word": "hiver",
+      "meaning": "winter"
+    },
+    {
+      "word": "pluie",
+      "meaning": "rain"
+    },
+    {
+      "word": "neige",
+      "meaning": "snow"
+    },
+    {
+      "word": "vent",
+      "meaning": "wind"
+    },
+    {
+      "word": "nuage",
+      "meaning": "cloud"
+    },
+    {
+      "word": "orage",
+      "meaning": "storm"
+    },
+    {
+      "word": "fleur",
+      "meaning": "flower"
+    },
+    {
+      "word": "herbe",
+      "meaning": "grass"
+    },
+    {
+      "word": "feuille",
+      "meaning": "leaf"
+    },
+    {
+      "word": "treize",
+      "meaning": "thirteen"
+    },
+    {
+      "word": "quatorze",
+      "meaning": "fourteen"
+    },
+    {
+      "word": "quinze",
+      "meaning": "fifteen"
+    },
+    {
+      "word": "seize",
+      "meaning": "sixteen"
+    },
+    {
+      "word": "trente",
+      "meaning": "thirty"
+    },
+    {
+      "word": "quarante",
+      "meaning": "forty"
+    },
+    {
+      "word": "cinquante",
+      "meaning": "fifty"
+    },
+    {
+      "word": "mille",
+      "meaning": "one thousand"
+    },
+    {
+      "word": "aube",
+      "meaning": "dawn"
+    },
+    {
+      "word": "crépuscule",
+      "meaning": "dusk"
+    },
+    {
+      "word": "gel",
+      "meaning": "frost"
+    },
+    {
+      "word": "grêle",
+      "meaning": "hail"
+    },
+    {
+      "word": "brume",
+      "meaning": "mist"
+    },
+    {
+      "word": "arbre",
+      "meaning": "tree"
+    },
+    {
+      "word": "buisson",
+      "meaning": "bush"
+    },
+    {
+      "word": "sapin",
+      "meaning": "fir tree"
+    },
+    {
+      "word": "palmier",
+      "meaning": "palm tree"
+    },
+    {
+      "word": "cactus",
+      "meaning": "cactus"
+    },
+    {
+      "word": "premier",
+      "meaning": "first"
+    },
+    {
+      "word": "dernier",
+      "meaning": "last"
+    }
+  ]
+}
