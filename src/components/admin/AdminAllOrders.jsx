@@ -10,7 +10,7 @@ import { supabase } from '../../lib/supabaseClient'
 // row's own order table by id, and the table, summary and totals
 // update from local state, no reload.
 //
-// There are 25 order tables, one per plan, all written by the same
+// There are 26 order tables, one per plan, all written by the same
 // cart (placeBusinessOrder). Every table has the same standard
 // columns — customer_name, customer_email, customer_phone, plan,
 // price (numeric, the plan's monthly LIST price), note, created_at —
@@ -40,7 +40,7 @@ import { supabase } from '../../lib/supabaseClient'
 // never the table name (barber_order is the Simple Website, while
 // barbershop_order is the Barber system).
 const PLANS = [
-  // Systems (12)
+  // Systems (13)
   { table: 'restaurant_order', label: 'Restaurant', group: 'systems', price: 40 },
   { table: 'pos_order', label: 'Point of sale', group: 'systems', price: 50 },
   { table: 'barbershop_order', label: 'Barbershop', group: 'systems', price: 15 },
@@ -52,6 +52,7 @@ const PLANS = [
   { table: 'holiday_order', label: 'Holiday', group: 'systems', price: 20 },
   { table: 'rentals_order', label: 'Car Rental', group: 'systems', price: 20 },
   { table: 'laundry_order', label: 'Laundry', group: 'systems', price: 20 },
+  { table: 'gym_order', label: 'Gym', group: 'systems', price: 20 },
   { table: 'barber_order', label: 'Simple Website', group: 'systems', price: 10 },
   // Add-ons (4)
   { table: 'tv_gallery_order', label: 'TV Gallery', group: 'addons', price: 2 },
