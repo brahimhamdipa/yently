@@ -1,0 +1,244 @@
+{
+  "words": [
+    {
+      "word": "village",
+      "meaning": "A small place where people live, smaller than a town"
+    },
+    {
+      "word": "town",
+      "meaning": "A place where people live, bigger than a village"
+    },
+    {
+      "word": "city",
+      "meaning": "A very big place where many people live and work"
+    },
+    {
+      "word": "country",
+      "meaning": "A land with its own people and government, like France or Egypt"
+    },
+    {
+      "word": "world",
+      "meaning": "The earth and all the people and places on it"
+    },
+    {
+      "word": "map",
+      "meaning": "A picture that shows where places are"
+    },
+    {
+      "word": "flag",
+      "meaning": "A piece of cloth with colours that stands for a country"
+    },
+    {
+      "word": "language",
+      "meaning": "The words people speak, like English or Arabic"
+    },
+    {
+      "word": "music",
+      "meaning": "Sounds made by singing or playing instruments"
+    },
+    {
+      "word": "song",
+      "meaning": "Music with words that you sing"
+    },
+    {
+      "word": "story",
+      "meaning": "A tale about people or things, real or made up"
+    },
+    {
+      "word": "poem",
+      "meaning": "Words written in a beautiful way, often with rhymes"
+    },
+    {
+      "word": "letter",
+      "meaning": "A written message you send to someone"
+    },
+    {
+      "word": "newspaper",
+      "meaning": "Paper with news printed on it every day"
+    },
+    {
+      "word": "magazine",
+      "meaning": "A thin book with pictures and stories, printed every week or month"
+    },
+    {
+      "word": "radio",
+      "meaning": "A machine that plays music and news through the air"
+    },
+    {
+      "word": "television",
+      "meaning": "A machine that shows moving pictures and sound"
+    },
+    {
+      "word": "computer",
+      "meaning": "A machine that helps you work, play and learn"
+    },
+    {
+      "word": "phone",
+      "meaning": "You use it to talk to people far away"
+    },
+    {
+      "word": "camera",
+      "meaning": "You take photos with it"
+    },
+    {
+      "word": "movie",
+      "meaning": "A story shown on a big screen"
+    },
+    {
+      "word": "theatre",
+      "meaning": "A place where people watch plays"
+    },
+    {
+      "word": "museum",
+      "meaning": "A place where old and interesting things are kept and shown"
+    },
+    {
+      "word": "library",
+      "meaning": "A place where you can borrow books to read"
+    },
+    {
+      "word": "hospital",
+      "meaning": "A place where sick people are looked after"
+    },
+    {
+      "word": "hotel",
+      "meaning": "A place where travellers sleep and eat"
+    },
+    {
+      "word": "restaurant",
+      "meaning": "A place where you buy and eat a meal"
+    },
+    {
+      "word": "market",
+      "meaning": "A place where people sell food and other things"
+    },
+    {
+      "word": "bank",
+      "meaning": "A place where people keep their money"
+    },
+    {
+      "word": "post office",
+      "meaning": "A place where you send letters and parcels"
+    },
+    {
+      "word": "airport",
+      "meaning": "A place where planes take off and land"
+    },
+    {
+      "word": "station",
+      "meaning": "A place where trains or buses stop"
+    },
+    {
+      "word": "park",
+      "meaning": "A place with grass and trees where children play"
+    },
+    {
+      "word": "zoo",
+      "meaning": "A place where wild animals are kept for people to see"
+    },
+    {
+      "word": "circus",
+      "meaning": "A show with clowns, acrobats and animals"
+    },
+    {
+      "word": "farm",
+      "meaning": "Land where a farmer grows food and keeps animals"
+    },
+    {
+      "word": "factory",
+      "meaning": "A big building where things are made"
+    },
+    {
+      "word": "office",
+      "meaning": "A place where people work at desks"
+    },
+    {
+      "word": "church",
+      "meaning": "A building where Christians pray"
+    },
+    {
+      "word": "supermarket",
+      "meaning": "A big shop where you buy food and other things"
+    },
+    {
+      "word": "mosque",
+      "meaning": "A building where Muslims pray"
+    },
+    {
+      "word": "temple",
+      "meaning": "A building where people pray in some religions"
+    },
+    {
+      "word": "synagogue",
+      "meaning": "A building where Jewish people pray"
+    },
+    {
+      "word": "cinema",
+      "meaning": "A place where you watch films on a big screen"
+    },
+    {
+      "word": "stadium",
+      "meaning": "A big place where people watch sports"
+    },
+    {
+      "word": "gym",
+      "meaning": "A place where people exercise"
+    },
+    {
+      "word": "swimming pool",
+      "meaning": "A place full of water where people swim"
+    },
+    {
+      "word": "bookshop",
+      "meaning": "A shop where you buy books"
+    },
+    {
+      "word": "bakery",
+      "meaning": "A shop where bread and cakes are made and sold"
+    },
+    {
+      "word": "pharmacy",
+      "meaning": "A shop where you buy medicine"
+    },
+    {
+      "word": "cafe",
+      "meaning": "A small place where you can drink coffee and eat cake"
+    },
+    {
+      "word": "university",
+      "meaning": "A big school where older students study after school"
+    },
+    {
+      "word": "college",
+      "meaning": "A school where older students study after school"
+    },
+    {
+      "word": "kindergarten",
+      "meaning": "A school for very young children"
+    },
+    {
+      "word": "continent",
+      "meaning": "A very big piece of land, like Africa or Asia"
+    },
+    {
+      "word": "tablet",
+      "meaning": "A small flat computer you hold in your hand"
+    },
+    {
+      "word": "laptop",
+      "meaning": "A computer you can carry and use on your lap"
+    },
+    {
+      "word": "headphones",
+      "meaning": "Things you wear on your ears to listen to music"
+    },
+    {
+      "word": "microphone",
+      "meaning": "A thing you speak into to make your voice louder"
+    },
+    {
+      "word": "podcast",
+      "meaning": "A radio show you can listen to on the internet"
+    }
+  ]
+}

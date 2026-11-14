@@ -1,0 +1,244 @@
+{
+  "words": [
+    {
+      "word": "gravity",
+      "meaning": "The force that pulls things down to the earth"
+    },
+    {
+      "word": "magnet",
+      "meaning": "A piece of metal that pulls iron towards it"
+    },
+    {
+      "word": "electricity",
+      "meaning": "The power that makes lights and machines work"
+    },
+    {
+      "word": "temperature",
+      "meaning": "How hot or cold something is"
+    },
+    {
+      "word": "oxygen",
+      "meaning": "The gas in the air that we need to breathe"
+    },
+    {
+      "word": "hydrogen",
+      "meaning": "A very light gas; water is made of hydrogen and oxygen"
+    },
+    {
+      "word": "carbon",
+      "meaning": "A chemical found in coal, diamonds and all living things"
+    },
+    {
+      "word": "atom",
+      "meaning": "A very tiny part of everything, too small to see"
+    },
+    {
+      "word": "molecule",
+      "meaning": "Two or more atoms joined together"
+    },
+    {
+      "word": "cell",
+      "meaning": "The smallest living part of a plant or animal body"
+    },
+    {
+      "word": "bone",
+      "meaning": "A hard part inside your body that holds you up"
+    },
+    {
+      "word": "muscle",
+      "meaning": "A part of your body that moves when you use it"
+    },
+    {
+      "word": "brain",
+      "meaning": "The part in your head that thinks and learns"
+    },
+    {
+      "word": "heart",
+      "meaning": "The part in your chest that pumps blood around your body"
+    },
+    {
+      "word": "lung",
+      "meaning": "One of the two parts in your chest that help you breathe"
+    },
+    {
+      "word": "stomach",
+      "meaning": "The part inside you where food goes after you eat"
+    },
+    {
+      "word": "skeleton",
+      "meaning": "All the bones in a body joined together"
+    },
+    {
+      "word": "blood",
+      "meaning": "The red liquid that flows through your body"
+    },
+    {
+      "word": "skin",
+      "meaning": "The soft cover over your whole body"
+    },
+    {
+      "word": "nerve",
+      "meaning": "A tiny line in your body that carries messages to your brain"
+    },
+    {
+      "word": "virus",
+      "meaning": "A tiny germ that can make you sick"
+    },
+    {
+      "word": "bacteria",
+      "meaning": "Tiny living things, too small to see, that can make you sick or help you"
+    },
+    {
+      "word": "vaccine",
+      "meaning": "A medicine that stops you from catching a sickness"
+    },
+    {
+      "word": "medicine",
+      "meaning": "Something you take to help you feel better when you are sick"
+    },
+    {
+      "word": "experiment",
+      "meaning": "A test to find out how something works"
+    },
+    {
+      "word": "laboratory",
+      "meaning": "A room where scientists do experiments"
+    },
+    {
+      "word": "microscope",
+      "meaning": "A tool that makes very small things look big"
+    },
+    {
+      "word": "telescope",
+      "meaning": "A tool that makes faraway stars look close"
+    },
+    {
+      "word": "galaxy",
+      "meaning": "A huge group of stars, like our Milky Way"
+    },
+    {
+      "word": "universe",
+      "meaning": "Everything that exists, all the stars and planets"
+    },
+    {
+      "word": "orbit",
+      "meaning": "The path a planet takes around a star"
+    },
+    {
+      "word": "rocket",
+      "meaning": "A machine that flies into space"
+    },
+    {
+      "word": "satellite",
+      "meaning": "A machine that goes around the earth in space"
+    },
+    {
+      "word": "fossil",
+      "meaning": "The remains of an animal or plant that lived long ago, found in rock"
+    },
+    {
+      "word": "dinosaur",
+      "meaning": "A huge animal that lived millions of years ago"
+    },
+    {
+      "word": "evolution",
+      "meaning": "How living things slowly change over a very long time"
+    },
+    {
+      "word": "climate",
+      "meaning": "The usual weather of a place over many years"
+    },
+    {
+      "word": "weather",
+      "meaning": "Rain, sun, wind and snow at a place and time"
+    },
+    {
+      "word": "pressure",
+      "meaning": "The force that pushes on something"
+    },
+    {
+      "word": "earthquake",
+      "meaning": "When the ground shakes suddenly"
+    },
+    {
+      "word": "nucleus",
+      "meaning": "The middle part of a cell or an atom"
+    },
+    {
+      "word": "electron",
+      "meaning": "A very tiny part of an atom with a small charge"
+    },
+    {
+      "word": "proton",
+      "meaning": "A tiny part of an atom with a positive charge"
+    },
+    {
+      "word": "neutron",
+      "meaning": "A tiny part of an atom with no charge"
+    },
+    {
+      "word": "force",
+      "meaning": "A push or a pull that moves something"
+    },
+    {
+      "word": "friction",
+      "meaning": "The force that slows things down when they rub together"
+    },
+    {
+      "word": "liquid",
+      "meaning": "Something that flows, like water or milk"
+    },
+    {
+      "word": "solid",
+      "meaning": "Something hard that keeps its shape, like ice or wood"
+    },
+    {
+      "word": "gas",
+      "meaning": "Something like air that you cannot see or hold"
+    },
+    {
+      "word": "evaporation",
+      "meaning": "When a liquid slowly turns into a gas"
+    },
+    {
+      "word": "condensation",
+      "meaning": "When a gas turns back into drops of liquid"
+    },
+    {
+      "word": "chemical",
+      "meaning": "A substance like a medicine or a cleaner, made by science"
+    },
+    {
+      "word": "reaction",
+      "meaning": "What happens when two chemicals are mixed"
+    },
+    {
+      "word": "acid",
+      "meaning": "A liquid that can burn or bite, like lemon juice or vinegar"
+    },
+    {
+      "word": "mineral",
+      "meaning": "A natural substance from the earth, like salt or iron"
+    },
+    {
+      "word": "crystal",
+      "meaning": "A hard clear stone with flat sides, like a diamond"
+    },
+    {
+      "word": "tsunami",
+      "meaning": "A huge wave from an earthquake under the sea"
+    },
+    {
+      "word": "metal",
+      "meaning": "A hard material like iron, gold or silver"
+    },
+    {
+      "word": "motion",
+      "meaning": "Moving from one place to another"
+    },
+    {
+      "word": "density",
+      "meaning": "How heavy something is for its size"
+    }
+  ]
+}

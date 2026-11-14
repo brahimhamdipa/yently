@@ -1,0 +1,244 @@
+{
+  "words": [
+    {
+      "word": "today",
+      "meaning": "This day, right now"
+    },
+    {
+      "word": "tomorrow",
+      "meaning": "The day after today"
+    },
+    {
+      "word": "yesterday",
+      "meaning": "The day before today"
+    },
+    {
+      "word": "tonight",
+      "meaning": "This evening and night"
+    },
+    {
+      "word": "dawn",
+      "meaning": "The very start of the morning, when light first appears"
+    },
+    {
+      "word": "noon",
+      "meaning": "Twelve o'clock in the middle of the day"
+    },
+    {
+      "word": "midnight",
+      "meaning": "Twelve o'clock at night"
+    },
+    {
+      "word": "evening",
+      "meaning": "The part of the day before night"
+    },
+    {
+      "word": "afternoon",
+      "meaning": "The part of the day after noon and before evening"
+    },
+    {
+      "word": "weekend",
+      "meaning": "Saturday and Sunday, when most people do not work"
+    },
+    {
+      "word": "weekday",
+      "meaning": "A day from Monday to Friday"
+    },
+    {
+      "word": "month",
+      "meaning": "One of the twelve parts of a year"
+    },
+    {
+      "word": "year",
+      "meaning": "Twelve months, from January to December"
+    },
+    {
+      "word": "week",
+      "meaning": "Seven days, from Monday to Sunday"
+    },
+    {
+      "word": "hour",
+      "meaning": "Sixty minutes"
+    },
+    {
+      "word": "minute",
+      "meaning": "Sixty seconds"
+    },
+    {
+      "word": "second",
+      "meaning": "A very short time; sixty make a minute"
+    },
+    {
+      "word": "calendar",
+      "meaning": "A chart that shows the days, weeks and months of the year"
+    },
+    {
+      "word": "birthday",
+      "meaning": "The day each year when you were born"
+    },
+    {
+      "word": "holiday",
+      "meaning": "A day off school or work, or a trip away from home"
+    },
+    {
+      "word": "vacation",
+      "meaning": "A time away from school or work to rest and have fun"
+    },
+    {
+      "word": "January",
+      "meaning": "The first month of the year"
+    },
+    {
+      "word": "February",
+      "meaning": "The second month of the year"
+    },
+    {
+      "word": "March",
+      "meaning": "The third month of the year"
+    },
+    {
+      "word": "April",
+      "meaning": "The fourth month of the year"
+    },
+    {
+      "word": "May",
+      "meaning": "The fifth month of the year"
+    },
+    {
+      "word": "June",
+      "meaning": "The sixth month of the year"
+    },
+    {
+      "word": "July",
+      "meaning": "The seventh month of the year"
+    },
+    {
+      "word": "August",
+      "meaning": "The eighth month of the year"
+    },
+    {
+      "word": "September",
+      "meaning": "The ninth month of the year"
+    },
+    {
+      "word": "October",
+      "meaning": "The tenth month of the year"
+    },
+    {
+      "word": "November",
+      "meaning": "The eleventh month of the year"
+    },
+    {
+      "word": "December",
+      "meaning": "The twelfth month of the year, when Christmas comes"
+    },
+    {
+      "word": "Monday",
+      "meaning": "The first day of the school week"
+    },
+    {
+      "word": "Tuesday",
+      "meaning": "The second day of the week"
+    },
+    {
+      "word": "Wednesday",
+      "meaning": "The middle day of the week"
+    },
+    {
+      "word": "Thursday",
+      "meaning": "The fourth day of the week"
+    },
+    {
+      "word": "Friday",
+      "meaning": "The fifth day of the week, before the weekend"
+    },
+    {
+      "word": "Saturday",
+      "meaning": "The first day of the weekend"
+    },
+    {
+      "word": "Sunday",
+      "meaning": "The last day of the weekend"
+    },
+    {
+      "word": "dusk",
+      "meaning": "The time when the day is ending and it gets dark"
+    },
+    {
+      "word": "twilight",
+      "meaning": "The soft light just after the sun goes down"
+    },
+    {
+      "word": "moment",
+      "meaning": "A very short time"
+    },
+    {
+      "word": "forever",
+      "meaning": "For all time, with no end"
+    },
+    {
+      "word": "always",
+      "meaning": "At every time; all the time"
+    },
+    {
+      "word": "never",
+      "meaning": "Not at any time"
+    },
+    {
+      "word": "sometimes",
+      "meaning": "At some times, but not always"
+    },
+    {
+      "word": "often",
+      "meaning": "Many times"
+    },
+    {
+      "word": "early",
+      "meaning": "Before the usual time"
+    },
+    {
+      "word": "late",
+      "meaning": "After the usual time"
+    },
+    {
+      "word": "soon",
+      "meaning": "In a short time from now"
+    },
+    {
+      "word": "now",
+      "meaning": "At this time"
+    },
+    {
+      "word": "then",
+      "meaning": "At that time"
+    },
+    {
+      "word": "before",
+      "meaning": "Earlier than something"
+    },
+    {
+      "word": "after",
+      "meaning": "Later than something"
+    },
+    {
+      "word": "daily",
+      "meaning": "Every day"
+    },
+    {
+      "word": "Christmas",
+      "meaning": "A holiday in December when people celebrate the birth of Jesus"
+    },
+    {
+      "word": "Easter",
+      "meaning": "A holiday in spring when Christians celebrate"
+    },
+    {
+      "word": "Halloween",
+      "meaning": "A night on 31 October when children dress up"
+    },
+    {
+      "word": "New Year",
+      "meaning": "The first day of January, the start of a new year"
+    }
+  ]
+}

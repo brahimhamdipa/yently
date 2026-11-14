@@ -1,0 +1,244 @@
+{
+  "words": [
+    {
+      "word": "elephant",
+      "meaning": "A very big grey animal with a long trunk"
+    },
+    {
+      "word": "giraffe",
+      "meaning": "A tall animal with a very long neck"
+    },
+    {
+      "word": "zebra",
+      "meaning": "A horse-like animal with black and white stripes"
+    },
+    {
+      "word": "camel",
+      "meaning": "A desert animal with one or two humps"
+    },
+    {
+      "word": "penguin",
+      "meaning": "A black and white bird that cannot fly but swims"
+    },
+    {
+      "word": "owl",
+      "meaning": "A bird that sees well at night and says hoo"
+    },
+    {
+      "word": "eagle",
+      "meaning": "A big strong bird that flies high"
+    },
+    {
+      "word": "butterfly",
+      "meaning": "A pretty insect with colourful wings"
+    },
+    {
+      "word": "ladybug",
+      "meaning": "A small red insect with black spots"
+    },
+    {
+      "word": "spider",
+      "meaning": "An animal with eight legs that makes a web"
+    },
+    {
+      "word": "mango",
+      "meaning": "A sweet yellow-orange fruit"
+    },
+    {
+      "word": "cherry",
+      "meaning": "A small round red fruit"
+    },
+    {
+      "word": "carrot",
+      "meaning": "A long orange vegetable"
+    },
+    {
+      "word": "potato",
+      "meaning": "A round vegetable that grows in the ground"
+    },
+    {
+      "word": "tomato",
+      "meaning": "A round red fruit we use like a vegetable"
+    },
+    {
+      "word": "onion",
+      "meaning": "A round vegetable that can make your eyes water"
+    },
+    {
+      "word": "corn",
+      "meaning": "A yellow vegetable that grows on a tall plant"
+    },
+    {
+      "word": "beans",
+      "meaning": "Small seeds we cook and eat"
+    },
+    {
+      "word": "soup",
+      "meaning": "Hot food you eat from a bowl with a spoon"
+    },
+    {
+      "word": "salad",
+      "meaning": "Cold food made of leaves and vegetables"
+    },
+    {
+      "word": "arm",
+      "meaning": "The part of your body from your shoulder to your hand"
+    },
+    {
+      "word": "leg",
+      "meaning": "The part of your body from your hip to your foot"
+    },
+    {
+      "word": "finger",
+      "meaning": "One of the five parts at the end of your hand"
+    },
+    {
+      "word": "toe",
+      "meaning": "One of the five parts at the end of your foot"
+    },
+    {
+      "word": "tooth",
+      "meaning": "A hard white thing in your mouth for biting"
+    },
+    {
+      "word": "tongue",
+      "meaning": "The soft part in your mouth that tastes food"
+    },
+    {
+      "word": "neck",
+      "meaning": "The part that joins your head to your body"
+    },
+    {
+      "word": "knee",
+      "meaning": "The middle part of your leg that bends"
+    },
+    {
+      "word": "elbow",
+      "meaning": "The middle part of your arm that bends"
+    },
+    {
+      "word": "shoulder",
+      "meaning": "The top part of your arm where it meets your body"
+    },
+    {
+      "word": "shirt",
+      "meaning": "You wear it on the top of your body"
+    },
+    {
+      "word": "pants",
+      "meaning": "You wear them on your legs"
+    },
+    {
+      "word": "dress",
+      "meaning": "A piece of clothing girls often wear"
+    },
+    {
+      "word": "coat",
+      "meaning": "A warm piece of clothing you wear outside"
+    },
+    {
+      "word": "gloves",
+      "meaning": "You wear them on your hands to keep warm"
+    },
+    {
+      "word": "scarf",
+      "meaning": "You wear it around your neck to keep warm"
+    },
+    {
+      "word": "boots",
+      "meaning": "Strong shoes you wear in rain or snow"
+    },
+    {
+      "word": "pajamas",
+      "meaning": "Soft clothes you wear to sleep"
+    },
+    {
+      "word": "blanket",
+      "meaning": "A warm cover you sleep under"
+    },
+    {
+      "word": "pillow",
+      "meaning": "A soft thing you rest your head on in bed"
+    },
+    {
+      "word": "walrus",
+      "meaning": "A big sea animal with long white tusks"
+    },
+    {
+      "word": "seal",
+      "meaning": "A sea animal with flippers that swims well"
+    },
+    {
+      "word": "jellyfish",
+      "meaning": "A soft sea animal with long arms that can sting"
+    },
+    {
+      "word": "starfish",
+      "meaning": "A star-shaped animal that lives in the sea"
+    },
+    {
+      "word": "seahorse",
+      "meaning": "A small sea animal with a curled tail that looks like a horse"
+    },
+    {
+      "word": "throat",
+      "meaning": "The inside of your neck where food goes down"
+    },
+    {
+      "word": "waist",
+      "meaning": "The middle part of your body, between your chest and hips"
+    },
+    {
+      "word": "hip",
+      "meaning": "The side of your body where your leg joins your body"
+    },
+    {
+      "word": "heel",
+      "meaning": "The back part of your foot"
+    },
+    {
+      "word": "palm",
+      "meaning": "The flat inside part of your hand"
+    },
+    {
+      "word": "celery",
+      "meaning": "A long green vegetable you eat raw or in soup"
+    },
+    {
+      "word": "garlic",
+      "meaning": "A small white vegetable with a strong smell"
+    },
+    {
+      "word": "avocado",
+      "meaning": "A green fruit with a big stone inside and soft flesh"
+    },
+    {
+      "word": "eggplant",
+      "meaning": "A big purple vegetable"
+    },
+    {
+      "word": "couch",
+      "meaning": "A long soft seat for sitting, like a sofa"
+    },
+    {
+      "word": "curtain",
+      "meaning": "Cloth that hangs over a window"
+    },
+    {
+      "word": "carpet",
+      "meaning": "A soft cover on the floor"
+    },
+    {
+      "word": "attic",
+      "meaning": "A room under the roof of a house"
+    },
+    {
+      "word": "balcony",
+      "meaning": "A small flat place outside a room, high up"
+    },
+    {
+      "word": "garage",
+      "meaning": "A building where you keep a car"
+    }
+  ]
+}

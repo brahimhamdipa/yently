@@ -1,0 +1,244 @@
+{
+  "words": [
+    {
+      "word": "hedgehog",
+      "meaning": "A small animal covered in sharp spines"
+    },
+    {
+      "word": "squirrel",
+      "meaning": "A small animal with a bushy tail that climbs trees"
+    },
+    {
+      "word": "raccoon",
+      "meaning": "An animal with a black mask around its eyes"
+    },
+    {
+      "word": "skunk",
+      "meaning": "A black and white animal that can make a bad smell"
+    },
+    {
+      "word": "beaver",
+      "meaning": "An animal that builds dams in rivers"
+    },
+    {
+      "word": "otter",
+      "meaning": "An animal that swims and plays in rivers"
+    },
+    {
+      "word": "badger",
+      "meaning": "A grey animal with a striped face that digs"
+    },
+    {
+      "word": "mole",
+      "meaning": "A small animal that digs tunnels under the ground"
+    },
+    {
+      "word": "bat",
+      "meaning": "A small animal that flies at night"
+    },
+    {
+      "word": "firefly",
+      "meaning": "A small insect that glows in the dark"
+    },
+    {
+      "word": "dragonfly",
+      "meaning": "A thin insect with big wings that flies near water"
+    },
+    {
+      "word": "snail",
+      "meaning": "A small animal that carries its house on its back"
+    },
+    {
+      "word": "worm",
+      "meaning": "A long thin animal that lives in the soil"
+    },
+    {
+      "word": "caterpillar",
+      "meaning": "A small animal that turns into a butterfly"
+    },
+    {
+      "word": "raspberry",
+      "meaning": "A small sweet red fruit"
+    },
+    {
+      "word": "blackberry",
+      "meaning": "A small sweet dark fruit"
+    },
+    {
+      "word": "kiwi",
+      "meaning": "A small brown fruit with green flesh inside"
+    },
+    {
+      "word": "fig",
+      "meaning": "A small sweet fruit with many tiny seeds"
+    },
+    {
+      "word": "plum",
+      "meaning": "A small sweet purple fruit"
+    },
+    {
+      "word": "apricot",
+      "meaning": "A small sweet orange fruit"
+    },
+    {
+      "word": "yogurt",
+      "meaning": "A soft food made from milk"
+    },
+    {
+      "word": "oatmeal",
+      "meaning": "A warm breakfast food made from oats"
+    },
+    {
+      "word": "muffin",
+      "meaning": "A small round cake"
+    },
+    {
+      "word": "waffle",
+      "meaning": "A crisp cake with square holes, often eaten with syrup"
+    },
+    {
+      "word": "pancake",
+      "meaning": "A flat round cake cooked in a pan"
+    },
+    {
+      "word": "noodle",
+      "meaning": "Long thin food we cook and eat in soup"
+    },
+    {
+      "word": "steak",
+      "meaning": "A thick slice of beef"
+    },
+    {
+      "word": "turkey",
+      "meaning": "A big bird people eat at Thanksgiving"
+    },
+    {
+      "word": "ham",
+      "meaning": "Meat from a pig, often sliced"
+    },
+    {
+      "word": "bacon",
+      "meaning": "Thin slices of pork, often eaten for breakfast"
+    },
+    {
+      "word": "drawer",
+      "meaning": "A box in a desk or cupboard that slides open"
+    },
+    {
+      "word": "closet",
+      "meaning": "A small room where you keep clothes"
+    },
+    {
+      "word": "lamp",
+      "meaning": "A light you can put on a table"
+    },
+    {
+      "word": "clock",
+      "meaning": "It shows you the time"
+    },
+    {
+      "word": "key",
+      "meaning": "You use it to open a lock"
+    },
+    {
+      "word": "lock",
+      "meaning": "It keeps a door closed until you open it with a key"
+    },
+    {
+      "word": "brush",
+      "meaning": "You use it to make your hair neat"
+    },
+    {
+      "word": "comb",
+      "meaning": "You use it to tidy your hair"
+    },
+    {
+      "word": "toothbrush",
+      "meaning": "You clean your teeth with it"
+    },
+    {
+      "word": "toothpaste",
+      "meaning": "The paste you put on your toothbrush"
+    },
+    {
+      "word": "chameleon",
+      "meaning": "A lizard that can change colour"
+    },
+    {
+      "word": "gecko",
+      "meaning": "A small lizard with wide toes"
+    },
+    {
+      "word": "iguana",
+      "meaning": "A big lizard that lives in trees"
+    },
+    {
+      "word": "toad",
+      "meaning": "An animal like a frog that lives on land"
+    },
+    {
+      "word": "puffin",
+      "meaning": "A black and white sea bird with a colourful beak"
+    },
+    {
+      "word": "hawk",
+      "meaning": "A bird that hunts other animals"
+    },
+    {
+      "word": "falcon",
+      "meaning": "A fast bird that hunts in the sky"
+    },
+    {
+      "word": "woodpecker",
+      "meaning": "A bird that taps on trees with its beak"
+    },
+    {
+      "word": "bagel",
+      "meaning": "A round bread roll with a hole in the middle"
+    },
+    {
+      "word": "croissant",
+      "meaning": "A soft flaky bread roll shaped like a crescent"
+    },
+    {
+      "word": "pretzel",
+      "meaning": "A salty twisted bread snack"
+    },
+    {
+      "word": "donut",
+      "meaning": "A sweet round cake with a hole in the middle"
+    },
+    {
+      "word": "cupcake",
+      "meaning": "A small cake in a paper cup"
+    },
+    {
+      "word": "brownie",
+      "meaning": "A small dark chocolate cake"
+    },
+    {
+      "word": "pudding",
+      "meaning": "A soft sweet food, often eaten after dinner"
+    },
+    {
+      "word": "candle",
+      "meaning": "A stick of wax that burns and gives light"
+    },
+    {
+      "word": "vase",
+      "meaning": "A container for holding flowers"
+    },
+    {
+      "word": "rug",
+      "meaning": "A small thick carpet on the floor"
+    },
+    {
+      "word": "battery",
+      "meaning": "A small thing that gives power to toys and clocks"
+    },
+    {
+      "word": "charger",
+      "meaning": "A thing you plug in to fill a phone or tablet with power"
+    }
+  ]
+}

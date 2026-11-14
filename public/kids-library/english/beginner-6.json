@@ -1,0 +1,244 @@
+{
+  "words": [
+    {
+      "word": "crocodile",
+      "meaning": "A big animal with a long mouth full of teeth that lives in rivers"
+    },
+    {
+      "word": "hippo",
+      "meaning": "A very big animal that loves water"
+    },
+    {
+      "word": "rhino",
+      "meaning": "A big grey animal with a horn on its nose"
+    },
+    {
+      "word": "cheetah",
+      "meaning": "The fastest animal on land"
+    },
+    {
+      "word": "leopard",
+      "meaning": "A wild cat with spots"
+    },
+    {
+      "word": "gorilla",
+      "meaning": "A very big and strong ape"
+    },
+    {
+      "word": "ostrich",
+      "meaning": "A very big bird that cannot fly"
+    },
+    {
+      "word": "flamingo",
+      "meaning": "A pink bird with long legs"
+    },
+    {
+      "word": "seagull",
+      "meaning": "A white bird that lives near the sea"
+    },
+    {
+      "word": "pelican",
+      "meaning": "A big bird with a large beak for holding fish"
+    },
+    {
+      "word": "broccoli",
+      "meaning": "A green vegetable that looks like a little tree"
+    },
+    {
+      "word": "spinach",
+      "meaning": "A green leafy vegetable that makes you strong"
+    },
+    {
+      "word": "cucumber",
+      "meaning": "A long green vegetable we eat in salads"
+    },
+    {
+      "word": "lettuce",
+      "meaning": "A green leafy vegetable we eat in salads"
+    },
+    {
+      "word": "cabbage",
+      "meaning": "A round green vegetable with many leaves"
+    },
+    {
+      "word": "mushroom",
+      "meaning": "A small food that grows like a tiny umbrella"
+    },
+    {
+      "word": "peas",
+      "meaning": "Small round green vegetables"
+    },
+    {
+      "word": "pepper",
+      "meaning": "A spice that makes food taste hot, or a crunchy vegetable"
+    },
+    {
+      "word": "sugar",
+      "meaning": "Sweet white food we put in tea or cakes"
+    },
+    {
+      "word": "flour",
+      "meaning": "White powder we use to make bread and cakes"
+    },
+    {
+      "word": "jam",
+      "meaning": "Sweet fruit spread we put on bread"
+    },
+    {
+      "word": "jelly",
+      "meaning": "A sweet soft food that wobbles"
+    },
+    {
+      "word": "toast",
+      "meaning": "Bread that is cooked until it is brown and crisp"
+    },
+    {
+      "word": "cereal",
+      "meaning": "A breakfast food we eat with milk"
+    },
+    {
+      "word": "sausage",
+      "meaning": "A long food made of meat"
+    },
+    {
+      "word": "chicken",
+      "meaning": "A bird we keep for eggs and meat"
+    },
+    {
+      "word": "beef",
+      "meaning": "Meat from a cow"
+    },
+    {
+      "word": "lamb",
+      "meaning": "Meat from a young sheep"
+    },
+    {
+      "word": "oven",
+      "meaning": "You cook food inside it"
+    },
+    {
+      "word": "fridge",
+      "meaning": "A cold box that keeps food fresh"
+    },
+    {
+      "word": "kitchen",
+      "meaning": "The room where we cook"
+    },
+    {
+      "word": "bathroom",
+      "meaning": "The room with a bath, shower and toilet"
+    },
+    {
+      "word": "bedroom",
+      "meaning": "The room where we sleep"
+    },
+    {
+      "word": "living room",
+      "meaning": "The room where the family sits and relaxes"
+    },
+    {
+      "word": "stairs",
+      "meaning": "Steps that take you up or down in a house"
+    },
+    {
+      "word": "roof",
+      "meaning": "The top of a house"
+    },
+    {
+      "word": "chimney",
+      "meaning": "Smoke comes out of it from a fire inside"
+    },
+    {
+      "word": "fence",
+      "meaning": "A wall around a garden or yard"
+    },
+    {
+      "word": "gate",
+      "meaning": "A small door in a fence"
+    },
+    {
+      "word": "yard",
+      "meaning": "The ground around a house"
+    },
+    {
+      "word": "alligator",
+      "meaning": "A big animal like a crocodile that lives in rivers"
+    },
+    {
+      "word": "cobra",
+      "meaning": "A snake that can stand up and spread its neck"
+    },
+    {
+      "word": "scorpion",
+      "meaning": "A small animal with a tail that can sting"
+    },
+    {
+      "word": "grasshopper",
+      "meaning": "A green insect that jumps high"
+    },
+    {
+      "word": "cricket",
+      "meaning": "A small insect that sings at night"
+    },
+    {
+      "word": "mosquito",
+      "meaning": "A tiny insect that bites and drinks blood"
+    },
+    {
+      "word": "moth",
+      "meaning": "An insect like a butterfly that flies at night"
+    },
+    {
+      "word": "ketchup",
+      "meaning": "A red sauce made from tomatoes"
+    },
+    {
+      "word": "mustard",
+      "meaning": "A yellow sauce with a strong taste"
+    },
+    {
+      "word": "vinegar",
+      "meaning": "A sour liquid used in cooking"
+    },
+    {
+      "word": "cream",
+      "meaning": "The thick white part of milk"
+    },
+    {
+      "word": "cinnamon",
+      "meaning": "A brown spice that smells sweet"
+    },
+    {
+      "word": "vanilla",
+      "meaning": "A sweet taste from a plant, used in ice cream and cakes"
+    },
+    {
+      "word": "sink",
+      "meaning": "A basin with taps where you wash your hands or dishes"
+    },
+    {
+      "word": "shower",
+      "meaning": "Water that falls on you from above to wash"
+    },
+    {
+      "word": "toilet",
+      "meaning": "You sit on it in the bathroom"
+    },
+    {
+      "word": "bathtub",
+      "meaning": "A big tub you fill with water to wash in"
+    },
+    {
+      "word": "basement",
+      "meaning": "A room under a house, below the ground"
+    },
+    {
+      "word": "porch",
+      "meaning": "A small covered place at the front door of a house"
+    },
+    {
+      "word": "mailbox",
+      "meaning": "A box outside a house where letters are put"
+    }
+  ]
+}

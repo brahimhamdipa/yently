@@ -1,0 +1,244 @@
+{
+  "words": [
+    {
+      "word": "river",
+      "meaning": "Water that flows across the land"
+    },
+    {
+      "word": "lake",
+      "meaning": "A large area of still water with land around it"
+    },
+    {
+      "word": "ocean",
+      "meaning": "A huge area of salty water, bigger than a sea"
+    },
+    {
+      "word": "mountain",
+      "meaning": "A very high piece of land"
+    },
+    {
+      "word": "hill",
+      "meaning": "A piece of land that is higher than the land around it"
+    },
+    {
+      "word": "valley",
+      "meaning": "Low land between hills or mountains"
+    },
+    {
+      "word": "forest",
+      "meaning": "A large place with many trees"
+    },
+    {
+      "word": "desert",
+      "meaning": "A very dry place with lots of sand and little rain"
+    },
+    {
+      "word": "island",
+      "meaning": "Land with water all around it"
+    },
+    {
+      "word": "volcano",
+      "meaning": "A mountain that can shoot out hot lava"
+    },
+    {
+      "word": "rainbow",
+      "meaning": "A curved band of colours in the sky after rain"
+    },
+    {
+      "word": "thunder",
+      "meaning": "The loud sound after lightning"
+    },
+    {
+      "word": "lightning",
+      "meaning": "A bright flash in the sky during a storm"
+    },
+    {
+      "word": "storm",
+      "meaning": "Bad weather with strong wind, rain and thunder"
+    },
+    {
+      "word": "fog",
+      "meaning": "A thick cloud close to the ground that makes it hard to see"
+    },
+    {
+      "word": "ice",
+      "meaning": "Frozen water, very cold and hard"
+    },
+    {
+      "word": "frost",
+      "meaning": "Thin ice that forms on cold mornings"
+    },
+    {
+      "word": "breeze",
+      "meaning": "A soft gentle wind"
+    },
+    {
+      "word": "wave",
+      "meaning": "Water that rises and falls in the sea"
+    },
+    {
+      "word": "waterfall",
+      "meaning": "Water that falls down from a high place"
+    },
+    {
+      "word": "autumn",
+      "meaning": "The season when leaves fall from trees"
+    },
+    {
+      "word": "winter",
+      "meaning": "The coldest season, when it can snow"
+    },
+    {
+      "word": "summer",
+      "meaning": "The hottest season, when the sun shines a lot"
+    },
+    {
+      "word": "season",
+      "meaning": "One of the four parts of the year"
+    },
+    {
+      "word": "planet",
+      "meaning": "A large round world that goes around a star"
+    },
+    {
+      "word": "earth",
+      "meaning": "The planet we live on"
+    },
+    {
+      "word": "comet",
+      "meaning": "A ball of ice and dust that flies through space with a tail"
+    },
+    {
+      "word": "eclipse",
+      "meaning": "When the moon or the sun is hidden for a short time"
+    },
+    {
+      "word": "meadow",
+      "meaning": "A field of grass and flowers"
+    },
+    {
+      "word": "pond",
+      "meaning": "A small area of still water"
+    },
+    {
+      "word": "stream",
+      "meaning": "A small river"
+    },
+    {
+      "word": "cave",
+      "meaning": "A big hole in a rock or under the ground"
+    },
+    {
+      "word": "cliff",
+      "meaning": "A high steep rock by the sea or a mountain"
+    },
+    {
+      "word": "shore",
+      "meaning": "The land at the edge of the sea or a lake"
+    },
+    {
+      "word": "coast",
+      "meaning": "The land where the sea meets the land"
+    },
+    {
+      "word": "jungle",
+      "meaning": "A thick forest in a hot place"
+    },
+    {
+      "word": "swamp",
+      "meaning": "Wet land with water and tall plants"
+    },
+    {
+      "word": "glacier",
+      "meaning": "A huge river of ice that moves very slowly"
+    },
+    {
+      "word": "moonlight",
+      "meaning": "The soft light from the moon at night"
+    },
+    {
+      "word": "sunrise",
+      "meaning": "The time when the sun comes up in the morning"
+    },
+    {
+      "word": "spring",
+      "meaning": "The season when flowers grow and it gets warmer"
+    },
+    {
+      "word": "sunset",
+      "meaning": "The time when the sun goes down in the evening"
+    },
+    {
+      "word": "hail",
+      "meaning": "Small balls of ice that fall from the sky"
+    },
+    {
+      "word": "blizzard",
+      "meaning": "A very strong snowstorm with wind"
+    },
+    {
+      "word": "hurricane",
+      "meaning": "A very strong storm with wind and rain"
+    },
+    {
+      "word": "tornado",
+      "meaning": "A fast spinning wind that moves across the land"
+    },
+    {
+      "word": "drought",
+      "meaning": "A long time with no rain"
+    },
+    {
+      "word": "flood",
+      "meaning": "Water that covers land that is usually dry"
+    },
+    {
+      "word": "tide",
+      "meaning": "The sea coming in and going out every day"
+    },
+    {
+      "word": "lagoon",
+      "meaning": "A shallow area of sea water near the land"
+    },
+    {
+      "word": "bay",
+      "meaning": "A part of the sea that curves into the land"
+    },
+    {
+      "word": "harbor",
+      "meaning": "A safe place where ships can stop"
+    },
+    {
+      "word": "canyon",
+      "meaning": "A deep valley with steep sides made by a river"
+    },
+    {
+      "word": "dune",
+      "meaning": "A hill of sand made by the wind"
+    },
+    {
+      "word": "oasis",
+      "meaning": "A place in the desert with water and trees"
+    },
+    {
+      "word": "crater",
+      "meaning": "A big round hole in the ground, or on the moon"
+    },
+    {
+      "word": "meteor",
+      "meaning": "A rock from space that burns brightly as it falls"
+    },
+    {
+      "word": "asteroid",
+      "meaning": "A rock that flies around the sun in space"
+    },
+    {
+      "word": "constellation",
+      "meaning": "A group of stars that looks like a picture in the sky"
+    },
+    {
+      "word": "aurora",
+      "meaning": "Beautiful coloured lights in the night sky in cold places"
+    }
+  ]
+}

@@ -1,0 +1,244 @@
+{
+  "words": [
+    {
+      "word": "architect",
+      "meaning": "A person who designs buildings"
+    },
+    {
+      "word": "surgeon",
+      "meaning": "A doctor who operates on people to fix their bodies"
+    },
+    {
+      "word": "professor",
+      "meaning": "A teacher at a university"
+    },
+    {
+      "word": "detective",
+      "meaning": "A person who finds out who did a crime"
+    },
+    {
+      "word": "journalist",
+      "meaning": "A person who writes news for newspapers or television"
+    },
+    {
+      "word": "editor",
+      "meaning": "A person who checks and fixes books or newspapers"
+    },
+    {
+      "word": "translator",
+      "meaning": "A person who changes words from one language to another"
+    },
+    {
+      "word": "programmer",
+      "meaning": "A person who writes code for computers"
+    },
+    {
+      "word": "designer",
+      "meaning": "A person who plans how things will look"
+    },
+    {
+      "word": "chemist",
+      "meaning": "A scientist who studies what things are made of"
+    },
+    {
+      "word": "physicist",
+      "meaning": "A scientist who studies energy, forces and how things move"
+    },
+    {
+      "word": "biologist",
+      "meaning": "A scientist who studies living things"
+    },
+    {
+      "word": "geologist",
+      "meaning": "A scientist who studies rocks and the earth"
+    },
+    {
+      "word": "astronomer",
+      "meaning": "A scientist who studies the stars and planets"
+    },
+    {
+      "word": "historian",
+      "meaning": "A person who studies the past"
+    },
+    {
+      "word": "philosopher",
+      "meaning": "A person who thinks deeply about life and ideas"
+    },
+    {
+      "word": "economist",
+      "meaning": "A person who studies money and how people use it"
+    },
+    {
+      "word": "accountant",
+      "meaning": "A person who keeps track of money for a business"
+    },
+    {
+      "word": "secretary",
+      "meaning": "A person who helps in an office with letters and calls"
+    },
+    {
+      "word": "mayor",
+      "meaning": "The leader of a town or city"
+    },
+    {
+      "word": "governor",
+      "meaning": "The leader of a state or region"
+    },
+    {
+      "word": "president",
+      "meaning": "The leader of a country"
+    },
+    {
+      "word": "captain",
+      "meaning": "The person in charge of a ship or a team"
+    },
+    {
+      "word": "chef",
+      "meaning": "The head cook in a restaurant"
+    },
+    {
+      "word": "pharmacist",
+      "meaning": "A person who gives you medicine in a pharmacy"
+    },
+    {
+      "word": "optician",
+      "meaning": "A person who checks your eyes and makes glasses"
+    },
+    {
+      "word": "therapist",
+      "meaning": "A person who helps people feel better in body or mind"
+    },
+    {
+      "word": "coach",
+      "meaning": "A person who trains a sports team"
+    },
+    {
+      "word": "referee",
+      "meaning": "A person who makes sure players follow the rules in a game"
+    },
+    {
+      "word": "miner",
+      "meaning": "A person who digs coal or gold out of the ground"
+    },
+    {
+      "word": "fisherman",
+      "meaning": "A person who catches fish"
+    },
+    {
+      "word": "blacksmith",
+      "meaning": "A person who makes things from hot iron"
+    },
+    {
+      "word": "jeweler",
+      "meaning": "A person who makes and sells rings and necklaces"
+    },
+    {
+      "word": "florist",
+      "meaning": "A person who sells flowers"
+    },
+    {
+      "word": "butcher",
+      "meaning": "A person who sells meat"
+    },
+    {
+      "word": "postman",
+      "meaning": "A person who brings letters to your house"
+    },
+    {
+      "word": "janitor",
+      "meaning": "A person who cleans and looks after a school or building"
+    },
+    {
+      "word": "babysitter",
+      "meaning": "A person who looks after children while their parents are out"
+    },
+    {
+      "word": "lifeguard",
+      "meaning": "A person who watches swimmers to keep them safe"
+    },
+    {
+      "word": "zookeeper",
+      "meaning": "A person who looks after animals in a zoo"
+    },
+    {
+      "word": "mathematician",
+      "meaning": "A person who studies numbers and shapes"
+    },
+    {
+      "word": "linguist",
+      "meaning": "A person who studies languages"
+    },
+    {
+      "word": "geographer",
+      "meaning": "A person who studies the earth and places"
+    },
+    {
+      "word": "psychiatrist",
+      "meaning": "A doctor who helps people with their minds and feelings"
+    },
+    {
+      "word": "pediatrician",
+      "meaning": "A doctor for babies and children"
+    },
+    {
+      "word": "cardiologist",
+      "meaning": "A doctor who looks after hearts"
+    },
+    {
+      "word": "novelist",
+      "meaning": "A person who writes long stories called novels"
+    },
+    {
+      "word": "playwright",
+      "meaning": "A person who writes plays for the theatre"
+    },
+    {
+      "word": "illustrator",
+      "meaning": "A person who draws pictures for books"
+    },
+    {
+      "word": "animator",
+      "meaning": "A person who makes cartoons move"
+    },
+    {
+      "word": "choreographer",
+      "meaning": "A person who makes up dances"
+    },
+    {
+      "word": "violinist",
+      "meaning": "A person who plays the violin"
+    },
+    {
+      "word": "cellist",
+      "meaning": "A person who plays the cello"
+    },
+    {
+      "word": "conductor",
+      "meaning": "A person who leads an orchestra"
+    },
+    {
+      "word": "film director",
+      "meaning": "A person who tells actors what to do in a film"
+    },
+    {
+      "word": "producer",
+      "meaning": "A person who organises making a film or a show"
+    },
+    {
+      "word": "veterinarian",
+      "meaning": "A doctor for animals, also called a vet"
+    },
+    {
+      "word": "paleontologist",
+      "meaning": "A scientist who studies fossils and dinosaurs"
+    },
+    {
+      "word": "dermatologist",
+      "meaning": "A doctor who looks after skin"
+    },
+    {
+      "word": "orthodontist",
+      "meaning": "A dentist who makes teeth straight"
+    }
+  ]
+}

@@ -1,0 +1,244 @@
+{
+  "words": [
+    {
+      "word": "jacket",
+      "meaning": "A short coat you wear outside"
+    },
+    {
+      "word": "sweater",
+      "meaning": "A warm piece of clothing you wear on top"
+    },
+    {
+      "word": "hoodie",
+      "meaning": "A sweater with a hood for your head"
+    },
+    {
+      "word": "T-shirt",
+      "meaning": "A light shirt with short sleeves"
+    },
+    {
+      "word": "jeans",
+      "meaning": "Strong blue trousers made of denim"
+    },
+    {
+      "word": "shorts",
+      "meaning": "Short trousers for warm days"
+    },
+    {
+      "word": "skirt",
+      "meaning": "A piece of clothing worn around the waist"
+    },
+    {
+      "word": "blouse",
+      "meaning": "A shirt for women and girls"
+    },
+    {
+      "word": "suit",
+      "meaning": "A jacket and trousers that match, worn for smart occasions"
+    },
+    {
+      "word": "tie",
+      "meaning": "A long piece of cloth men wear around the neck"
+    },
+    {
+      "word": "belt",
+      "meaning": "A band you wear around your waist to hold up your trousers"
+    },
+    {
+      "word": "cap",
+      "meaning": "A small hat with a brim at the front"
+    },
+    {
+      "word": "helmet",
+      "meaning": "A hard hat that protects your head"
+    },
+    {
+      "word": "mittens",
+      "meaning": "Gloves with no separate fingers, for cold weather"
+    },
+    {
+      "word": "slippers",
+      "meaning": "Soft shoes you wear inside the house"
+    },
+    {
+      "word": "sandals",
+      "meaning": "Open shoes for warm weather"
+    },
+    {
+      "word": "sneakers",
+      "meaning": "Comfortable sports shoes"
+    },
+    {
+      "word": "raincoat",
+      "meaning": "A coat that keeps you dry in the rain"
+    },
+    {
+      "word": "umbrella",
+      "meaning": "You hold it over your head to keep off the rain"
+    },
+    {
+      "word": "sunglasses",
+      "meaning": "Dark glasses that protect your eyes from the sun"
+    },
+    {
+      "word": "alarm clock",
+      "meaning": "A clock that rings to wake you up"
+    },
+    {
+      "word": "ring",
+      "meaning": "A small circle of metal you wear on your finger"
+    },
+    {
+      "word": "necklace",
+      "meaning": "A chain you wear around your neck"
+    },
+    {
+      "word": "earrings",
+      "meaning": "Small decorations you wear on your ears"
+    },
+    {
+      "word": "bracelet",
+      "meaning": "A band you wear around your wrist"
+    },
+    {
+      "word": "wallet",
+      "meaning": "A small case for money and cards"
+    },
+    {
+      "word": "purse",
+      "meaning": "A small bag for money and small things"
+    },
+    {
+      "word": "backpack",
+      "meaning": "A bag you carry on your back"
+    },
+    {
+      "word": "suitcase",
+      "meaning": "A big case for clothes when you travel"
+    },
+    {
+      "word": "pocket",
+      "meaning": "A small bag sewn into your clothes for small things"
+    },
+    {
+      "word": "button",
+      "meaning": "A small round thing that closes your clothes"
+    },
+    {
+      "word": "zipper",
+      "meaning": "A long fastener that opens and closes clothes and bags"
+    },
+    {
+      "word": "collar",
+      "meaning": "The part of a shirt that goes around your neck"
+    },
+    {
+      "word": "sleeve",
+      "meaning": "The part of a shirt that covers your arm"
+    },
+    {
+      "word": "uniform",
+      "meaning": "Special clothes everyone in a group wears"
+    },
+    {
+      "word": "costume",
+      "meaning": "Clothes you wear to look like someone else"
+    },
+    {
+      "word": "robe",
+      "meaning": "A long loose piece of clothing you wear at home"
+    },
+    {
+      "word": "vest",
+      "meaning": "A short piece of clothing worn over a shirt"
+    },
+    {
+      "word": "overalls",
+      "meaning": "Trousers with a front part that covers your chest"
+    },
+    {
+      "word": "apron",
+      "meaning": "A cloth you wear over your clothes to keep them clean while cooking"
+    },
+    {
+      "word": "tights",
+      "meaning": "Thin clothes that cover the legs and feet"
+    },
+    {
+      "word": "leggings",
+      "meaning": "Tight trousers that stretch"
+    },
+    {
+      "word": "cardigan",
+      "meaning": "A sweater that opens at the front with buttons"
+    },
+    {
+      "word": "blazer",
+      "meaning": "A smart jacket, often part of a school uniform"
+    },
+    {
+      "word": "parka",
+      "meaning": "A long warm coat with a hood"
+    },
+    {
+      "word": "tracksuit",
+      "meaning": "Soft clothes you wear for sport"
+    },
+    {
+      "word": "swimsuit",
+      "meaning": "Clothes you wear to swim in"
+    },
+    {
+      "word": "underwear",
+      "meaning": "Clothes you wear under your other clothes"
+    },
+    {
+      "word": "flip-flops",
+      "meaning": "Light open shoes held on by a strap between the toes"
+    },
+    {
+      "word": "wristwatch",
+      "meaning": "A small clock you wear on your wrist"
+    },
+    {
+      "word": "glasses",
+      "meaning": "Two pieces of glass in a frame that help you see better"
+    },
+    {
+      "word": "earmuffs",
+      "meaning": "Soft covers you wear over your ears to keep them warm"
+    },
+    {
+      "word": "headband",
+      "meaning": "A band you wear around your head to hold back your hair"
+    },
+    {
+      "word": "handbag",
+      "meaning": "A small bag women carry for money and small things"
+    },
+    {
+      "word": "lunchbox",
+      "meaning": "A box for carrying your lunch to school"
+    },
+    {
+      "word": "bow tie",
+      "meaning": "A small tie shaped like a bow, worn for smart occasions"
+    },
+    {
+      "word": "cufflinks",
+      "meaning": "Small decorations that close the cuffs of a shirt"
+    },
+    {
+      "word": "nightgown",
+      "meaning": "A long loose dress women wear to sleep in"
+    },
+    {
+      "word": "bathrobe",
+      "meaning": "A long soft coat you wear after a bath"
+    },
+    {
+      "word": "rain boots",
+      "meaning": "Tall boots you wear in the rain to keep your feet dry"
+    }
+  ]
+}
