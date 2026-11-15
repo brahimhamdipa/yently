@@ -75,6 +75,11 @@
 
   /* ---------- Play state ---------- */
   var player = ''; // chosen student name
+  var playerPin = ''; // verified PIN for the current student, session only, never stored
+  var pinName = ''; // student awaiting PIN entry on the picker
+  var delStudentIdx = null; // Setup: student index awaiting an in-page delete confirmation
+  var delScoreId = null; // teacher scores: score id awaiting an in-page delete confirmation
+  var delScoreErr = ''; // teacher scores: delete error to show on the next list render
   var game = null; // 'spell' | 'pick' | 'meaning'
   var rounds = []; // the 10 words for this game, shuffled
   var roundIdx = 0;
@@ -138,6 +143,12 @@
   function loadPlayer() {
     try { player = localStorage.getItem(STUDENT_KEY) || ''; } catch (e) { player = ''; }
     if (player && students().indexOf(player) === -1) player = '';
+    /* A stored name that now has a PIN must re-enter it: never
+       auto-select a PIN student from localStorage. */
+    if (player && (data && data.pin_students || []).indexOf(player) !== -1) {
+      player = '';
+      try { localStorage.removeItem(STUDENT_KEY); } catch (e) {}
+    }
   }
   function savePlayer() {
     try { localStorage.setItem(STUDENT_KEY, player); } catch (e) {}
@@ -181,6 +192,15 @@
         html += '</div>';
       }
       html += '</div>';
+      /* PIN gate: a student with a PIN set must enter it before
+         playing. The prompt is in-page, never a native prompt(). */
+      if (pinName) {
+        html += '<div class="card"><h2>🔒 Enter your PIN</h2>' +
+          '<p class="info">Enter ' + esc(pinName) + '\'s 4-digit PIN to play:</p>' +
+          '<label>PIN</label><input id="pin-input" type="password" inputmode="numeric" maxlength="4" autocomplete="off">' +
+          '<div class="row"><button id="pin-ok" class="big-btn">OK</button><button id="pin-cancel" class="secondary">Cancel</button></div>' +
+          '<div id="pin-out" style="margin-top:12px"></div></div>';
+      }
     } else {
       html += '<h2>Hi, ' + esc(player) + '! 👋</h2>' +
         '<div class="card"><p class="info">Pick a game — 10 rounds each. Good luck!</p>' +
@@ -194,20 +214,64 @@
     el.innerHTML = html;
     el.querySelectorAll('[data-student]').forEach(function (btn) {
       btn.addEventListener('click', function () {
-        player = btn.getAttribute('data-student');
+        var name = btn.getAttribute('data-student');
+        /* A student with a PIN set must enter it first. */
+        if ((data.pin_students || []).indexOf(name) !== -1) {
+          pinName = name;
+          renderPlay();
+          return;
+        }
+        player = name;
+        playerPin = '';
+        pinName = '';
         savePlayer();
         renderPlay();
       });
     });
+    wirePinBox();
     el.querySelectorAll('[data-game]').forEach(function (btn) {
       btn.addEventListener('click', function () { startGame(btn.getAttribute('data-game')); });
     });
     var change = $('change-player');
     if (change) change.addEventListener('click', function () {
       player = '';
+      playerPin = '';
       try { localStorage.removeItem(STUDENT_KEY); } catch (e) {}
       renderPlay();
     });
+  }
+  /* PIN entry box on the picker: digits only, verified against the
+     server. The verified PIN lives only in a session variable. */
+  function wirePinBox() {
+    var input = $('pin-input');
+    if (!input) return;
+    input.addEventListener('input', function () {
+      input.value = input.value.replace(/\D/g, '').slice(0, 4);
+    });
+    $('pin-ok').addEventListener('click', function () {
+      var out = $('pin-out');
+      var pin = input.value;
+      if (!/^\d{4}$/.test(pin)) {
+        out.innerHTML = '<p class="error">Enter the 4-digit PIN.</p>';
+        return;
+      }
+      out.innerHTML = '<p class="info">Checking…</p>';
+      rpc('check_kids_spanish_student_pin', { p_slug: SLUG, p_student_name: pinName, p_pin: pin }).then(function (ok) {
+        if (ok === true) {
+          player = pinName;
+          playerPin = pin;
+          pinName = '';
+          savePlayer();
+          renderPlay();
+        } else {
+          out.innerHTML = '<p class="error">Wrong PIN. Try again.</p>';
+        }
+      }).catch(function () {
+        out.innerHTML = '<p class="error">Could not reach the PIN check. Please try again in a moment.</p>';
+      });
+    });
+    $('pin-cancel').addEventListener('click', function () { pinName = ''; renderPlay(); });
+    input.focus();
   }
   function startGame(g) {
     var list = shuffle(words());
@@ -346,7 +410,7 @@
       '<button id="other-game" class="big-btn secondary">Other games</button></div></div>';
     $('play-again').addEventListener('click', function () { startGame(game); });
     $('other-game').addEventListener('click', function () { game = null; renderPlay(); });
-    rpc('record_kids_spanish_score', { p_slug: SLUG, p_student_name: player, p_game: gameTitle(game), p_level: 'easy', p_score: score, p_total: total }).then(function () {
+    rpc('record_kids_spanish_score', { p_slug: SLUG, p_student_name: player, p_game: gameTitle(game), p_level: 'easy', p_score: score, p_total: total, p_pin: playerPin || '' }).then(function () {
       var out = $('save-out');
       if (out) out.textContent = 'Score saved — your teacher can see it. 🎉';
     }).catch(function () {
@@ -395,16 +459,49 @@
     el.innerHTML = '<h2>Teacher — Scores</h2><div class="card"><p class="info">Loading scores…</p></div>';
     rpc('list_kids_spanish_scores', { p_slug: SLUG, p_epass: teacherPass }).then(function (rows) {
       var list = rows || [];
+      var html = '<h2>Teacher — Scores</h2>';
+      if (delScoreErr) {
+        html += '<div class="card"><p class="error">Could not delete score: ' + esc(delScoreErr) + '</p></div>';
+        delScoreErr = '';
+      }
       if (!list.length) {
-        el.innerHTML = '<h2>Teacher — Scores</h2><div class="card"><p class="info">No scores yet. Once a student finishes a game, their score shows here.</p></div>';
+        html += '<div class="card"><p class="info">No scores yet. Once a student finishes a game, their score shows here.</p></div>';
+        el.innerHTML = html;
         return;
       }
-      var html = '<h2>Teacher — Scores</h2><p class="info">Newest first. Each row is one finished game.</p><div class="card"><table class="scores"><thead><tr><th>Student</th><th>Game</th><th>Score</th><th>Date</th></tr></thead><tbody>';
+      html += '<p class="info">Newest first. Each row is one finished game.</p><div class="card"><table class="scores"><thead><tr><th>Student</th><th>Game</th><th>Score</th><th>Date</th><th></th></tr></thead><tbody>';
       list.forEach(function (r) {
-        html += '<tr><td>' + esc(r.student_name) + '</td><td>' + esc(r.game) + '</td><td><b>' + esc(r.score) + ' / ' + esc(r.total) + '</b></td><td>' + esc(new Date(r.created_at).toLocaleString()) + '</td></tr>';
+        var delHtml;
+        if (delScoreId === r.id) {
+          delHtml = '<span>Delete this score?</span> <button class="small danger" data-score-del-yes="' + r.id + '">Yes</button> <button class="small secondary" data-score-del-no>Keep</button>';
+        } else {
+          delHtml = '<button class="small danger" data-score-del="' + r.id + '">Delete</button>';
+        }
+        html += '<tr><td>' + esc(r.student_name) + '</td><td>' + esc(r.game) + '</td><td><b>' + esc(r.score) + ' / ' + esc(r.total) + '</b></td><td>' + esc(new Date(r.created_at).toLocaleString()) + '</td><td>' + delHtml + '</td></tr>';
       });
       html += '</tbody></table></div>';
       el.innerHTML = html;
+      /* Delete a score: in-page tap-again confirm, same pattern as
+         the student delete in Setup. Never a native confirm(). */
+      el.querySelectorAll('[data-score-del]').forEach(function (b) {
+        b.addEventListener('click', function () { delScoreId = Number(b.getAttribute('data-score-del')); openTeacher(); });
+      });
+      el.querySelectorAll('[data-score-del-no]').forEach(function (b) {
+        b.addEventListener('click', function () { delScoreId = null; openTeacher(); });
+      });
+      el.querySelectorAll('[data-score-del-yes]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          var id = Number(b.getAttribute('data-score-del-yes'));
+          rpc('delete_kids_spanish_score', { p_slug: SLUG, p_epass: teacherPass || '', p_score_id: id }).then(function () {
+            delScoreId = null;
+            openTeacher();
+          }).catch(function (err) {
+            delScoreId = null;
+            delScoreErr = err.message || 'request failed';
+            openTeacher();
+          });
+        });
+      });
     }).catch(function (err) {
       el.innerHTML = '<h2>Teacher — Scores</h2><div class="card"><p class="error">Could not load scores: ' + esc(err.message) + '</p></div>';
     });
@@ -454,6 +551,7 @@
     rpc('get_kids_spanish_draft', { p_slug: SLUG, p_username: staffCreds.u, p_password: staffCreds.p }).then(function (res) {
       draft = res.data || {};
       draft.students = draft.students || [];
+      draft.student_pins = draft.student_pins || {};
       draft.words = draft.words || [];
       draftStatus = res.status || 'editing';
       renderSetup();
@@ -524,12 +622,43 @@
       draft.students.forEach(function (name, i) {
         var row = document.createElement('div');
         row.className = 'student-row';
-        row.innerHTML = '<span>' + esc(name) + '</span><button class="small danger" data-remove-student="' + i + '">Remove</button>';
-        row.querySelector('[data-remove-student]').addEventListener('click', function () {
-          draft.students.splice(i, 1);
+        if (delStudentIdx === i) {
+          row.innerHTML = '<span><strong>' + esc(name) + '</strong> — remove this student?</span>' +
+            '<span><button class="small danger" data-student-del-yes="' + i + '">Yes, remove</button> ' +
+            '<button class="small secondary" data-student-del-no>Keep</button></span>';
+        } else {
+          /* PIN: 4 digits, optional. A student with no PIN plays
+             without one, exactly as before. */
+          row.innerHTML = '<span>' + esc(name) + '</span>' +
+            '<input type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="PIN — optional" data-student-pin="' + i + '" value="' + esc((draft.student_pins[name]) || '') + '">' +
+            '<button class="small danger" data-student-del="' + i + '">Remove</button>';
+        }
+        studentsEl.appendChild(row);
+      });
+      studentsEl.querySelectorAll('[data-student-pin]').forEach(function (input) {
+        input.addEventListener('input', function () {
+          var v = input.value.replace(/\D/g, '').slice(0, 4);
+          input.value = v;
+          var name = draft.students[Number(input.getAttribute('data-student-pin'))];
+          if (!name) return;
+          if (v) draft.student_pins[name] = v; else delete draft.student_pins[name];
+        });
+      });
+      studentsEl.querySelectorAll('[data-student-del]').forEach(function (b) {
+        b.addEventListener('click', function () { delStudentIdx = Number(b.getAttribute('data-student-del')); drawStudents(); });
+      });
+      studentsEl.querySelectorAll('[data-student-del-no]').forEach(function (b) {
+        b.addEventListener('click', function () { delStudentIdx = null; drawStudents(); });
+      });
+      studentsEl.querySelectorAll('[data-student-del-yes]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          var idx = Number(b.getAttribute('data-student-del-yes'));
+          var nm = draft.students[idx];
+          draft.students.splice(idx, 1);
+          if (nm) delete draft.student_pins[nm];
+          delStudentIdx = null;
           drawStudents();
         });
-        studentsEl.appendChild(row);
       });
     }
     drawStudents();
@@ -569,12 +698,18 @@
       drawWords();
     });
     /* collectDraft must include EVERY editable field — anything left
-       out here is silently dropped when the owner saves. */
+       out here is silently dropped when the owner saves. PINs are
+       pruned to current students and to exactly 4 digits. */
     function collectDraft() {
+      var pins = {};
+      Object.keys(draft.student_pins || {}).forEach(function (nm) {
+        if (draft.students.indexOf(nm) !== -1 && /^\d{4}$/.test(draft.student_pins[nm])) pins[nm] = draft.student_pins[nm];
+      });
       return {
         name: $('setup-name').value.trim() || draft.name,
         about: $('setup-about').value,
         students: draft.students.slice(),
+        student_pins: pins,
         words: draft.words.filter(function (w) { return String(w.word || '').trim() !== '' && String(w.meaning || '').trim() !== ''; })
           .map(function (w) { return { word: String(w.word).trim(), meaning: String(w.meaning).trim() }; })
       };
