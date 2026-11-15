@@ -24,6 +24,7 @@ import { insertKidsScienceOrder } from './kidsScienceData'
 import { insertKidsGeographyOrder } from './kidsGeographyData'
 import { insertKidsCodingOrder } from './kidsCodingData'
 import { insertKidsReadingOrder } from './kidsReadingData'
+import { createOrderTracking, TABLE_BY_KEY } from './orderTracking'
 import {
   bundleFor,
   RESTAURANT_PLAN_KEY,
@@ -125,7 +126,22 @@ export async function placeBusinessOrder({ name, email, phone, note, items }) {
       price: item.price,
       note,
     }, { plan: item.name, price: item.price, ...(bundleNote ? { bundle_discount: bundleNote } : {}) })
-    placed.push(item)
+    // Tracking row for this plan. The insert above returns no id
+    // (submitAndNotify inserts with no .select()), so the RPC finds
+    // the just-placed row server-side (orderId null). createOrderTracking
+    // never throws and returns null on failure — the order is already
+    // placed at this point and stays placed either way.
+    let tracking_code = null
+    const orderTable = TABLE_BY_KEY[item.key]
+    if (!orderTable) {
+      console.warn('No tracking order table for plan key ' + item.key + ' — order placed without tracking')
+    } else {
+      tracking_code = await createOrderTracking({
+        kind: 'system', plan: item.name, orderTable, orderId: null,
+        name, email, phone, price: item.price, shopSlug: null,
+      })
+    }
+    placed.push({ ...item, tracking_code })
   }
   return placed
 }
