@@ -16,7 +16,10 @@
    set by the admin; schools with none set stay fully open) and
    shows every saved score so the teacher can see each student's
    progress. The password is checked on the server by the RPCs,
-   not just in the page. All credentials live in memory only: a
+   not just in the page. A student with a 4-digit PIN set in Setup
+   must enter it on the picker before playing; the PIN is checked
+   on the server, kept only in a session variable, and never stored
+   on the device. All credentials live in memory only: a
    reload asks again, exactly like the diner employee password. */
 (function () {
   'use strict';
@@ -93,6 +96,10 @@
   // Setup state: which topic/question is awaiting an in-page removal.
   var removeTopicId = null;
   var removeQKey = null;
+  var studentPin = ''; // verified PIN for the current student, session only, never stored
+  var pinName = ''; // student awaiting PIN entry on the picker
+  var delScoreId = null; // teacher scores: score id awaiting an in-page delete confirmation
+  var delScoreErr = ''; // teacher scores: delete error to show on the next list render
   try { playStudent = localStorage.getItem(STUDENT_KEY) || ''; } catch (e) {}
 
   function $(id) { return document.getElementById(id); }
@@ -204,6 +211,15 @@
       html += '<button data-student="' + esc(name) + '"' + (playStudent === name ? ' class="picked"' : '') + '>' + esc(name) + '</button>';
     });
     html += '</div></div>';
+    /* PIN gate: a student with a PIN set must enter it before
+       playing. The prompt is in-page, never a native prompt(). */
+    if (pinName) {
+      html += '<div class="card"><h3>🔒 Enter your PIN</h3>' +
+        '<p class="info">Enter ' + esc(pinName) + '\'s 4-digit PIN to play:</p>' +
+        '<label>PIN</label><input id="pin-input" type="password" inputmode="numeric" maxlength="4" autocomplete="off">' +
+        '<div class="row"><button id="pin-ok">OK</button><button id="pin-cancel" class="secondary">Cancel</button></div>' +
+        '<div id="pin-out" style="margin-top:12px"></div></div>';
+    }
     if (playStudent) {
       // Step 2: pick a topic.
       html += '<div class="card"><h3>2. Pick a topic, ' + esc(playStudent) + '!</h3><div class="pick-grid">';
@@ -229,11 +245,23 @@
     el.innerHTML = html;
     el.querySelectorAll('[data-student]').forEach(function (btn) {
       btn.addEventListener('click', function () {
-        playStudent = btn.getAttribute('data-student');
+        var name = btn.getAttribute('data-student');
+        /* Already verified for this student: no PIN prompt again. */
+        if (name === playStudent && studentPin) { renderPlay(); return; }
+        /* A student with a PIN set must enter it first. */
+        if ((data.pin_students || []).indexOf(name) !== -1) {
+          pinName = name;
+          renderPlay();
+          return;
+        }
+        pinName = '';
+        playStudent = name;
+        studentPin = '';
         try { localStorage.setItem(STUDENT_KEY, playStudent); } catch (e) {}
         renderPlay();
       });
     });
+    wirePinBox(el);
     el.querySelectorAll('[data-topic]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         playTopicId = btn.getAttribute('data-topic');
@@ -253,6 +281,39 @@
     var startBtn = $('play-start');
     if (startBtn) startBtn.addEventListener('click', startQuiz);
   }
+  /* PIN entry box on the picker: digits only, verified against the
+     server. The verified PIN lives only in a session variable. */
+  function wirePinBox(el) {
+    var input = $('pin-input');
+    if (!input) return;
+    input.addEventListener('input', function () {
+      input.value = input.value.replace(/\D/g, '').slice(0, 4);
+    });
+    $('pin-ok').addEventListener('click', function () {
+      var out = $('pin-out');
+      var pin = input.value;
+      if (!/^\d{4}$/.test(pin)) {
+        out.innerHTML = '<p class="error">Enter the 4-digit PIN.</p>';
+        return;
+      }
+      out.innerHTML = '<p class="info">Checking…</p>';
+      rpc('check_kids_science_student_pin', { p_slug: SLUG, p_student_name: pinName, p_pin: pin }).then(function (ok) {
+        if (ok === true) {
+          playStudent = pinName;
+          studentPin = pin;
+          pinName = '';
+          try { localStorage.setItem(STUDENT_KEY, playStudent); } catch (e) {}
+          renderPlay();
+        } else {
+          out.innerHTML = '<p class="error">Wrong PIN. Try again.</p>';
+        }
+      }).catch(function () {
+        out.innerHTML = '<p class="error">Could not reach the PIN check. Please try again in a moment.</p>';
+      });
+    });
+    $('pin-cancel').addEventListener('click', function () { pinName = ''; renderPlay(); });
+    input.focus();
+  }
   function renderQuiz(el) {
     // Finished: score + encouragement, saved once for the teacher.
     if (quizIdx >= quiz.length) {
@@ -261,7 +322,8 @@
         quizSaved = true;
         rpc('record_kids_science_score', {
           p_slug: SLUG, p_student_name: playStudent, p_game: quizTopicLabel,
-          p_level: playLevel, p_score: quizScore, p_total: total
+          p_level: playLevel, p_score: quizScore, p_total: total,
+          p_pin: studentPin || ''
         }).catch(function () {});
       }
       el.innerHTML = '<h2>🎉 Quiz finished!</h2><div class="card">' +
@@ -356,19 +418,50 @@
       var list = rows || [];
       var html = '<h2>Teacher — Scores</h2>' +
         '<div class="row" style="margin-bottom:12px"><button id="scores-refresh" class="secondary">Refresh</button></div>';
+      if (delScoreErr) {
+        html += '<div class="card"><p class="error">Could not delete score: ' + esc(delScoreErr) + '</p></div>';
+        delScoreErr = '';
+      }
       if (!list.length) {
         html += '<div class="card"><p class="info">No scores yet. Scores appear here after a student finishes a quiz in Play.</p></div>';
       } else {
-        html += '<div class="card"><table class="scores"><thead><tr><th>Student</th><th>Topic</th><th>Level</th><th>Score</th><th>Date</th></tr></thead><tbody>';
+        html += '<div class="card"><table class="scores"><thead><tr><th>Student</th><th>Topic</th><th>Level</th><th>Score</th><th>Date</th><th></th></tr></thead><tbody>';
         list.forEach(function (r) {
           var when = r.created_at ? new Date(r.created_at).toLocaleString() : '';
+          var delHtml;
+          if (delScoreId === r.id) {
+            delHtml = '<span>Delete this score?</span> <button class="danger small" data-score-del-yes="' + r.id + '">Yes</button> <button class="secondary small" data-score-del-no>Keep</button>';
+          } else {
+            delHtml = '<button class="small danger" data-score-del="' + r.id + '">Delete</button>';
+          }
           html += '<tr><td>' + esc(r.student_name) + '</td><td>' + esc(r.game) + '</td><td>' + esc(r.level) + '</td>' +
-            '<td><b>' + esc(r.score) + ' / ' + esc(r.total) + '</b></td><td>' + esc(when) + '</td></tr>';
+            '<td><b>' + esc(r.score) + ' / ' + esc(r.total) + '</b></td><td>' + esc(when) + '</td><td>' + delHtml + '</td></tr>';
         });
         html += '</tbody></table></div>';
       }
       el.innerHTML = html;
       $('scores-refresh').addEventListener('click', renderTeacher);
+      /* Delete a score: in-page tap-again confirm, same pattern as
+         the topic/question delete in Setup. Never a native confirm(). */
+      el.querySelectorAll('[data-score-del]').forEach(function (b) {
+        b.addEventListener('click', function () { delScoreId = Number(b.getAttribute('data-score-del')); renderTeacher(); });
+      });
+      el.querySelectorAll('[data-score-del-no]').forEach(function (b) {
+        b.addEventListener('click', function () { delScoreId = null; renderTeacher(); });
+      });
+      el.querySelectorAll('[data-score-del-yes]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          var id = Number(b.getAttribute('data-score-del-yes'));
+          rpc('delete_kids_science_score', { p_slug: SLUG, p_epass: teacherPass || '', p_score_id: id }).then(function () {
+            delScoreId = null;
+            renderTeacher();
+          }).catch(function (err) {
+            delScoreId = null;
+            delScoreErr = err.message || 'request failed';
+            renderTeacher();
+          });
+        });
+      });
     }).catch(function (err) {
       el.innerHTML = '<h2>Teacher — Scores</h2><div class="card"><p class="error">Could not load scores: ' + esc(err.message) + '</p></div>';
     });
@@ -420,6 +513,7 @@
       draft.name = draft.name || '';
       draft.about = draft.about || '';
       draft.students = draft.students || [];
+      draft.student_pins = draft.student_pins || {};
       draft.topics = draft.topics || [];
       draftStatus = res.status || 'editing';
       removeTopicId = null;
@@ -495,9 +589,22 @@
       draft.students.forEach(function (name, i) {
         var row = document.createElement('div');
         row.className = 'student-row';
-        row.innerHTML = '<span>' + esc(name) + '</span><button class="small danger" data-rm-student="' + i + '">Remove</button>';
+        /* PIN: 4 digits, optional. A student with no PIN plays
+           without one, exactly as before. */
+        row.innerHTML = '<span>' + esc(name) + '</span>' +
+          '<input type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="PIN — optional" data-student-pin="' + i + '" value="' + esc((draft.student_pins[name]) || '') + '">' +
+          '<button class="small danger" data-rm-student="' + i + '">Remove</button>';
+        row.querySelector('[data-student-pin]').addEventListener('input', function (e) {
+          var v = e.target.value.replace(/\D/g, '').slice(0, 4);
+          e.target.value = v;
+          var nm = draft.students[Number(e.target.getAttribute('data-student-pin'))];
+          if (!nm) return;
+          if (v) draft.student_pins[nm] = v; else delete draft.student_pins[nm];
+        });
         row.querySelector('[data-rm-student]').addEventListener('click', function () {
+          var nm = draft.students[i];
           draft.students.splice(i, 1);
+          if (nm) delete draft.student_pins[nm];
           drawStudents();
         });
         stEl.appendChild(row);
@@ -615,15 +722,22 @@
       drawTopics();
     });
     /* collectDraft must include EVERY editable field, or Setup silently
-       drops it: name, about, students, and each topic's label, facts
-       and questions (question text, 4 choices, correct choice, level,
-       fun fact). Name/about come from the inputs; students and topics
-       come from the draft state, which every field above keeps in sync. */
+       drops it: name, about, students, student_pins, and each topic's
+       label, facts and questions (question text, 4 choices, correct
+       choice, level, fun fact). Name/about come from the inputs;
+       students and topics come from the draft state, which every field
+       above keeps in sync. PINs are pruned to current students and to
+       exactly 4 digits. */
     function collectDraft() {
+      var pins = {};
+      Object.keys(draft.student_pins || {}).forEach(function (nm) {
+        if (draft.students.indexOf(nm) !== -1 && /^\d{4}$/.test(draft.student_pins[nm])) pins[nm] = draft.student_pins[nm];
+      });
       return {
         name: $('setup-name').value.trim() || draft.name,
         about: $('setup-about').value,
         students: (draft.students || []).filter(function (s) { return String(s).trim() !== ''; }),
+        student_pins: pins,
         topics: (draft.topics || []).map(function (t) {
           return {
             id: t.id,
@@ -697,6 +811,12 @@
       }
       data.students = data.students || [];
       data.topics = data.topics || [];
+      /* A stored name that now has a PIN must re-enter it: never
+         auto-select a PIN student from localStorage. */
+      if (playStudent && (data.pin_students || []).indexOf(playStudent) !== -1) {
+        playStudent = '';
+        try { localStorage.removeItem(STUDENT_KEY); } catch (e) {}
+      }
       document.title = data.name || 'Kids Science';
       var logo = $('site-logo');
       if (data.logo) { logo.src = (/^https?:\/\//.test(data.logo) ? data.logo : BASE + data.logo); logo.hidden = false; }
