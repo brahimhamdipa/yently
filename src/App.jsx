@@ -49,6 +49,7 @@ import CarSellerSoonPage from './components/CarSellerSoonPage'
 import ShopSellerFormPage from './components/ShopSellerFormPage'
 import ShopSellerSoonPage from './components/ShopSellerSoonPage'
 import LiveChatDemo from './components/LiveChatDemo'
+import TrackingPage from './components/TrackingPage'
 import BusinessCartPage from './components/BusinessCartPage'
 import BusinessSystemsPage from './components/BusinessSystemsPage'
 import KidsHubPage from './components/KidsHubPage'
@@ -72,6 +73,7 @@ export default function App() {
   const [tab, setTab] = useState(() => {
     const path = window.location.pathname.replace(/\/$/, '')
     if (path === '/admin') return 'admin'
+    if (path === '/track') return 'track'
     if (path === '/demo-live-chat' || path === '/demo-chat') return 'demo-live-chat'
     if (path === '/direct-upload') return 'direct-upload'
     if (path !== '' && path !== '/') return 'provider-form'
@@ -79,7 +81,7 @@ export default function App() {
   })
   const [formSlug, setFormSlug] = useState(() => {
     const path = window.location.pathname.replace(/\/$/, '')
-    if (path !== '' && path !== '/' && path !== '/admin' && path !== '/demo-live-chat' && path !== '/demo-chat' && path !== '/direct-upload') return decodeURIComponent(path.slice(1))
+    if (path !== '' && path !== '/' && path !== '/admin' && path !== '/track' && path !== '/demo-live-chat' && path !== '/demo-chat' && path !== '/direct-upload') return decodeURIComponent(path.slice(1))
     return null
   })
   const [providerId, setProviderId] = useState(null)
@@ -114,18 +116,21 @@ export default function App() {
     if (t === 'store-detail' && param) window.location.hash = 'store/' + param
     // Keep the address bar honest for the hidden routes: entering
     // admin shows /admin, entering a provider form shows /<name>,
-    // entering the live-chat demo shows /demo-live-chat, and leaving
-    // any of them returns to /.
+    // entering the live-chat demo shows /demo-live-chat, entering
+    // order tracking shows /track, and leaving any of them returns
+    // to /.
     const path = window.location.pathname.replace(/\/$/, '')
     const onAdmin = path === '/admin'
+    const onTrack = path === '/track'
     const onDemo = path === '/demo-live-chat' || path === '/demo-chat'
     const onDirect = path === '/direct-upload'
-    const onForm = path !== '' && path !== '/' && !onAdmin && !onDemo && !onDirect
+    const onForm = path !== '' && path !== '/' && !onAdmin && !onTrack && !onDemo && !onDirect
     if (t === 'admin' && !onAdmin) window.history.replaceState(null, '', '/admin')
+    else if (t === 'track' && !onTrack) window.history.replaceState(null, '', '/track')
     else if (t === 'demo-live-chat' && !onDemo) window.history.replaceState(null, '', '/demo-live-chat')
     else if (t === 'direct-upload' && !onDirect) window.history.replaceState(null, '', '/direct-upload')
     else if (t === 'provider-form' && param && !onForm) window.history.replaceState(null, '', '/' + param)
-    else if (t !== 'admin' && t !== 'provider-form' && t !== 'demo-live-chat' && t !== 'direct-upload' && (onAdmin || onForm || onDemo || onDirect)) window.history.replaceState(null, '', '/')
+    else if (t !== 'admin' && t !== 'track' && t !== 'provider-form' && t !== 'demo-live-chat' && t !== 'direct-upload' && (onAdmin || onTrack || onForm || onDemo || onDirect)) window.history.replaceState(null, '', '/')
   }
   // Back to the page the customer actually came from (or nowhere on a
   // fresh load, in which case pages hide their back link).
@@ -274,10 +279,12 @@ export default function App() {
         {tab === 'about' && <AboutPage />}
         {tab === 'guides' && <GuidesPage go={go} />}
         {tab === 'admin' && <AdminPage />}
+        {tab === 'track' && <TrackingPage go={go} />}
         {tab === 'provider-form' && <ProviderFormPage slug={formSlug} goBack={goBack} onAuthedChange={setFormAuthed} go={go} />}
       </main>
       <footer className="footer">
         <p>Yently — Everything you need, gently in one place.</p>
+        <p><button type="button" className="link-btn" style={{ fontSize: 14 }} onClick={() => go('track')}>Track your order</button></p>
       </footer>
       {!(tab === 'provider-form' && formAuthed) && tab !== 'demo-live-chat' && <ChatWidget />}
     </div>
