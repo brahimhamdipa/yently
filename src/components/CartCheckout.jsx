@@ -6,6 +6,8 @@ import { useCart } from '../lib/CartContext'
 
 import { loadItemsByIds, loadProviders, loadItemLocations, loadItemVariants, formatVariant, placeStoreOrder, placeStoreHoldOrder, emailReceipt, buildReceiptPdf, money } from '../lib/storeData'
 
+import { createOrderTracking, storeTrackingCodes } from '../lib/orderTracking'
+
 export { money }
 
 export const priceOf = (p) => Number(p.sale_price ?? p.price)
@@ -331,7 +333,15 @@ export default function CartCheckout({ products, onOrderPlaced }) {
       } catch (mailErr) {
         console.warn('Order email failed:', mailErr.message)
       }
-      setLastOrder(prev => [...(prev || []), { kind: 'grocery', id: data.order_id, total: data.total, fulfillment }])
+      // Tracking row for this grocery order. createOrderTracking never
+      // throws and returns null on failure — the order is already
+      // placed and stays placed either way.
+      const trackingCode = await createOrderTracking({
+        kind: 'shop', plan: 'shop', orderTable: 'grocery_orders', orderId: data.order_id,
+        name: customer.name, email: customer.email, phone: customer.phone, price: data.total, shopSlug: null,
+      })
+      if (trackingCode) storeTrackingCodes([trackingCode])
+      setLastOrder(prev => [...(prev || []), { kind: 'grocery', id: data.order_id, total: data.total, fulfillment, trackingCode }])
       removeSection(section.lines.map(l => l.key))
       clearSectionChoice(section.key)
       setSectionStatus(s => ({ ...s, [section.key]: '' }))
@@ -389,7 +399,15 @@ export default function CartCheckout({ products, onOrderPlaced }) {
       try {
         await emailReceipt({ subject: `New store order #${res.order_id} — ${section.title}`, record, pdfBase64: pdf.base64, filename: `receipt-order-${res.order_id}.pdf` })
       } catch { /* order is saved; email retry is a bonus */ }
-      setLastOrder(prev => [...(prev || []), { kind: 'store', id: res.order_id, total: res.total, fulfillment, storeName: section.title, pdf, record }])
+      // Tracking row for this store order (res.order_id is known from
+      // the RPC). createOrderTracking never throws and returns null on
+      // failure — the order is already placed and stays placed either way.
+      const trackingCode = await createOrderTracking({
+        kind: 'shop', plan: 'shop', orderTable: 'store_orders', orderId: res.order_id,
+        name: customer.name, email: customer.email, phone: customer.phone, price: res.total, shopSlug: null,
+      })
+      if (trackingCode) storeTrackingCodes([trackingCode])
+      setLastOrder(prev => [...(prev || []), { kind: 'store', id: res.order_id, total: res.total, fulfillment, storeName: section.title, pdf, record, trackingCode }])
       removeSection(section.lines.map(l => l.key))
       clearSectionChoice(section.key)
       setSectionStatus(s => ({ ...s, [section.key]: '' }))
@@ -444,6 +462,10 @@ export default function CartCheckout({ products, onOrderPlaced }) {
       try {
         await emailReceipt({ subject: `New hold order #${res.order_id} — ${section.title}`, record, pdfBase64: pdf.base64, filename: `receipt-hold-${res.order_id}.pdf` })
       } catch { /* hold is saved; email retry is a bonus */ }
+      // NO tracking row for holds: a hold is arranged with the
+      // customer later (pickup/delivery + payment at the store), not
+      // fulfilled — there is nothing to track yet, so no
+      // createOrderTracking call here and no trackingCode on the entry.
       setLastOrder(prev => [...(prev || []), { kind: 'store', hold: true, id: res.order_id, total: res.total, fulfillment, storeName: section.title, pdf, record }])
       removeSection(section.lines.map(l => l.key))
       clearSectionChoice(section.key)
@@ -479,6 +501,11 @@ export default function CartCheckout({ products, onOrderPlaced }) {
                   ? ` No payment was taken online — you pay at the store when you arrange ${r.fulfillment === 'delivery' ? 'your delivery' : 'your pickup'}.`
                   : ` We've emailed the details to our team and will contact you shortly to confirm ${r.fulfillment === 'delivery' ? 'your delivery' : 'your pickup'} and payment.`}
               </p>
+              {r.trackingCode && (
+                <p>Your tracking number: <b>{r.trackingCode}</b>{' '}
+                  <a href="/track">Track your order</a>
+                </p>
+              )}
               {r.kind === 'store' && (
                 <div className="store-actions">
                   <button type="button" onClick={() => r.pdf.download(r.hold ? `receipt-hold-${r.id}.pdf` : `receipt-order-${r.id}.pdf`)}>⬇️ Download receipt</button>

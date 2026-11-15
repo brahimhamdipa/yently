@@ -16,9 +16,10 @@ import AdminStoreManage from './admin/AdminStoreManage'
 
 import AdminChat from './admin/AdminChat'
 
-import AdminFolderPasses from './admin/AdminFolderPasses'
 import AdminAllPasses from './admin/AdminAllPasses'
 import AdminAllOrders from './admin/AdminAllOrders'
+import AdminSystemsOrders from './admin/AdminSystemsOrders'
+import AdminShopOrders from './admin/AdminShopOrders'
 import AdminBarcodeGenerator from './admin/AdminBarcodeGenerator'
 import AdminCars from './admin/AdminCars'
 import AdminDirectUpload from './admin/AdminDirectUpload'
@@ -194,11 +195,13 @@ const MENUS = [
       { label: 'Customers List', table: 'barber_customers' },
       { label: 'Cust.Subm.DB', table: 'barber_reservations' },
       { label: 'Barbers', table: 'barber_orders' },
-      { label: 'Folder Passes', section: 'folder-passes' },
     ] },
   ] },
   { n: 5, name: 'Chat', items: [
     { label: 'All Passes', section: 'all-passes' },
+    // All To Approve slots here (Phase 2)
+    { label: 'Systems Orders', section: 'systems-orders' },
+    { label: 'Shop Orders', section: 'shop-orders' },
     { label: 'All Orders', section: 'all-orders' },
     { label: 'Live Chat', section: 'chat' },
     { label: 'Chat', children: [
@@ -401,10 +404,12 @@ export default function AdminPage() {
       {section === 'store-manage' && <AdminStoreManage table={manageTable} onTableChange={setManageTable} />}
       {section === 'chat' && <AdminChat />}
       {section === 'all-passes' && <AdminAllPasses />}
+      {/* All To Approve slots here (Phase 2) */}
+      {section === 'systems-orders' && <AdminSystemsOrders />}
+      {section === 'shop-orders' && <AdminShopOrders />}
       {section === 'all-orders' && <AdminAllOrders />}
       {section === 'barcode-generator' && <AdminBarcodeGenerator />}
       {section === 'vault' && <AdminVault />}
-      {section === 'folder-passes' && <AdminFolderPasses />}
       <button type="button" className="admin-to-top no-print" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>↑ Top</button>
     </div>
   )

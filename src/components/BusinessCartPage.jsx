@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useBusinessCart, bundleFor } from '../lib/BusinessCartContext'
 import { placeBusinessOrder } from '../lib/businessData'
+import { storeTrackingCodes } from '../lib/orderTracking'
 import { BusinessTopBar } from './BusinessMenu'
 
 // My Cart for all Business Systems pages — mirrors PosCartPage's
@@ -38,6 +39,21 @@ export default function BusinessCartPage({ go }) {
   const bundle = bundleFor(cart)
   const orderBundle = lastOrder ? bundleFor(lastOrder) : null
 
+  // Save the placed order's tracking codes once, for the Tracking
+  // page (/track) to auto-fill. The ref holds the signature of the
+  // codes already stored, so this runs once per order, not on every
+  // render — a later order has a different signature and stores again.
+  const storedCodesRef = useRef('')
+  useEffect(() => {
+    if (!lastOrder || lastOrder.length === 0) return
+    const codes = lastOrder.map(i => i.tracking_code).filter(Boolean)
+    if (codes.length === 0) return
+    const sig = codes.join('|')
+    if (storedCodesRef.current === sig) return
+    storedCodesRef.current = sig
+    storeTrackingCodes(codes)
+  }, [lastOrder])
+
   const placeOrder = async (e) => {
     e.preventDefault()
     setSubmitting(true); setStatus('')
@@ -73,7 +89,14 @@ export default function BusinessCartPage({ go }) {
         <div className="hero-card">
           <h3>✓ Order placed — thank you, {lastOrder[0].customer_name}!</h3>
           {lastOrder.map(i => (
-            <p key={i.key}>{i.name} — ${Number(i.price).toFixed(2)}/month.</p>
+            <div key={i.key}>
+              <p>{i.name} — ${Number(i.price).toFixed(2)}/month.</p>
+              {i.tracking_code && (
+                <p>Your order number: <b>{i.tracking_code}</b>{' '}
+                  <button type="button" className="btn-soft" onClick={() => go && go('track')}>Track your order</button>
+                </p>
+              )}
+            </div>
           ))}
           {orderBundle && orderBundle.rate > 0 && (
             <p><b>Monthly total after bundle discount: ${orderBundle.total.toFixed(2)}/month</b> — you're saving ${orderBundle.savings.toFixed(2)}/month.</p>
