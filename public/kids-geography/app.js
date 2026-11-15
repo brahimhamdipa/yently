@@ -80,6 +80,11 @@
   var playStudent = '';
   var playGame = 'capitals';
   var playLevel = 'easy';
+  var playPin = ''; // verified PIN for the current student, session only, never stored
+  var pinName = ''; // student awaiting PIN entry on the picker
+  var delStudentIdx = null; // Setup: student index awaiting an in-page delete confirmation
+  var delScoreId = null; // teacher scores: score id awaiting an in-page delete confirmation
+  var delScoreErr = ''; // teacher scores: delete error to show on the next list render
   var rounds = []; // [{question, choices, answer}]
   var roundIdx = 0;
   var playScore = 0;
@@ -212,11 +217,30 @@
         '<p class="info">Easy uses only the well-known countries. Hard uses every country in the list.</p>' +
         '<button id="play-start" class="big-btn">▶ Start playing!</button>' +
         '<div id="play-out" style="margin-top:12px"></div></div>';
+      /* PIN gate: a student with a PIN set must enter it before
+         playing. The prompt is in-page, never a native prompt(). */
+      if (pinName) {
+        html += '<div class="card"><h2>🔒 Enter your PIN</h2>' +
+          '<p class="info">Enter ' + esc(pinName) + '\'s 4-digit PIN to play.</p>' +
+          '<label>PIN</label><input id="pin-input" type="password" inputmode="numeric" maxlength="4" autocomplete="off">' +
+          '<div class="row"><button id="pin-ok">OK</button><button id="pin-cancel" class="secondary">Cancel</button></div>' +
+          '<div id="pin-out" style="margin-top:12px"></div></div>';
+      }
       el.innerHTML = html;
       $('play-student').addEventListener('change', function () {
-        playStudent = $('play-student').value;
+        var name = $('play-student').value;
+        /* A student with a PIN set must enter it first. */
+        if (name && (data.pin_students || []).indexOf(name) !== -1) {
+          pinName = name;
+          renderPlay();
+          return;
+        }
+        playStudent = name;
+        playPin = '';
+        pinName = '';
         try { localStorage.setItem(STUDENT_KEY, playStudent); } catch (e) {}
       });
+      wirePinBox();
       el.querySelectorAll('[data-game]').forEach(function (b) {
         b.addEventListener('click', function () { playGame = b.getAttribute('data-game'); renderPlay(); });
       });
@@ -238,6 +262,39 @@
       return;
     }
     renderRound();
+  }
+  /* PIN entry box on the picker: digits only, verified against the
+     server. The verified PIN lives only in a session variable. */
+  function wirePinBox() {
+    var input = $('pin-input');
+    if (!input) return;
+    input.addEventListener('input', function () {
+      input.value = input.value.replace(/\D/g, '').slice(0, 4);
+    });
+    $('pin-ok').addEventListener('click', function () {
+      var out = $('pin-out');
+      var pin = input.value;
+      if (!/^\d{4}$/.test(pin)) {
+        out.innerHTML = '<p class="error">Enter the 4-digit PIN.</p>';
+        return;
+      }
+      out.innerHTML = '<p class="info">Checking…</p>';
+      rpc('check_kids_geography_student_pin', { p_slug: SLUG, p_student_name: pinName, p_pin: pin }).then(function (ok) {
+        if (ok === true) {
+          playStudent = pinName;
+          playPin = pin;
+          pinName = '';
+          try { localStorage.setItem(STUDENT_KEY, playStudent); } catch (e) {}
+          renderPlay();
+        } else {
+          out.innerHTML = '<p class="error">Wrong PIN. Try again.</p>';
+        }
+      }).catch(function () {
+        out.innerHTML = '<p class="error">Could not reach the PIN check. Please try again in a moment.</p>';
+      });
+    });
+    $('pin-cancel').addEventListener('click', function () { pinName = ''; renderPlay(); });
+    input.focus();
   }
   function renderRound() {
     var el = $('view-play');
@@ -299,7 +356,7 @@
     });
     if (scoreSaved) return;
     scoreSaved = true;
-    rpc('record_kids_geography_score', { p_slug: SLUG, p_student_name: playStudent, p_game: gameTitle(), p_level: playLevel, p_score: playScore, p_total: total }).then(function () {
+    rpc('record_kids_geography_score', { p_slug: SLUG, p_student_name: playStudent, p_game: gameTitle(), p_level: playLevel, p_score: playScore, p_total: total, p_pin: playPin || '' }).then(function () {
       var out = $('result-out');
       if (out) out.innerHTML = '<p class="note">Your score was saved — your teacher can see it. ✅</p>';
     }).catch(function () {
@@ -344,19 +401,52 @@
     el.innerHTML = '<h2>Teacher</h2><div class="card"><p class="info">Loading scores…</p></div>';
     rpc('list_kids_geography_scores', { p_slug: SLUG, p_epass: teacherPass }).then(function (rows) {
       var list = rows || [];
+      var html = '<h2>Teacher</h2>';
+      if (delScoreErr) {
+        html += '<div class="card"><p class="error">Could not delete score: ' + esc(delScoreErr) + '</p></div>';
+        delScoreErr = '';
+      }
       if (!list.length) {
-        el.innerHTML = '<h2>Teacher</h2><div class="card"><p class="info">No scores saved yet. Once students play a game, their scores will appear here.</p></div>';
+        html += '<div class="card"><p class="info">No scores saved yet. Once students play a game, their scores will appear here.</p></div>';
+        el.innerHTML = html;
         return;
       }
-      var html = '<h2>Teacher</h2><p class="info">' + list.length + ' saved score' + (list.length === 1 ? '' : 's') + ', newest first.</p>' +
-        '<div class="card"><table class="scores-table"><thead><tr><th>Student</th><th>Game</th><th>Level</th><th>Score</th><th>Date</th></tr></thead><tbody>';
+      html += '<p class="info">' + list.length + ' saved score' + (list.length === 1 ? '' : 's') + ', newest first.</p>' +
+        '<div class="card"><table class="scores-table"><thead><tr><th>Student</th><th>Game</th><th>Level</th><th>Score</th><th>Date</th><th></th></tr></thead><tbody>';
       list.forEach(function (r) {
+        var delHtml;
+        if (delScoreId === r.id) {
+          delHtml = '<span>Delete this score?</span> <button class="danger small" data-score-del-yes="' + r.id + '">Yes</button> <button class="secondary small" data-score-del-no>Keep</button>';
+        } else {
+          delHtml = '<button class="small danger" data-score-del="' + r.id + '">Delete</button>';
+        }
         html += '<tr><td>' + esc(r.student_name) + '</td><td>' + esc(r.game) + '</td><td>' + esc(r.level) + '</td>' +
           '<td><b>' + esc(r.score) + ' / ' + esc(r.total) + '</b></td>' +
-          '<td>' + esc(new Date(r.created_at).toLocaleString()) + '</td></tr>';
+          '<td>' + esc(new Date(r.created_at).toLocaleString()) + '</td><td>' + delHtml + '</td></tr>';
       });
       html += '</tbody></table></div>';
       el.innerHTML = html;
+      /* Delete a score: in-page tap-again confirm, same pattern as
+         the student delete in Setup. Never a native confirm(). */
+      el.querySelectorAll('[data-score-del]').forEach(function (b) {
+        b.addEventListener('click', function () { delScoreId = Number(b.getAttribute('data-score-del')); openTeacher(); });
+      });
+      el.querySelectorAll('[data-score-del-no]').forEach(function (b) {
+        b.addEventListener('click', function () { delScoreId = null; openTeacher(); });
+      });
+      el.querySelectorAll('[data-score-del-yes]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          var id = Number(b.getAttribute('data-score-del-yes'));
+          rpc('delete_kids_geography_score', { p_slug: SLUG, p_epass: teacherPass, p_score_id: id }).then(function () {
+            delScoreId = null;
+            openTeacher();
+          }).catch(function (err) {
+            delScoreId = null;
+            delScoreErr = err.message || 'request failed';
+            openTeacher();
+          });
+        });
+      });
     }).catch(function (err) {
       el.innerHTML = '<h2>Teacher</h2><div class="card"><p class="error">Could not load scores: ' + esc(err.message) + '</p></div>';
     });
@@ -406,6 +496,7 @@
     rpc('get_kids_geography_draft', { p_slug: SLUG, p_username: staffCreds.u, p_password: staffCreds.p }).then(function (res) {
       draft = res.data || {};
       draft.students = draft.students || [];
+      draft.student_pins = draft.student_pins || {};
       draft.countries = draft.countries || [];
       draftStatus = res.status || 'editing';
       renderSetup();
@@ -476,12 +567,42 @@
         return;
       }
       box.innerHTML = '<div class="card">' + draft.students.map(function (s, i) {
+        if (delStudentIdx === i) {
+          return '<div class="student-line"><span><strong>' + esc(s) + '</strong> — remove this student?</span>' +
+            '<span><button class="small danger" data-student-del-yes="' + i + '">Yes, remove</button> ' +
+            '<button class="small secondary" data-student-del-no>Keep</button></span></div>';
+        }
+        /* PIN: 4 digits, optional. A student with no PIN plays
+           without one, exactly as before. */
         return '<div class="student-line"><span>' + esc(s) + '</span>' +
+          '<input type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="PIN — optional" data-student-pin="' + i + '" value="' + esc((draft.student_pins[s]) || '') + '" style="max-width:130px;margin:0">' +
           '<button class="small danger" data-student-remove="' + i + '">Remove</button></div>';
       }).join('') + '</div>';
+      box.querySelectorAll('[data-student-pin]').forEach(function (input) {
+        input.addEventListener('input', function () {
+          var v = input.value.replace(/\D/g, '').slice(0, 4);
+          input.value = v;
+          var name = draft.students[Number(input.getAttribute('data-student-pin'))];
+          if (!name) return;
+          if (v) draft.student_pins[name] = v; else delete draft.student_pins[name];
+        });
+      });
       box.querySelectorAll('[data-student-remove]').forEach(function (btn) {
         btn.addEventListener('click', function () {
-          draft.students.splice(Number(btn.getAttribute('data-student-remove')), 1);
+          delStudentIdx = Number(btn.getAttribute('data-student-remove'));
+          drawStudents();
+        });
+      });
+      box.querySelectorAll('[data-student-del-no]').forEach(function (btn) {
+        btn.addEventListener('click', function () { delStudentIdx = null; drawStudents(); });
+      });
+      box.querySelectorAll('[data-student-del-yes]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var idx = Number(btn.getAttribute('data-student-del-yes'));
+          var nm = draft.students[idx];
+          draft.students.splice(idx, 1);
+          if (nm) delete draft.student_pins[nm];
+          delStudentIdx = null;
           drawStudents();
         });
       });
@@ -531,12 +652,18 @@
     });
 
     /* collectDraft builds the draft field-by-field — EVERY editable
-       field must be listed here, or Setup save silently drops it. */
+       field must be listed here, or Setup save silently drops it.
+       PINs are pruned to current students and to exactly 4 digits. */
     function collectDraft() {
+      var pins = {};
+      Object.keys(draft.student_pins || {}).forEach(function (nm) {
+        if (draft.students.indexOf(nm) !== -1 && /^\d{4}$/.test(draft.student_pins[nm])) pins[nm] = draft.student_pins[nm];
+      });
       return {
         name: $('setup-name').value.trim() || draft.name,
         about: $('setup-about').value,
         students: draft.students.filter(function (s) { return String(s).trim() !== ''; }),
+        student_pins: pins,
         countries: draft.countries.filter(function (c) { return String(c.name || '').trim() !== ''; }).map(function (c) {
           return { name: String(c.name).trim(), capital: String(c.capital || '').trim(), continent: c.continent || 'Europe', flag: String(c.flag || '').trim(), easy: !!c.easy };
         })
@@ -600,6 +727,12 @@
       }
       data.students = data.students || [];
       data.countries = data.countries || [];
+      /* A stored name that now has a PIN must re-enter it: never
+         auto-select a PIN student from localStorage. */
+      if (playStudent && (data.pin_students || []).indexOf(playStudent) !== -1) {
+        playStudent = '';
+        try { localStorage.removeItem(STUDENT_KEY); } catch (e) {}
+      }
       document.title = data.name || 'Kids Geography';
       var logo = $('site-logo');
       if (data.logo) { logo.src = (/^https?:\/\//.test(data.logo) ? data.logo : BASE + data.logo); logo.hidden = false; }
