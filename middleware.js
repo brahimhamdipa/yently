@@ -42,6 +42,7 @@ const KNOWN = new Set([
   'demo-live-chat',
   'demo-tv-gallery',
   'direct-upload',
+  'track', // public order tracking — never a clean link (see /track route)
   'pos',
   'diner',
   'barbers',
