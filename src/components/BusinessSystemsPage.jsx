@@ -21,7 +21,7 @@ const SYSTEMS = [
   { name: 'Holiday', price: 20, blurb: 'Your own holiday rentals page — properties, dates, and bookings.', tab: 'holiday', video: true },
   { name: 'Car Rental', price: 20, blurb: 'Your own car rental page — cars, drivers, and bookings.', tab: 'rentals', video: true },
   { name: 'Laundry', price: 20, blurb: 'Your own laundry page — services, prices, and orders with pickup or delivery.', tab: 'laundry', video: true },
-  { name: 'Gym', price: 20, blurb: 'Your own gym page — memberships, classes, trainers, and check-ins.', tab: 'gym', video: false },
+  { name: 'Gym', price: 20, blurb: 'Your own gym page — memberships, classes, trainers, and check-ins.', tab: 'gym', video: true },
   { name: 'Simple Website', price: 10, blurb: 'Any website, built for you — your name, logo, services, and pictures.', tab: 'simple-barbershop' },
 ]
 

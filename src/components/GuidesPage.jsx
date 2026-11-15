@@ -55,6 +55,7 @@ const SYSTEM_GUIDES = [
   { name: 'Holiday', tab: 'holiday', video: '/videos/holiday-guide.mp4', length: '2:05', pdf: '/guides/holiday-guide.pdf' },
   { name: 'Car Rental', tab: 'rentals', video: '/videos/rentals-guide.mp4', length: '2:02', pdf: '/guides/rentals-guide.pdf' },
   { name: 'Laundry', tab: 'laundry', video: '/videos/laundry-guide.mp4', length: '2:13', pdf: '/guides/laundry-guide.pdf' },
+  { name: 'Gym', tab: 'gym', video: '/videos/gym-guide.mp4', length: '1:54', pdf: '/guides/gym-guide.pdf' },
   { name: 'Add-Ons', tab: 'business-hub', video: '/videos/addons-guide.mp4', length: '2:15', pdf: '/guides/addons-guide.pdf' },
   { name: 'Direct Upload', tab: 'direct-upload', video: null, length: null, pdf: null },
 ]
