@@ -95,6 +95,10 @@
   var delPuzzleIdx = null; // Setup puzzle index awaiting an in-page delete confirmation
   var editPuzzleIdx = null; // Setup puzzle index being edited, or -1 for a new puzzle
   var editPuzzle = null; // working copy of the puzzle being edited in Setup
+  var studentPin = ''; // verified PIN for the current student, session only, never stored
+  var pinName = ''; // student awaiting PIN entry on the picker
+  var delScoreId = null; // teacher scores: score id awaiting an in-page delete confirmation
+  var delScoreErr = ''; // teacher scores: delete error to show on the next list render
 
   var ARROWS = ['⬆️', '➡️', '⬇️', '⬅️'];
   var DIRS = [[-1, 0], [0, 1], [1, 0], [0, -1]];
@@ -275,10 +279,20 @@
       html += '</div>';
     }
     html += '</div>';
+    /* PIN gate: a student with a PIN set must enter it before
+       playing. The prompt is in-page, never a native prompt(). */
+    if (pinName) {
+      html += '<div class="card"><h3>🔒 Enter your PIN</h3>' +
+        '<p class="info">Enter ' + esc(pinName) + '\'s 4-digit PIN:</p>' +
+        '<label>PIN</label><input id="pin-input" type="password" inputmode="numeric" maxlength="4" autocomplete="off">' +
+        '<div class="row"><button id="pin-ok">OK</button><button id="pin-cancel" class="secondary">Cancel</button></div>' +
+        '<div id="pin-out" style="margin-top:12px"></div></div>';
+    }
     if (!student) {
       html += '<div class="card"><p class="info">Pick your name above to start playing. Your stars are saved under your name. ✨</p></div>';
       el.innerHTML = html;
       wireStudentButtons(el);
+      wirePinBox(el);
       return;
     }
     /* Puzzle list */
@@ -301,6 +315,7 @@
       el.innerHTML = html;
       wireStudentButtons(el);
       wirePuzzleButtons(el);
+      wirePinBox(el);
       return;
     }
     /* Maze + program builder */
@@ -327,6 +342,7 @@
     el.innerHTML = html;
     wireStudentButtons(el);
     wirePuzzleButtons(el);
+    wirePinBox(el);
     el.querySelectorAll('[data-add-block]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         if (running) return;
@@ -368,7 +384,25 @@
   function wireStudentButtons(el) {
     el.querySelectorAll('[data-student]').forEach(function (btn) {
       btn.addEventListener('click', function () {
-        student = btn.getAttribute('data-student');
+        var name = btn.getAttribute('data-student');
+        /* Already verified for this student: no PIN prompt again. */
+        if (name === student && studentPin) {
+          if (!getPuzzle(puzzleId)) puzzleId = null;
+          program = [];
+          playMsg = ''; playMsgKind = '';
+          resetRobot();
+          renderPlay();
+          return;
+        }
+        /* A student with a PIN set must enter it first. */
+        if ((data.pin_students || []).indexOf(name) !== -1) {
+          pinName = name;
+          renderPlay();
+          return;
+        }
+        student = name;
+        studentPin = '';
+        pinName = '';
         try { localStorage.setItem(STUDENT_KEY, student); } catch (e) {}
         if (!getPuzzle(puzzleId)) puzzleId = null;
         program = [];
@@ -378,6 +412,44 @@
         renderPlay();
       });
     });
+  }
+  /* PIN entry box on the picker: digits only, verified against the
+     server. The verified PIN lives only in a session variable. */
+  function wirePinBox(el) {
+    var input = $('pin-input');
+    if (!input) return;
+    input.addEventListener('input', function () {
+      input.value = input.value.replace(/\D/g, '').slice(0, 4);
+    });
+    $('pin-ok').addEventListener('click', function () {
+      var out = $('pin-out');
+      var pin = input.value;
+      if (!/^\d{4}$/.test(pin)) {
+        out.innerHTML = '<p class="error">Enter the 4-digit PIN.</p>';
+        return;
+      }
+      out.innerHTML = '<p class="info">Checking…</p>';
+      rpc('check_kids_coding_student_pin', { p_slug: SLUG, p_student_name: pinName, p_pin: pin }).then(function (ok) {
+        if (ok === true) {
+          student = pinName;
+          studentPin = pin;
+          pinName = '';
+          try { localStorage.setItem(STUDENT_KEY, student); } catch (e) {}
+          if (!getPuzzle(puzzleId)) puzzleId = null;
+          program = [];
+          playMsg = ''; playMsgKind = '';
+          resetRobot();
+          loadScoresFromDb();
+          renderPlay();
+        } else {
+          out.innerHTML = '<p class="error">Wrong PIN — try again.</p>';
+        }
+      }).catch(function () {
+        out.innerHTML = '<p class="error">Could not reach the PIN check. Please try again in a moment.</p>';
+      });
+    });
+    $('pin-cancel').addEventListener('click', function () { pinName = ''; renderPlay(); });
+    input.focus();
   }
   function wirePuzzleButtons(el) {
     el.querySelectorAll('[data-puzzle]').forEach(function (btn) {
@@ -497,7 +569,7 @@
          stars, total = 3) so the teacher can see it. A save failure
          never takes the celebration away — the stars are already
          kept in this browser. */
-      rpc('record_kids_coding_score', { p_slug: SLUG, p_student_name: student, p_game: String(p.id), p_level: 1, p_score: stars, p_total: 3 }).catch(function () {});
+      rpc('record_kids_coding_score', { p_slug: SLUG, p_student_name: student, p_game: String(p.id), p_level: 1, p_score: stars, p_total: 3, p_pin: studentPin || '' }).catch(function () {});
       renderPlay();
       return;
     }
@@ -536,21 +608,52 @@
     rpc('list_kids_coding_scores', { p_slug: SLUG, p_epass: teacherPass || '' }).then(function (rows) {
       var list = rows || [];
       var html = '<h2>Teacher — progress</h2>';
+      if (delScoreErr) {
+        html += '<div class="card"><p class="error">Could not delete score: ' + esc(delScoreErr) + '</p></div>';
+        delScoreErr = '';
+      }
       if (!list.length) {
         html += '<div class="card"><p class="info">No puzzles solved yet. When a child reaches the ⭐, their stars show up here.</p></div>';
       } else {
-        html += '<div class="card"><table class="score-table"><thead><tr><th>Student</th><th>Puzzle</th><th>Stars</th><th>Date</th></tr></thead><tbody>';
+        html += '<div class="card"><table class="score-table"><thead><tr><th>Student</th><th>Puzzle</th><th>Stars</th><th>Date</th><th></th></tr></thead><tbody>';
         list.forEach(function (r) {
           var p = getPuzzle(r.game);
           var pname = p ? p.name : String(r.game);
           var when = r.created_at ? new Date(r.created_at).toLocaleString() : '';
-          html += '<tr><td>' + esc(r.student_name) + '</td><td>' + esc(pname) + '</td><td>' + starsText(Number(r.score) || 0) + '</td><td>' + esc(when) + '</td></tr>';
+          var delHtml;
+          if (delScoreId === r.id) {
+            delHtml = '<span>Delete this score?</span> <button class="danger small" data-score-del-yes="' + r.id + '">Yes</button> <button class="secondary small" data-score-del-no>Keep</button>';
+          } else {
+            delHtml = '<button class="small danger" data-score-del="' + r.id + '">Delete</button>';
+          }
+          html += '<tr><td>' + esc(r.student_name) + '</td><td>' + esc(pname) + '</td><td>' + starsText(Number(r.score) || 0) + '</td><td>' + esc(when) + '</td><td>' + delHtml + '</td></tr>';
         });
         html += '</tbody></table></div>';
       }
       html += '<button id="teach-refresh" class="secondary">Refresh</button>';
       el.innerHTML = html;
       $('teach-refresh').addEventListener('click', renderTeacher);
+      /* Delete a score: in-page tap-again confirm, same pattern as
+         the puzzle delete in Setup. Never a native confirm(). */
+      el.querySelectorAll('[data-score-del]').forEach(function (b) {
+        b.addEventListener('click', function () { delScoreId = Number(b.getAttribute('data-score-del')); renderTeacher(); });
+      });
+      el.querySelectorAll('[data-score-del-no]').forEach(function (b) {
+        b.addEventListener('click', function () { delScoreId = null; renderTeacher(); });
+      });
+      el.querySelectorAll('[data-score-del-yes]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          var id = Number(b.getAttribute('data-score-del-yes'));
+          rpc('delete_kids_coding_score', { p_slug: SLUG, p_epass: teacherPass || '', p_score_id: id }).then(function () {
+            delScoreId = null;
+            renderTeacher();
+          }).catch(function (err) {
+            delScoreId = null;
+            delScoreErr = err.message || 'request failed';
+            renderTeacher();
+          });
+        });
+      });
     }).catch(function (err) {
       el.innerHTML = '<h2>Teacher</h2><div class="card"><p class="error">Could not load progress: ' + esc(err.message) + '</p></div>';
     });
@@ -600,6 +703,7 @@
     rpc('get_kids_coding_draft', { p_slug: SLUG, p_username: staffCreds.u, p_password: staffCreds.p }).then(function (res) {
       draft = res.data || {};
       draft.students = draft.students || [];
+      draft.student_pins = draft.student_pins || {};
       draft.puzzles = draft.puzzles || [];
       draftStatus = res.status || 'editing';
       delPuzzleIdx = null;
@@ -723,11 +827,20 @@
       var ed = $('setup-puzzle-editor');
       if (ed) ed.scrollIntoView();
     });
+    /* collectDraft must include EVERY editable field, or Setup
+       silently drops it — name, about, students, student_pins and
+       puzzles. PINs are pruned to current students and to exactly
+       4 digits. */
     function collectDraft() {
+      var pins = {};
+      Object.keys(draft.student_pins || {}).forEach(function (nm) {
+        if ((draft.students || []).indexOf(nm) !== -1 && /^\d{4}$/.test(draft.student_pins[nm])) pins[nm] = draft.student_pins[nm];
+      });
       return {
         name: ($('setup-name') ? $('setup-name').value.trim() : draft.name) || draft.name,
         about: $('setup-about') ? $('setup-about').value : (draft.about || ''),
         students: (draft.students || []).filter(function (s) { return String(s).trim() !== ''; }),
+        student_pins: pins,
         puzzles: (draft.puzzles || []).filter(function (p) { return p && String(p.name || '').trim() !== ''; })
       };
     }
@@ -762,13 +875,28 @@
       if (!draft.students.length) { box.innerHTML = '<p class="info">No students yet — add names below.</p>'; return; }
       var h = '';
       draft.students.forEach(function (s, i) {
+        /* PIN: 4 digits, optional. A student with no PIN plays
+           without one, exactly as before. */
         h += '<div class="order-line"><span>' + esc(s) + '</span>' +
+          '<input type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="PIN — optional" data-student-pin="' + i + '" value="' + esc((draft.student_pins[s]) || '') + '">' +
           '<button class="small danger" data-rm-student="' + i + '">Remove</button></div>';
       });
       box.innerHTML = h;
+      box.querySelectorAll('[data-student-pin]').forEach(function (input) {
+        input.addEventListener('input', function () {
+          var v = input.value.replace(/\D/g, '').slice(0, 4);
+          input.value = v;
+          var name = draft.students[Number(input.getAttribute('data-student-pin'))];
+          if (!name) return;
+          if (v) draft.student_pins[name] = v; else delete draft.student_pins[name];
+        });
+      });
       box.querySelectorAll('[data-rm-student]').forEach(function (btn) {
         btn.addEventListener('click', function () {
-          draft.students.splice(Number(btn.getAttribute('data-rm-student')), 1);
+          var idx = Number(btn.getAttribute('data-rm-student'));
+          var nm = draft.students[idx];
+          draft.students.splice(idx, 1);
+          if (nm) delete draft.student_pins[nm];
           drawStudents();
         });
       });
@@ -935,6 +1063,12 @@
       rpc('kids_coding_pass_status', { p_slug: SLUG }).then(function (s) {
         teacherUnlocked = !!(s && s.has_pass === false);
         if (student && data.students.indexOf(student) === -1) student = '';
+        /* A stored name that now has a PIN must re-enter it: never
+           auto-select a PIN student from localStorage. */
+        if (student && (data.pin_students || []).indexOf(student) !== -1) {
+          student = '';
+          try { localStorage.removeItem(STUDENT_KEY); } catch (e) {}
+        }
         if (!getPuzzle(puzzleId)) puzzleId = null;
         renderPlay();
         loadScoresFromDb();
