@@ -1004,7 +1004,7 @@
         return rpc('submit_houses_draft', { p_slug: SLUG, p_u: ownerCreds.u, p_p: ownerCreds.p }).then(function () {
           draftStatus = directUploadOn ? 'approved' : 'pending';
           $('d-status').textContent = directUploadOn ? 'Draft status: approved — live right away.' : 'Draft status: pending — waiting for Yently to approve it.';
-          notifyEmail('Houses draft for approval: ' + d.name, 'houses_draft', { slug: SLUG, name: d.name });
+          notifyEmail((directUploadOn ? 'Houses upload — live right away: ' : 'Houses draft for approval: ') + d.name, 'houses_draft', { slug: SLUG, name: d.name, status: directUploadOn ? 'Live right away — no approval needed' : undefined });
         });
       })
       .catch(function (e) { err.hidden = false; err.textContent = 'Error: ' + e.message; });
