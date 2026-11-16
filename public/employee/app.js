@@ -802,7 +802,7 @@
         return rpc('submit_employee_draft', { p_slug: SLUG, p_u: ownerCreds.u, p_p: ownerCreds.p }).then(function () {
           draftStatus = directUploadOn ? 'approved' : 'pending';
           $('d-status').textContent = draftStatusText();
-          notifyEmail('Employee draft for approval: ' + d.name, 'employee_draft', { slug: SLUG, name: d.name });
+          notifyEmail((directUploadOn ? 'Employee upload — live right away: ' : 'Employee draft for approval: ') + d.name, 'employee_draft', { slug: SLUG, name: d.name, status: directUploadOn ? 'Live right away — no approval needed' : undefined });
         });
       })
       .catch(function (e) { err.hidden = false; err.textContent = 'Error: ' + e.message; });
