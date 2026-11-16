@@ -92,6 +92,69 @@ function isKnownSystem(system) {
   return Boolean(PARAM_BY_SYSTEM[system]) || system.startsWith('kids-') || system === 'live-chat'
 }
 
+// Cancelled-service gate (Phase 2): a service the owner has
+// cancelled stays offline. The check FAILS OPEN — any error
+// (network, non-OK response, bad JSON, missing table) returns false
+// and the request proceeds exactly as if the service were not
+// cancelled, so a failing check can never take a live service down.
+async function isCancelledService(system, slug) {
+  try {
+    if (!system || !slug) return false
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/cancelled_services?system=eq.${encodeURIComponent(system)}&shop_slug=eq.${encodeURIComponent(slug)}&select=system,shop_slug&limit=1`,
+      {
+        headers: {
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        },
+      },
+    )
+    if (!res.ok) return false
+    const rows = await res.json()
+    if (!Array.isArray(rows)) return false
+    return rows.length > 0
+  } catch (e) {
+    return false
+  }
+}
+
+// Branded offline page for a cancelled service: plain English, no
+// slugs, system names, folder names or link patterns anywhere.
+const OFFLINE_PAGE = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>This service is no longer available — Yently</title>
+<style>
+body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #111827; background: #f9fafb; }
+header { background: #059669; color: #fff; padding: 18px 20px; font-size: 22px; font-weight: 800; letter-spacing: 1px; }
+main { max-width: 560px; margin: 48px auto; padding: 0 20px; text-align: center; }
+h1 { font-size: 24px; margin: 0 0 12px; }
+p { font-size: 16px; line-height: 1.6; color: #4b5563; margin: 0 0 20px; }
+a { color: #059669; font-weight: 700; }
+a:hover { color: #047857; }
+.rule { width: 64px; height: 4px; background: #f5a623; border-radius: 2px; margin: 0 auto 24px; }
+</style>
+</head>
+<body>
+<header>YENTLY</header>
+<main>
+<div class="rule"></div>
+<h1>This service is no longer available</h1>
+<p>This service has been closed and is no longer available.</p>
+<p><a href="https://yently.com">Back to Yently</a></p>
+</main>
+</body>
+</html>`
+
+function offlineResponse() {
+  return new Response(OFFLINE_PAGE, {
+    status: 200,
+    headers: { 'content-type': 'text/html; charset=utf-8' },
+  })
+}
+
 export default async function middleware(request) {
   try {
     const url = new URL(request.url)
@@ -104,6 +167,22 @@ export default async function middleware(request) {
     // name, so they must not be skipped here.
     if (parts.length === 1 && parts[0].includes('.')) return next()
     const first = parts[0].toLowerCase()
+    // Cancelled-service gate for known-system paths (Phase 2): a
+    // single-segment system page carrying its slug query param
+    // (e.g. /diner?r=<slug>) goes offline when that service is
+    // cancelled. Runs BEFORE the KNOWN early-return below, but ONLY
+    // when the slug param is present and non-empty — with no slug
+    // param, behaviour is exactly as before. Multi-segment paths
+    // (system files) and non-system KNOWN entries ('track', 'admin',
+    // …) are never checked: isKnownSystem is false for those, and
+    // paramFor('live-chat') is null.
+    if (parts.length === 1 && isKnownSystem(first)) {
+      const param = paramFor(first)
+      const slugParam = param ? url.searchParams.get(param) : null
+      if (slugParam && (await isCancelledService(first, slugParam))) {
+        return offlineResponse()
+      }
+    }
     if (KNOWN.has(first)) return next()
     const slug = first.replace(/[^a-z0-9-]+/g, '').replace(/^-+|-+$/g, '')
     if (!slug) return next()
@@ -128,6 +207,13 @@ export default async function middleware(request) {
       // chat demo page — no shop folder, no query param).
       if (row.system === 'live-chat') {
         return rewrite(new URL('/demo-live-chat', request.url))
+      }
+      // Cancelled-service gate for clean links (Phase 2): a paid
+      // clean link whose service is cancelled goes offline instead
+      // of rewriting. Fail-open: a failing check proceeds with the
+      // rewrite exactly as if the service were not cancelled.
+      if (await isCancelledService(row.system, row.shop_slug)) {
+        return offlineResponse()
       }
       // Clean-link page: /<slug> -> /<system>?<param>=<shop_slug>.
       const param = paramFor(row.system)
