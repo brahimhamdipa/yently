@@ -149,10 +149,13 @@ export default function App() {
   const GROCERY_TABS = ['grocery-cart', 'lunches', 'meats', 'grocery-contact', 'stores', 'store-detail', 'store-order', 'category', 'products', 'item-detail', 'shop-seller', 'shop-seller-soon']
   const BUSINESS_TABS = ['business-hub', 'restaurants', 'pos', 'barbers', 'dealer', 'employee', 'bodyshop', 'houses', 'doctor', 'holiday', 'rentals', 'laundry', 'gym', 'simple-barbershop', 'tv-gallery', 'live-chat', 'clean-link', 'direct-upload', 'demo-live-chat', 'business-cart']
   const KIDS_TABS = ['kids-hub', 'kids-math', 'kids-english', 'kids-arabic', 'kids-french', 'kids-spanish', 'kids-science', 'kids-geography', 'kids-coding', 'kids-reading', 'kids-books']
-  const inMore = ['services', 'services-home', 'services-contact', 'about', 'guides', 'clothes'].includes(tab) || KIDS_TABS.includes(tab)
   const inBusiness = BUSINESS_TABS.includes(tab)
   const inCars = ['cars', 'sell', 'contact', 'car-seller', 'car-seller-soon'].includes(tab)
+  const inKids = KIDS_TABS.includes(tab)
   const inFlights = ['flights', 'flights-hub', 'reserve', 'flight-pay', 'flight-contact'].includes(tab)
+  // "More" holds Cars + Services + Guides + About Us now that
+  // Yently Kids is a top-level item.
+  const inMore = ['services', 'services-home', 'services-contact', 'about', 'guides', 'clothes'].includes(tab) || inCars
 
   return (
     <div className="app">
@@ -166,13 +169,13 @@ export default function App() {
           <nav>
             <button className={inBusiness ? 'active' : ''} onClick={() => go('business-hub')}>Systems</button>
             <button className={GROCERY_TABS.includes(tab) ? 'active' : ''} onClick={() => go('products')}>Shop</button>
-            <button className={inCars ? 'active' : ''} onClick={() => go('cars')}>Cars</button>
+            <button className={inKids ? 'active' : ''} onClick={() => go('kids-hub')}>Yently Kids</button>
             <button className={inFlights ? 'active' : ''} onClick={() => go('flights-hub')}>Flights</button>
             <span className="dropdown" ref={moreRef}>
               <button className={inMore ? 'active' : ''} onClick={() => setMoreOpen(o => !o)}>More ▾</button>
               {moreOpen && (
                 <span className="dropdown-menu">
-                  <a onClick={() => go('kids-hub')}>Yently Kids</a>
+                  <a onClick={() => go('cars')}>Cars</a>
                   <a onClick={() => go('services')}>Services</a>
                   <a onClick={() => go('guides')}>Guides</a>
                   <a onClick={() => go('about')}>About Us</a>

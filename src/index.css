@@ -225,9 +225,14 @@ label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-w
 /* Item detail: the pictures touch the top, left and right edges of
    the section, exactly like the pictures on the Shop product cards —
    the slideshow is the first child of a padded-out card, and the
-   text below lives in a padded body. */
-.item-detail-card { padding: 0; overflow: hidden; gap: 0; }
-.item-detail-card .slideshow { border-radius: 0; }
+   text below lives in a padded body. The store page
+   (store-detail-card) uses the exact same treatment. */
+.item-detail-card, .store-detail-card { padding: 0; overflow: hidden; gap: 0; }
+.item-detail-card .slideshow, .store-detail-card .slideshow { border-radius: 0; }
+
+/* Shop scope banner: the Harrisburg-area service note shown on the
+   Stores and Products pages. */
+.scope-banner { background: #fffbeb; border: 1px solid #fcd34d; border-radius: 10px; padding: 10px 12px; font-weight: 600; }
 
 /* Variant matrix: one row per dimension (Flavor / Color / Pack ...),
    each option a check box. Picked = blue, unavailable = greyed out. */
