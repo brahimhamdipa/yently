@@ -871,7 +871,7 @@
         return rpc('submit_holiday_draft', { p_slug: SLUG, p_u: ownerCreds.u, p_p: ownerCreds.p }).then(function () {
           draftStatus = directUploadOn ? 'approved' : 'pending';
           $('d-status').textContent = directUploadOn ? 'Draft status: approved — live right away.' : 'Draft status: pending — waiting for Yently to approve it.';
-          notifyEmail('Holiday draft for approval: ' + d.name, 'holiday_draft', { slug: SLUG, name: d.name });
+          notifyEmail((directUploadOn ? 'Holiday upload — live right away: ' : 'Holiday draft for approval: ') + d.name, 'holiday_draft', { slug: SLUG, name: d.name, status: directUploadOn ? 'Live right away — no approval needed' : undefined });
         });
       })
       .catch(function (e) { err.hidden = false; err.textContent = 'Error: ' + e.message; });
