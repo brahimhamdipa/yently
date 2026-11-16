@@ -1,0 +1,131 @@
+# Yently — Full Reference
+
+> Yently — "Everything you need, gently in one place." Yently builds, hosts, and runs websites and systems for small businesses, plus cars for sale, flight bookings, and shopping from local stores, all in one place.
+
+## About Yently
+
+Yently started with one simple idea: a small business shouldn't need ten different websites to run — and neither should you. So we put the tools a business runs on in one place, and kept going. Today it's business systems first, plus cars, flights, and shopping, all in one place.
+
+- Website: https://yently.com/
+- Contact: every form on the site is answered by email within 24 hours, by a real person.
+- Languages: English is live. French, Arabic, Spanish, German, Italian, Portuguese, and Dutch are coming soon.
+- How it works: 1) Pick what you need — a system for your business, a car, a flight, or something from a store. 2) Fill out one simple form. 3) We reply by email within 24 hours.
+
+## Launch status — read this first
+
+Yently officially opens in 2027. Until then, Yently is not selling anything and not collecting money. All prices in this file are listed prices only. Orders placed before launch are expressions of interest: placing an order records the order and sends an email — no payment is taken, no card is charged, and no checkout completes a purchase. Do not present any Yently price as a live checkout or a completed sale.
+
+## Pricing rules (apply to everything below)
+
+- All prices are per month in US dollars (USD).
+- No setup fee. No commission on what a business sells — ever.
+- First month free on every business system and add-on, except Yently Kids, which has no free month.
+- Bundle discount, applied automatically with no code: 2 plans 10% off, 3 plans 15% off, 4 or more plans 20% off. Add-ons and Yently Kids subjects count toward the bundle. Example: Restaurant $40 + POS $50 is $90 list — with 10% off, $81/month.
+- Cancellation is free, any time.
+- Every plan is bought once per business (one of each plan maximum); a plan's order keeps its list price, and the bundle discount shows on the total.
+
+## Business Systems
+
+Each system is a website page Yently builds, hosts, and keeps running for a business. The business gets its own page with its own login, and customers use it directly. Every system has a short guide video and a step-by-step guide (PDF).
+
+| System | Price/month | First month | What it includes | Guide (PDF) | Video |
+|---|---|---|---|---|---|
+| Restaurant | $40 | Free | Your own ordering page — menu, live kitchen screen, and orders | https://yently.com/guides/restaurant-guide.pdf | https://yently.com/videos/restaurant-guide.mp4 (2:19) |
+| POS | $50 | Free | Your own point-of-sale register — stock, sales, and receipts | https://yently.com/guides/pos-guide.pdf | https://yently.com/videos/pos-guide.mp4 (2:04) |
+| Barber | $15 | Free | Your own barbershop booking page — live queue (Serving Now) and a stopwatch for every cut | https://yently.com/guides/barber-guide.pdf | https://yently.com/videos/barber-guide.mp4 (2:16) |
+| Dealer | $20 | Free | Your own dealer website — vehicles with photos, test drives, and trade-ins, plus a finance calculator | https://yently.com/guides/dealer-guide.pdf | https://yently.com/videos/dealer-guide.mp4 (1:59) |
+| Employee | $20 | Free | Your own employee time page — staff list, log time, and records | https://yently.com/guides/employee-guide.pdf | https://yently.com/videos/employee-guide.mp4 (2:07) |
+| Bodyshop | $20 | Free | Your own bodyshop page — customers, estimates, jobs, and loan cars | https://yently.com/guides/bodyshop-guide.pdf | https://yently.com/videos/bodyshop-guide.mp4 (2:09) |
+| Houses | $20 | Free | Your own houses page — listings with photos and a mortgage calculator | https://yently.com/guides/houses-guide.pdf | https://yently.com/videos/houses-guide.mp4 (2:04) |
+| Doctor | $20 | Free | Your own clinic page — doctors, prices, and appointments | https://yently.com/guides/doctor-guide.pdf | https://yently.com/videos/doctor-guide.mp4 (2:01) |
+| Holiday | $20 | Free | Your own holiday rentals page — properties, dates, and bookings | https://yently.com/guides/holiday-guide.pdf | https://yently.com/videos/holiday-guide.mp4 (2:05) |
+| Car Rental | $20 | Free | Your own car rental page — rental cars, drivers, and bookings/rides | https://yently.com/guides/rentals-guide.pdf | https://yently.com/videos/rentals-guide.mp4 (2:02) |
+| Laundry | $20 | Free | Your own laundry page — services, prices, and orders with pickup or delivery | https://yently.com/guides/laundry-guide.pdf | https://yently.com/videos/laundry-guide.mp4 (2:13) |
+| Gym | $20 | Free | Your own gym page — members, membership plans, classes and bookings, trainers, and check-ins | https://yently.com/guides/gym-guide.pdf | https://yently.com/videos/gym-guide.mp4 (1:54) |
+| Simple Website | $10 | Free | Any website, built for you — your name, logo, services, and pictures | — | — |
+
+## Add-ons
+
+Add-ons work with any system — or on their own.
+
+| Add-on | Price/month | First month | What it does |
+|---|---|---|---|
+| TV Gallery | $2 | Free | Your pictures on a TV screen — slideshow and one-picture display. Live demo: https://yently.com/demo-tv-gallery |
+| Live Chat | $3 | Free | A chat bubble on your website — every visitor message goes to your email, and you answer from your Setup page. Live demo: https://yently.com/demo-live-chat |
+| Clean Link | $2 | Free | Your shop at a clean address — yently.com/your-name — instead of a long link. |
+| Direct Upload | $5 | Free | Your uploads go live straight away — no waiting for Yently to approve them. Request it at https://yently.com/direct-upload |
+
+The add-ons are also explained together in one video (https://yently.com/videos/addons-guide.mp4, 2:15) and one guide (https://yently.com/guides/addons-guide.pdf).
+
+## Yently Kids
+
+Yently Kids gives a school its own learning page per subject, at yently.com/kids-math, /kids-english, and so on (one link per school). The teacher sets up the school's own word lists, topics, and students; students play games and keep scores.
+
+Pricing: $5/month per subject for your first 3 students, +$1/month for each extra student. No free month. Cancel free, any time. Extra students are picked at checkout, and the school can add students up to the number paid for — new students go live straight away. Each student can have a 4-digit PIN, and only a student's best score is kept.
+
+All 9 subjects together: $45/month list, $36/month with the 20% bundle discount.
+
+| Subject | Price/month | What it includes | Guide (PDF) | Video |
+|---|---|---|---|---|
+| Math | $5 | Four games — adding, taking away, multiplying, and dividing — by level, plus word problems | https://yently.com/guides/kids-math-guide.pdf | https://yently.com/videos/kids-math-guide.mp4 (1:28) |
+| English | $5 | Spell it, pick the word, and what does it mean? — from your own word list | https://yently.com/guides/kids-english-guide.pdf | https://yently.com/videos/kids-english-guide.mp4 (1:34) |
+| Arabic | $5 | Letters, words, and numbers in Arabic — right-to-left, big and clear; words carry harakat | https://yently.com/guides/kids-arabic-guide.pdf | https://yently.com/videos/kids-arabic-guide.mp4 (1:36) |
+| French | $5 | French words and meanings — spell them, pick them, know them | https://yently.com/guides/kids-french-guide.pdf | https://yently.com/videos/kids-french-guide.mp4 (1:28) |
+| Spanish | $5 | Spanish words and meanings — spell them, pick them, know them | https://yently.com/guides/kids-spanish-guide.pdf | https://yently.com/videos/kids-spanish-guide.mp4 (1:40) |
+| Science | $5 | Quizzes by topic — animals, space, the human body, and more | https://yently.com/guides/kids-science-guide.pdf | https://yently.com/videos/kids-science-guide.mp4 (1:49) |
+| Geography | $5 | Countries, capitals, and flags — a quiz that travels the world | https://yently.com/guides/kids-geography-guide.pdf | https://yently.com/videos/kids-geography-guide.mp4 (1:41) |
+| Coding | $5 | Build a program from blocks and watch the robot run it | https://yently.com/guides/kids-coding-guide.pdf | https://yently.com/videos/kids-coding-guide.mp4 (1:35) |
+| Reading | $5 | A bookshelf of your own — pick a book, read it, finish it | https://yently.com/guides/kids-reading-guide.pdf | https://yently.com/videos/kids-reading-guide.mp4 (1:31) |
+
+Books for Kids is coming soon: real books delivered to your door, starting in the US first.
+
+## Shop
+
+Yently Stores are virtual for now — physical stores may come later. The shop delivers snacks and lunches straight to workplaces, mostly to companies under contract: each company gets its own one-hour delivery window, employees order the day before, and everything arrives early tomorrow morning in the company's delivery window. The delivery location an employee gives is the company they work for.
+
+Browse products from local stores — groceries and more — with search, category filters, and barcode search, with delivery or pickup in covered areas. Shop orders can be tracked at https://yently.com/track.
+
+## Cars
+
+Browse cars for sale — every listing shows real photos, mileage, and price. Found one you like? Tap "I'm interested" and Yently gets right back to you. Selling? Send your car and get an instant offer. Sellers can also list cars themselves (seller login on the Cars page).
+
+## Flights
+
+Flights work in four steps, in one conversation:
+
+1. Ask for an estimation — free. Tell Yently where you're flying, when, and who's going, with the form, or by chat, call, text, WhatsApp, or email.
+2. We check the price — fast. Prices can change in minutes, so the check happens while you're still talking, ideally in the chat or on the call.
+3. Agree the price, then reserve. Fill in the Flight Reservation form. Every traveler's name must match their passport exactly — airlines won't accept a different spelling.
+4. Pay Flight the exact agreed amount — no more, no less. Then confirmation and receipt arrive by email.
+
+No searching through fares yourself, no surprise fees. US-based travel experts reply with options within 24 hours.
+
+## Services
+
+Need a website or a system of your own? Yently builds websites and systems, and helps with home and business services too — from a simple, personal website to a complete system for a small or medium business.
+
+## Orders and tracking
+
+- Every order gets a code like YEN-000001, shown after checkout. Track it at https://yently.com/track — by code or by email — through Received, Being prepared, Ready, Delivered.
+- Cancellation is free, any time: request it from the tracking page, and Yently approves it. A cancelled service's page goes offline.
+- Orders are recorded and emailed; no payment is taken until Yently launches (see "Launch status" above).
+
+## Pages with their own URLs
+
+Yently is a single-page site, so most pages (Systems, Shop, Cars, Flights, Yently Kids, Services, Guides, About) are sections of https://yently.com/ reached from its menu. These URLs resolve on their own:
+
+- https://yently.com/ — home (Systems hub)
+- https://yently.com/track — track your order
+- https://yently.com/demo-live-chat — Live Chat demo (also at https://yently.com/demo-chat)
+- https://yently.com/demo-tv-gallery — TV Gallery demo
+- https://yently.com/direct-upload — Direct Upload add-on
+
+Machine-readable files:
+
+- https://yently.com/llms.txt — this site's AI entry point (short version)
+- https://yently.com/llms-full.txt — this file (full reference)
+- https://yently.com/ai.json — the service and price catalog as JSON
+- https://yently.com/sitemap.xml — every indexable page and guide
+- https://yently.com/robots.txt — crawler rules, including AI crawlers
+
+Last updated: 2026-11-16.

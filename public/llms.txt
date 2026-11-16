@@ -1,0 +1,91 @@
+# Yently
+
+> Yently — "Everything you need, gently in one place." Yently builds, hosts, and runs websites and systems for small businesses, plus cars for sale, flight bookings, and shopping from local stores, all in one place. Yently officially opens in 2027: prices below are listed prices, and orders placed before launch are expressions of interest — no payment is taken and nothing is sold yet. All prices are per month in US dollars, with no setup fee and no commission on what a business sells.
+
+Yently is a single-page website at https://yently.com/ — the Systems, Shop, Cars, Flights, and Yently Kids pages are sections of that one page, not separate URLs. The pages that do have their own URLs are the home page, order tracking, the live-chat demo, and Direct Upload (listed under Optional below). Every system and subject also has a step-by-step guide (PDF) and a short guide video, which are the link targets below.
+
+Pricing rules: the first month is free on every business system and add-on except Yently Kids, which has no free month. Bundle discount, applied automatically with no code: 2 plans 10% off, 3 plans 15% off, 4 or more plans 20% off. Add-ons and Yently Kids subjects count toward the bundle. Cancellation is free, any time.
+
+For the full reference — every service, price, and detail — see llms-full.txt. For the same catalog as machine-readable JSON, see ai.json. Structured data (JSON-LD) with the same prices is embedded in the home page.
+
+## Business Systems
+
+- [Restaurant — $40/month](https://yently.com/guides/restaurant-guide.pdf): Your own ordering page — menu, live kitchen, and orders. First month free.
+- [POS — $50/month](https://yently.com/guides/pos-guide.pdf): Your own point-of-sale register — stock, sales, and receipts. First month free.
+- [Barber — $15/month](https://yently.com/guides/barber-guide.pdf): Your own barbershop booking page — live queue and a stopwatch for every cut. First month free.
+- [Dealer — $20/month](https://yently.com/guides/dealer-guide.pdf): Your own dealer website — vehicles, test drives, and trade-ins. First month free.
+- [Employee — $20/month](https://yently.com/guides/employee-guide.pdf): Your own employee time page — log time and keep records. First month free.
+- [Bodyshop — $20/month](https://yently.com/guides/bodyshop-guide.pdf): Your own bodyshop page — estimates, jobs, and loan cars. First month free.
+- [Houses — $20/month](https://yently.com/guides/houses-guide.pdf): Your own houses page — listings, photos, and a mortgage calculator. First month free.
+- [Doctor — $20/month](https://yently.com/guides/doctor-guide.pdf): Your own clinic page — doctors, prices, and appointments. First month free.
+- [Holiday — $20/month](https://yently.com/guides/holiday-guide.pdf): Your own holiday rentals page — properties, dates, and bookings. First month free.
+- [Car Rental — $20/month](https://yently.com/guides/rentals-guide.pdf): Your own car rental page — cars, drivers, and bookings. First month free.
+- [Laundry — $20/month](https://yently.com/guides/laundry-guide.pdf): Your own laundry page — services, prices, and orders with pickup or delivery. First month free.
+- [Gym — $20/month](https://yently.com/guides/gym-guide.pdf): Your own gym page — memberships, classes, trainers, and check-ins. First month free.
+- [Simple Website — $10/month](https://yently.com/): Any website, built for you — your name, logo, services, and pictures. First month free. No guide PDF; see the home page under Systems.
+
+## Add-ons
+
+- [TV Gallery — $2/month](https://yently.com/guides/addons-guide.pdf): Your pictures on a TV screen — slideshow and one-picture display. First month free. Live demo: https://yently.com/demo-tv-gallery
+- [Live Chat — $3/month](https://yently.com/guides/addons-guide.pdf): A chat bubble on your website — every message to your email. First month free. Live demo: https://yently.com/demo-live-chat
+- [Clean Link — $2/month](https://yently.com/guides/addons-guide.pdf): Your shop at a clean address — yently.com/your-name. First month free.
+- [Direct Upload — $5/month](https://yently.com/direct-upload): Your uploads go live straight away — no waiting for approval. First month free.
+
+## Yently Kids
+
+Every subject is $5/month for your first 3 students, +$1/month for each extra student. No free month. Cancel free, any time. All 9 subjects together: $45/month list, $36/month with the 20% bundle discount.
+
+- [Kids Math — $5/month](https://yently.com/guides/kids-math-guide.pdf): Four games — adding, taking away, multiplying, and dividing — by level.
+- [Kids English — $5/month](https://yently.com/guides/kids-english-guide.pdf): Spell it, pick the word, and what does it mean? — from your own word list.
+- [Kids Arabic — $5/month](https://yently.com/guides/kids-arabic-guide.pdf): Letters, words, and numbers in Arabic — right-to-left, big and clear.
+- [Kids French — $5/month](https://yently.com/guides/kids-french-guide.pdf): French words and meanings — spell them, pick them, know them.
+- [Kids Spanish — $5/month](https://yently.com/guides/kids-spanish-guide.pdf): Spanish words and meanings — spell them, pick them, know them.
+- [Kids Science — $5/month](https://yently.com/guides/kids-science-guide.pdf): Quizzes by topic — animals, space, the human body, and more.
+- [Kids Geography — $5/month](https://yently.com/guides/kids-geography-guide.pdf): Countries, capitals, and flags — a quiz that travels the world.
+- [Kids Coding — $5/month](https://yently.com/guides/kids-coding-guide.pdf): Build a program from blocks and watch the robot run it.
+- [Kids Reading — $5/month](https://yently.com/guides/kids-reading-guide.pdf): A bookshelf of your own — pick a book, read it, finish it.
+- [Books for Kids — coming soon](https://yently.com/): Real books delivered to your door — starting in the US first. See the home page under Yently Kids.
+
+## Shop, Cars, Flights
+
+- [Yently Shop](https://yently.com/): Virtual stores for now — snacks and lunches delivered straight to workplaces. Order today, everything arrives early tomorrow morning in the company's delivery window. Browse products from local stores, with delivery or pickup in covered areas. See the home page under Shop.
+- [Yently Cars](https://yently.com/): Browse cars for sale — every listing shows real photos, mileage, and price. Selling? Send your car and get an instant offer. See the home page under Cars.
+- [Yently Flights](https://yently.com/): 1) Ask for a free flight estimation. 2) We check the price fast, ideally while still talking. 3) Agree the price, then reserve — every traveler's name must match their passport exactly. 4) Pay Flight the exact agreed amount, then confirmation and receipt by email. See the home page under Flights.
+
+## Guide videos
+
+- [Restaurant guide video — 2:19](https://yently.com/videos/restaurant-guide.mp4): How the Restaurant system works.
+- [POS guide video — 2:04](https://yently.com/videos/pos-guide.mp4): How the POS system works.
+- [Barber guide video — 2:16](https://yently.com/videos/barber-guide.mp4): How the Barber system works.
+- [Dealer guide video — 1:59](https://yently.com/videos/dealer-guide.mp4): How the Dealer system works.
+- [Employee guide video — 2:07](https://yently.com/videos/employee-guide.mp4): How the Employee system works.
+- [Bodyshop guide video — 2:09](https://yently.com/videos/bodyshop-guide.mp4): How the Bodyshop system works.
+- [Houses guide video — 2:04](https://yently.com/videos/houses-guide.mp4): How the Houses system works.
+- [Doctor guide video — 2:01](https://yently.com/videos/doctor-guide.mp4): How the Doctor system works.
+- [Holiday guide video — 2:05](https://yently.com/videos/holiday-guide.mp4): How the Holiday system works.
+- [Car Rental guide video — 2:02](https://yently.com/videos/rentals-guide.mp4): How the Car Rental system works.
+- [Laundry guide video — 2:13](https://yently.com/videos/laundry-guide.mp4): How the Laundry system works.
+- [Gym guide video — 1:54](https://yently.com/videos/gym-guide.mp4): How the Gym system works.
+- [Add-Ons guide video — 2:15](https://yently.com/videos/addons-guide.mp4): TV Gallery, Live Chat, and Clean Link, explained.
+- [Kids Math guide video — 1:28](https://yently.com/videos/kids-math-guide.mp4): How Kids Math works.
+- [Kids English guide video — 1:34](https://yently.com/videos/kids-english-guide.mp4): How Kids English works.
+- [Kids Arabic guide video — 1:36](https://yently.com/videos/kids-arabic-guide.mp4): How Kids Arabic works.
+- [Kids French guide video — 1:28](https://yently.com/videos/kids-french-guide.mp4): How Kids French works.
+- [Kids Spanish guide video — 1:40](https://yently.com/videos/kids-spanish-guide.mp4): How Kids Spanish works.
+- [Kids Science guide video — 1:49](https://yently.com/videos/kids-science-guide.mp4): How Kids Science works.
+- [Kids Geography guide video — 1:41](https://yently.com/videos/kids-geography-guide.mp4): How Kids Geography works.
+- [Kids Coding guide video — 1:35](https://yently.com/videos/kids-coding-guide.mp4): How Kids Coding works.
+- [Kids Reading guide video — 1:31](https://yently.com/videos/kids-reading-guide.mp4): How Kids Reading works.
+
+## Full reference
+
+- [llms-full.txt](https://yently.com/llms-full.txt): The full Yently reference — every service, price, and detail in one markdown file.
+- [ai.json](https://yently.com/ai.json): The same service and price catalog as machine-readable JSON.
+- [sitemap.xml](https://yently.com/sitemap.xml): Every indexable page and guide on the site.
+
+## Optional
+
+- [Track your order](https://yently.com/track): Look up an order by its YEN code or email — Received, Being prepared, Ready, Delivered — and request a cancellation.
+- [Live chat demo](https://yently.com/demo-live-chat): Try the Live Chat add-on on a demo café page.
+- [TV Gallery demo](https://yently.com/demo-tv-gallery): The TV Gallery add-on, fullscreen.
+- [Direct Upload](https://yently.com/direct-upload): The Direct Upload add-on — $5/month, first month free.
