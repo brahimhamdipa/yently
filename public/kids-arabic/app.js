@@ -694,8 +694,8 @@
       var extraEl = $('setup-extra-students');
       if (extraEl) {
         extraEl.innerHTML = draft.students.length >= studentLimit
-          ? 'Need more students? You have ' + draft.students.length + ' of ' + studentLimit + ' places — <a href="/extra-students">add extra students</a> for $1/month each.'
-          : 'Need more students? <a href="/extra-students">Extra students</a> are $1/month each.';
+          ? 'Need more students? You have ' + draft.students.length + ' of ' + studentLimit + ' places — <a href="/?add=kids-extra-arabic&slug=' + encodeURIComponent(SLUG) + '">add extra students</a> for $1/month each — free for the rest of this month.'
+          : 'Need more students? <a href="/?add=kids-extra-arabic&slug=' + encodeURIComponent(SLUG) + '">Extra students</a> are $1/month each — free for the rest of this month.';
       }
       var addBtn = $('setup-add-student');
       if (addBtn) addBtn.disabled = draft.students.length >= studentLimit;
@@ -761,7 +761,7 @@
       var out = $('setup-student-out');
       if (!v) return;
       if (draft.students.indexOf(v) !== -1) { out.innerHTML = '<p class="error">That name is already on the list.</p>'; return; }
-      if (draft.students.length >= studentLimit) { out.innerHTML = '<p class="error">You are at your limit of ' + studentLimit + ' students. <a href="/extra-students">Add extra students</a> for $1/month each.</p>'; return; }
+      if (draft.students.length >= studentLimit) { out.innerHTML = '<p class="error">You are at your limit of ' + studentLimit + ' students. <a href="/?add=kids-extra-arabic&slug=' + encodeURIComponent(SLUG) + '">Add extra students</a> for $1/month each — free for the rest of this month.</p>'; return; }
       /* Adding a student goes live at once via the RPC — no draft,
          no approval. */
       saveStudentsLive(draft.students.concat([v]), out, function () {
