@@ -2,6 +2,7 @@ import { Fragment, useEffect, useMemo, useState } from 'react'
 import { fmtDate } from '../../lib/admin'
 import { money } from '../../lib/storeData'
 import { supabase } from '../../lib/supabaseClient'
+import CancelOrderForm, { isGateableOrderTable, systemForOrderTable } from './CancelOrderForm'
 
 // Systems Orders: the fulfilment view of every Business-cart plan
 // order, driven by the order_tracking table (kind='system').
@@ -96,6 +97,8 @@ export default function AdminSystemsOrders() {
   const [status, setStatus] = useState('')
   const [statusError, setStatusError] = useState('')
   const [confirmDeliver, setConfirmDeliver] = useState(null)
+  const [cancelRow, setCancelRow] = useState(null)
+  const [cancelSubmitting, setCancelSubmitting] = useState(false)
   const [updating, setUpdating] = useState(false)
 
   const load = async () => {
@@ -103,6 +106,7 @@ export default function AdminSystemsOrders() {
     setLoadError('')
     setExpandedKey(null)
     setConfirmDeliver(null)
+    setCancelRow(null)
     try {
       const { data, error } = await supabase
         .from('order_tracking')
@@ -159,6 +163,29 @@ export default function AdminSystemsOrders() {
       setStatusError('Cannot update status: ' + err.message)
     } finally {
       setUpdating(false)
+    }
+  }
+
+  const doCancelOrder = async ({ system, slug, note }) => {
+    if (!cancelRow) return
+    setCancelSubmitting(true)
+    setStatusError('')
+    try {
+      const { error } = await supabase.rpc('admin_cancel_order', {
+        p_code: cancelRow.code,
+        p_system: system || null,
+        p_shop_slug: slug || null,
+        p_reason: note || null,
+      })
+      if (error) throw error
+      const gated = cancelRow.kind === 'system' && isGateableOrderTable(cancelRow.order_table) && system.trim() !== '' && slug.trim() !== ''
+      setStatus(`✓ ${cancelRow.code} — cancelled${gated ? '. The service page is offline' : '.'}`)
+      setCancelRow(null)
+      load()
+    } catch (err) {
+      setStatusError('Cannot cancel order: ' + err.message)
+    } finally {
+      setCancelSubmitting(false)
     }
   }
 
@@ -233,6 +260,21 @@ export default function AdminSystemsOrders() {
         </div>
       )}
 
+      {cancelRow && (
+        <CancelOrderForm
+          key={'cancel-' + cancelRow.code}
+          title={`Cancel order ${cancelRow.code}?`}
+          initialSystem={systemForOrderTable(cancelRow.order_table)}
+          initialSlug={cancelRow.shop_slug || ''}
+          showSlug={isGateableOrderTable(cancelRow.order_table)}
+          submitLabel="Cancel order"
+          noteLabel="Reason"
+          onSubmit={doCancelOrder}
+          onClose={() => setCancelRow(null)}
+          submitting={cancelSubmitting}
+        />
+      )}
+
       <p><b>{summary.total} order{summary.total === 1 ? '' : 's'}</b> · Received {summary.received} · Preparing {summary.preparing} · Ready {summary.ready} · Delivered {summary.delivered} · Cancelled {summary.cancelled}</p>
 
       <div className="form-card">
@@ -305,7 +347,8 @@ export default function AdminSystemsOrders() {
                           <>
                             <button type="button" className="btn-mini" onClick={() => doSetStatus(r, 'preparing')} disabled={updating || cur >= 1}>Mark preparing</button>{' '}
                             <button type="button" className="btn-mini" onClick={() => doSetStatus(r, 'ready')} disabled={updating || cur >= 2}>Mark ready</button>{' '}
-                            <button type="button" className="btn-mini" onClick={() => setConfirmDeliver(r)} disabled={updating || cur >= 3}>Mark delivered</button>
+                            <button type="button" className="btn-mini" onClick={() => setConfirmDeliver(r)} disabled={updating || cur >= 3}>Mark delivered</button>{' '}
+                            <button type="button" className="btn-mini" onClick={() => setCancelRow(r)} disabled={updating}>Cancel order</button>
                           </>
                         )}
                       </td>

@@ -2,6 +2,7 @@ import { Fragment, useEffect, useMemo, useState } from 'react'
 import { fetchAll, fmtDate } from '../../lib/admin'
 import { money } from '../../lib/storeData'
 import { supabase } from '../../lib/supabaseClient'
+import CancelOrderForm from './CancelOrderForm'
 
 // Shop Orders: every shop order — store_orders + grocery_orders —
 // each joined to its tracking row (kind='shop', matched on
@@ -93,6 +94,8 @@ export default function AdminShopOrders() {
   const [status, setStatus] = useState('')
   const [statusError, setStatusError] = useState('')
   const [confirmDeliver, setConfirmDeliver] = useState(null)
+  const [cancelRow, setCancelRow] = useState(null)
+  const [cancelSubmitting, setCancelSubmitting] = useState(false)
   const [updating, setUpdating] = useState(false)
 
   const load = async () => {
@@ -100,6 +103,7 @@ export default function AdminShopOrders() {
     setFailed([])
     setExpandedKey(null)
     setConfirmDeliver(null)
+    setCancelRow(null)
     const failedTables = []
     // One bad table must never blank the page: fetchAll throws, so
     // each table is grabbed on its own and a failure just records
@@ -210,6 +214,31 @@ export default function AdminShopOrders() {
     }
   }
 
+  // Shop orders have no service page to take offline, so the cancel
+  // goes through with no system and no slug — the order is just
+  // cancelled. The shared form still asks for a reason.
+  const doCancelOrder = async ({ note }) => {
+    if (!cancelRow || !cancelRow.code) return
+    setCancelSubmitting(true)
+    setStatusError('')
+    try {
+      const { error } = await supabase.rpc('admin_cancel_order', {
+        p_code: cancelRow.code,
+        p_system: null,
+        p_shop_slug: null,
+        p_reason: note || null,
+      })
+      if (error) throw error
+      setStatus(`✓ ${cancelRow.code} — cancelled.`)
+      setCancelRow(null)
+      load()
+    } catch (err) {
+      setStatusError('Cannot cancel order: ' + err.message)
+    } finally {
+      setCancelSubmitting(false)
+    }
+  }
+
   const summary = useMemo(() => {
     const out = { total: 0, received: 0, preparing: 0, ready: 0, delivered: 0, cancelled: 0, noStatus: 0 }
     for (const r of rows || []) {
@@ -275,6 +304,21 @@ export default function AdminShopOrders() {
             <button type="button" className="btn-soft" onClick={() => setConfirmDeliver(null)}>Cancel</button>
           </div>
         </div>
+      )}
+
+      {cancelRow && (
+        <CancelOrderForm
+          key={'cancel-' + cancelRow.code}
+          title={`Cancel order ${cancelRow.code}?`}
+          initialSystem=""
+          initialSlug=""
+          showSlug={false}
+          submitLabel="Cancel order"
+          noteLabel="Reason"
+          onSubmit={doCancelOrder}
+          onClose={() => setCancelRow(null)}
+          submitting={cancelSubmitting}
+        />
       )}
 
       <p><b>{summary.total} order{summary.total === 1 ? '' : 's'}</b> · Received {summary.received} · Preparing {summary.preparing} · Ready {summary.ready} · Delivered {summary.delivered} · Cancelled {summary.cancelled}{summary.noStatus > 0 && ` · No status ${summary.noStatus}`}</p>
@@ -351,7 +395,8 @@ export default function AdminShopOrders() {
                           <>
                             <button type="button" className="btn-mini" onClick={() => doSetStatus(r, 'preparing')} disabled={updating || cur >= 1}>Mark preparing</button>{' '}
                             <button type="button" className="btn-mini" onClick={() => doSetStatus(r, 'ready')} disabled={updating || cur >= 2}>Mark ready</button>{' '}
-                            <button type="button" className="btn-mini" onClick={() => setConfirmDeliver(r)} disabled={updating || cur >= 3}>Mark delivered</button>
+                            <button type="button" className="btn-mini" onClick={() => setConfirmDeliver(r)} disabled={updating || cur >= 3}>Mark delivered</button>{' '}
+                            <button type="button" className="btn-mini" onClick={() => setCancelRow(r)} disabled={updating}>Cancel order</button>
                           </>
                         )}
                       </td>
