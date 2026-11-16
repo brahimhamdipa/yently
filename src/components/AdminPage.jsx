@@ -21,6 +21,7 @@ import AdminAllApprovals from './admin/AdminAllApprovals'
 import AdminAllOrders from './admin/AdminAllOrders'
 import AdminSystemsOrders from './admin/AdminSystemsOrders'
 import AdminShopOrders from './admin/AdminShopOrders'
+import AdminAllRequests from './admin/AdminAllRequests'
 import AdminCancellations from './admin/AdminCancellations'
 import AdminBarcodeGenerator from './admin/AdminBarcodeGenerator'
 import AdminCars from './admin/AdminCars'
@@ -204,6 +205,7 @@ const MENUS = [
     { label: 'All Approvals', section: 'all-approvals' },
     { label: 'Systems Orders', section: 'systems-orders' },
     { label: 'Shop Orders', section: 'shop-orders' },
+    { label: 'All Requests', section: 'all-requests' },
     { label: 'Cancellations', section: 'cancellations' },
     { label: 'All Orders', section: 'all-orders' },
     { label: 'Live Chat', section: 'chat' },
@@ -410,6 +412,7 @@ export default function AdminPage() {
       {section === 'all-approvals' && <AdminAllApprovals />}
       {section === 'systems-orders' && <AdminSystemsOrders />}
       {section === 'shop-orders' && <AdminShopOrders />}
+      {section === 'all-requests' && <AdminAllRequests />}
       {section === 'cancellations' && <AdminCancellations />}
       {section === 'all-orders' && <AdminAllOrders />}
       {section === 'barcode-generator' && <AdminBarcodeGenerator />}
