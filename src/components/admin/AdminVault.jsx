@@ -67,6 +67,29 @@ function sanitizeName(name) {
   return String(name).replace(/[^A-Za-z0-9._-]+/g, '-').replace(/^-+/, '') || 'file'
 }
 
+// Local-date helpers for the calendar / Upcoming views. Due dates are
+// stored as 'YYYY-MM-DD' strings, so all math is done on those strings
+// (never on Date objects parsed from them, which would shift by
+// timezone) — parseDay builds a local date from the parts.
+function parseDay(iso) {
+  const [y, m, d] = String(iso).split('-').map(Number)
+  return new Date(y || 1970, (m || 1) - 1, d || 1)
+}
+
+function dayStr(date) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+}
+
+function addDays(iso, n) {
+  const d = parseDay(iso)
+  d.setDate(d.getDate() + n)
+  return dayStr(d)
+}
+
+// Signed-URL preview kinds for the document viewer: PDFs and images
+// open inline in a viewer; anything else opens in a new tab.
+const VIEWABLE_IMAGE = ['png', 'jpg', 'jpeg', 'webp', 'gif']
+
 function sortReminders(rows) {
   const withDue = (r) => r.due_date || '9999-12-31'
   return [...rows].sort((a, b) => {
@@ -85,6 +108,7 @@ export default function AdminVault() {
   const [uploading, setUploading] = useState(false)
   const [confirmDoc, setConfirmDoc] = useState(null)
   const [busyDoc, setBusyDoc] = useState(null)
+  const [viewingDoc, setViewingDoc] = useState(null)
 
   // Reminders
   const [reminders, setReminders] = useState(null)
@@ -97,6 +121,11 @@ export default function AdminVault() {
   const [provForm, setProvForm] = useState(EMPTY_PROVIDER)
   const [editingProv, setEditingProv] = useState(null)
   const [confirmProvDel, setConfirmProvDel] = useState(null)
+
+  // Calendar (month grid) — starts on the current month.
+  const [calYear, setCalYear] = useState(() => new Date().getFullYear())
+  const [calMonth, setCalMonth] = useState(() => new Date().getMonth())
+  const [calDay, setCalDay] = useState(null)
 
   const loadDocs = async () => {
     try {
@@ -157,6 +186,20 @@ export default function AdminVault() {
     window.open(data.signedUrl, '_blank', 'noopener')
   }
 
+  // View a document: PDFs and images open inline in a viewer (same
+  // 1-hour signed URL as Download); anything else opens in a new tab,
+  // exactly like Download. Nothing about storage changes.
+  const viewDoc = async (doc) => {
+    setError('')
+    const { data, error: err } = await supabase.storage.from(BUCKET).createSignedUrl(doc.name, 3600)
+    if (err) { setError(err.message); return }
+    const name = displayName(doc.name)
+    const ext = String(name.split('.').pop() || '').toLowerCase()
+    if (ext === 'pdf') setViewingDoc({ url: data.signedUrl, name, kind: 'pdf' })
+    else if (VIEWABLE_IMAGE.includes(ext)) setViewingDoc({ url: data.signedUrl, name, kind: 'image' })
+    else window.open(data.signedUrl, '_blank', 'noopener')
+  }
+
   const deleteDoc = async (doc) => {
     if (confirmDoc !== doc.name) { setConfirmDoc(doc.name); return }
     setConfirmDoc(null)
@@ -204,6 +247,25 @@ export default function AdminVault() {
       notes: r.notes || '',
     })
     setConfirmRemDel(null)
+  }
+
+  // Edit from the Calendar or Upcoming view: the ONE edit form lives
+  // in the Reminders view, so jump there with the form already open
+  // on that reminder — no second form is built anywhere.
+  const editReminderFrom = (r) => {
+    editReminder(r)
+    setView('reminders')
+    window.scrollTo(0, 0)
+  }
+
+  // Start a new reminder on a calendar day: same form, due date
+  // already filled in with the day that was tapped.
+  const addReminderOnDay = (iso) => {
+    setEditingRem(null)
+    setRemForm({ ...EMPTY_REMINDER, due_date: iso })
+    setConfirmRemDel(null)
+    setView('reminders')
+    window.scrollTo(0, 0)
   }
 
   const deleteReminder = async (r) => {
@@ -294,6 +356,91 @@ export default function AdminVault() {
     return null
   }
 
+  // ----- Upcoming (next 7 days, then days 8–30) -----
+  // Open reminders only, with a due date. Overdue items are not
+  // repeated here — they already sit at the top of the full list and
+  // in the Reminders tab count.
+  const upcoming7 = openReminders.filter(r => r.due_date && r.due_date >= today && r.due_date <= addDays(today, 6))
+  const upcoming30 = openReminders.filter(r => r.due_date && r.due_date > addDays(today, 6) && r.due_date <= addDays(today, 30))
+
+  // One shared Upcoming section, shown at the top of the Reminders
+  // view and as the whole Upcoming view. onEdit is editReminder
+  // inside Reminders (form opens in place) and editReminderFrom
+  // elsewhere (jumps to the Reminders form).
+  const renderUpcoming = (onEdit) => {
+    if (upcoming7.length === 0 && upcoming30.length === 0) return null
+    const group = (title, items) => items.length === 0 ? null : (
+      <div key={title}>
+        <h4 style={{ margin: '14px 0 6px' }}>{title}</h4>
+        <div className="table-wrap">
+          <table className="admin-table">
+            <thead>
+              <tr><th></th><th>Title</th><th>Due</th><th>Amount</th><th className="no-print"></th></tr>
+            </thead>
+            <tbody>
+              {items.map(r => {
+                const tag = dueTag(r)
+                return (
+                  <tr key={r.id} style={tag ? { background: tag.text === 'Overdue' ? '#fef2f2' : '#fffbeb' } : undefined}>
+                    <td>
+                      <input
+                        type="checkbox"
+                        checked={!!r.done}
+                        onChange={() => toggleDone(r)}
+                        aria-label={r.done ? 'Mark as not done' : 'Mark as done'}
+                      />
+                    </td>
+                    <td>
+                      {r.title}
+                      {tag && <span style={{ color: tag.color, fontWeight: 700 }}> — {tag.text}</span>}
+                    </td>
+                    <td>{r.due_date || ''}</td>
+                    <td>{fmtAmount(r.amount)}</td>
+                    <td className="no-print" style={{ whiteSpace: 'nowrap' }}>
+                      <button type="button" className="btn-mini" onClick={() => onEdit(r)}>Edit</button>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )
+    return (
+      <div className="form-card wide" style={{ marginBottom: 16 }}>
+        <h3>Upcoming</h3>
+        {group('Next 7 days', upcoming7)}
+        {group('Days 8–30', upcoming30)}
+      </div>
+    )
+  }
+
+  // ----- Calendar (month grid, open reminders on their dates) -----
+  const calByDay = {}
+  for (const r of openReminders) {
+    if (!r.due_date) continue
+    if (!calByDay[r.due_date]) calByDay[r.due_date] = []
+    calByDay[r.due_date].push(r)
+  }
+  const calDaysInMonth = new Date(calYear, calMonth + 1, 0).getDate()
+  const calFirstWeekday = new Date(calYear, calMonth, 1).getDay()
+  const calMonthName = new Date(calYear, calMonth, 1).toLocaleString(undefined, { month: 'long', year: 'numeric' })
+  const calDayItems = calDay ? (calByDay[calDay] || []) : []
+
+  const shiftMonth = (delta) => {
+    const m = calMonth + delta
+    setCalMonth(((m % 12) + 12) % 12)
+    setCalYear(calYear + Math.floor(m / 12))
+    setCalDay(null)
+  }
+  const goToday = () => {
+    const now = new Date()
+    setCalYear(now.getFullYear())
+    setCalMonth(now.getMonth())
+    setCalDay(todayStr())
+  }
+
   return (
     <div>
       <div className="hero-card">
@@ -308,6 +455,8 @@ export default function AdminVault() {
           Reminders &amp; bills {overdueCount > 0 ? `(${overdueCount} overdue)` : dueSoonCount > 0 ? `(${dueSoonCount} due soon)` : ''}
         </button>
         <button type="button" className={view === 'providers' ? 'active' : ''} onClick={() => setView('providers')}>Providers</button>
+        <button type="button" className={view === 'calendar' ? 'active' : ''} onClick={() => setView('calendar')}>Calendar</button>
+        <button type="button" className={view === 'upcoming' ? 'active' : ''} onClick={() => setView('upcoming')}>Upcoming</button>
       </div>
 
       {status && <p className="status">{status}</p>}
@@ -336,6 +485,7 @@ export default function AdminVault() {
                       <td>{fmtSize(d.metadata && d.metadata.size)}</td>
                       <td>{fmtDate(d.created_at)}</td>
                       <td className="no-print" style={{ whiteSpace: 'nowrap' }}>
+                        <button type="button" className="btn-mini" onClick={() => viewDoc(d)}>View</button>{' '}
                         <button type="button" className="btn-mini" onClick={() => downloadDoc(d)}>Download</button>{' '}
                         <button
                           type="button"
@@ -379,6 +529,8 @@ export default function AdminVault() {
               )}
             </div>
           </form>
+
+          {reminders !== null && renderUpcoming(editReminder)}
 
           {reminders === null && <div className="hero-card"><p>Loading reminders...</p></div>}
           {reminders !== null && reminders.length === 0 && <p className="hint">Nothing on your list yet — add your first reminder or bill above.</p>}
@@ -480,6 +632,156 @@ export default function AdminVault() {
               </table>
             </div>
           )}
+        </div>
+      )}
+
+      {view === 'calendar' && (
+        <div>
+          <div className="form-card wide">
+            <div className="row" style={{ alignItems: 'center' }}>
+              <button type="button" className="btn-mini" onClick={() => shiftMonth(-1)}>‹ Prev</button>
+              <h3 style={{ flex: 1, textAlign: 'center', margin: 0 }}>{calMonthName}</h3>
+              <button type="button" className="btn-mini" onClick={() => shiftMonth(1)}>Next ›</button>
+              <button type="button" className="btn-mini" onClick={goToday}>Today</button>
+            </div>
+            <div className="table-wrap" style={{ marginTop: 12 }}>
+              <table className="admin-table">
+                <thead>
+                  <tr>{['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => <th key={d}>{d}</th>)}</tr>
+                </thead>
+                <tbody>
+                  {(() => {
+                    const cells = []
+                    for (let i = 0; i < calFirstWeekday; i++) cells.push(null)
+                    for (let d = 1; d <= calDaysInMonth; d++) cells.push(d)
+                    while (cells.length % 7 !== 0) cells.push(null)
+                    const weeks = []
+                    for (let w = 0; w < cells.length; w += 7) weeks.push(cells.slice(w, w + 7))
+                    return weeks.map((week, wi) => (
+                      <tr key={wi}>
+                        {week.map((day, di) => {
+                          if (day === null) return <td key={di} style={{ background: '#f9fafb' }}></td>
+                          const iso = `${calYear}-${String(calMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+                          const items = calByDay[iso] || []
+                          const hasOverdue = items.some(r => r.due_date < today)
+                          const hasSoon = items.some(r => r.due_date >= today && r.due_date <= dueSoonCutoff)
+                          return (
+                            <td
+                              key={di}
+                              onClick={() => setCalDay(iso)}
+                              style={{
+                                verticalAlign: 'top',
+                                width: '14.28%',
+                                height: 76,
+                                padding: 6,
+                                cursor: 'pointer',
+                                background: iso === calDay ? '#dbeafe' : hasOverdue ? '#fef2f2' : hasSoon ? '#fffbeb' : undefined,
+                                border: iso === today ? '2px solid #2563eb' : undefined,
+                              }}
+                            >
+                              <div style={{ fontWeight: 700 }}>{day}</div>
+                              {items.slice(0, 2).map(r => (
+                                <div
+                                  key={r.id}
+                                  style={{
+                                    fontSize: 12,
+                                    whiteSpace: 'nowrap',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    color: r.due_date < today ? '#dc2626' : r.due_date <= dueSoonCutoff ? '#b45309' : undefined,
+                                  }}
+                                >
+                                  {r.title}
+                                </div>
+                              ))}
+                              {items.length > 2 && <div style={{ fontSize: 12, color: '#6b7280' }}>+{items.length - 2} more</div>}
+                            </td>
+                          )
+                        })}
+                      </tr>
+                    ))
+                  })()}
+                </tbody>
+              </table>
+            </div>
+            <p className="hint">Tap a day to see what is due. Overdue days are red, days due within 7 days are gold, today has a blue border. Only reminders that are not done show on the calendar.</p>
+          </div>
+
+          {calDay && (
+            <div className="form-card wide">
+              <h3>{calDay === today ? `Today — ${calDay}` : calDay}</h3>
+              {calDayItems.length === 0 ? (
+                <p className="hint">Nothing due on this day.</p>
+              ) : (
+                <div className="table-wrap">
+                  <table className="admin-table">
+                    <thead>
+                      <tr><th></th><th>Title</th><th>Kind</th><th>Amount</th><th>Notes</th><th className="no-print"></th></tr>
+                    </thead>
+                    <tbody>
+                      {calDayItems.map(r => {
+                        const tag = dueTag(r)
+                        return (
+                          <tr key={r.id} style={tag ? { background: tag.text === 'Overdue' ? '#fef2f2' : '#fffbeb' } : undefined}>
+                            <td>
+                              <input
+                                type="checkbox"
+                                checked={!!r.done}
+                                onChange={() => toggleDone(r)}
+                                aria-label={r.done ? 'Mark as not done' : 'Mark as done'}
+                              />
+                            </td>
+                            <td>
+                              {r.title}
+                              {tag && <span style={{ color: tag.color, fontWeight: 700 }}> — {tag.text}</span>}
+                            </td>
+                            <td>{(KIND_OPTIONS.find(k => k.value === r.kind) || {}).label || r.kind}</td>
+                            <td>{fmtAmount(r.amount)}</td>
+                            <td>{r.notes || ''}</td>
+                            <td className="no-print" style={{ whiteSpace: 'nowrap' }}>
+                              <button type="button" className="btn-mini" onClick={() => editReminderFrom(r)}>Edit</button>{' '}
+                              <button type="button" className="btn-mini btn-danger" onClick={() => deleteReminder(r)}>
+                                {confirmRemDel === r.id ? 'Tap again to confirm' : 'Delete'}
+                              </button>
+                            </td>
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+              <div className="row" style={{ marginTop: 10 }}>
+                <button type="button" onClick={() => addReminderOnDay(calDay)}>Add a reminder on this day</button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {view === 'upcoming' && (
+        <div>
+          <p className="hint">The nearest bills and reminders, soonest first — the next 7 days, then days 8–30. Overdue items stay at the top of the Reminders list.</p>
+          {reminders === null && <div className="hero-card"><p>Loading reminders...</p></div>}
+          {reminders !== null && renderUpcoming(editReminderFrom)}
+          {reminders !== null && upcoming7.length === 0 && upcoming30.length === 0 && (
+            <p className="hint">Nothing due in the next 30 days.</p>
+          )}
+        </div>
+      )}
+
+      {viewingDoc && (
+        <div className="modal-overlay" onClick={() => setViewingDoc(null)}>
+          <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 860 }}>
+            <button className="modal-close" onClick={() => setViewingDoc(null)} aria-label="Close">✕</button>
+            <h3>{viewingDoc.name}</h3>
+            {viewingDoc.kind === 'pdf' ? (
+              <iframe title={viewingDoc.name} src={viewingDoc.url} style={{ width: '100%', height: '70vh', border: 0 }} />
+            ) : (
+              <img src={viewingDoc.url} alt={viewingDoc.name} style={{ maxWidth: '100%', maxHeight: '70vh' }} />
+            )}
+            <p className="hint">This preview link works for one hour. Use Download for a copy of your own.</p>
+          </div>
         </div>
       )}
     </div>
