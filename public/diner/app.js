@@ -72,6 +72,11 @@
   var data = null; // live menu/info (visitors)
   var draft = null; // staff draft (Setup)
   var draftStatus = 'editing';
+  /* Direct Upload: when Yently has switched it on for this shop,
+     an upload goes live straight away instead of waiting for
+     approval. Checked once when Setup opens and cached for the
+     session; any failure leaves it off, so the old wording stays. */
+  var directUploadOn = false;
   var staffCreds = null; // {u, p} in memory only, never stored
   /* ---------- Shop live chat (per-shop add-on) ---------- */
   /* The visitor bubble mounts once, after the shop's live data loads;
@@ -889,6 +894,11 @@
       draft = res.data || {};
       draft.menu = draft.menu || [];
       draftStatus = res.status || 'editing';
+      /* Direct Upload switch: see the note by directUploadOn. */
+      return rpc('direct_upload_enabled', { p_owner_type: 'diner', p_owner_key: SLUG }).then(function (on) {
+        directUploadOn = (on === true);
+      }).catch(function () { directUploadOn = false; });
+    }).then(function () {
       renderSetup();
     }).catch(function () {
       el.innerHTML = '<h2>Setup</h2><div class="card"><p class="error">Could not load your draft. Please try again in a moment.</p></div>';
@@ -897,6 +907,7 @@
   function statusLine() {
     if (draftStatus === 'pending') return 'Your changes were sent to Yently and are waiting for approval. Visitors still see the approved menu.';
     if (draftStatus === 'approved') return 'Your last upload was approved and is now live.';
+    if (directUploadOn) return 'Direct Upload is on for this page — your changes go live the moment you upload them. Visitors still see the approved menu.';
     return 'Your changes are saved as a draft. Visitors still see the approved menu until you upload and Yently approves.';
   }
   function renderSetup() {
@@ -926,7 +937,7 @@
       '</div><h2>Menu</h2><div id="setup-menu"></div>' +
       '<button id="setup-add" class="secondary">+ Add menu item</button>' +
       '<div class="row" style="margin-top:16px"><button id="setup-save" class="secondary">Save draft</button>' +
-      '<button id="setup-upload">Upload for approval</button></div>' +
+      '<button id="setup-upload">' + (directUploadOn ? 'Upload — goes live right away' : 'Upload for approval') + '</button></div>' +
       '<div id="setup-out" style="margin-top:12px"></div>' +
       '<div class="card"><h3>Chats</h3>' +
       '<p class="info">Messages from visitors on this page. Visitors only see the chat bubble once Yently switches live chat on for this shop.</p>' +
@@ -1027,9 +1038,9 @@
       var d = collectDraft();
       rpc('submit_diner_draft', { p_slug: SLUG, p_username: staffCreds.u, p_password: staffCreds.p, p_draft: d }).then(function () {
         draft = d;
-        draftStatus = 'pending';
+        draftStatus = directUploadOn ? 'approved' : 'pending';
         notifyEmail('Diner draft for approval: ' + (d.name || SLUG), { restaurant: d.name || '', slug: SLUG });
-        out.innerHTML = '<p class="info">Uploaded! Your changes were sent to Yently and are waiting for approval. We will confirm once they are live.</p>';
+        out.innerHTML = '<p class="info">' + (directUploadOn ? 'Uploaded! Your changes are live right away. ✅' : 'Uploaded! Your changes were sent to Yently and are waiting for approval. We will confirm once they are live.') + '</p>';
       }).catch(function (err) {
         out.innerHTML = '<p class="error">Could not upload: ' + esc(err.message) + '</p>';
       });
