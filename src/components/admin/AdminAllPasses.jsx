@@ -8,6 +8,9 @@ import DraftView from './DraftView'
 // the link, the username, the password, who uses it, and the note.
 // Grouped by area (Stores, Diner, POS, Dealer, Employee, Bodyshop,
 // Yently Kids, Barbers, Websites, Chat, Clean Links), with a search box over everything.
+// Each group header has a ▾ / ▸ toggle that collapses just that
+// group (all groups start expanded), with Collapse all / Expand all
+// in the toolbar at the top.
 // Passwords show readable here BY DESIGN, like everywhere else in
 // Admin — this page is owner-only, and the whole point of it is that
 // the admin can see what he gave out.
@@ -228,6 +231,14 @@ export default function AdminAllPasses() {
   const [extraEdits, setExtraEdits] = useState({})
   const [savingExtra, setSavingExtra] = useState(null)
   const [extraErrors, setExtraErrors] = useState({})
+
+  // Collapsed groups: per-group, default EXPANDED — an empty set
+  // means every group shows its rows on first open. ▾ = open,
+  // ▸ = collapsed. Collapse all / Expand all set or clear the set.
+  const [collapsed, setCollapsed] = useState({})
+  const toggleGroup = (key) => setCollapsed(prev => ({ ...prev, [key]: !prev[key] }))
+  const collapseAllGroups = () => setCollapsed(Object.fromEntries(GROUPS.map(g => [g.key, true])))
+  const expandAllGroups = () => setCollapsed({})
 
   // Create state: the "Add a pass" form.
   const [showCreate, setShowCreate] = useState(false)
@@ -698,13 +709,18 @@ export default function AdminAllPasses() {
 
   return (
     <div>
+      <style>{`.allpasses-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.allpasses-table th { font-size: 12.5px; padding: 4px 8px; text-align: left; background: #f8fafc; }
+.allpasses-table td { padding: 4px 8px; vertical-align: top; }`}</style>
       <div className="hero-card">
         <h2>🔑 All Passes {total > 0 && `(${total})`}</h2>
-        <p>Every login you have handed out — the link, the username, the password, who uses it, and your note. Grouped by area; use the search to find one fast. Add, edit, delete and approve passes right here — no need to open their own tables. Live clean links are listed under Clean Links below (view and delete only — add one from Admin → Clean Link Orders). For Yently Kids schools, the Kids column shows the live student count and the kid limit (3 included + paid extras) — change the number and Save to set the limit.</p>
+        <p>Every login you have handed out — the link, the username, the password, who uses it, and your note. Grouped by area — tap the ▾ beside a group name to collapse just that group, or Collapse all at the top; use the search to find one fast. Add, edit, delete and approve passes right here — no need to open their own tables. Live clean links are listed under Clean Links below (view and delete only — add one from Admin → Clean Link Orders). For Yently Kids schools, the Kids column shows the live student count and the kid limit (3 included + paid extras) — change the number and Save to set the limit.</p>
       </div>
       <div className="form-card">
         <input placeholder="Search link, username, customer, note..." value={search} onChange={e => setSearch(e.target.value)} />
         <button type="button" className="btn-soft" onClick={() => load()}>↻ Refresh</button>
+        <button type="button" className="btn-soft" onClick={collapseAllGroups}>Collapse all</button>
+        <button type="button" className="btn-soft" onClick={expandAllGroups}>Expand all</button>
         <button type="button" className="btn-primary" onClick={() => { setShowCreate(!showCreate); setCreateError('') }}>{showCreate ? 'Close add form' : '+ Add a pass'}</button>
       </div>
       {status && <p>{status}</p>}
@@ -801,14 +817,18 @@ export default function AdminAllPasses() {
       {GROUPS.map(g => {
         const list = shown.filter(r => r.group === g.key)
         if (q && list.length === 0) return null
+        const isCollapsed = !!collapsed[g.key]
         return (
           <div key={g.key}>
-            <h3>{g.title} ({list.length})</h3>
+            <h3 style={{ margin: '10px 0 3px', fontSize: 16, lineHeight: 1.3 }}>
+              <button type="button" className="btn-soft" onClick={() => toggleGroup(g.key)} aria-expanded={!isCollapsed} aria-label={(isCollapsed ? 'Expand ' : 'Collapse ') + g.title + ' passes'} style={{ padding: '2px 8px', marginRight: 6, fontSize: 13, lineHeight: 1.4 }}>{isCollapsed ? '▸' : '▾'}</button>
+              <span onClick={() => toggleGroup(g.key)} style={{ cursor: 'pointer' }}>{g.title} ({list.length})</span>
+            </h3>
             {failed.includes(g.key) && <p className="hint">Could not load this group — tap Refresh to try again.</p>}
-            {list.length === 0 && !failed.includes(g.key) && <p className="hint">Nothing here yet.</p>}
-            {list.length > 0 && (
-              <div className="table-wrap">
-                <table>
+            {!isCollapsed && list.length === 0 && !failed.includes(g.key) && <p className="hint">Nothing here yet.</p>}
+            {!isCollapsed && list.length > 0 && (
+              <div className="table-wrap" style={{ marginTop: 4 }}>
+                <table className="allpasses-table">
                   <thead>
                     <tr><th>Link</th><th>Username</th><th>Password</th><th>Customer</th>{g.key === 'kids' && <th>Kids</th>}<th>Note</th><th>Actions</th></tr>
                   </thead>
@@ -821,25 +841,25 @@ export default function AdminAllPasses() {
                         <Fragment key={r.key}>
                         <tr>
                           <td><a href={r.link} target="_blank" rel="noreferrer">{r.linkText}</a><br /><span className="hint">{r.kind}</span></td>
-                          <td>{editing ? <input style={{ width: '100%' }} value={edit.user} onChange={e => setEdit({ ...edit, user: e.target.value })} /> : r.user}</td>
+                          <td>{editing ? <input style={{ width: '100%', padding: '6px 8px', fontSize: 13.5 }} value={edit.user} onChange={e => setEdit({ ...edit, user: e.target.value })} /> : r.user}</td>
                           <td>
                             {editing ? (
                               <>
-                                <input style={{ width: '100%' }} value={edit.pass} onChange={e => setEdit({ ...edit, pass: e.target.value })} />
-                                {isShop(r) && <><br /><input style={{ width: '100%' }} placeholder={r.group === 'kids' ? 'Teacher password' : 'Team password'} value={edit.epass} onChange={e => setEdit({ ...edit, epass: e.target.value })} /></>}
+                                <input style={{ width: '100%', padding: '6px 8px', fontSize: 13.5 }} value={edit.pass} onChange={e => setEdit({ ...edit, pass: e.target.value })} />
+                                {isShop(r) && <><br /><input style={{ width: '100%', padding: '6px 8px', fontSize: 13.5 }} placeholder={r.group === 'kids' ? 'Teacher password' : 'Team password'} value={edit.epass} onChange={e => setEdit({ ...edit, epass: e.target.value })} /></>}
                               </>
                             ) : (
                               <>{r.pass}{r.passExtra && <><br /><span className="hint">{r.passExtra}</span></>}</>
                             )}
                           </td>
-                          <td>{editing && isShop(r) ? <input style={{ width: '100%' }} value={edit.customer} onChange={e => setEdit({ ...edit, customer: e.target.value })} /> : r.customer}</td>
+                          <td>{editing && isShop(r) ? <input style={{ width: '100%', padding: '6px 8px', fontSize: 13.5 }} value={edit.customer} onChange={e => setEdit({ ...edit, customer: e.target.value })} /> : r.customer}</td>
                           {g.key === 'kids' && (
                             <td>
                               {r.kids ? (
                                 <>
                                   Students: {r.kids.students} · Limit: {3 + r.kids.paidExtra} (3 + {r.kids.paidExtra} extra)
                                   <br />
-                                  <input type="number" min="0" step="1" style={{ width: 64 }} value={extraEdits[r.key] ?? r.kids.paidExtra} onChange={e => setExtraEdits(prev => ({ ...prev, [r.key]: e.target.value }))} aria-label="Paid extra kids" />{' '}
+                                  <input type="number" min="0" step="1" style={{ width: 64, padding: '5px 6px', fontSize: 13.5 }} value={extraEdits[r.key] ?? r.kids.paidExtra} onChange={e => setExtraEdits(prev => ({ ...prev, [r.key]: e.target.value }))} aria-label="Paid extra kids" />{' '}
                                   <button type="button" className="btn-mini" onClick={() => saveExtraKids(r)} disabled={savingExtra === r.key}>Save</button>
                                   {extraErrors[r.key] && <><br /><span className="hint">{extraErrors[r.key]}</span></>}
                                 </>
@@ -848,7 +868,7 @@ export default function AdminAllPasses() {
                               )}
                             </td>
                           )}
-                          <td>{editing ? <input style={{ width: '100%' }} value={edit.note} onChange={e => setEdit({ ...edit, note: e.target.value })} /> : (r.note || '—')}</td>
+                          <td>{editing ? <input style={{ width: '100%', padding: '6px 8px', fontSize: 13.5 }} value={edit.note} onChange={e => setEdit({ ...edit, note: e.target.value })} /> : (r.note || '—')}</td>
                           <td>
                             {editing ? (
                               <>
