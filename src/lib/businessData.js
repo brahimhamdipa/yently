@@ -44,6 +44,7 @@ import {
   CHAT_PLAN_KEY,
   CLEAN_PLAN_KEY,
   DIRECT_PLAN_KEY,
+  isKidsPlanKey,
   KIDS_MATH_PLAN_KEY,
   KIDS_ENGLISH_PLAN_KEY,
   KIDS_ARABIC_PLAN_KEY,
@@ -98,10 +99,20 @@ const INSERT_BY_KEY = {
   [KIDS_READING_PLAN_KEY]: insertKidsReadingOrder,
 }
 
-// items = [{key, name, price}]. Places each item in cart order and
+// items = [{key, name, price, extraKids}]. Places each item in cart order and
 // returns the placed items. If any insert throws, the error
 // propagates — items placed before the failure stay placed, and the
 // caller reports the error.
+//
+// Kids lines carry extraKids (students beyond the first 3, +$1/month
+// each, already folded into item.price): the order row is inserted
+// with price = 5 + extras and extra_kids = N, and the owner email
+// carries an "Extra kids: N" line. extra_kids exists ONLY on the 9
+// kids_<subject>_order tables, so it is added to the insert data
+// ONLY for Kids plans — never for other plans, where the unknown
+// column would fail the insert. Old Kids order rows are
+// grandfathered: their stored price is never touched, only new
+// orders use the new price.
 //
 // Bundle note (owner's call 2026-11-09): when 2+ plans are ordered
 // together, every per-plan owner email also carries the discounted
@@ -118,6 +129,8 @@ export async function placeBusinessOrder({ name, email, phone, note, items }) {
   for (const item of items || []) {
     const insert = INSERT_BY_KEY[item.key]
     if (!insert) throw new Error('Unknown business plan: ' + item.key)
+    const isKids = isKidsPlanKey(item.key)
+    const extraKids = isKids ? Math.max(0, Number(item.extraKids) || 0) : 0
     await insert({
       customer_name: name,
       customer_email: email,
@@ -125,7 +138,13 @@ export async function placeBusinessOrder({ name, email, phone, note, items }) {
       plan: item.name,
       price: item.price,
       note,
-    }, { plan: item.name, price: item.price, ...(bundleNote ? { bundle_discount: bundleNote } : {}) })
+      ...(isKids ? { extra_kids: extraKids } : {}),
+    }, {
+      plan: item.name,
+      price: item.price,
+      ...(bundleNote ? { bundle_discount: bundleNote } : {}),
+      ...(extraKids > 0 ? { extra_kids: `Extra kids: ${extraKids}` } : {}),
+    })
     // Tracking row for this plan. The insert above returns no id
     // (submitAndNotify inserts with no .select()), so the RPC finds
     // the just-placed row server-side (orderId null). createOrderTracking

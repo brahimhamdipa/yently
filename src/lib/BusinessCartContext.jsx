@@ -22,9 +22,14 @@ import { createContext, useContext, useEffect, useState } from 'react'
 // inserts the order rows and emails the owner, who then sets each
 // page up. Connecting carts to the bank comes later.
 //
-// The cart is an array of {key, name, price} — one of each plan max.
-// A website plan is one line, quantity 1: buying it twice is two
-// separate orders, not quantity 2 of one site.
+// The cart is an array of {key, name, price, extraKids} — one of
+// each plan max. A website plan is one line, quantity 1: buying it
+// twice is two separate orders, not quantity 2 of one site.
+// extraKids is only ever non-zero on Kids lines: the number of
+// students beyond the first 3, at +$1/month each, folded into that
+// line's price (see kidsLinePrice). Extra kids are part of the
+// plan's price, never separate plans, so they never change how many
+// plans the bundle tiers count.
 const BusinessCartCtx = createContext(null)
 
 const STORAGE_KEY = 'autofly-business-cart'
@@ -97,41 +102,71 @@ export const DIRECT_PLAN_KEY = 'direct:website'
 export const DIRECT_PLAN_NAME = 'Direct Upload'
 export const DIRECT_PLAN_PRICE = 5
 
+export const KIDS_BASE_PRICE = 5
+export const KIDS_INCLUDED_STUDENTS = 3
+export const KIDS_EXTRA_KID_PRICE = 1
+
 export const KIDS_MATH_PLAN_KEY = 'kids-math'
 export const KIDS_MATH_PLAN_NAME = 'Kids Math page'
-export const KIDS_MATH_PLAN_PRICE = 10
+export const KIDS_MATH_PLAN_PRICE = KIDS_BASE_PRICE
 
 export const KIDS_ENGLISH_PLAN_KEY = 'kids-english'
 export const KIDS_ENGLISH_PLAN_NAME = 'Kids English page'
-export const KIDS_ENGLISH_PLAN_PRICE = 10
+export const KIDS_ENGLISH_PLAN_PRICE = KIDS_BASE_PRICE
 
 export const KIDS_ARABIC_PLAN_KEY = 'kids-arabic'
 export const KIDS_ARABIC_PLAN_NAME = 'Kids Arabic page'
-export const KIDS_ARABIC_PLAN_PRICE = 10
+export const KIDS_ARABIC_PLAN_PRICE = KIDS_BASE_PRICE
 
 export const KIDS_FRENCH_PLAN_KEY = 'kids-french'
 export const KIDS_FRENCH_PLAN_NAME = 'Kids French page'
-export const KIDS_FRENCH_PLAN_PRICE = 10
+export const KIDS_FRENCH_PLAN_PRICE = KIDS_BASE_PRICE
 
 export const KIDS_SPANISH_PLAN_KEY = 'kids-spanish'
 export const KIDS_SPANISH_PLAN_NAME = 'Kids Spanish page'
-export const KIDS_SPANISH_PLAN_PRICE = 10
+export const KIDS_SPANISH_PLAN_PRICE = KIDS_BASE_PRICE
 
 export const KIDS_SCIENCE_PLAN_KEY = 'kids-science'
 export const KIDS_SCIENCE_PLAN_NAME = 'Kids Science page'
-export const KIDS_SCIENCE_PLAN_PRICE = 10
+export const KIDS_SCIENCE_PLAN_PRICE = KIDS_BASE_PRICE
 
 export const KIDS_GEOGRAPHY_PLAN_KEY = 'kids-geography'
 export const KIDS_GEOGRAPHY_PLAN_NAME = 'Kids Geography page'
-export const KIDS_GEOGRAPHY_PLAN_PRICE = 10
+export const KIDS_GEOGRAPHY_PLAN_PRICE = KIDS_BASE_PRICE
 
 export const KIDS_CODING_PLAN_KEY = 'kids-coding'
 export const KIDS_CODING_PLAN_NAME = 'Kids Coding page'
-export const KIDS_CODING_PLAN_PRICE = 10
+export const KIDS_CODING_PLAN_PRICE = KIDS_BASE_PRICE
 
 export const KIDS_READING_PLAN_KEY = 'kids-reading'
 export const KIDS_READING_PLAN_NAME = 'Kids Reading page'
-export const KIDS_READING_PLAN_PRICE = 10
+export const KIDS_READING_PLAN_PRICE = KIDS_BASE_PRICE
+
+// Kids pricing: $5/month covers the first 3 students; each extra
+// student is +$1/month. No free month on Kids — the other systems
+// keep theirs.
+export const KIDS_PLAN_KEYS = new Set([
+  KIDS_MATH_PLAN_KEY,
+  KIDS_ENGLISH_PLAN_KEY,
+  KIDS_ARABIC_PLAN_KEY,
+  KIDS_FRENCH_PLAN_KEY,
+  KIDS_SPANISH_PLAN_KEY,
+  KIDS_SCIENCE_PLAN_KEY,
+  KIDS_GEOGRAPHY_PLAN_KEY,
+  KIDS_CODING_PLAN_KEY,
+  KIDS_READING_PLAN_KEY,
+])
+
+export function isKidsPlanKey(key) {
+  return KIDS_PLAN_KEYS.has(key)
+}
+
+// Monthly price of one Kids line: base $5 + $1 per extra student
+// beyond the first 3. Non-Kids plans never carry extras.
+export function kidsLinePrice(extraKids) {
+  const n = Math.max(0, Number(extraKids) || 0)
+  return KIDS_BASE_PRICE + n * KIDS_EXTRA_KID_PRICE
+}
 
 // Single source of truth for the twenty-six plans, keyed by plan key.
 export const BUSINESS_PLANS = {
@@ -169,6 +204,9 @@ export const BUSINESS_PLANS = {
 // order row still keeps its plan's list price (see businessData.js),
 // because no money is collected yet — carts record orders + email
 // only until the bank is connected. Money is rounded to 2 decimals.
+// The tier counts CART LINES (plans), not students: a Kids line
+// with extra kids still counts as one plan, and its extras are
+// already inside its line price, so they get the same tier rate.
 export function bundleFor(cart) {
   const items = Array.isArray(cart) ? cart : []
   const count = items.length
@@ -190,13 +228,16 @@ export function BusinessCartProvider({ children }) {
       if (!Array.isArray(raw)) return []
       // Keep only known plans, one of each max; rebuild each line from
       // BUSINESS_PLANS so a stale stored name or price never survives.
+      // A stored extraKids survives only on Kids lines, and the line
+      // price is recomputed from it (base + $1 per extra kid).
       const seen = new Set()
       const items = []
       for (const i of raw) {
         if (!i || !BUSINESS_PLANS[i.key] || seen.has(i.key)) continue
         seen.add(i.key)
         const plan = BUSINESS_PLANS[i.key]
-        items.push({ key: plan.key, name: plan.name, price: plan.price })
+        const extraKids = isKidsPlanKey(plan.key) ? Math.max(0, Number(i.extraKids) || 0) : 0
+        items.push({ key: plan.key, name: plan.name, price: extraKids > 0 ? kidsLinePrice(extraKids) : plan.price, extraKids })
       }
       return items
     } catch {
@@ -211,11 +252,25 @@ export function BusinessCartProvider({ children }) {
   const count = cart.length
 
   // Adding a plan already in the cart is a no-op — one of each max.
-  const addPlan = (key) => {
+  // extraKids only applies to Kids plans: the number of students
+  // beyond the first 3, folded into the line price (+$1 each).
+  const addPlan = (key, extraKids = 0) => {
     const plan = BUSINESS_PLANS[key]
     if (!plan) return
+    const kids = isKidsPlanKey(key) ? Math.max(0, Number(extraKids) || 0) : 0
     setLastOrder(null)
-    setCartState(c => (c.some(i => i.key === key) ? c : [...c, { key: plan.key, name: plan.name, price: plan.price }]))
+    setCartState(c => (c.some(i => i.key === key) ? c : [...c, { key: plan.key, name: plan.name, price: kids > 0 ? kidsLinePrice(kids) : plan.price, extraKids: kids }]))
+  }
+
+  // Change the extra-student count on a Kids line already in the
+  // cart (from the ad-page stepper or the cart line itself). The
+  // line price is recomputed; the plan still counts once for the
+  // bundle tiers. A no-op for non-Kids plans and unknown keys.
+  const updateExtraKids = (key, extraKids) => {
+    const plan = BUSINESS_PLANS[key]
+    if (!plan || !isKidsPlanKey(key)) return
+    const n = Math.max(0, Number(extraKids) || 0)
+    setCartState(c => c.map(i => (i.key === key ? { ...i, extraKids: n, price: kidsLinePrice(n) } : i)))
   }
 
   const removePlan = (key) => setCartState(c => c.filter(i => i.key !== key))
@@ -225,7 +280,7 @@ export function BusinessCartProvider({ children }) {
   const clearCart = () => setCartState([])
 
   return (
-    <BusinessCartCtx.Provider value={{ cart, count, addPlan, removePlan, hasPlan, clearCart, lastOrder, setLastOrder }}>
+    <BusinessCartCtx.Provider value={{ cart, count, addPlan, updateExtraKids, removePlan, hasPlan, clearCart, lastOrder, setLastOrder }}>
       {children}
     </BusinessCartCtx.Provider>
   )
