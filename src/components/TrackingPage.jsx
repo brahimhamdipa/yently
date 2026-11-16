@@ -24,9 +24,11 @@ const DARK_GREY = '#6b7280'
 const RED = '#dc2626'
 
 // Plan name -> list price, from the cart's single source of truth.
-// Order rows store the plan NAME (see placeBusinessOrder), so the
-// tracker recovers the monthly list price by name. A plan name that
-// is not in the map has no known price — the price line is omitted
+// Order rows store the plan NAME (see placeBusinessOrder). The tracker
+// prefers the order row's recorded price (the RPC carries it) — a Kids
+// order with extra students costs more than the plan's base price —
+// and falls back to this map when the RPC has no price. A plan name
+// that is not in the map has no known price — the price line is omitted
 // rather than guessed. Shop orders have no price in the RPC at all,
 // so they never show one.
 const PLAN_BY_NAME = Object.fromEntries(
@@ -282,11 +284,14 @@ export default function TrackingPage({ go }) {
     return row.plan || 'System order'
   }
 
-  // System orders are monthly plans — show "$X/month" from the
-  // known list price. Shop orders are one-off totals and the RPC
-  // carries no price, so they show no price line at all.
+  // System orders are monthly plans — show "$X/month" from the order
+  // row's recorded price when the RPC carries one (a Kids order with
+  // extra students is more than the plan's base price), else the known
+  // list price. Shop orders are one-off totals and the RPC carries no
+  // price, so they show no price line at all.
   const priceText = () => {
     if (!order || isShop) return null
+    if (order.price != null) return `$${Number(order.price)}/month`
     const known = PLAN_BY_NAME[order.plan]
     if (!known) return null
     return `$${known.price}/month`
