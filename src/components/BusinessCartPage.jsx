@@ -155,7 +155,8 @@ export default function BusinessCartPage({ go }) {
               <input required placeholder="Phone" value={phone} onChange={e => setPhone(e.target.value)} />
             </label>
             <label>Note (optional)
-              <textarea placeholder="Your business name, city, anything that helps us set up your pages" value={note} onChange={e => setNote(e.target.value)} />
+              <textarea placeholder="Your business name, city, anything that helps us set up your pages — or a web address word you would prefer for your page, for example: my-shop" value={note} onChange={e => setNote(e.target.value)} />
+              <span className="hint" style={{ fontWeight: 400 }}>If you have a preferred web address word for your page (for example: my-shop), list it here — we will use one if it is available, but we cannot guarantee it.</span>
             </label>
             <p>List total: ${bundle.listTotal.toFixed(2)}/month</p>
             {bundle.rate > 0 && (

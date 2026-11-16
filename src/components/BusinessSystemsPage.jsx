@@ -6,7 +6,9 @@ import { BusinessTopBar } from './BusinessMenu'
 // POS $50, Barber $15, Dealer $20, Employee $20, Bodyshop $20, Houses $20,
 // Doctor $20, Holiday $20, Car Rental $20, Laundry $20, Gym $20,
 // Simple Website $10, TV Gallery $2, Live Chat $3 — all per month,
-// first month free). No Add to cart here on purpose: each ad page
+// first month free). Extra Students is a Kids add-on: $1/month per
+// extra student beyond the first 3 included in the $5/month Kids
+// price, no free month on Kids. No Add to cart here on purpose: each ad page
 // has its own. Bundle tiers (2 plans 10% off, 3 plans 15% off, 4+
 // plans 20% off) apply automatically in My Cart.
 const SYSTEMS = [
@@ -30,6 +32,7 @@ const ADDONS = [
   { name: 'Live Chat', price: 3, blurb: 'A chat bubble on your website — every message to your email.', tab: 'live-chat' },
   { name: 'Clean Link', price: 2, blurb: 'Your shop at a clean address — yently.com/your-name.', tab: 'clean-link' },
   { name: 'Direct Upload', price: 5, blurb: 'Your uploads go live straight away — no waiting for approval.', tab: 'direct-upload' },
+  { name: 'Extra Students', price: 1, blurb: '$1/month per extra student — the first 3 are included in the $5/month Kids price.', href: '/extra-students' },
 ]
 
 function SystemRow({ item, first, go }) {
@@ -44,7 +47,13 @@ function SystemRow({ item, first, go }) {
           </p>
         )}
       </div>
-      <button type="button" onClick={() => go && go(item.tab)} style={{ flexShrink: 0 }}>See it →</button>
+      {/* Extra Students is a real route (/extra-students), not a tab,
+          so its row links straight there instead of calling go(). */}
+      {item.href ? (
+        <a href={item.href} style={{ flexShrink: 0, display: 'inline-block', background: '#2563eb', color: '#fff', padding: '12px 22px', borderRadius: 10, fontWeight: 700, textDecoration: 'none' }}>See it →</a>
+      ) : (
+        <button type="button" onClick={() => go && go(item.tab)} style={{ flexShrink: 0 }}>See it →</button>
+      )}
     </div>
   )
 }
