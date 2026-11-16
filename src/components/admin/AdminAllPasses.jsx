@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 
 import { supabase } from '../../lib/supabaseClient'
+
+import DraftView from './DraftView'
 
 // All Passes: every login the admin has handed out, in one place —
 // the link, the username, the password, who uses it, and the note.
@@ -211,6 +213,15 @@ export default function AdminAllPasses() {
 
   // Approve state: which row's draft is being approved right now.
   const [approving, setApproving] = useState(null)
+
+  // Draft view state: which pending row's draft is open, the fetched
+  // draft + live data per row, and per-row load errors. The draft is
+  // fetched on first View tap only — the pass rows above do not carry
+  // draft_data, so there is nothing to show until then.
+  const [viewKey, setViewKey] = useState(null)
+  const [viewData, setViewData] = useState({})
+  const [viewError, setViewError] = useState({})
+  const [viewLoading, setViewLoading] = useState(null)
 
   // Paid extra kids (Yently Kids only): per-row draft number, which
   // row is saving, and per-row errors.
@@ -468,6 +479,27 @@ export default function AdminAllPasses() {
     }
   }
 
+  // ----- Draft view -----
+
+  // Opens (or closes) the read-only view of a pending draft, fetched
+  // live from the row's own table on first tap. A fetch failure is
+  // recorded per row and shown inside that row's panel.
+  const toggleDraftView = async (r) => {
+    if (viewKey === r.key) { setViewKey(null); return }
+    setViewKey(r.key)
+    if (viewData[r.key] || viewError[r.key]) return
+    setViewLoading(r.key)
+    try {
+      const { data, error } = await supabase.from(r.table).select('draft_data, live_data').eq('id', r.id).maybeSingle()
+      if (error) throw error
+      setViewData(prev => ({ ...prev, [r.key]: { draft: data?.draft_data ?? null, live: data?.live_data ?? null } }))
+    } catch (err) {
+      setViewError(prev => ({ ...prev, [r.key]: 'Could not load the draft: ' + err.message }))
+    } finally {
+      setViewLoading(null)
+    }
+  }
+
   // ----- Approve -----
 
   // One tap makes a pending shop draft live, through the same approve
@@ -480,6 +512,7 @@ export default function AdminAllPasses() {
       const { error } = await supabase.rpc(spec.rpc, { [spec.param]: r.id })
       if (error) { setStatus('Cannot approve: ' + error.message); return }
       setStatus(`✓ Draft approved — ${r.customer} is live now.`)
+      setViewKey(null)
       await load(true)
     } catch (err) {
       setStatus('Cannot approve: ' + err.message)
@@ -782,8 +815,11 @@ export default function AdminAllPasses() {
                   <tbody>
                     {list.map(r => {
                       const editing = editingKey === r.key
+                      const viewing = viewKey === r.key
+                      const draft = viewData[r.key]
                       return (
-                        <tr key={r.key}>
+                        <Fragment key={r.key}>
+                        <tr>
                           <td><a href={r.link} target="_blank" rel="noreferrer">{r.linkText}</a><br /><span className="hint">{r.kind}</span></td>
                           <td>{editing ? <input style={{ width: '100%' }} value={edit.user} onChange={e => setEdit({ ...edit, user: e.target.value })} /> : r.user}</td>
                           <td>
@@ -826,13 +862,24 @@ export default function AdminAllPasses() {
                                 <button type="button" className="btn-mini" onClick={() => { setConfirmDelete(r); setDeleteError('') }}>🗑 Delete</button>
                                 {isShop(r) && (
                                   r.draftStatus === 'pending'
-                                    ? <>{' '}<button type="button" className="btn-mini" onClick={() => approveRow(r)} disabled={approving === r.key}>Approve draft</button></>
+                                    ? <>{' '}<button type="button" className="btn-mini" onClick={() => toggleDraftView(r)}>{viewing ? 'Hide' : 'View'}</button>{' '}<button type="button" className="btn-mini" onClick={() => approveRow(r)} disabled={approving === r.key}>Approve draft</button></>
                                     : <><br /><span className="hint">Draft: {r.draftStatus}</span></>
                                 )}
                               </>
                             )}
                           </td>
                         </tr>
+                        {isShop(r) && r.draftStatus === 'pending' && viewing && (
+                          <tr>
+                            <td colSpan={g.key === 'kids' ? 7 : 6}>
+                              <p><b>What “{r.customer}” is asking to put live</b> — against what visitors see now:</p>
+                              {viewLoading === r.key && <p className="hint">Loading the draft…</p>}
+                              {viewError[r.key] && <p className="hint">{viewError[r.key]}</p>}
+                              {draft && <DraftView draft={draft.draft} live={draft.live} />}
+                            </td>
+                          </tr>
+                        )}
+                        </Fragment>
                       )
                     })}
                   </tbody>
