@@ -69,6 +69,11 @@
   var biz = null; // live business info + staff (visitors)
   var draft = null; // owner draft (Setup)
   var draftStatus = 'editing';
+  /* Direct Upload: when Yently has switched it on for this shop,
+     an upload goes live straight away instead of waiting for
+     approval. Checked once when Setup opens and cached for the
+     session; any failure leaves it off, so the old wording stays. */
+  var directUploadOn = false;
   var ownerCreds = null; // {u, p} in memory only, never stored
   /* ---------- Shop live chat (per-shop add-on) ---------- */
   /* The visitor bubble mounts once, after the shop's live data loads;
@@ -591,7 +596,7 @@
     }
     var h = '<h2>Setup — ' + esc(biz.name) + '</h2>' +
       '<div class="card"><h3>Business details</h3>' +
-      '<p class="info">Changes save as a draft. Upload for approval and the admin makes them live.</p>' +
+      '<p class="info">' + (directUploadOn ? 'Direct Upload is on for this page — your changes go live the moment you upload them.' : 'Changes save as a draft. Upload for approval and the admin makes them live.') + '</p>' +
       '<label>Business name</label><input id="d-name" type="text" value="' + esc(draft.name || '') + '">' +
       '<label>Icon picture</label>' +
       '<div class="icon-field">' +
@@ -609,7 +614,7 @@
       '<label>New job</label><input id="job-new" type="text" placeholder="Job title">' +
       '<div class="row"><button id="job-add" class="secondary">Add job</button></div>' +
       '<div class="row" style="margin-top:12px"><button id="d-save">Save draft</button>' +
-      '<button id="d-upload" class="secondary">Upload for approval</button></div>' +
+      '<button id="d-upload" class="secondary">' + (directUploadOn ? 'Upload — goes live right away' : 'Upload for approval') + '</button></div>' +
       '<p class="info" id="d-status">' + esc(draftStatusText()) + '</p>' +
       '<p class="error" id="d-err" hidden></p></div>' +
       '<div class="card"><h3>Staff</h3>' +
@@ -795,7 +800,7 @@
           return;
         }
         return rpc('submit_employee_draft', { p_slug: SLUG, p_u: ownerCreds.u, p_p: ownerCreds.p }).then(function () {
-          draftStatus = 'pending';
+          draftStatus = directUploadOn ? 'approved' : 'pending';
           $('d-status').textContent = draftStatusText();
           notifyEmail('Employee draft for approval: ' + d.name, 'employee_draft', { slug: SLUG, name: d.name });
         });
@@ -812,8 +817,12 @@
         draftStatus = (r.draft || r.data) ? (r.status || 'editing') : 'editing';
         if (!draft || typeof draft !== 'object') draft = {};
         draft.jobs = draft.jobs || [];
-        renderSetup();
+        /* Direct Upload switch: see the note by directUploadOn. */
+        return rpc('direct_upload_enabled', { p_owner_type: 'employee', p_owner_key: SLUG }).then(function (on) {
+          directUploadOn = (on === true);
+        }).catch(function () { directUploadOn = false; });
       })
+      .then(function () { renderSetup(); })
       .catch(function (e) {
         var el = $('view-setup');
         el.innerHTML = '<p class="error">Error: ' + esc(e.message) + '</p>';
