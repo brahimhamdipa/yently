@@ -61,15 +61,15 @@ const PLANS = [
   { table: 'clean_link_order', label: 'Clean Link', group: 'addons', price: 2 },
   { table: 'direct_upload_order', label: 'Direct Upload', group: 'addons', price: 5 },
   // Yently Kids (9)
-  { table: 'kids_math_order', label: 'Kids Math', group: 'kids', price: 10 },
-  { table: 'kids_english_order', label: 'Kids English', group: 'kids', price: 10 },
-  { table: 'kids_arabic_order', label: 'Kids Arabic', group: 'kids', price: 10 },
-  { table: 'kids_french_order', label: 'Kids French', group: 'kids', price: 10 },
-  { table: 'kids_spanish_order', label: 'Kids Spanish', group: 'kids', price: 10 },
-  { table: 'kids_science_order', label: 'Kids Science', group: 'kids', price: 10 },
-  { table: 'kids_geography_order', label: 'Kids Geography', group: 'kids', price: 10 },
-  { table: 'kids_coding_order', label: 'Kids Coding', group: 'kids', price: 10 },
-  { table: 'kids_reading_order', label: 'Kids Reading', group: 'kids', price: 10 },
+  { table: 'kids_math_order', label: 'Kids Math', group: 'kids', price: 5 },
+  { table: 'kids_english_order', label: 'Kids English', group: 'kids', price: 5 },
+  { table: 'kids_arabic_order', label: 'Kids Arabic', group: 'kids', price: 5 },
+  { table: 'kids_french_order', label: 'Kids French', group: 'kids', price: 5 },
+  { table: 'kids_spanish_order', label: 'Kids Spanish', group: 'kids', price: 5 },
+  { table: 'kids_science_order', label: 'Kids Science', group: 'kids', price: 5 },
+  { table: 'kids_geography_order', label: 'Kids Geography', group: 'kids', price: 5 },
+  { table: 'kids_coding_order', label: 'Kids Coding', group: 'kids', price: 5 },
+  { table: 'kids_reading_order', label: 'Kids Reading', group: 'kids', price: 5 },
 ]
 
 const PLAN_BY_TABLE = Object.fromEntries(PLANS.map(p => [p.table, p]))
@@ -372,6 +372,9 @@ export default function AdminSystemsOrders() {
                                 <p><b>Clean link:</b> {src.clean_slug ? 'yently.com/' + src.clean_slug : '—'} · <b>System:</b> {src.system || '—'} · <b>Shop:</b> {src.shop_slug || '—'} · <b>Business name:</b> {src.business_name || '—'}</p>
                               )}
                               <p><b>Customer on the original order:</b> {src.customer_name || '—'}{src.customer_email ? ` · ${src.customer_email}` : ''}{src.customer_phone ? ` · ${src.customer_phone}` : ''} · <b>Price:</b> {src.price !== undefined && src.price !== null ? money(src.price) + '/month' : '—'}</p>
+                              {plan?.group === 'kids' && (
+                                <p><b>Extra kids:</b> {src.extra_kids ? `+${src.extra_kids} (limit 3 + ${src.extra_kids} = ${3 + Number(src.extra_kids)} kids)` : '0 — the 3 included kids only'}</p>
+                              )}
                               <p className="hint">Ordered {src.created_at ? fmtDate(src.created_at) : '—'} · source table {r.order_table} · row #{src.id ?? r.order_id}</p>
                             </>
                           )}

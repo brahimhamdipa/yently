@@ -32,6 +32,10 @@ import { supabase } from '../../lib/supabaseClient'
 //     same way as the rest, but one missing or broken table can never
 //     blank the page (see grab() below), and a row with no created_at
 //     sorts by id instead.
+//   - kids_<subject>_order also has extra_kids (0 when the order was
+//     for the 3 included kids only). It is shown in the table and in
+//     the expanded details; it is never edited here — the school's
+//     limit is set from All Passes, where the paid extras live.
 //
 // fetchAll caps at 500 rows per table. The summary shows a per-plan
 // count, so a table that hit the cap is visible as "500+".
@@ -60,15 +64,15 @@ const PLANS = [
   { table: 'clean_link_order', label: 'Clean Link', group: 'addons', price: 2 },
   { table: 'direct_upload_order', label: 'Direct Upload', group: 'addons', price: 5 },
   // Yently Kids (9)
-  { table: 'kids_math_order', label: 'Kids Math', group: 'kids', price: 10 },
-  { table: 'kids_english_order', label: 'Kids English', group: 'kids', price: 10 },
-  { table: 'kids_arabic_order', label: 'Kids Arabic', group: 'kids', price: 10 },
-  { table: 'kids_french_order', label: 'Kids French', group: 'kids', price: 10 },
-  { table: 'kids_spanish_order', label: 'Kids Spanish', group: 'kids', price: 10 },
-  { table: 'kids_science_order', label: 'Kids Science', group: 'kids', price: 10 },
-  { table: 'kids_geography_order', label: 'Kids Geography', group: 'kids', price: 10 },
-  { table: 'kids_coding_order', label: 'Kids Coding', group: 'kids', price: 10 },
-  { table: 'kids_reading_order', label: 'Kids Reading', group: 'kids', price: 10 },
+  { table: 'kids_math_order', label: 'Kids Math', group: 'kids', price: 5 },
+  { table: 'kids_english_order', label: 'Kids English', group: 'kids', price: 5 },
+  { table: 'kids_arabic_order', label: 'Kids Arabic', group: 'kids', price: 5 },
+  { table: 'kids_french_order', label: 'Kids French', group: 'kids', price: 5 },
+  { table: 'kids_spanish_order', label: 'Kids Spanish', group: 'kids', price: 5 },
+  { table: 'kids_science_order', label: 'Kids Science', group: 'kids', price: 5 },
+  { table: 'kids_geography_order', label: 'Kids Geography', group: 'kids', price: 5 },
+  { table: 'kids_coding_order', label: 'Kids Coding', group: 'kids', price: 5 },
+  { table: 'kids_reading_order', label: 'Kids Reading', group: 'kids', price: 5 },
 ]
 
 const GROUPS = [
@@ -174,6 +178,9 @@ export default function AdminAllOrders() {
           shop_slug: r.shop_slug ?? null,
           clean_slug: r.clean_slug ?? null,
           status: r.status ?? null,
+          // Kids extras only; null on every other table (and on a
+          // Kids row from before the extra_kids column existed).
+          extra_kids: r.extra_kids ?? null,
         })
       }
     })
@@ -466,7 +473,7 @@ export default function AdminAllOrders() {
         <div className="table-wrap">
           <table className="admin-table">
             <thead>
-              <tr><th>Date</th><th>System / Plan</th><th>Customer</th><th>Email</th><th>Phone</th><th>Price</th><th>Status</th><th>Note</th><th>Actions</th></tr>
+              <tr><th>Date</th><th>System / Plan</th><th>Customer</th><th>Email</th><th>Phone</th><th>Price</th><th>Extra kids</th><th>Status</th><th>Note</th><th>Actions</th></tr>
             </thead>
             <tbody>
               {filtered.map(r => {
@@ -482,6 +489,11 @@ export default function AdminAllOrders() {
                       <td>{r.customer_email || '—'}</td>
                       <td>{r.customer_phone || '—'}</td>
                       <td>{money(r.price)}</td>
+                      {/* Extra kids only means something on Kids orders
+                          — every other order table has no extra_kids
+                          column, so those rows show '—'. A Kids order
+                          for the 3 included kids only shows 0. */}
+                      <td>{r.group === 'kids' ? (Number(r.extra_kids) > 0 ? `+${Number(r.extra_kids)} extra` : '0') : '—'}</td>
                       {/* Status only means something on Clean Link orders
                           — every other order table has no status column,
                           so those rows show '—' rather than an invented
@@ -496,7 +508,7 @@ export default function AdminAllOrders() {
                     </tr>
                     {expanded && (
                       <tr>
-                        <td colSpan={9}>
+                        <td colSpan={10}>
                           {editing ? (
                             <>
                               <p><b>Edit order</b> — {r.label} · ordered {r.created_at ? fmtDate(r.created_at) : '—'}</p>
@@ -530,7 +542,15 @@ export default function AdminAllOrders() {
                             </>
                           ) : (
                             <>
-                              <p><b>Plan ordered:</b> {r.plan || r.label} · <b>Price:</b> {money(r.price)}/month (list price){listPrice !== undefined && r.price !== listPrice && <> — the plan's list price is {money(listPrice)}/month, so this order's price was changed</>}</p>
+                              {/* Kids prices are per-order now ($5 for
+                                  the first 3 kids + $1 per extra kid),
+                                  so the flat list-price comparison
+                                  below would flag every new Kids order
+                                  as changed — it is skipped for Kids
+                                  rows, where the order price is
+                                  supposed to vary with extra_kids. */}
+                              <p><b>Plan ordered:</b> {r.plan || r.label} · <b>Price:</b> {money(r.price)}/month (list price){r.group !== 'kids' && listPrice !== undefined && r.price !== listPrice && <> — the plan's list price is {money(listPrice)}/month, so this order's price was changed</>}</p>
+                              {r.group === 'kids' && <p><b>Extra kids:</b> {Number(r.extra_kids) > 0 ? `+${Number(r.extra_kids)} — the school's kid limit is ${3 + Number(r.extra_kids)} (3 included + ${Number(r.extra_kids)} paid extra)` : '0 — the 3 included kids only'}</p>}
                               <p><b>Customer:</b> {r.customer_name || '—'}{r.customer_email ? ` · ${r.customer_email}` : ''}{r.customer_phone ? ` · ${r.customer_phone}` : ''}</p>
                               <p><b>Note:</b> {r.note || '—'}</p>
                               <p><b>Order #{r.id}</b> · {r.label}</p>

@@ -184,7 +184,7 @@ const blankDraft = (table) => {
   if (table === 'bodyshop_orders') return { customer_name: '', customer_email: '', customer_phone: '', plan: 'Bodyshop management', price: 20, note: '' }
   if (KIDS_SHOP_TABLES.includes(table)) return { slug: '', name: '', u: '', p: '', epass: '', note: '' }
   if (KIDS_APPROVAL_TABLES.includes(table)) return {}
-  if (KIDS_ORDER_TABLES.includes(table)) return { customer_name: '', customer_email: '', customer_phone: '', plan: 'Kids ' + KIDS_SUBJECTS[kidsSubjectOf(table)].label + ' page', price: 10, note: '' }
+  if (KIDS_ORDER_TABLES.includes(table)) return { customer_name: '', customer_email: '', customer_phone: '', plan: 'Kids ' + KIDS_SUBJECTS[kidsSubjectOf(table)].label + ' page', price: 5, note: '' }
   if (table === 'item_batches') return {}
   if (table === 'upload_forms') return { f: '', u: '', p: '', folder: '', note: '' }
   return { name: '' }

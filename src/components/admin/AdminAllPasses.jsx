@@ -32,6 +32,16 @@ import { supabase } from '../../lib/supabaseClient'
 //     same approve RPC AdminStoreManage uses. Any other draft state
 //     shows as small "Draft: ..." text instead of a button.
 //
+//   - KIDS LIMITS: the Yently Kids group has one more column, Kids:
+//     the school's live student count and its kid limit (3 included
+//     + paid extras). The number input changes paid_extra_kids on
+//     the school's own shops row — a direct owner update, the same
+//     write path as Save above (every kids shops table has an
+//     "owner all" policy for the admin email, so no RPC is needed).
+//     The student count comes from live_data.students, fetched in a
+//     separate query so a table that has not gained the
+//     paid_extra_kids column yet cannot break the whole Kids group.
+//
 // AUTOMATIC: the page reads the pass tables live on every load, so a
 // new pass in any system below appears here on its own, the moment it
 // is created. A completely NEW kind of pass (a new system with its own
@@ -66,6 +76,10 @@ const GROUPS = [
 // The nine Kids tables work exactly like the other six: a school has
 // a slug, a login, a teacher password (epass) and a draft.
 const SHOP_TABLES = ['diner_restaurants', 'barbershop_shops', 'pos_stores', 'dealer_shops', 'employee_shops', 'bodyshop_shops', 'houses_shops', 'doctor_shops', 'holiday_shops', 'rentals_shops', 'laundry_shops', 'gym_shops', 'kids_math_shops', 'kids_english_shops', 'kids_arabic_shops', 'kids_french_shops', 'kids_spanish_shops', 'kids_science_shops', 'kids_geography_shops', 'kids_coding_shops', 'kids_reading_shops']
+
+// The nine Kids school tables, for the separate paid-extra-kids
+// fetch in load().
+const KIDS_SHOP_TABLES = ['kids_math_shops', 'kids_english_shops', 'kids_arabic_shops', 'kids_french_shops', 'kids_spanish_shops', 'kids_science_shops', 'kids_geography_shops', 'kids_coding_shops', 'kids_reading_shops']
 
 // Approve RPCs, copied exactly from AdminStoreManage: diner takes
 // p_restaurant_id, POS takes p_store_id, the other four — and all
@@ -198,6 +212,12 @@ export default function AdminAllPasses() {
   // Approve state: which row's draft is being approved right now.
   const [approving, setApproving] = useState(null)
 
+  // Paid extra kids (Yently Kids only): per-row draft number, which
+  // row is saving, and per-row errors.
+  const [extraEdits, setExtraEdits] = useState({})
+  const [savingExtra, setSavingExtra] = useState(null)
+  const [extraErrors, setExtraErrors] = useState({})
+
   // Create state: the "Add a pass" form.
   const [showCreate, setShowCreate] = useState(false)
   const [createSystem, setCreateSystem] = useState('')
@@ -249,6 +269,22 @@ export default function AdminAllPasses() {
       grab('kids', supabase.from('kids_reading_shops').select('id, slug, name, u, p, epass, note, draft_status').order('name')),
       grab('cleanlinks', supabase.from('clean_links').select('id, slug, system, shop_slug').order('slug')),
     ])
+    // Paid extra kids, fetched apart from the pass rows: if a school
+    // table has not gained paid_extra_kids yet, that fetch fails and
+    // the Kids column says so — the pass rows above still load.
+    const kidsInfo = {}
+    const extras = await Promise.all(KIDS_SHOP_TABLES.map(async (t) => {
+      const { data, error } = await supabase.from(t).select('id, live_data, paid_extra_kids')
+      if (error) return { table: t, rows: null }
+      return { table: t, rows: data || [] }
+    }))
+    for (const { table, rows } of extras) {
+      if (!rows) continue
+      for (const r of rows) {
+        const students = Array.isArray(r.live_data && r.live_data.students) ? r.live_data.students.length : 0
+        kidsInfo[table + ':' + r.id] = { students, paidExtra: Number(r.paid_extra_kids) || 0 }
+      }
+    }
     setStoreList(providers)
     setEmployeeList(employees)
     setTakenProviderIds(formRows.map(r => r.provider_id))
@@ -263,6 +299,10 @@ export default function AdminAllPasses() {
       link: linkPrefix + r.slug, linkText: 'yently.com' + linkPrefix + r.slug,
       user: r.u, pass: r.p, epass: r.epass || '', passExtra: r.epass ? (group === 'kids' ? 'Teacher: ' + r.epass : 'Team: ' + r.epass) : '',
       customer: r.name || '—', note: r.note || '', draftStatus: r.draft_status || 'editing',
+      // Kids only: { students, paidExtra } from the extras fetch
+      // above; null on every other group, and null for a Kids school
+      // whose table has not gained paid_extra_kids yet.
+      kids: kidsInfo[table + ':' + r.id] || null,
     })
     const all = [
       ...formRows.map(r => ({
@@ -448,6 +488,34 @@ export default function AdminAllPasses() {
     }
   }
 
+  // ----- Paid extra kids (Yently Kids only) -----
+
+  // Saves the paid-extras number for one school, straight onto its
+  // shops row — a direct owner update, the same write path as
+  // saveEdit: every kids shops table has an "owner all" policy for
+  // the admin email (see kids_<subject>.sql), so no RPC is needed.
+  // The limit the school gets is 3 + this number.
+  const saveExtraKids = async (r) => {
+    if (!r.kids) return
+    const raw = extraEdits[r.key]
+    if (raw === '') { setExtraErrors(prev => ({ ...prev, [r.key]: 'Type a whole number, 0 or more.' })); return }
+    const n = raw === undefined ? r.kids.paidExtra : Number(raw)
+    if (!Number.isInteger(n) || n < 0) { setExtraErrors(prev => ({ ...prev, [r.key]: 'Extra kids must be a whole number, 0 or more.' })); return }
+    setSavingExtra(r.key)
+    setExtraErrors(prev => ({ ...prev, [r.key]: '' }))
+    try {
+      const { error } = await supabase.from(r.table).update({ paid_extra_kids: n }).eq('id', r.id)
+      if (error) { setExtraErrors(prev => ({ ...prev, [r.key]: 'Cannot save: ' + error.message })); return }
+      setExtraEdits(prev => { const next = { ...prev }; delete next[r.key]; return next })
+      setStatus(`✓ Saved — ${r.customer} now allows ${n} extra kid${n === 1 ? '' : 's'} (limit ${3 + n}).`)
+      await load(true)
+    } catch (err) {
+      setExtraErrors(prev => ({ ...prev, [r.key]: 'Cannot save: ' + err.message }))
+    } finally {
+      setSavingExtra(null)
+    }
+  }
+
   // ----- Create -----
 
   // A form name is taken if another table already uses it — the same
@@ -599,7 +667,7 @@ export default function AdminAllPasses() {
     <div>
       <div className="hero-card">
         <h2>🔑 All Passes {total > 0 && `(${total})`}</h2>
-        <p>Every login you have handed out — the link, the username, the password, who uses it, and your note. Grouped by area; use the search to find one fast. Add, edit, delete and approve passes right here — no need to open their own tables. Live clean links are listed under Clean Links below (view and delete only — add one from Admin → Clean Link Orders).</p>
+        <p>Every login you have handed out — the link, the username, the password, who uses it, and your note. Grouped by area; use the search to find one fast. Add, edit, delete and approve passes right here — no need to open their own tables. Live clean links are listed under Clean Links below (view and delete only — add one from Admin → Clean Link Orders). For Yently Kids schools, the Kids column shows the live student count and the kid limit (3 included + paid extras) — change the number and Save to set the limit.</p>
       </div>
       <div className="form-card">
         <input placeholder="Search link, username, customer, note..." value={search} onChange={e => setSearch(e.target.value)} />
@@ -709,7 +777,7 @@ export default function AdminAllPasses() {
               <div className="table-wrap">
                 <table>
                   <thead>
-                    <tr><th>Link</th><th>Username</th><th>Password</th><th>Customer</th><th>Note</th><th>Actions</th></tr>
+                    <tr><th>Link</th><th>Username</th><th>Password</th><th>Customer</th>{g.key === 'kids' && <th>Kids</th>}<th>Note</th><th>Actions</th></tr>
                   </thead>
                   <tbody>
                     {list.map(r => {
@@ -729,6 +797,21 @@ export default function AdminAllPasses() {
                             )}
                           </td>
                           <td>{editing && isShop(r) ? <input style={{ width: '100%' }} value={edit.customer} onChange={e => setEdit({ ...edit, customer: e.target.value })} /> : r.customer}</td>
+                          {g.key === 'kids' && (
+                            <td>
+                              {r.kids ? (
+                                <>
+                                  Students: {r.kids.students} · Limit: {3 + r.kids.paidExtra} (3 + {r.kids.paidExtra} extra)
+                                  <br />
+                                  <input type="number" min="0" step="1" style={{ width: 64 }} value={extraEdits[r.key] ?? r.kids.paidExtra} onChange={e => setExtraEdits(prev => ({ ...prev, [r.key]: e.target.value }))} aria-label="Paid extra kids" />{' '}
+                                  <button type="button" className="btn-mini" onClick={() => saveExtraKids(r)} disabled={savingExtra === r.key}>Save</button>
+                                  {extraErrors[r.key] && <><br /><span className="hint">{extraErrors[r.key]}</span></>}
+                                </>
+                              ) : (
+                                <span className="hint">Extra-kids info not loaded — the database update has not landed yet.</span>
+                              )}
+                            </td>
+                          )}
                           <td>{editing ? <input style={{ width: '100%' }} value={edit.note} onChange={e => setEdit({ ...edit, note: e.target.value })} /> : (r.note || '—')}</td>
                           <td>
                             {editing ? (
