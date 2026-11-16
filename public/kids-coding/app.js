@@ -918,7 +918,7 @@
       rpc('submit_kids_coding_draft', { p_slug: SLUG, p_username: staffCreds.u, p_password: staffCreds.p, p_draft: d }).then(function () {
         draft = d;
         draftStatus = directUploadOn ? 'approved' : 'pending';
-        notifyEmail('Kids Coding draft for approval: ' + (d.name || SLUG), { school: d.name || '', slug: SLUG });
+        notifyEmail((directUploadOn ? 'Kids Coding upload — live right away: ' : 'Kids Coding draft for approval: ') + (d.name || SLUG), { school: d.name || '', slug: SLUG, status: directUploadOn ? 'Live right away — no approval needed' : undefined });
         out.innerHTML = '<p class="info">' + (directUploadOn ? 'Uploaded! Your changes are live right away. ✅' : 'Uploaded! Your changes were sent to Yently and are waiting for approval. We will email you once they are live.') + '</p>';
       }).catch(function (err) {
         out.innerHTML = '<p class="error">Could not upload: ' + esc(err.message) + '</p>';
