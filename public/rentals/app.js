@@ -70,6 +70,11 @@
   var rental = null; // live rental company info + cars + drivers (visitors)
   var draft = null; // owner draft (Setup)
   var draftStatus = 'editing';
+  /* Direct Upload: when Yently has switched it on for this shop,
+     an upload goes live straight away instead of waiting for
+     approval. Checked once when Setup opens and cached for the
+     session; any failure leaves it off, so the old wording stays. */
+  var directUploadOn = false;
   var ownerCreds = null; // {u, p} in memory only, never stored
   /* ---------- Shop live chat (per-shop add-on) ---------- */
   /* The visitor bubble mounts once, after the shop's live data loads;
@@ -780,7 +785,7 @@
     }
     var h = '<h2>Setup — ' + esc(rental.name) + '</h2>' +
       '<div class="card"><h3>Rental company details</h3>' +
-      '<p class="info">Changes save as a draft. Upload for approval and the admin makes them live.</p>' +
+      '<p class="info">' + (directUploadOn ? 'Direct Upload is on for this page — your changes go live the moment you upload them.' : 'Changes save as a draft. Upload for approval and the admin makes them live.') + '</p>' +
       '<label>Company name</label><input id="d-name" type="text" value="' + esc(draft.name || '') + '">' +
       '<label>Icon picture</label>' +
       '<div class="icon-field">' +
@@ -794,7 +799,7 @@
       '<label>Hours</label><input id="d-hours" type="text" value="' + esc(draft.hours || '') + '">' +
       '<label>About</label><textarea id="d-about">' + esc(draft.about || '') + '</textarea>' +
       '<div class="row"><button id="d-save">Save draft</button>' +
-      '<button id="d-upload" class="secondary">Upload for approval</button></div>' +
+      '<button id="d-upload" class="secondary">' + (directUploadOn ? 'Upload — goes live right away' : 'Upload for approval') + '</button></div>' +
       '<p class="info" id="d-status">Draft status: ' + esc(draftStatus) + (draftStatus === 'pending' ? ' — waiting for Yently to approve it.' : draftStatus === 'approved' ? ' — approved, live now.' : ' — not sent yet.') + '</p>' +
       '<p class="error" id="d-err" hidden></p></div>' +
       '<div class="card"><h3>Cars</h3>' +
@@ -976,8 +981,8 @@
           return;
         }
         return rpc('submit_rentals_draft', { p_slug: SLUG, p_u: ownerCreds.u, p_p: ownerCreds.p }).then(function () {
-          draftStatus = 'pending';
-          $('d-status').textContent = 'Draft status: pending — waiting for Yently to approve it.';
+          draftStatus = directUploadOn ? 'approved' : 'pending';
+          $('d-status').textContent = directUploadOn ? 'Draft status: approved — live right away.' : 'Draft status: pending — waiting for Yently to approve it.';
           notifyEmail('Car rental draft for approval: ' + d.name, 'rentals_draft', { slug: SLUG, name: d.name });
         });
       })
@@ -1133,8 +1138,12 @@
       .then(function (d) {
         draft = d || {};
         draftStatus = 'editing';
-        renderSetup();
+        /* Direct Upload switch: see the note by directUploadOn. */
+        return rpc('direct_upload_enabled', { p_owner_type: 'rentals', p_owner_key: SLUG }).then(function (on) {
+          directUploadOn = (on === true);
+        }).catch(function () { directUploadOn = false; });
       })
+      .then(function () { renderSetup(); })
       .catch(function (e) {
         var el = $('view-setup');
         el.innerHTML = '<p class="error">Error: ' + esc(e.message) + '</p>';
