@@ -59,7 +59,7 @@ export default function ProviderPage({ providerId, go, goBack }) {
         <p className="hint">Store ID: <b>{store.id}</b>{store.city || store.country ? ` · ${[store.city, store.country].filter(Boolean).join(', ')}` : ''}</p>
       </div>
 
-      <div className="form-card wide store-info">
+      <div className="form-card wide store-info store-detail-card">
         <div className="slideshow store-photos">
           {n > 0 ? (
             <img src={images[idx]} alt={store.name} onClick={() => setZoom(true)} title="Click to enlarge" />
@@ -75,6 +75,7 @@ export default function ProviderPage({ providerId, go, goBack }) {
           )}
         </div>
 
+        <div className="card-body">
         <h3>Visit us</h3>
         {store.address && <p><b>Address:</b> {store.address}</p>}
         {(store.city || store.zip || store.country) && <p><b>City / Zip / Country:</b> {[store.city, store.zip, store.country].filter(Boolean).join(', ')}</p>}
@@ -85,6 +86,7 @@ export default function ProviderPage({ providerId, go, goBack }) {
         <div className="item-actions">
           {store.phone && <a className="store-btn" href={`tel:${store.phone.replace(/[^+0-9]/g, '')}`}>📞 Call the store</a>}
           {mapsUrl && <a className="store-btn btn-soft" href={mapsUrl} target="_blank" rel="noreferrer">🗺️ Get directions</a>}
+        </div>
         </div>
       </div>
 

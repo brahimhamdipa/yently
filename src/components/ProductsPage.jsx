@@ -111,6 +111,7 @@ return Object.values(map).sort((a, b) => a.label.localeCompare(b.label))
       <div className="hero-card">
         <h2>🛍️ Products</h2>
         <p>Every item from every store, in one place. Search, filter by category, and add to your cart — your cart groups each store's items into their own section at checkout.</p>
+        <p className="scope-banner">📍 We serve the Harrisburg area only — Carlisle, Mechanicsburg, Dillsburg, Camp Hill, Enola and Harrisburg — and we're growing slowly. Closed June and July. Full service from August 2027.</p>
         {count > 0 && (
           <p><button type="button" className="link-btn" onClick={() => go('grocery-cart')}>🛒 View My Cart ({count})</button></p>
         )}

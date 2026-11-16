@@ -73,6 +73,7 @@ export default function ProvidersPage({ go, onShop, onView }) {
       <div className="hero-card">
         <h2>🏬 Yently Stores</h2>
         <p>Our stores are virtual for now — we deliver snacks and lunches straight to your workplace. Order today and everything arrives early tomorrow morning, in your company's delivery window. Search by store name, country, city or zip code.</p>
+        <p className="scope-banner">📍 We serve the Harrisburg area only — Carlisle, Mechanicsburg, Dillsburg, Camp Hill, Enola and Harrisburg — and we're growing slowly. Closed June and July. Full service from August 2027.</p>
         <div className="filters">
           <input placeholder="Search stores (e.g. Paris, Morocco, 10007)" value={query} onChange={e => setQuery(e.target.value)} />
         </div>
