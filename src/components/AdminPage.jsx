@@ -20,6 +20,7 @@ import AdminAllPasses from './admin/AdminAllPasses'
 import AdminAllOrders from './admin/AdminAllOrders'
 import AdminSystemsOrders from './admin/AdminSystemsOrders'
 import AdminShopOrders from './admin/AdminShopOrders'
+import AdminCancellations from './admin/AdminCancellations'
 import AdminBarcodeGenerator from './admin/AdminBarcodeGenerator'
 import AdminCars from './admin/AdminCars'
 import AdminDirectUpload from './admin/AdminDirectUpload'
@@ -202,6 +203,7 @@ const MENUS = [
     // All To Approve slots here (Phase 2)
     { label: 'Systems Orders', section: 'systems-orders' },
     { label: 'Shop Orders', section: 'shop-orders' },
+    { label: 'Cancellations', section: 'cancellations' },
     { label: 'All Orders', section: 'all-orders' },
     { label: 'Live Chat', section: 'chat' },
     { label: 'Chat', children: [
@@ -407,6 +409,7 @@ export default function AdminPage() {
       {/* All To Approve slots here (Phase 2) */}
       {section === 'systems-orders' && <AdminSystemsOrders />}
       {section === 'shop-orders' && <AdminShopOrders />}
+      {section === 'cancellations' && <AdminCancellations />}
       {section === 'all-orders' && <AdminAllOrders />}
       {section === 'barcode-generator' && <AdminBarcodeGenerator />}
       {section === 'vault' && <AdminVault />}

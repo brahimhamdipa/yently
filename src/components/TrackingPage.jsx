@@ -67,6 +67,18 @@ function historyAtFor(history, stepKey) {
   return hit?.at || null
 }
 
+// Date the order was cancelled: the LAST status_history entry whose
+// status is cancelled (a re-cancel after a reopen would supersede
+// an earlier one). Null when the history carries no such entry.
+function cancelledAtFor(history) {
+  const list = Array.isArray(history) ? history : []
+  const hits = list.filter((h) =>
+    ['cancelled', 'canceled'].includes(String(h?.status || '').trim().toLowerCase()),
+  )
+  if (hits.length === 0) return null
+  return hits[hits.length - 1]?.at || null
+}
+
 function descriptionFor(row, stepKey) {
   const isShop = row?.kind === 'shop'
   if (stepKey === 'received') return 'We have received your order.'
@@ -180,6 +192,9 @@ export default function TrackingPage({ go }) {
   }, [])
 
   const openCancel = () => {
+    // A cancelled order can never open the cancel form — the CANCEL
+    // button is hidden for it too, this is the backstop.
+    if (stepIndexFor(order?.status) === -2) return
     setCancelName(order?.first_name || '')
     setCancelEmail('')
     setCancelReason('')
@@ -189,11 +204,11 @@ export default function TrackingPage({ go }) {
   }
 
   const submitCancel = async () => {
-    if (!order) return
+    if (!order || stepIndexFor(order?.status) === -2) return
     const name = cancelName.trim()
     const email = cancelEmail.trim()
     if (!email) {
-      setCancelError('Please enter your email so Yently can confirm the cancellation.')
+      setCancelError('Please enter your email so Yently can find your request.')
       return
     }
     setCancelSending(true)
@@ -237,6 +252,7 @@ export default function TrackingPage({ go }) {
 
   const isShop = order?.kind === 'shop'
   const cancelled = stepIndexFor(order?.status) === -2
+  const cancelledAt = cancelled ? cancelledAtFor(order?.status_history) : null
   const currentStep = cancelled ? -1 : stepIndexFor(order?.status)
   // A status the tracker does not recognise still shows the order,
   // with every step grey until the history says otherwise.
@@ -411,7 +427,7 @@ export default function TrackingPage({ go }) {
 
           {cancelled && (
             <p className="status" style={{ background: '#fef2f2', borderColor: '#fecaca', color: RED, fontWeight: 600 }}>
-              This order was cancelled.
+              This order was cancelled{cancelledAt ? ` on ${fmtDate(cancelledAt)}` : ''}.
             </p>
           )}
 
@@ -486,12 +502,12 @@ export default function TrackingPage({ go }) {
             </button>
           </div>
 
-          {/* Cancel form. */}
-          {cancelOpen && !cancelDone && (
+          {/* Cancel form — never shown for a cancelled order. */}
+          {cancelOpen && !cancelDone && !cancelled && (
             <div className="form-card" style={{ marginTop: 16 }}>
               <h3 style={{ margin: 0 }}>Cancel this order?</h3>
               <p className="hint" style={{ margin: 0 }}>
-                Order {order.code} — {planLabel(order)}. Yently will confirm the cancellation by email.
+                Order {order.code} — {planLabel(order)}. You can check the status of your request here on this page.
               </p>
               <label>
                 Name
@@ -518,7 +534,7 @@ export default function TrackingPage({ go }) {
           )}
           {cancelDone && (
             <p className="status" style={{ marginTop: 16 }}>
-              Cancellation requested — Yently will confirm by email.
+              Cancellation requested — you can check its status here on this page.
             </p>
           )}
         </>
