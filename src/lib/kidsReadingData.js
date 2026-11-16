@@ -8,7 +8,14 @@ export async function insertKidsReadingOrder(data, emailExtras) {
   return submitAndNotify({
     table: 'kids_reading_order',
     data,
-    subject: `New Kids Reading order — ${data.customer_name}`,
+    // Cart checkout for an Extra Students line passes
+    // emailExtras.isExtraStudents (see businessData.js): the row
+    // is still a Kids Reading order, but the owner email must read
+    // as an Extra Students request, not a new school order — the
+    // same subject the direct /extra-students page already uses.
+    subject: (emailExtras && emailExtras.isExtraStudents)
+      ? `Extra Students — Reading — ${data.customer_name}`
+      : `New Kids Reading order — ${data.customer_name}`,
     emailExtras,
   })
 }
