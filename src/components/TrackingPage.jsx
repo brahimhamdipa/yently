@@ -120,7 +120,21 @@ export default function TrackingPage({ go }) {
   const [cancelError, setCancelError] = useState('')
   const [cancelSending, setCancelSending] = useState(false)
   const [cancelDone, setCancelDone] = useState(false)
+  const [cancelReqStatus, setCancelReqStatus] = useState(null)
   const autoLookedUp = useRef(false)
+
+  // Latest cancellation-request status for the open order, so a
+  // pending/rejected request still shows after a reload (the submit
+  // banner only lives until then). Missing RPC = no banner, the
+  // tracker still works.
+  const loadCancelReqStatus = async (code) => {
+    try {
+      const { data, error } = await supabase.rpc('cancellation_status_for_order', { p_code: code })
+      if (!error) setCancelReqStatus(typeof data === 'string' ? data : null)
+    } catch (e) {
+      setCancelReqStatus(null)
+    }
+  }
 
   const loadByCode = async (code) => {
     const norm = normaliseCode(code)
@@ -130,6 +144,7 @@ export default function TrackingPage({ go }) {
     setEmailOrders(null)
     setCancelOpen(false)
     setCancelDone(false)
+    setCancelReqStatus(null)
     try {
       const { data, error: rpcError } = await supabase.rpc('track_order', { p_code: norm })
       if (rpcError) throw rpcError
@@ -140,6 +155,7 @@ export default function TrackingPage({ go }) {
       } else {
         setOrder(rows[0])
         setError('')
+        loadCancelReqStatus(rows[0].code)
       }
     } catch (e) {
       // The RPC does not exist yet (SQL not run) or the lookup
@@ -240,6 +256,7 @@ export default function TrackingPage({ go }) {
         console.warn('Cancellation email failed (request itself was saved):', notifyErr?.message)
       }
       setCancelDone(true)
+      setCancelReqStatus('pending')
     } catch (e) {
       setCancelError(
         'We couldn’t send your cancellation request right now — please contact Yently and we’ll take care of it.' +
@@ -428,6 +445,18 @@ export default function TrackingPage({ go }) {
           {cancelled && (
             <p className="status" style={{ background: '#fef2f2', borderColor: '#fecaca', color: RED, fontWeight: 600 }}>
               This order was cancelled{cancelledAt ? ` on ${fmtDate(cancelledAt)}` : ''}.
+            </p>
+          )}
+
+          {!cancelled && cancelReqStatus === 'pending' && (
+            <p className="status" style={{ background: '#fffbeb', borderColor: '#fde68a', color: '#92400e', fontWeight: 600 }}>
+              Cancellation requested — Yently is reviewing it. You can check its status here on this page.
+            </p>
+          )}
+
+          {!cancelled && cancelReqStatus === 'rejected' && (
+            <p className="status" style={{ background: '#fef2f2', borderColor: '#fecaca', color: RED, fontWeight: 600 }}>
+              Your cancellation request was not approved — your order is still active.
             </p>
           )}
 
