@@ -77,6 +77,11 @@
   var data = null; // live school info (Play)
   var draft = null; // owner draft (Setup)
   var draftStatus = 'editing';
+  /* Direct Upload: when Yently has switched it on for this shop,
+     an upload goes live straight away instead of waiting for
+     approval. Checked once when Setup opens and cached for the
+     session; any failure leaves it off, so the old wording stays. */
+  var directUploadOn = false;
   var studentLimit = 3; // students included in the plan (3) + paid extra kids; fetched in openSetup, falls back to 3
   var staffCreds = null; // {u, p} in memory only, never stored
   var teacherPass = null; // teacher password in memory only, never stored
@@ -204,6 +209,12 @@
       html += '</div>';
     }
     html += '</div>';
+    /* Sign out: let the next child pick their own name (and enter
+       their own PIN). Clears the session PIN too — nothing is
+       stored on the device. */
+    if (player) {
+      html += '<div class="row"><button id="sign-out" class="secondary">Sign out</button></div>';
+    }
     /* PIN gate: a student with a PIN set must enter it before
        playing. The prompt is in-page, never a native prompt(). */
     if (pinName) {
@@ -239,6 +250,15 @@
       });
     });
     wirePinBox(el);
+    var signOut = $('sign-out');
+    if (signOut) signOut.addEventListener('click', function () {
+      player = '';
+      studentPin = '';
+      pinName = '';
+      game = null;
+      try { localStorage.removeItem(STUDENT_KEY); } catch (e) {}
+      renderPlay();
+    });
     el.querySelectorAll('[data-game]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         startGame(btn.getAttribute('data-game'));
@@ -583,6 +603,11 @@
         if (typeof limit === 'number' && isFinite(limit) && limit >= 3) studentLimit = limit;
       }).catch(function () {});
     }).then(function () {
+      /* Direct Upload switch: see the note by directUploadOn. */
+      return rpc('direct_upload_enabled', { p_owner_type: 'kids-french', p_owner_key: SLUG }).then(function (on) {
+        directUploadOn = (on === true);
+      }).catch(function () { directUploadOn = false; });
+    }).then(function () {
       renderSetup();
     }).catch(function () {
       el.innerHTML = '<h2>Setup</h2><div class="card"><p class="error">Could not load your draft. Please try again in a moment.</p></div>';
@@ -591,6 +616,7 @@
   function statusLine() {
     if (draftStatus === 'pending') return 'Your changes were sent to Yently and are waiting for approval. Children still see the approved word list.';
     if (draftStatus === 'approved') return 'Your last upload was approved and is now live.';
+    if (directUploadOn) return 'Direct Upload is on for this school — your changes go live the moment you upload them. Children still see the approved word list.';
     return 'Your changes are saved as a draft. Children still see the approved word list until you upload and Yently approves.';
   }
   function renderSetup() {
@@ -609,7 +635,7 @@
       '<h2>Words</h2><div id="setup-words"></div>' +
       '<div class="row"><input id="setup-new-word" type="text" placeholder="French word…"><input id="setup-new-meaning" type="text" placeholder="English meaning…"><button id="setup-add-word" class="secondary">+ Add word</button></div>' +
       '<div class="row" style="margin-top:16px"><button id="setup-save" class="secondary">Save draft</button>' +
-      '<button id="setup-upload">Upload for approval</button></div>' +
+      '<button id="setup-upload">' + (directUploadOn ? 'Upload — goes live right away' : 'Upload for approval') + '</button></div>' +
       '<div id="setup-out" style="margin-top:12px"></div>' +
       '<h2>Chats — المحادثات</h2>' +
       '<div class="row"><button id="setup-chats-toggle" class="secondary">💬 Chats — المحادثات</button></div>' +
@@ -663,6 +689,29 @@
         if (out) out.innerHTML = '<p class="error">Could not save students: ' + esc(err.message || 'request failed') + '</p>';
       });
     }
+    /* PINs go live at once — no draft, no approval. The RPC writes
+       the pruned PIN map into BOTH live_data and draft_data, so a
+       later draft save/upload (collectDraft includes pins) can never
+       revert it. Called on the PIN box's change event (blur/Enter),
+       never on every keystroke. Removing a PIN = blanking the box:
+       the input handler already deleted the key from
+       draft.student_pins, so the RPC writes the map without it. */
+    function savePinsLive() {
+      var out = $('setup-student-out');
+      var pins = {};
+      Object.keys(draft.student_pins || {}).forEach(function (nm) {
+        if (draft.students.indexOf(nm) !== -1 && /^\d{4}$/.test(draft.student_pins[nm])) pins[nm] = draft.student_pins[nm];
+      });
+      if (out) out.innerHTML = '<p class="info">Saving PIN…</p>';
+      rpc('set_kids_french_student_pins', { p_slug: SLUG, p_u: staffCreds.u, p_p: staffCreds.p, p_pins: pins }).then(function (ok) {
+        if (ok !== true) throw new Error('not saved');
+        draft.student_pins = pins;
+        if (data) data.pin_students = Object.keys(pins);
+        if (out) out.innerHTML = '<p class="info">PIN saved — live right away ✓</p>';
+      }).catch(function (err) {
+        if (out) out.innerHTML = '<p class="error">Could not save PIN: ' + esc(err.message || 'request failed') + '</p>';
+      });
+    }
     function drawStudents() {
       /* Student limit: show "Students: X of Y" and disable Add at
          the limit — extra kids are bought at checkout. */
@@ -702,6 +751,7 @@
             if (!nm) return;
             if (v) draft.student_pins[nm] = v; else delete draft.student_pins[nm];
           });
+          input.addEventListener('change', savePinsLive);
         });
         row.querySelectorAll('[data-student-del]').forEach(function (b) {
           b.addEventListener('click', function () { removeStudentIdx = i; drawStudents(); });
@@ -823,9 +873,9 @@
       var d = collectDraft();
       rpc('submit_kids_french_draft', { p_slug: SLUG, p_username: staffCreds.u, p_password: staffCreds.p, p_draft: d }).then(function () {
         draft = d;
-        draftStatus = 'pending';
+        draftStatus = directUploadOn ? 'approved' : 'pending';
         notifyEmail('Kids French draft for approval: ' + (d.name || SLUG), { school: d.name || '', slug: SLUG });
-        out.innerHTML = '<p class="info">Uploaded! Your changes were sent to Yently and are waiting for approval. We will email you once they are live.</p>';
+        out.innerHTML = '<p class="info">' + (directUploadOn ? 'Uploaded! Your changes are live right away. ✅' : 'Uploaded! Your changes were sent to Yently and are waiting for approval. We will email you once they are live.') + '</p>';
       }).catch(function (err) {
         out.innerHTML = '<p class="error">Could not upload: ' + esc(err.message) + '</p>';
       });
