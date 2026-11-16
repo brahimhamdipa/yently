@@ -27,7 +27,7 @@ import ProviderFormPage from './components/ProviderFormPage'
 import ChatWidget from './components/ChatWidget'
 import AdminPage from './components/AdminPage'
 import { CartProvider } from './lib/CartContext'
-import { BusinessCartProvider, BUSINESS_PLANS, useBusinessCart } from './lib/BusinessCartContext'
+import { BusinessCartProvider, BUSINESS_PLANS, useBusinessCart, isKidsExtraPlanKey } from './lib/BusinessCartContext'
 import BarbersPage from './components/BarbersPage'
 import SimpleBarbershopPage from './components/SimpleBarbershopPage'
 import RestaurantsPage from './components/RestaurantsPage'
@@ -72,7 +72,10 @@ import './index.css'
 // opens that ad page, adds the plan to the customer's cart and opens
 // My Cart. ?system=flight-pay opens the Pay Flight page (no money is
 // taken there — the customer enters the agreed amount and we send the
-// secure payment link). Unknown values fall back to the Systems hub.
+// secure payment link). Extra Students links from a school's Setup
+// page carry ?slug= too (/?add=kids-extra-<subject>&slug=<school>),
+// so the cart line knows which school the places are for. Unknown
+// values fall back to the Systems hub.
 // The root path carries the query, so the middleware clean-link
 // matcher (/:slug) never touches it.
 const DEEP_LINK_SYSTEMS = new Set([
@@ -91,7 +94,12 @@ const DEEP_LINK_SYSTEMS = new Set([
 // block (business tabs and Kids tabs have separate providers).
 // Adding a plan already in the cart is a no-op, and the query is
 // cleared after it is read so a later visit to the same tab never
-// re-runs it.
+// re-runs it. Extra Students deep links carry ?slug= as well
+// (/?add=kids-extra-<subject>&slug=<school>, built by a school's
+// Setup page): the slug rides into the cart line so checkout knows
+// which school the places are for. A new extra line starts at 1
+// place; one already in the cart keeps the larger count and takes
+// the new slug (see addPlan in BusinessCartContext).
 function DeepLinkCartAdder({ go }) {
   const { addPlan } = useBusinessCart()
   const done = useRef(false)
@@ -101,7 +109,8 @@ function DeepLinkCartAdder({ go }) {
     const key = params.get('add')
     if (!key || !BUSINESS_PLANS[key]) return
     done.current = true
-    addPlan(key)
+    if (isKidsExtraPlanKey(key)) addPlan(key, 1, params.get('slug') || '')
+    else addPlan(key)
     window.history.replaceState(null, '', window.location.pathname)
     go('business-cart')
   }, [])
