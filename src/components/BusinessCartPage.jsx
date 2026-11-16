@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useBusinessCart, bundleFor, isKidsPlanKey, KIDS_BASE_PRICE, KIDS_EXTRA_KID_PRICE, KIDS_INCLUDED_STUDENTS } from '../lib/BusinessCartContext'
+import { useBusinessCart, bundleFor, isKidsPlanKey, isKidsExtraPlanKey, KIDS_BASE_PRICE, KIDS_EXTRA_KID_PRICE, KIDS_INCLUDED_STUDENTS } from '../lib/BusinessCartContext'
 import { placeBusinessOrder } from '../lib/businessData'
 import { storeTrackingCodes } from '../lib/orderTracking'
 import { BusinessTopBar } from './BusinessMenu'
@@ -38,6 +38,7 @@ export default function BusinessCartPage({ go }) {
 
   const bundle = bundleFor(cart)
   const orderBundle = lastOrder ? bundleFor(lastOrder) : null
+  const hasExtras = cart.some(i => isKidsExtraPlanKey(i.key))
 
   // Save the placed order's tracking codes once, for the Tracking
   // page (/track) to auto-fill. The ref holds the signature of the
@@ -59,6 +60,14 @@ export default function BusinessCartPage({ go }) {
     setSubmitting(true); setStatus('')
     try {
       const items = await placeBusinessOrder({ name, email, phone, note, items: cart })
+      if (items.length === 0) {
+        // Every line was a 0-place Extra Students line (skipped at
+        // checkout, see businessData.js): nothing was placed, so keep
+        // the cart and say so instead of showing an empty cart.
+        setStatus('Nothing was placed — your extra-students line has 0 places. Add students above, or remove the line.')
+        setSubmitting(false)
+        return
+      }
       setLastOrder(items.map(i => ({ ...i, customer_name: name })))
       clearCart()
       setName(''); setEmail(''); setPhone(''); setNote('')
@@ -97,6 +106,9 @@ export default function BusinessCartPage({ go }) {
                 {isKidsPlanKey(i.key) && !i.extraKids && (
                   <> First {KIDS_INCLUDED_STUDENTS} students included.</>
                 )}
+                {isKidsExtraPlanKey(i.key) && Number(i.extraKids) > 0 && (
+                  <> Includes {i.extraKids} extra student{Number(i.extraKids) === 1 ? '' : 's'}{i.schoolSlug ? <> for school “{i.schoolSlug}”</> : null} — free for the rest of this month; your new monthly amount is ${(KIDS_BASE_PRICE + Number(i.extraKids) * KIDS_EXTRA_KID_PRICE).toFixed(2)}/month from the next payment.</>
+                )}
               </p>
               {i.tracking_code && (
                 <p>Your order number: <b>{i.tracking_code}</b>{' '}
@@ -134,6 +146,20 @@ export default function BusinessCartPage({ go }) {
                       </div>
                     </div>
                   )}
+                  {isKidsExtraPlanKey(i.key) && (
+                    <div style={{ marginTop: 8 }}>
+                      <div className="hint">Base $0.00/month — this line only adds student places to a school you already have{i.schoolSlug ? <> (“{i.schoolSlug}”)</> : null}. $1.00/month per extra student, free for the rest of this month — your new monthly amount (${(KIDS_BASE_PRICE + Number(i.extraKids) * KIDS_EXTRA_KID_PRICE).toFixed(2)}/month) starts with the next payment.</div>
+                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginTop: 6 }}>
+                        <span style={{ fontSize: 14 }}>Extra students:</span>
+                        <button type="button" onClick={() => updateExtraKids(i.key, (Number(i.extraKids) || 0) - 1)} disabled={(Number(i.extraKids) || 0) <= 0} aria-label="One fewer extra student" style={{ minWidth: 32, fontSize: 16, lineHeight: 1, padding: '4px 8px' }}>−</button>
+                        <b>{Number(i.extraKids) || 0}</b>
+                        <button type="button" onClick={() => updateExtraKids(i.key, (Number(i.extraKids) || 0) + 1)} aria-label="One more extra student" style={{ minWidth: 32, fontSize: 16, lineHeight: 1, padding: '4px 8px' }}>+</button>
+                      </div>
+                      {Number(i.extraKids) === 0 && (
+                        <div className="hint" style={{ marginTop: 6 }}>0 extra students — this line will be skipped at checkout. Add students above, or remove the line.</div>
+                      )}
+                    </div>
+                  )}
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <b>${Number(i.price).toFixed(2)}/month</b>
@@ -165,6 +191,9 @@ export default function BusinessCartPage({ go }) {
             <p><b>Total: ${bundle.total.toFixed(2)}/month</b></p>
             {bundle.rate > 0 && (
               <p>You're saving ${bundle.savings.toFixed(2)}/month with the bundle.</p>
+            )}
+            {hasExtras && (
+              <p className="hint">Extra student places are added in full — they don't count toward the bundle discount.</p>
             )}
             <button type="submit" disabled={submitting}>{submitting ? 'Placing…' : 'Place order'}</button>
             {status && <p className="status">{status}</p>}
