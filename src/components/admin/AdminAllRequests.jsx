@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useMemo, useState } from 'react'
 import { fetchAll, fmtDate } from '../../lib/admin'
 import { supabase } from '../../lib/supabaseClient'
+import ReplyEmailModal, { PLANS } from './ReplyEmailModal'
 
 // All Requests: every unpaid request / submission / question from a
 // visitor, in one place — so the owner can see it, reply to it, and
@@ -67,149 +68,9 @@ import { supabase } from '../../lib/supabaseClient'
 // the edited draft (the owner sends from his own email), and Copy
 // copies the draft to the clipboard.
 
-const SITE = 'https://yently.com'
-
-// Every plan that can be paid for through the shared Business cart:
-// key → { label, tab, price, blurb, freeMonth }. Prices copied from
-// BusinessCartContext (the single source of truth) — this page never
-// sets a price, it only quotes it. freeMonth is stated only where
-// the site says so: first month free on every business system (hub
-// hero), Live Chat and Direct Upload (their ad pages); TV Gallery
-// and Clean Link carry no free-month claim here; Kids has no free
-// month at all.
-const PLANS = {
-  'r:website': { label: 'Restaurant', tab: 'restaurants', price: 40, blurb: 'a restaurant ordering page with a live kitchen', freeMonth: true },
-  'p:website': { label: 'POS', tab: 'pos', price: 50, blurb: 'a point of sale page — your own register, with stock that updates itself and receipts kept', freeMonth: true },
-  'bb:website': { label: 'Barbershop', tab: 'barbers', price: 15, blurb: 'a barbershop booking page with a live queue', freeMonth: true },
-  'd:website': { label: 'Dealer', tab: 'dealer', price: 20, blurb: 'a dealer page with test drives and trade-ins', freeMonth: true },
-  'e:website': { label: 'Employee', tab: 'employee', price: 20, blurb: 'an employee time page with records', freeMonth: true },
-  'bs:website': { label: 'Bodyshop', tab: 'bodyshop', price: 20, blurb: 'a bodyshop page with estimates and jobs', freeMonth: true },
-  'h:website': { label: 'Houses', tab: 'houses', price: 20, blurb: 'a houses page', freeMonth: true },
-  'dr:website': { label: 'Doctor', tab: 'doctor', price: 20, blurb: 'a doctor booking page', freeMonth: true },
-  'hol:website': { label: 'Holiday', tab: 'holiday', price: 20, blurb: 'a holiday rentals page', freeMonth: true },
-  'cr:website': { label: 'Car Rental', tab: 'rentals', price: 20, blurb: 'a car rental page with bookings', freeMonth: true },
-  'la:website': { label: 'Laundry', tab: 'laundry', price: 20, blurb: 'a laundry page', freeMonth: true },
-  'gy:website': { label: 'Gym', tab: 'gym', price: 20, blurb: 'a gym page with members, classes and bookings', freeMonth: true },
-  'b:website': { label: 'Simple Website', tab: 'simple-barbershop', price: 10, blurb: 'a simple website for your business', freeMonth: true },
-  'tv:website': { label: 'TV Gallery', tab: 'tv-gallery', price: 2, blurb: 'a TV gallery page for your screens', freeMonth: false },
-  'chat:website': { label: 'Live Chat', tab: 'live-chat', price: 3, blurb: 'a live chat bubble for your website', freeMonth: true },
-  'clean:website': { label: 'Clean Link', tab: 'clean-link', price: 2, blurb: 'a short, clean yently.com link for your page', freeMonth: false },
-  'direct:website': { label: 'Direct Upload', tab: 'direct-upload', price: 5, blurb: 'Direct Upload — your uploads go live straight away, no waiting for approval', freeMonth: true },
-  'kids-math': { label: 'Kids Math', tab: 'kids-math', price: 5, kids: 'Math' },
-  'kids-english': { label: 'Kids English', tab: 'kids-english', price: 5, kids: 'English' },
-  'kids-arabic': { label: 'Kids Arabic', tab: 'kids-arabic', price: 5, kids: 'Arabic' },
-  'kids-french': { label: 'Kids French', tab: 'kids-french', price: 5, kids: 'French' },
-  'kids-spanish': { label: 'Kids Spanish', tab: 'kids-spanish', price: 5, kids: 'Spanish' },
-  'kids-science': { label: 'Kids Science', tab: 'kids-science', price: 5, kids: 'Science' },
-  'kids-geography': { label: 'Kids Geography', tab: 'kids-geography', price: 5, kids: 'Geography' },
-  'kids-coding': { label: 'Kids Coding', tab: 'kids-coding', price: 5, kids: 'Coding' },
-  'kids-reading': { label: 'Kids Reading', tab: 'kids-reading', price: 5, kids: 'Reading' },
-}
-
-// The pay link for a plan: a deep link that opens the ad page, adds
-// the plan to the customer's cart and opens My Cart (see App.jsx —
-// ?system=<tab>&add=<plan key>). Direct Upload is a real route, so
-// its link is the page itself, matching AdminDirectUpload. Flights
-// pay through the Pay Flight page (no money is taken on the page —
-// the customer enters the agreed amount and we send the secure
-// payment link). The generic template links to the Systems hub.
-const payLinkFor = (key) => {
-  if (key === 'direct:website') return `${SITE}/direct-upload`
-  if (key === 'flights') return `${SITE}/?system=flight-pay`
-  if (key === 'generic' || key === 'sell-car') return SITE + '/'
-  const plan = PLANS[key]
-  if (!plan) return SITE + '/'
-  return `${SITE}/?system=${plan.tab}&add=${key}`
-}
-
-const firstName = (name) => (name || '').trim().split(/\s+/)[0] || 'there'
-
-// One template per reply situation. Each has: a short greeting, one
-// line about the service + price, the pay link, one closing line,
-// and a sign-off as Yently. build() takes the row so the draft can
-// name the service, the route, or the car the customer asked about.
-const TEMPLATES = {}
-for (const [key, plan] of Object.entries(PLANS)) {
-  if (plan.kids) {
-    TEMPLATES[key] = {
-      label: `Yently Kids ${plan.kids} — $5/month`,
-      build: (row) => ({
-        subject: `Yently Kids ${plan.kids} — for your school`,
-        body:
-`Hi ${firstName(row.name)},
-
-Thanks for asking about Yently Kids ${plan.kids} for your school. It's $5/month for the first 3 students, then $1/month for each extra student — no free month, and you can cancel anytime.
-
-You can add it to your cart here: ${payLinkFor(key)} — when you check out, we'll set up your school and send your link and login by email. If you have more than 3 students, you can add the extra ones in your cart.
-
-Any questions, just reply to this email.
-
-— Yently`,
-      }),
-    }
-  } else {
-    TEMPLATES[key] = {
-      label: `${plan.label} — $${plan.price}/month`,
-      build: (row) => ({
-        subject: plan.label === 'POS' ? 'Your point of sale — Yently' : `Your ${plan.label.toLowerCase()} page — Yently`,
-        body:
-`Hi ${firstName(row.name)},
-
-Thanks for asking about ${plan.blurb}. It's $${plan.price}/month${plan.freeMonth ? ', first month free' : ''}.
-
-You can add it to your cart here: ${payLinkFor(key)} — when you check out, we'll set up your page and send your link and login by email.
-
-Any questions, just reply to this email.
-
-— Yently`,
-      }),
-    }
-  }
-}
-TEMPLATES.flights = {
-  label: 'Flights — Pay Flight page',
-  build: (row) => ({
-    subject: 'Your flight — Yently',
-    body:
-`Hi ${firstName(row.name)},
-
-Thanks for your flight request${row.summary && row.table === 'flight_bookings' ? ` — ${row.summary}` : ''}. When you're ready, open the Pay Flight page here: ${payLinkFor('flights')} and enter the exact amount we agreed. We'll send your secure payment link right away, and your confirmation and receipt follow by email once it's paid.
-
-Any questions, just reply to this email.
-
-— Yently`,
-  }),
-}
-TEMPLATES.generic = {
-  label: 'Generic — thanks + link to Yently',
-  build: (row) => ({
-    subject: 'Thanks for getting in touch — Yently',
-    body:
-`Hi ${firstName(row.name)},
-
-Thanks for your message — we'll get back to you shortly.
-
-You can see everything Yently offers here: ${SITE}/
-
-Any questions, just reply to this email.
-
-— Yently`,
-  }),
-}
-TEMPLATES['sell-car'] = {
-  label: 'Sell your car — no pay link',
-  build: (row) => ({
-    subject: 'Selling your car — Yently',
-    body:
-`Hi ${firstName(row.name)},
-
-Thanks for telling us about your car${row.summary ? ` — ${row.summary}` : ''}. We'll look at the details you sent and be in touch shortly about the next step.
-
-Any questions, just reply to this email.
-
-— Yently`,
-  }),
-}
+// PLANS, the reply templates and the Reply modal live in the
+// shared ReplyEmailModal.jsx (also used by All Orders) — this page
+// only keeps PLAN_BY_SYSTEM_NAME + inquirySource below.
 
 // Demo requests name the system after the dash: 'Demo Request — POS',
 // 'Demo Request — Kids Math', … Map the system name to its plan key.
@@ -310,10 +171,6 @@ export default function AdminAllRequests() {
   const [deleteError, setDeleteError] = useState('')
   const [deleting, setDeleting] = useState(false)
   const [replyRow, setReplyRow] = useState(null)
-  const [replyTemplate, setReplyTemplate] = useState('generic')
-  const [replySubject, setReplySubject] = useState('')
-  const [replyBody, setReplyBody] = useState('')
-  const [copied, setCopied] = useState(false)
 
   const load = async () => {
     setRows(null)
@@ -422,39 +279,6 @@ export default function AdminAllRequests() {
     }
   }
 
-  const openReply = (row) => {
-    const draft = TEMPLATES[row.template].build(row)
-    setReplyRow(row)
-    setReplyTemplate(row.template)
-    setReplySubject(draft.subject)
-    setReplyBody(draft.body)
-    setCopied(false)
-  }
-
-  const switchTemplate = (key) => {
-    if (!replyRow) return
-    setReplyTemplate(key)
-    const draft = TEMPLATES[key].build(replyRow)
-    setReplySubject(draft.subject)
-    setReplyBody(draft.body)
-    setCopied(false)
-  }
-
-  const copyDraft = async () => {
-    const text = `To: ${replyRow.email || ''}\nSubject: ${replySubject}\n\n${replyBody}`
-    try {
-      await navigator.clipboard.writeText(text)
-      setCopied(true)
-    } catch {
-      const ta = document.createElement('textarea')
-      ta.value = text
-      document.body.appendChild(ta)
-      ta.select()
-      try { document.execCommand('copy'); setCopied(true) } catch { setCopied(false) }
-      document.body.removeChild(ta)
-    }
-  }
-
   const summary = useMemo(() => {
     const perSource = {}
     let done = 0
@@ -484,10 +308,6 @@ export default function AdminAllRequests() {
   }, [rows, search, sourceFilter, statusFilter, sort, doneMap])
 
   if (rows === null) return <div className="hero-card"><p>Loading all requests…</p></div>
-
-  const mailto = replyRow && replyRow.email
-    ? `mailto:${replyRow.email}?subject=${encodeURIComponent(replySubject)}&body=${encodeURIComponent(replyBody)}`
-    : ''
 
   return (
     <div>
@@ -569,7 +389,7 @@ export default function AdminAllRequests() {
                       <td>{isDone ? '✓ Done' : 'New'}</td>
                       <td>
                         <button type="button" className="btn-mini" onClick={() => setExpandedKey(expanded ? null : r.key)}>{expanded ? 'Hide' : 'View'}</button>{' '}
-                        <button type="button" className="btn-mini" onClick={() => openReply(r)}>Reply</button>{' '}
+                        <button type="button" className="btn-mini" onClick={() => setReplyRow(r)}>Reply</button>{' '}
                         <button type="button" className="btn-mini" onClick={() => { setConfirmDelete(r); setDeleteError('') }}>🗑 Delete</button>
                       </td>
                     </tr>
@@ -582,7 +402,7 @@ export default function AdminAllRequests() {
                             <p key={label}><b>{label}:</b> {value}</p>
                           ))}
                           <div className="store-actions">
-                            <button type="button" className="btn-mini" onClick={() => openReply(r)}>Reply</button>{' '}
+                            <button type="button" className="btn-mini" onClick={() => setReplyRow(r)}>Reply</button>{' '}
                             <button type="button" className="btn-mini" onClick={() => markDone(r.key, !isDone)}>
                               {isDone ? 'Mark as new' : '✓ Mark done'}
                             </button>
@@ -600,39 +420,12 @@ export default function AdminAllRequests() {
       )}
 
       {replyRow && (
-        <div className="modal-overlay" onClick={() => setReplyRow(null)}>
-          <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 640 }}>
-            <button className="modal-close" onClick={() => setReplyRow(null)} aria-label="Close">✕</button>
-            <h3>Reply to {replyRow.name || 'the customer'}</h3>
-            <p className="hint">{replyRow.source} · {replyRow.email || 'no email on file'}{replyRow.phone ? ` · ${replyRow.phone}` : ''}</p>
-            <div className="modal-form">
-              <label>Template
-                <select value={replyTemplate} onChange={e => switchTemplate(e.target.value)}>
-                  {Object.entries(TEMPLATES).map(([key, t]) => (
-                    <option key={key} value={key}>{t.label}</option>
-                  ))}
-                </select>
-              </label>
-              <p className="hint">Switching templates replaces the draft below with that template&apos;s wording. Edit anything before sending.</p>
-              <label>Subject
-                <input value={replySubject} onChange={e => setReplySubject(e.target.value)} />
-              </label>
-              <label>Message
-                <textarea rows={12} value={replyBody} onChange={e => setReplyBody(e.target.value)} style={{ width: '100%' }} />
-              </label>
-              <div className="store-actions">
-                {mailto ? (
-                  <a className="btn-primary" href={mailto} style={{ textDecoration: 'none', padding: '11px 18px', borderRadius: 10, background: '#2563eb', color: '#fff', fontWeight: 600, display: 'inline-block' }}>Open in email app</a>
-                ) : (
-                  <button type="button" className="btn-primary" disabled>No email on file</button>
-                )}
-                <button type="button" className="btn-soft" onClick={copyDraft}>{copied ? '✓ Copied' : 'Copy'}</button>
-                <button type="button" className="btn-soft" onClick={() => setReplyRow(null)}>Close</button>
-              </div>
-              <p className="hint">Nothing is sent from this page. “Open in email app” opens the draft in your own email app, and Copy puts the subject + message on your clipboard. Mark the request done in View once you&apos;ve sent it.</p>
-            </div>
-          </div>
-        </div>
+        <ReplyEmailModal
+          row={replyRow}
+          defaultTemplate={replyRow.template}
+          doneHint="Mark the request done in View once you've sent it."
+          onClose={() => setReplyRow(null)}
+        />
       )}
     </div>
   )

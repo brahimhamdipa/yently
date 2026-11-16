@@ -2,6 +2,7 @@ import { Fragment, useEffect, useMemo, useState } from 'react'
 import { fetchAll, fmtDate } from '../../lib/admin'
 import { money } from '../../lib/storeData'
 import { supabase } from '../../lib/supabaseClient'
+import ReplyEmailModal from './ReplyEmailModal'
 
 // All Orders: every order the Business cart ever wrote, in one place —
 // one row per plan ordered, newest first. Edit and delete live here:
@@ -134,6 +135,10 @@ export default function AdminAllOrders() {
   const [editError, setEditError] = useState('')
   const [savingEdit, setSavingEdit] = useState(false)
 
+  // Email state: the order row whose customer the owner is about
+  // to email (thank-you / ready templates in the shared modal).
+  const [emailRow, setEmailRow] = useState(null)
+
   // Delete state: the row waiting for its in-page confirmation
   // (same pattern as All Passes — never window.confirm).
   const [confirmDelete, setConfirmDelete] = useState(null)
@@ -146,6 +151,7 @@ export default function AdminAllOrders() {
     setEditingKey(null)
     setConfirmDelete(null)
     setExpandedKey(null)
+    setEmailRow(null)
     const failedTables = []
     // One bad table must never blank the page: fetchAll throws, so
     // each table is grabbed on its own and a failure just records
@@ -283,6 +289,25 @@ export default function AdminAllOrders() {
     }
   }
 
+  // Build the row the shared Reply modal expects from an order
+  // row: customer + plan + price, plus the Extra Students flag (the
+  // Extra Students page writes its note as 'Extra students for
+  // school "<slug>" ...'), so the thank-you names that purchase
+  // instead of the subject itself.
+  const orderToReplyRow = (r) => ({
+    name: r.customer_name,
+    email: r.customer_email,
+    phone: r.customer_phone,
+    source: `${r.label} order`,
+    table: r.table,
+    summary: `${r.label} — ${money(r.price)}/month${r.note ? ` — ${truncate(r.note, 60)}` : ''}`,
+    planKey: r.plan || '',
+    planPrice: r.price,
+    serviceLabel: r.label,
+    isExtraStudents: (r.note || '').startsWith('Extra students for school'),
+    extraKids: r.extra_kids,
+  })
+
   // Months present in the data, newest first, for the month selector.
   const months = useMemo(() => {
     if (!orders) return []
@@ -372,7 +397,7 @@ export default function AdminAllOrders() {
     <div>
       <div className="hero-card">
         <h2>🧾 All Orders {totalOrders > 0 && `(${totalOrders})`}</h2>
-        <p>Every plan order from the Business cart, in one place — one row per plan ordered, newest first. Tap a row for the full details. Edit or delete any order from its row: Edit opens a form in the row's details, Delete asks first. Prices are the plan's monthly list price, so the monthly value of a plan is simply its orders added up.</p>
+        <p>Every plan order from the Business cart, in one place — one row per plan ordered, newest first. Tap a row for the full details. Edit, email or delete any order from its row: Edit opens a form in the row's details, Email opens a ready-to-send thank-you or your-page-is-ready draft, Delete asks first. Prices are the plan's monthly list price, so the monthly value of a plan is simply its orders added up.</p>
       </div>
 
       {status && <p>{status}</p>}
@@ -503,6 +528,7 @@ export default function AdminAllOrders() {
                       <td>{truncate(r.note, 60) || '—'}</td>
                       <td onClick={e => e.stopPropagation()}>
                         <button type="button" className="btn-mini" onClick={() => startEdit(r)}>✏️ Edit</button>{' '}
+                        <button type="button" className="btn-mini" onClick={() => setEmailRow(r)}>✉️ Email</button>{' '}
                         <button type="button" className="btn-mini" onClick={() => { setConfirmDelete(r); setDeleteError('') }}>🗑 Delete</button>
                       </td>
                     </tr>
@@ -572,6 +598,14 @@ export default function AdminAllOrders() {
             </tbody>
           </table>
         </div>
+      )}
+
+      {emailRow && (
+        <ReplyEmailModal
+          row={orderToReplyRow(emailRow)}
+          defaultTemplate="thank-you"
+          onClose={() => setEmailRow(null)}
+        />
       )}
     </div>
   )
