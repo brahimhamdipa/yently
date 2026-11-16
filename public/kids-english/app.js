@@ -591,9 +591,11 @@
       field('School name', 'setup-name', draft.name) +
       field('About text', 'setup-about', draft.about) +
       '</div><h2>Students</h2><p class="info" id="setup-student-count"></p><div id="setup-students"></div>' +
+      '<p class="info">To change a student\'s name, click Remove next to that student, then add a new student with the right name.</p>' +
       '<div class="row"><input id="setup-new-student" type="text" placeholder="New student name…" style="flex:1;margin:0">' +
       '<button id="setup-add-student" class="secondary">+ Add student</button></div>' +
       '<div id="setup-student-out" style="margin-top:8px"></div>' +
+      '<p class="info" id="setup-extra-students"></p>' +
       '<h2>Words</h2><p class="info">Each word has a meaning or hint the children see while they play.</p><div id="setup-words"></div>' +
       '<button id="setup-add-word" class="secondary">+ Add word</button>' +
       '<div class="row" style="margin-top:16px"><button id="setup-save" class="secondary">Save draft</button>' +
@@ -676,12 +678,21 @@
     }
     function drawStudents() {
       /* Student limit: show "Students: X of Y" and disable Add at
-         the limit — extra kids are bought at checkout. */
+         the limit — extra students are on the Extra Students page. */
       var countEl = $('setup-student-count');
       if (countEl) {
         countEl.textContent = draft.students.length >= studentLimit
-          ? 'Students: ' + draft.students.length + ' of ' + studentLimit + ' — at your limit. Need more students? Add extra kids at checkout — $1/month each.'
+          ? 'Students: ' + draft.students.length + ' of ' + studentLimit + ' — at your limit.'
           : 'Students: ' + draft.students.length + ' of ' + studentLimit + ' — changes go live right away, no approval needed.';
+      }
+      /* Need more students? Quiet line under the Students section,
+         linking to the Extra Students page. Count and limit are
+         already client-side (studentLimit, fetched in openSetup). */
+      var extraEl = $('setup-extra-students');
+      if (extraEl) {
+        extraEl.innerHTML = draft.students.length >= studentLimit
+          ? 'Need more students? You have ' + draft.students.length + ' of ' + studentLimit + ' places — <a href="/extra-students">add extra students</a> for $1/month each.'
+          : 'Need more students? <a href="/extra-students">Extra students</a> are $1/month each.';
       }
       var addBtn = $('setup-add-student');
       if (addBtn) addBtn.disabled = draft.students.length >= studentLimit;
@@ -725,7 +736,7 @@
       var name = input.value.trim();
       if (!name) { out.innerHTML = '<p class="error">Type a name first.</p>'; return; }
       if (draft.students.indexOf(name) !== -1) { out.innerHTML = '<p class="error">That name is already on the list.</p>'; return; }
-      if (draft.students.length >= studentLimit) { out.innerHTML = '<p class="error">You are at your limit of ' + studentLimit + ' students. Add extra kids at checkout — $1/month each.</p>'; return; }
+      if (draft.students.length >= studentLimit) { out.innerHTML = '<p class="error">You are at your limit of ' + studentLimit + ' students. <a href="/extra-students">Add extra students</a> for $1/month each.</p>'; return; }
       /* Adding a student goes live at once via the RPC — no draft,
          no approval. */
       saveStudentsLive(draft.students.concat([name]), out, function () {
