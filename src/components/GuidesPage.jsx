@@ -61,15 +61,15 @@ const SYSTEM_GUIDES = [
 ]
 
 const KIDS_GUIDES = [
-  { name: 'Math', tab: 'kids-math', video: '/videos/kids-math-guide.mp4', length: '1:24', pdf: '/guides/kids-math-guide.pdf' },
-  { name: 'English', tab: 'kids-english', video: '/videos/kids-english-guide.mp4', length: '1:22', pdf: '/guides/kids-english-guide.pdf' },
-  { name: 'Arabic', tab: 'kids-arabic', video: '/videos/kids-arabic-guide.mp4', length: '1:26', pdf: '/guides/kids-arabic-guide.pdf' },
-  { name: 'French', tab: 'kids-french', video: '/videos/kids-french-guide.mp4', length: '1:23', pdf: '/guides/kids-french-guide.pdf' },
-  { name: 'Spanish', tab: 'kids-spanish', video: '/videos/kids-spanish-guide.mp4', length: '1:26', pdf: '/guides/kids-spanish-guide.pdf' },
-  { name: 'Science', tab: 'kids-science', video: '/videos/kids-science-guide.mp4', length: '1:29', pdf: '/guides/kids-science-guide.pdf' },
-  { name: 'Geography', tab: 'kids-geography', video: '/videos/kids-geography-guide.mp4', length: '1:27', pdf: '/guides/kids-geography-guide.pdf' },
-  { name: 'Coding', tab: 'kids-coding', video: '/videos/kids-coding-guide.mp4', length: '1:27', pdf: '/guides/kids-coding-guide.pdf' },
-  { name: 'Reading', tab: 'kids-reading', video: '/videos/kids-reading-guide.mp4', length: '1:16', pdf: '/guides/kids-reading-guide.pdf' },
+  { name: 'Math', tab: 'kids-math', video: '/videos/kids-math-guide.mp4', length: '1:28', pdf: '/guides/kids-math-guide.pdf' },
+  { name: 'English', tab: 'kids-english', video: '/videos/kids-english-guide.mp4', length: '1:34', pdf: '/guides/kids-english-guide.pdf' },
+  { name: 'Arabic', tab: 'kids-arabic', video: '/videos/kids-arabic-guide.mp4', length: '1:36', pdf: '/guides/kids-arabic-guide.pdf' },
+  { name: 'French', tab: 'kids-french', video: '/videos/kids-french-guide.mp4', length: '1:28', pdf: '/guides/kids-french-guide.pdf' },
+  { name: 'Spanish', tab: 'kids-spanish', video: '/videos/kids-spanish-guide.mp4', length: '1:40', pdf: '/guides/kids-spanish-guide.pdf' },
+  { name: 'Science', tab: 'kids-science', video: '/videos/kids-science-guide.mp4', length: '1:49', pdf: '/guides/kids-science-guide.pdf' },
+  { name: 'Geography', tab: 'kids-geography', video: '/videos/kids-geography-guide.mp4', length: '1:41', pdf: '/guides/kids-geography-guide.pdf' },
+  { name: 'Coding', tab: 'kids-coding', video: '/videos/kids-coding-guide.mp4', length: '1:35', pdf: '/guides/kids-coding-guide.pdf' },
+  { name: 'Reading', tab: 'kids-reading', video: '/videos/kids-reading-guide.mp4', length: '1:31', pdf: '/guides/kids-reading-guide.pdf' },
 ]
 
 const tableStyle = { width: '100%', borderCollapse: 'collapse', fontSize: 15 }
