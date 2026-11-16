@@ -322,7 +322,7 @@ export default function AdminCancellations() {
                             <button type="button" className="btn-mini" onClick={() => { setRejectReq(r); setRejectNote('') }} disabled={updating}>Reject</button>
                           </>
                         )}
-                        {r.status === 'approved' && (
+                        {r.status === 'approved' && t.status === 'cancelled' && (
                           <button type="button" className="btn-mini" onClick={() => setRestoreReq(r)} disabled={updating}>Restore</button>
                         )}
                       </td>
