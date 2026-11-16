@@ -27,7 +27,7 @@ import ProviderFormPage from './components/ProviderFormPage'
 import ChatWidget from './components/ChatWidget'
 import AdminPage from './components/AdminPage'
 import { CartProvider } from './lib/CartContext'
-import { BusinessCartProvider } from './lib/BusinessCartContext'
+import { BusinessCartProvider, BUSINESS_PLANS, useBusinessCart } from './lib/BusinessCartContext'
 import BarbersPage from './components/BarbersPage'
 import SimpleBarbershopPage from './components/SimpleBarbershopPage'
 import RestaurantsPage from './components/RestaurantsPage'
@@ -45,6 +45,7 @@ import TvGalleryPage from './components/TvGalleryPage'
 import LiveChatPage from './components/LiveChatPage'
 import CleanLinkPage from './components/CleanLinkPage'
 import DirectUploadPage from './components/DirectUploadPage'
+import ExtraStudentsPage from './components/ExtraStudentsPage'
 import CarSellerSoonPage from './components/CarSellerSoonPage'
 import ShopSellerFormPage from './components/ShopSellerFormPage'
 import ShopSellerSoonPage from './components/ShopSellerSoonPage'
@@ -66,6 +67,47 @@ import BooksForKidsPage from './components/BooksForKidsPage'
 import logoUrl from './assets/logo-com.webp'
 import './index.css'
 
+// Deep links (used by the reply templates in Admin → All Requests):
+//   https://yently.com/?system=<tab>&add=<plan key>
+// opens that ad page, adds the plan to the customer's cart and opens
+// My Cart. ?system=flight-pay opens the Pay Flight page (no money is
+// taken there — the customer enters the agreed amount and we send the
+// secure payment link). Unknown values fall back to the Systems hub.
+// The root path carries the query, so the middleware clean-link
+// matcher (/:slug) never touches it.
+const DEEP_LINK_SYSTEMS = new Set([
+  'business-hub', 'restaurants', 'pos', 'barbers', 'dealer', 'employee',
+  'bodyshop', 'houses', 'doctor', 'holiday', 'rentals', 'laundry', 'gym',
+  'simple-barbershop', 'tv-gallery', 'live-chat', 'clean-link',
+  'direct-upload', 'demo-live-chat', 'business-cart',
+  'kids-hub', 'kids-math', 'kids-english', 'kids-arabic', 'kids-french',
+  'kids-spanish', 'kids-science', 'kids-geography', 'kids-coding',
+  'kids-reading', 'kids-books',
+  'flights', 'flights-hub', 'reserve', 'flight-pay', 'flight-contact',
+])
+
+// Reads ?add=<plan key> once, adds that plan to the shared Business
+// cart and opens My Cart. Rendered inside each BusinessCartProvider
+// block (business tabs and Kids tabs have separate providers).
+// Adding a plan already in the cart is a no-op, and the query is
+// cleared after it is read so a later visit to the same tab never
+// re-runs it.
+function DeepLinkCartAdder({ go }) {
+  const { addPlan } = useBusinessCart()
+  const done = useRef(false)
+  useEffect(() => {
+    if (done.current) return
+    const params = new URLSearchParams(window.location.search)
+    const key = params.get('add')
+    if (!key || !BUSINESS_PLANS[key]) return
+    done.current = true
+    addPlan(key)
+    window.history.replaceState(null, '', window.location.pathname)
+    go('business-cart')
+  }, [])
+  return null
+}
+
 export default function App() {
   // The admin page has no visible link anywhere: it opens only by
   // typing yently.com/admin (see vercel.json rewrite). A provider
@@ -76,12 +118,15 @@ export default function App() {
     if (path === '/track') return 'track'
     if (path === '/demo-live-chat' || path === '/demo-chat') return 'demo-live-chat'
     if (path === '/direct-upload') return 'direct-upload'
+    if (path === '/extra-students') return 'extra-students'
     if (path !== '' && path !== '/') return 'provider-form'
+    const system = new URLSearchParams(window.location.search).get('system')
+    if (system && DEEP_LINK_SYSTEMS.has(system)) return system
     return 'business-hub'
   })
   const [formSlug, setFormSlug] = useState(() => {
     const path = window.location.pathname.replace(/\/$/, '')
-    if (path !== '' && path !== '/' && path !== '/admin' && path !== '/track' && path !== '/demo-live-chat' && path !== '/demo-chat' && path !== '/direct-upload') return decodeURIComponent(path.slice(1))
+    if (path !== '' && path !== '/' && path !== '/admin' && path !== '/track' && path !== '/demo-live-chat' && path !== '/demo-chat' && path !== '/direct-upload' && path !== '/extra-students') return decodeURIComponent(path.slice(1))
     return null
   })
   const [providerId, setProviderId] = useState(null)
@@ -124,13 +169,15 @@ export default function App() {
     const onTrack = path === '/track'
     const onDemo = path === '/demo-live-chat' || path === '/demo-chat'
     const onDirect = path === '/direct-upload'
-    const onForm = path !== '' && path !== '/' && !onAdmin && !onTrack && !onDemo && !onDirect
+    const onExtra = path === '/extra-students'
+    const onForm = path !== '' && path !== '/' && !onAdmin && !onTrack && !onDemo && !onDirect && !onExtra
     if (t === 'admin' && !onAdmin) window.history.replaceState(null, '', '/admin')
     else if (t === 'track' && !onTrack) window.history.replaceState(null, '', '/track')
     else if (t === 'demo-live-chat' && !onDemo) window.history.replaceState(null, '', '/demo-live-chat')
     else if (t === 'direct-upload' && !onDirect) window.history.replaceState(null, '', '/direct-upload')
+    else if (t === 'extra-students' && !onExtra) window.history.replaceState(null, '', '/extra-students')
     else if (t === 'provider-form' && param && !onForm) window.history.replaceState(null, '', '/' + param)
-    else if (t !== 'admin' && t !== 'track' && t !== 'provider-form' && t !== 'demo-live-chat' && t !== 'direct-upload' && (onAdmin || onTrack || onForm || onDemo || onDirect)) window.history.replaceState(null, '', '/')
+    else if (t !== 'admin' && t !== 'track' && t !== 'provider-form' && t !== 'demo-live-chat' && t !== 'direct-upload' && t !== 'extra-students' && (onAdmin || onTrack || onForm || onDemo || onDirect || onExtra)) window.history.replaceState(null, '', '/')
   }
   // Back to the page the customer actually came from (or nowhere on a
   // fresh load, in which case pages hide their back link).
@@ -168,8 +215,8 @@ export default function App() {
         <div className="header-right">
           <nav>
             <button className={inBusiness ? 'active' : ''} onClick={() => go('business-hub')}>Systems</button>
-            <button className={GROCERY_TABS.includes(tab) ? 'active' : ''} onClick={() => go('products')}>Shop</button>
             <button className={inKids ? 'active' : ''} onClick={() => go('kids-hub')}>Yently Kids</button>
+            <button className={GROCERY_TABS.includes(tab) ? 'active' : ''} onClick={() => go('products')}>Shop</button>
             <button className={inFlights ? 'active' : ''} onClick={() => go('flights-hub')}>Flights</button>
             <span className="dropdown" ref={moreRef}>
               <button className={inMore ? 'active' : ''} onClick={() => setMoreOpen(o => !o)}>More ▾</button>
@@ -235,6 +282,7 @@ export default function App() {
         )}
         {BUSINESS_TABS.includes(tab) && (
           <BusinessCartProvider>
+            <DeepLinkCartAdder go={go} />
             {tab === 'business-hub' && <BusinessSystemsPage go={go} />}
             {tab === 'restaurants' && <RestaurantsPage go={go} />}
             {tab === 'pos' && <PosPage go={go} />}
@@ -259,6 +307,7 @@ export default function App() {
         )}
         {KIDS_TABS.includes(tab) && (
           <BusinessCartProvider>
+            <DeepLinkCartAdder go={go} />
             {tab === 'kids-hub' && <KidsHubPage go={go} />}
             {tab === 'kids-math' && <KidsMathPage go={go} />}
             {tab === 'kids-english' && <KidsEnglishPage go={go} />}
@@ -270,6 +319,11 @@ export default function App() {
             {tab === 'kids-coding' && <KidsCodingPage go={go} />}
             {tab === 'kids-reading' && <KidsReadingPage go={go} />}
             {tab === 'kids-books' && <BooksForKidsPage go={go} />}
+          </BusinessCartProvider>
+        )}
+        {tab === 'extra-students' && (
+          <BusinessCartProvider>
+            <ExtraStudentsPage go={go} />
           </BusinessCartProvider>
         )}
         {tab === 'clothes' && <ClothesPage />}
