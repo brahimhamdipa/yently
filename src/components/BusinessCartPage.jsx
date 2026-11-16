@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useBusinessCart, bundleFor } from '../lib/BusinessCartContext'
+import { useBusinessCart, bundleFor, isKidsPlanKey, KIDS_BASE_PRICE, KIDS_EXTRA_KID_PRICE, KIDS_INCLUDED_STUDENTS } from '../lib/BusinessCartContext'
 import { placeBusinessOrder } from '../lib/businessData'
 import { storeTrackingCodes } from '../lib/orderTracking'
 import { BusinessTopBar } from './BusinessMenu'
@@ -28,7 +28,7 @@ const PLAN_HINTS = {
 }
 
 export default function BusinessCartPage({ go }) {
-  const { cart, count, removePlan, clearCart, lastOrder, setLastOrder } = useBusinessCart()
+  const { cart, count, removePlan, updateExtraKids, clearCart, lastOrder, setLastOrder } = useBusinessCart()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
@@ -90,7 +90,14 @@ export default function BusinessCartPage({ go }) {
           <h3>✓ Order placed — thank you, {lastOrder[0].customer_name}!</h3>
           {lastOrder.map(i => (
             <div key={i.key}>
-              <p>{i.name} — ${Number(i.price).toFixed(2)}/month.</p>
+              <p>{i.name} — ${Number(i.price).toFixed(2)}/month.
+                {isKidsPlanKey(i.key) && Number(i.extraKids) > 0 && (
+                  <> Includes {i.extraKids} extra student{Number(i.extraKids) === 1 ? '' : 's'} beyond the first {KIDS_INCLUDED_STUDENTS} (${KIDS_BASE_PRICE.toFixed(2)} base + ${Number(i.extraKids) * KIDS_EXTRA_KID_PRICE}.00).</>
+                )}
+                {isKidsPlanKey(i.key) && !i.extraKids && (
+                  <> First {KIDS_INCLUDED_STUDENTS} students included.</>
+                )}
+              </p>
               {i.tracking_code && (
                 <p>Your order number: <b>{i.tracking_code}</b>{' '}
                   <button type="button" className="btn-soft" onClick={() => go && go('track')}>Track your order</button>
@@ -114,6 +121,19 @@ export default function BusinessCartPage({ go }) {
                 <div>
                   <b>{i.name}</b>
                   <div className="hint">{PLAN_HINTS[i.key] || ''}</div>
+                  {isKidsPlanKey(i.key) && (
+                    <div style={{ marginTop: 8 }}>
+                      <div className="hint">${KIDS_BASE_PRICE.toFixed(2)}/month for the first {KIDS_INCLUDED_STUDENTS} students
+                        {Number(i.extraKids) > 0 && <> + ${Number(i.extraKids) * KIDS_EXTRA_KID_PRICE}.00/month for {i.extraKids} extra student{Number(i.extraKids) === 1 ? '' : 's'}</>}
+                      </div>
+                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginTop: 6 }}>
+                        <span style={{ fontSize: 14 }}>Extra students:</span>
+                        <button type="button" onClick={() => updateExtraKids(i.key, (Number(i.extraKids) || 0) - 1)} disabled={(Number(i.extraKids) || 0) <= 0} aria-label="One fewer extra student" style={{ minWidth: 32, fontSize: 16, lineHeight: 1, padding: '4px 8px' }}>−</button>
+                        <b>{Number(i.extraKids) || 0}</b>
+                        <button type="button" onClick={() => updateExtraKids(i.key, (Number(i.extraKids) || 0) + 1)} aria-label="One more extra student" style={{ minWidth: 32, fontSize: 16, lineHeight: 1, padding: '4px 8px' }}>+</button>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <b>${Number(i.price).toFixed(2)}/month</b>

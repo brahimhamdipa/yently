@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { submitAndNotify } from '../lib/notify'
-import { useBusinessCart, KIDS_READING_PLAN_KEY, KIDS_READING_PLAN_PRICE } from '../lib/BusinessCartContext'
+import { useBusinessCart, KIDS_READING_PLAN_KEY, kidsLinePrice } from '../lib/BusinessCartContext'
+import KidsExtraStudents from './KidsExtraStudents'
 import { KidsTopBar } from './KidsMenu'
 import FloatingAddToCart from './FloatingAddToCart'
 import DemoInterestPopup from './DemoInterestPopup'
@@ -9,7 +10,7 @@ import DemoInterestPopup from './DemoInterestPopup'
 // Kids → Reading). One product only: a learning page for children, with
 // a Play area for the kids, a Teacher area with every score, and a Setup
 // the owner edits (draft → approval, like the other folder systems).
-// $10/month, first month free. No card payment is taken here — the
+// $5/month for the first 3 students, +$1/month for each extra student. No free month. No card payment is taken here — the
 // request form emails the owner, who then creates the school page and
 // its link by hand, and the Add to cart card puts a kids_reading_order row
 // in front of the owner the same way (shared Business cart,
@@ -17,8 +18,15 @@ import DemoInterestPopup from './DemoInterestPopup'
 // other Business Systems pages). Nothing on this page promises instant
 // signup. Connecting carts to the bank comes later.
 export default function KidsReadingPage({ go }) {
-  const { hasPlan, addPlan } = useBusinessCart()
+  const { hasPlan, addPlan, updateExtraKids } = useBusinessCart()
   const inCart = hasPlan(KIDS_READING_PLAN_KEY)
+  const [extraKids, setExtraKids] = useState(0)
+  const totalPrice = kidsLinePrice(extraKids)
+  const changeExtraKids = (n) => {
+    const next = Math.max(0, Number(n) || 0)
+    setExtraKids(next)
+    if (inCart) updateExtraKids(KIDS_READING_PLAN_KEY, next)
+  }
   const [form, setForm] = useState({ name: '', school: '', email: '', phone: '', message: '' })
   const [status, setStatus] = useState('')
   const [busy, setBusy] = useState(false)
@@ -49,7 +57,7 @@ export default function KidsReadingPage({ go }) {
       <KidsTopBar go={go} />
       <div className="hero-card" style={{ background: '#161d44', color: '#fff', textAlign: 'center' }}>
         <h2 style={{ color: '#fff' }}>📖 A bookshelf of your own</h2>
-        <p style={{ fontSize: 18, color: '#f5c542' }}>Your own Kids Reading page for $10/month — pick a book, read it page by page, and finish it.</p>
+        <p style={{ fontSize: 18, color: '#f5c542' }}>Your own Kids Reading page for $5/month (first 3 kids) + $1/extra kid — pick a book, read it page by page, and finish it.</p>
         <p>Learning that feels like play — your children learn, you see every score.</p>
       </div>
 
@@ -82,19 +90,20 @@ export default function KidsReadingPage({ go }) {
 
       <div className="hero-card">
         <h3>Simple, honest pricing</h3>
-        <p><b>$10/month.</b> That's it — your own Kids Reading page, your students, and the teacher progress view. No setup fee. First month free, cancel anytime.</p>
+        <p><b>$5/month for your first 3 students, +$1/month for each extra student.</b> No free month. Cancel free, any time.</p>
         <p className="hint">Send your request below and Yently will be in touch to set up your Kids Reading page.</p>
       </div>
 
       <div className="hero-card" style={{ textAlign: 'center' }}>
-        <h3>Kids Reading page — ${KIDS_READING_PLAN_PRICE}/month</h3>
+        <h3>Kids Reading page — $5/month (first 3 kids) + $1/extra kid</h3>
+        <KidsExtraStudents extraKids={extraKids} onChange={changeExtraKids} />
         {inCart ? (
           <div>
-            <p>✓ In your cart.</p>
+            <p>✓ In your cart — ${totalPrice}/month.</p>
             <button onClick={() => go && go('business-cart')}>Go to My Cart</button>
           </div>
         ) : (
-          <button onClick={() => addPlan(KIDS_READING_PLAN_KEY)}>Add to cart — ${KIDS_READING_PLAN_PRICE}/month</button>
+          <button onClick={() => addPlan(KIDS_READING_PLAN_KEY, extraKids)}>Add to cart — ${totalPrice}/month</button>
         )}
       </div>
 
@@ -121,7 +130,7 @@ export default function KidsReadingPage({ go }) {
         {status && <p className="status">{status}</p>}
       </form>
 
-      <FloatingAddToCart planKey={KIDS_READING_PLAN_KEY} name="Kids Reading page" price={KIDS_READING_PLAN_PRICE} go={go} />
+      <FloatingAddToCart planKey={KIDS_READING_PLAN_KEY} name="Kids Reading page" price={totalPrice} extraKids={extraKids} go={go} />
     </div>
   )
 }

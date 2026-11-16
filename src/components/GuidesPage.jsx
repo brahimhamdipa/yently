@@ -37,7 +37,7 @@ const PRICE_GROUPS = [
   {
     title: 'Yently Kids',
     rows: [
-      { name: 'Any subject', blurb: 'Math, English, Arabic, French, Spanish, Science, Geography, Coding, Reading — one price per subject', price: 10, tab: 'kids-hub' },
+      { name: 'Any subject', blurb: 'Math, English, Arabic, French, Spanish, Science, Geography, Coding, Reading — $5/month per subject for your first 3 students, +$1/month for each extra student', price: 5, firstMonth: 'No free month', tab: 'kids-hub' },
     ],
   },
 ]
@@ -88,7 +88,7 @@ export default function GuidesPage({ go }) {
 
       <div className="form-card wide">
         <h3>Prices &amp; offers</h3>
-        <p>Every plan below is per month. The first month is free on every plan, there is no setup fee, and there is no commission on what you sell — ever.</p>
+        <p>Every plan below is per month. The first month is free on every plan except Yently Kids, which has no free month. There is no setup fee, and there is no commission on what you sell — ever.</p>
         <div style={{ overflowX: 'auto' }}>
           <table style={tableStyle}>
             <thead>
@@ -108,7 +108,7 @@ export default function GuidesPage({ go }) {
                       <td style={tdStyle}><a onClick={() => go(r.tab)} style={{ ...linkStyle, cursor: 'pointer' }}>{r.name}</a></td>
                       <td style={tdStyle}>{r.blurb}</td>
                       <td style={{ ...tdStyle, textAlign: 'right', whiteSpace: 'nowrap' }}>${r.price}/month</td>
-                      <td style={{ ...tdStyle, textAlign: 'right' }}>Free</td>
+                      <td style={{ ...tdStyle, textAlign: 'right' }}>{r.firstMonth || 'Free'}</td>
                     </tr>
                   ))}
                 </Fragment>
