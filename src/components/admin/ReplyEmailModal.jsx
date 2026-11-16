@@ -289,8 +289,8 @@ export default function ReplyEmailModal({ row, defaultTemplate, doneHint, onClos
     : ''
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 640 }}>
+    <div className="modal-overlay" onClick={onClose} style={{ overflowY: 'auto', alignItems: 'flex-start' }}>
+      <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 640, margin: 'auto', maxHeight: ['calc(100vh - 32px)', 'calc(100dvh - 32px)'], overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
         <button className="modal-close" onClick={onClose} aria-label="Close">✕</button>
         <h3>Reply to {row.name || 'the customer'}</h3>
         <p className="hint">{row.source || row.label || ''}{row.source || row.label ? ' · ' : ''}{row.email || 'no email on file'}{row.phone ? ` · ${row.phone}` : ''}</p>
