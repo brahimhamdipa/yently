@@ -111,7 +111,7 @@ export default function HolidayPage({ go }) {
         <h3>Get your holiday rentals online</h3>
         <div className="row">
           <input required placeholder="Your name" value={form.name} onChange={set('name')} />
-          <input required placeholder="Business name" value={form.business} onChange={set('business')} />
+          <input placeholder="Business name (optional)" value={form.business} onChange={set('business')} />
         </div>
         <div className="row">
           <input required placeholder="Email" type="email" value={form.email} onChange={set('email')} />

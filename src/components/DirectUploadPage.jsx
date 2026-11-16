@@ -97,7 +97,7 @@ export default function DirectUploadPage({ go }) {
           customer_name: form.name,
           customer_email: form.email,
           customer_phone: form.phone,
-          business_name: form.business,
+          business_name: form.business.trim() || null,
           system: form.system,
           shop_slug: normSlug(form.shop_slug),
           message: form.message || null,
@@ -130,8 +130,8 @@ export default function DirectUploadPage({ go }) {
             <input required placeholder="Your name" value={form.name} onChange={set('name')} />
           </div>
           <div className="field">
-            <span className="field-label">Business name <Help text={HELP.business} /></span>
-            <input required placeholder="Business name" value={form.business} onChange={set('business')} />
+            <span className="field-label">Business name (optional) <Help text={HELP.business} /></span>
+            <input placeholder="Business name (optional)" value={form.business} onChange={set('business')} />
           </div>
         </div>
         <div className="row">
