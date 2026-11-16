@@ -153,9 +153,9 @@ export default function App() {
   const inCars = ['cars', 'sell', 'contact', 'car-seller', 'car-seller-soon'].includes(tab)
   const inKids = KIDS_TABS.includes(tab)
   const inFlights = ['flights', 'flights-hub', 'reserve', 'flight-pay', 'flight-contact'].includes(tab)
-  // "More" holds Cars + Services + Guides + About Us now that
-  // Yently Kids is a top-level item.
-  const inMore = ['services', 'services-home', 'services-contact', 'about', 'guides', 'clothes'].includes(tab) || inCars
+  // "More" holds Cars + Services + Guides + Track Order + About Us
+  // now that Yently Kids is a top-level item.
+  const inMore = ['services', 'services-home', 'services-contact', 'about', 'guides', 'track', 'clothes'].includes(tab) || inCars
 
   return (
     <div className="app">
@@ -178,6 +178,7 @@ export default function App() {
                   <a onClick={() => go('cars')}>Cars</a>
                   <a onClick={() => go('services')}>Services</a>
                   <a onClick={() => go('guides')}>Guides</a>
+                  <a onClick={() => go('track')}>Track Order</a>
                   <a onClick={() => go('about')}>About Us</a>
                 </span>
               )}
