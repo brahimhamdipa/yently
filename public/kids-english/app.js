@@ -6,7 +6,7 @@
    their school (that login is what Yently sells); Setup edits
    save as a draft, and the Upload button sends the draft to the
    admin for approval. Approval makes the draft live instantly —
-   no file swap, no redeploy wait.
+   no file swap, no redeploy wait. Student names are the exception: adding or removing a student goes live at once, up to the school's student limit (3 included + paid extra kids).
    Play is PUBLIC: a child picks their name, picks a game, and
    plays 10 rounds. Scores are saved so the teacher can see each
    student's progress — only each student's BEST score per game is
@@ -72,6 +72,7 @@
   var data = null; // live school info (visitors)
   var draft = null; // owner draft (Setup)
   var draftStatus = 'editing';
+  var studentLimit = 3; // students included in the plan (3) + paid extra kids; fetched in openSetup, falls back to 3
   var staffCreds = null; // {u, p} in memory only, never stored
   var teacherPass = null; // teacher password in memory only, never stored
   var teacherUnlocked = false; // true once the teacher password is entered, or when the school has none set
@@ -537,6 +538,12 @@
       draft.student_pins = draft.student_pins || {};
       draft.words = draft.words || [];
       draftStatus = res.status || 'editing';
+      /* Student limit: 3 included + paid extra kids. Fetched fresh
+         each time Setup opens; falls back to 3 if unavailable. */
+      return rpc('kids_english_student_limit', { p_slug: SLUG }).then(function (limit) {
+        if (typeof limit === 'number' && isFinite(limit) && limit >= 3) studentLimit = limit;
+      }).catch(function () {});
+    }).then(function () {
       renderSetup();
     }).catch(function () {
       el.innerHTML = '<h2>Setup</h2><div class="card"><p class="error">Could not load your draft. Please try again in a moment.</p></div>';
@@ -557,9 +564,10 @@
       '<div class="card">' +
       field('School name', 'setup-name', draft.name) +
       field('About text', 'setup-about', draft.about) +
-      '</div><h2>Students</h2><div id="setup-students"></div>' +
+      '</div><h2>Students</h2><p class="info" id="setup-student-count"></p><div id="setup-students"></div>' +
       '<div class="row"><input id="setup-new-student" type="text" placeholder="New student name…" style="flex:1;margin:0">' +
       '<button id="setup-add-student" class="secondary">+ Add student</button></div>' +
+      '<div id="setup-student-out" style="margin-top:8px"></div>' +
       '<h2>Words</h2><p class="info">Each word has a meaning or hint the children see while they play.</p><div id="setup-words"></div>' +
       '<button id="setup-add-word" class="secondary">+ Add word</button>' +
       '<div class="row" style="margin-top:16px"><button id="setup-save" class="secondary">Save draft</button>' +
@@ -598,7 +606,38 @@
     });
 
     var studentsEl = $('setup-students');
+    /* Students go live at once — no draft, no approval. The RPC
+       writes the new list into BOTH live_data and draft_data, so a
+       later draft save/upload (collectDraft reads draft.students)
+       can never revert it. PINs are untouched by the RPC and still
+       flow through the draft. On success both in-memory copies are
+       refreshed from the saved list. */
+    function saveStudentsLive(next, out, done) {
+      if (out) out.innerHTML = '<p class="info">Saving…</p>';
+      rpc('set_kids_english_students', { p_slug: SLUG, p_u: staffCreds.u, p_p: staffCreds.p, p_students: next }).then(function (ok) {
+        if (ok !== true) throw new Error('not saved');
+        draft.students = next.slice();
+        if (data) data.students = next.slice();
+        if (out) out.innerHTML = '';
+        drawStudents();
+        if (done) done();
+      }).catch(function (err) {
+        if (out) out.innerHTML = '<p class="error">Could not save students: ' + esc(err.message || 'request failed') + '</p>';
+      });
+    }
     function drawStudents() {
+      /* Student limit: show "Students: X of Y" and disable Add at
+         the limit — extra kids are bought at checkout. */
+      var countEl = $('setup-student-count');
+      if (countEl) {
+        countEl.textContent = draft.students.length >= studentLimit
+          ? 'Students: ' + draft.students.length + ' of ' + studentLimit + ' — at your limit. Need more students? Add extra kids at checkout — $1/month each.'
+          : 'Students: ' + draft.students.length + ' of ' + studentLimit + ' — changes go live right away, no approval needed.';
+      }
+      var addBtn = $('setup-add-student');
+      if (addBtn) addBtn.disabled = draft.students.length >= studentLimit;
+      var newStudentInput = $('setup-new-student');
+      if (newStudentInput) newStudentInput.disabled = draft.students.length >= studentLimit;
       studentsEl.innerHTML = '';
       if (!draft.students.length) {
         studentsEl.innerHTML = '<div class="card"><p class="info">No students yet — add names above.</p></div>';
@@ -617,9 +656,14 @@
           if (v) draft.student_pins[name] = v; else delete draft.student_pins[name];
         });
         row.querySelector('[data-remove-student]').addEventListener('click', function () {
-          draft.students.splice(i, 1);
-          delete draft.student_pins[name];
-          drawStudents();
+          var next = draft.students.slice();
+          next.splice(i, 1);
+          /* Removing a student also goes live at once via the RPC. */
+          saveStudentsLive(next, $('setup-student-out'), function () {
+            delete draft.student_pins[name];
+            var out = $('setup-student-out');
+            if (out) out.innerHTML = '<p class="info">Student removed — live right away. ✅</p>';
+          });
         });
         studentsEl.appendChild(row);
       });
@@ -627,11 +671,17 @@
     drawStudents();
     $('setup-add-student').addEventListener('click', function () {
       var input = $('setup-new-student');
+      var out = $('setup-student-out');
       var name = input.value.trim();
-      if (!name) return;
-      if (draft.students.indexOf(name) === -1) draft.students.push(name);
-      input.value = '';
-      drawStudents();
+      if (!name) { out.innerHTML = '<p class="error">Type a name first.</p>'; return; }
+      if (draft.students.indexOf(name) !== -1) { out.innerHTML = '<p class="error">That name is already on the list.</p>'; return; }
+      if (draft.students.length >= studentLimit) { out.innerHTML = '<p class="error">You are at your limit of ' + studentLimit + ' students. Add extra kids at checkout — $1/month each.</p>'; return; }
+      /* Adding a student goes live at once via the RPC — no draft,
+         no approval. */
+      saveStudentsLive(draft.students.concat([name]), out, function () {
+        input.value = '';
+        out.innerHTML = '<p class="info">Student added — live right away. ✅</p>';
+      });
     });
 
     var wordsEl = $('setup-words');
@@ -665,7 +715,9 @@
 
     /* collectDraft must include EVERY editable field — name, about,
        students, student_pins and words — or Setup silently drops it.
-       PINs are pruned to current students and to exactly 4 digits. */
+       PINs are pruned to current students and to exactly 4 digits.
+       Students come from draft.students, which the live student RPC
+       keeps in sync — a later save/upload never reverts a student change. */
     function collectDraft() {
       var pins = {};
       Object.keys(draft.student_pins || {}).forEach(function (nm) {
