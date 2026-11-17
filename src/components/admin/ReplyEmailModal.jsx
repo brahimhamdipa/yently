@@ -1,4 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+
+import { supabase } from '../../lib/supabaseClient'
 
 // Shared reply-email modal (Admin menu 5 → All Requests and All
 // Orders). Nothing is ever sent from this page: the modal shows an
@@ -15,6 +17,13 @@ import { useState } from 'react'
 // doneHint is an optional extra sentence in the footer (All
 // Requests passes its "mark done" reminder; All Orders passes
 // nothing).
+//
+// The "Your page is ready" template also carries a "Manage my
+// access" magic link (https://yently.com/pass-recovery?t=<token>),
+// one per customer email, valid 30 days. The token is issued by the
+// owner-only ensure_access_token RPC when the Ready template is
+// open; a failure leaves the draft without the link, and the
+// customer can still recover with an email code instead.
 
 const SITE = 'https://yently.com'
 
@@ -142,7 +151,7 @@ Any questions, just reply to this email.
 
 TEMPLATES.ready = {
   label: 'Your page is ready — login details',
-  build: (row) => {
+  build: (row, magicLink) => {
     const service = serviceName(row)
     return {
       subject: service ? `Your ${service} page is ready — Yently` : 'Your Yently page is ready',
@@ -157,6 +166,8 @@ Website link: [PASTE THE LINK HERE]
 Username: [PASTE THE USERNAME HERE]
 Password: [PASTE THE PASSWORD HERE]
 Employee password: [PASTE THE EMPLOYEE PASSWORD HERE — delete this line if the service has none]
+${magicLink ? `
+Manage your access (see or change your logins any time, without a code): ${magicLink}` : ''}
 
 How to start: open the link above and log in with the username and password.
 
@@ -260,10 +271,29 @@ export default function ReplyEmailModal({ row, defaultTemplate, doneHint, onClos
   const [subject, setSubject] = useState(initial.subject)
   const [body, setBody] = useState(initial.body)
   const [copied, setCopied] = useState(false)
+  // The "Manage my access" magic link for the Ready template: one
+  // per customer email, valid 30 days (ensure_access_token RPC,
+  // owner-only). Fetched once when the Ready template is open and
+  // the row has an email; the draft is rebuilt with the link once it
+  // arrives — but only if the owner has not edited the draft by
+  // hand in the meantime (a hand-edited draft is left alone).
+  const [magicLink, setMagicLink] = useState('')
+  const [magicState, setMagicState] = useState('') // '' | 'loading' | 'ready' | 'failed'
+  useEffect(() => {
+    if (template !== 'ready' || !row.email || magicState !== '') return
+    setMagicState('loading')
+    supabase.rpc('ensure_access_token', { p_email: row.email }).then(({ data, error }) => {
+      if (error || !data || !data.ok || !data.token) { setMagicState('failed'); return }
+      const link = `${SITE}/pass-recovery?t=${data.token}`
+      setMagicLink(link)
+      setMagicState('ready')
+      setBody(prev => (prev === TEMPLATES.ready.build(row).body ? TEMPLATES.ready.build(row, link).body : prev))
+    }).catch(() => { setMagicState('failed') })
+  }, [template, row.email])
 
   const switchTemplate = (key) => {
     setTemplate(key)
-    const draft = (TEMPLATES[key] || TEMPLATES.generic).build(row)
+    const draft = (TEMPLATES[key] || TEMPLATES.generic).build(row, key === 'ready' ? magicLink : undefined)
     setSubject(draft.subject)
     setBody(draft.body)
     setCopied(false)
@@ -303,6 +333,8 @@ export default function ReplyEmailModal({ row, defaultTemplate, doneHint, onClos
             </select>
           </label>
           <p className="hint">Switching templates replaces the draft below with that template&apos;s wording. Edit anything before sending.</p>
+          {template === 'ready' && magicState === 'loading' && <p className="hint">Generating the customer’s “Manage my access” link…</p>}
+          {template === 'ready' && magicState === 'failed' && <p className="hint">The “Manage my access” link could not be generated — the email still works; the customer can recover with a code instead.</p>}
           <label>Subject
             <input value={subject} onChange={e => setSubject(e.target.value)} />
           </label>

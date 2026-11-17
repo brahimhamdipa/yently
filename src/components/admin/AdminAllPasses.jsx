@@ -86,6 +86,33 @@ const SHOP_TABLES = ['diner_restaurants', 'barbershop_shops', 'pos_stores', 'dea
 // fetch in load().
 const KIDS_SHOP_TABLES = ['kids_math_shops', 'kids_english_shops', 'kids_arabic_shops', 'kids_french_shops', 'kids_spanish_shops', 'kids_science_shops', 'kids_geography_shops', 'kids_coding_shops', 'kids_reading_shops']
 
+// Shop table -> the system key the recovery mapping uses
+// (shop_owner_emails.owner_type, same keys as the Live Chat and
+// Direct Upload switches: 'diner', 'kids-arabic', ...).
+const SHOP_OWNER_TYPE = {
+  diner_restaurants: 'diner',
+  barbershop_shops: 'barbers',
+  pos_stores: 'pos',
+  dealer_shops: 'dealer',
+  employee_shops: 'employee',
+  bodyshop_shops: 'bodyshop',
+  houses_shops: 'houses',
+  doctor_shops: 'doctor',
+  holiday_shops: 'holiday',
+  rentals_shops: 'rentals',
+  laundry_shops: 'laundry',
+  gym_shops: 'gym',
+  kids_math_shops: 'kids-math',
+  kids_english_shops: 'kids-english',
+  kids_arabic_shops: 'kids-arabic',
+  kids_french_shops: 'kids-french',
+  kids_spanish_shops: 'kids-spanish',
+  kids_science_shops: 'kids-science',
+  kids_geography_shops: 'kids-geography',
+  kids_coding_shops: 'kids-coding',
+  kids_reading_shops: 'kids-reading',
+}
+
 // Approve RPCs, copied exactly from AdminStoreManage: diner takes
 // p_restaurant_id, POS takes p_store_id, the other four — and all
 // nine Kids subjects — take p_shop_id.
@@ -172,7 +199,7 @@ const blankCreate = (system) => {
   if (system === 'barber_intake_forms') return { f: '', u: '', p: '', note: '' }
   if (system === 'upload_forms') return { f: '', u: '', p: '', folder: '', note: '' }
   if (system === 'folder_passes') return { folder: '', username: '', password: '', note: '' }
-  return { slug: '', name: '', u: '', p: '', epass: '', note: '' }
+  return { slug: '', name: '', u: '', p: '', epass: '', note: '', ownerEmail: '' }
 }
 
 // The fresh live_data AdminStoreManage sets when a shop is created.
@@ -205,7 +232,7 @@ export default function AdminAllPasses() {
 
   // Edit state: which row is being edited, and its draft values.
   const [editingKey, setEditingKey] = useState(null)
-  const [edit, setEdit] = useState({ user: '', pass: '', epass: '', customer: '', note: '' })
+  const [edit, setEdit] = useState({ user: '', pass: '', epass: '', customer: '', note: '', ownerEmail: '' })
   const [editError, setEditError] = useState('')
   const [savingEdit, setSavingEdit] = useState(false)
 
@@ -260,7 +287,7 @@ export default function AdminAllPasses() {
       if (error) { failedGroups.push(key); return [] }
       return data || []
     }
-    const [providers, formRows, employees, passRows, intakeRows, dinerRows, shopRows, uploadRows, folderRows, posRows, dealerRows, employeeRows, bodyshopRows, housesRows, doctorRows, holidayRows, rentalsRows, laundryRows, gymRows, kidsMathRows, kidsEnglishRows, kidsArabicRows, kidsFrenchRows, kidsSpanishRows, kidsScienceRows, kidsGeographyRows, kidsCodingRows, kidsReadingRows, cleanLinkRows] = await Promise.all([
+    const [providers, formRows, employees, passRows, intakeRows, dinerRows, shopRows, uploadRows, folderRows, posRows, dealerRows, employeeRows, bodyshopRows, housesRows, doctorRows, holidayRows, rentalsRows, laundryRows, gymRows, kidsMathRows, kidsEnglishRows, kidsArabicRows, kidsFrenchRows, kidsSpanishRows, kidsScienceRows, kidsGeographyRows, kidsCodingRows, kidsReadingRows, cleanLinkRows, ownerEmailRows] = await Promise.all([
       grab('stores', supabase.from('store_providers').select('id, name')),
       grab('stores', supabase.from('providersForm').select('id, provider_id, f, u, p, comment').order('f')),
       grab('chat', supabase.from('employees').select('id, firstName, lastName')),
@@ -290,6 +317,7 @@ export default function AdminAllPasses() {
       grab('kids', supabase.from('kids_coding_shops').select('id, slug, name, u, p, epass, note, draft_status').order('name')),
       grab('kids', supabase.from('kids_reading_shops').select('id, slug, name, u, p, epass, note, draft_status').order('name')),
       grab('cleanlinks', supabase.from('clean_links').select('id, slug, system, shop_slug').order('slug')),
+      grab('owneremails', supabase.from('shop_owner_emails').select('owner_type, owner_key, owner_email')),
     ])
     // Paid extra kids, fetched apart from the pass rows: if a school
     // table has not gained paid_extra_kids yet, that fetch fails and
@@ -307,6 +335,14 @@ export default function AdminAllPasses() {
         kidsInfo[table + ':' + r.id] = { students, paidExtra: Number(r.paid_extra_kids) || 0 }
       }
     }
+    // Owner emails for the shops (Pass Recovery linkage): which
+    // customer email each shop belongs to. A missing table or no
+    // rows just means nothing is linked yet — the page works
+    // without it, and the row shows "not linked".
+    const ownerEmailByKey = {}
+    for (const r of ownerEmailRows || []) {
+      if (r.owner_type && r.owner_key) ownerEmailByKey[r.owner_type + '|' + r.owner_key] = r.owner_email || ''
+    }
     setStoreList(providers)
     setEmployeeList(employees)
     setTakenProviderIds(formRows.map(r => r.provider_id))
@@ -321,6 +357,9 @@ export default function AdminAllPasses() {
       link: linkPrefix + r.slug, linkText: 'yently.com' + linkPrefix + r.slug,
       user: r.u, pass: r.p, epass: r.epass || '', passExtra: r.epass ? (group === 'kids' ? 'Teacher: ' + r.epass : 'Team: ' + r.epass) : '',
       customer: r.name || '—', note: r.note || '', draftStatus: r.draft_status || 'editing',
+      // Pass Recovery linkage: the system key + slug the mapping
+      // uses, and the owner's email ('' when not linked yet).
+      ownerType: SHOP_OWNER_TYPE[table] || '', ownerKey: r.slug || '', ownerEmail: ownerEmailByKey[(SHOP_OWNER_TYPE[table] || '') + '|' + (r.slug || '')] || '',
       // Kids only: { students, paidExtra } from the extras fetch
       // above; null on every other group, and null for a Kids school
       // whose table has not gained paid_extra_kids yet.
@@ -399,7 +438,7 @@ export default function AdminAllPasses() {
 
   const startEdit = (r) => {
     setEditingKey(r.key)
-    setEdit({ user: r.user || '', pass: r.pass || '', epass: r.epass || '', customer: r.customer === '—' ? '' : (r.customer || ''), note: r.note || '' })
+    setEdit({ user: r.user || '', pass: r.pass || '', epass: r.epass || '', customer: r.customer === '—' ? '' : (r.customer || ''), note: r.note || '', ownerEmail: r.ownerEmail || '' })
     setEditError('')
   }
 
@@ -430,7 +469,15 @@ export default function AdminAllPasses() {
     try {
       const { error } = await supabase.from(r.table).update(fields).eq('id', r.id)
       if (error) { setEditError('Cannot save: ' + error.message); return }
-      setStatus('✓ Saved.')
+      // The owner email lives in shop_owner_emails, not on the shop
+      // row — saved through its own RPC (owner-only). A failure
+      // here leaves the pass saved and says so.
+      let emailNote = ''
+      if (SHOP_TABLES.includes(r.table)) {
+        const { error: emailErr } = await supabase.rpc('set_shop_owner_email', { p_owner_type: r.ownerType, p_owner_key: r.ownerKey, p_email: edit.ownerEmail || '' })
+        if (emailErr) emailNote = ` The owner email was not saved (${emailErr.message}).`
+      }
+      setStatus('✓ Saved.' + emailNote)
       setEditingKey(null)
       setEditError('')
       await load(true)
@@ -479,6 +526,11 @@ export default function AdminAllPasses() {
       }
       const { error } = await supabase.from(r.table).delete().eq('id', r.id)
       if (error) { setDeleteError('Cannot delete: ' + error.message); return }
+      // A deleted shop must not leave its owner email behind for a
+      // future shop that reuses the same slug.
+      if (SHOP_TABLES.includes(r.table)) {
+        await supabase.rpc('set_shop_owner_email', { p_owner_type: r.ownerType, p_owner_key: r.ownerKey, p_email: '' }).catch(() => {})
+      }
       setStatus(`✓ Deleted "${deleteLabel(r)}".`)
       setConfirmDelete(null)
       if (editingKey === r.key) setEditingKey(null)
@@ -587,6 +639,18 @@ export default function AdminAllPasses() {
         if (live) fields.live_data = live
         const { error } = await supabase.from(system).insert(fields)
         if (error) { setCreateError('Cannot add: ' + error.message); return }
+        // Owner email for the new shop (Pass Recovery linkage),
+        // through its own RPC — a failure leaves the pass added
+        // and says so in the status line.
+        if (c.ownerEmail && c.ownerEmail.trim()) {
+          const { error: emailErr } = await supabase.rpc('set_shop_owner_email', { p_owner_type: SHOP_OWNER_TYPE[system], p_owner_key: slug, p_email: c.ownerEmail.trim() })
+          if (emailErr) {
+            setStatus(`✓ Pass added, but the owner email was not saved (${emailErr.message}) — set it from the row below.`)
+            setCreate(blankCreate(system))
+            await load(true)
+            return
+          }
+        }
       } else if (system === 'providersForm') {
         if (!c.provider_id) { setCreateError('Pick a store first.'); return }
         const f = slugify(c.f)
@@ -703,7 +767,7 @@ export default function AdminAllPasses() {
   if (loading) return <div className="hero-card"><p>Loading all passes...</p></div>
 
   const q = search.trim().toLowerCase()
-  const shown = (rows || []).filter(r => !q || [r.linkText, r.user, r.pass, r.customer, r.note, r.kind].join(' ').toLowerCase().includes(q))
+  const shown = (rows || []).filter(r => !q || [r.linkText, r.user, r.pass, r.customer, r.note, r.kind, r.ownerEmail].join(' ').toLowerCase().includes(q))
   const total = (rows || []).length
   const isShop = (r) => SHOP_TABLES.includes(r.table)
 
@@ -714,7 +778,7 @@ export default function AdminAllPasses() {
 .allpasses-table td { padding: 4px 8px; vertical-align: top; }`}</style>
       <div className="hero-card">
         <h2>🔑 All Passes {total > 0 && `(${total})`}</h2>
-        <p>Every login you have handed out — the link, the username, the password, who uses it, and your note. Grouped by area — tap the ▾ beside a group name to collapse just that group, or Collapse all at the top; use the search to find one fast. Add, edit, delete and approve passes right here — no need to open their own tables. Live clean links are listed under Clean Links below (view and delete only — add one from Admin → Clean Link Orders). For Yently Kids schools, the Kids column shows the live student count and the kid limit (3 included + paid extras) — change the number and Save to set the limit.</p>
+        <p>Every login you have handed out — the link, the username, the password, who uses it, and your note. Grouped by area — tap the ▾ beside a group name to collapse just that group, or Collapse all at the top; use the search to find one fast. Add, edit, delete and approve passes right here — no need to open their own tables. The owner email on a shop row is the email that can recover those logins on the Pass Recovery page — set it when you add a pass, or edit the row (blank clears it). Live clean links are listed under Clean Links below (view and delete only — add one from Admin → Clean Link Orders). For Yently Kids schools, the Kids column shows the live student count and the kid limit (3 included + paid extras) — change the number and Save to set the limit.</p>
       </div>
       <div className="form-card">
         <input placeholder="Search link, username, customer, note..." value={search} onChange={e => setSearch(e.target.value)} />
@@ -744,6 +808,7 @@ export default function AdminAllPasses() {
             <input required placeholder="Password" value={create.p || ''} onChange={e => setCreate({ ...create, p: e.target.value })} />
             <input placeholder={kidsOf(createSystem) ? 'Teacher password (optional — one shared password for the Teacher area)' : 'Employee password (optional — one shared team password)'} value={create.epass || ''} onChange={e => setCreate({ ...create, epass: e.target.value })} />
             <input placeholder="Note for yourself (optional — not shown to the shop)" value={create.note || ''} onChange={e => setCreate({ ...create, note: e.target.value })} />
+            <input type="email" placeholder="Owner email (optional — the email that can recover these logins)" value={create.ownerEmail || ''} onChange={e => setCreate({ ...create, ownerEmail: e.target.value })} />
           </>)}
           {createSystem === 'providersForm' && (<>
             <select required value={create.provider_id || ''} onChange={e => setCreate({ ...create, provider_id: e.target.value })}>
@@ -852,7 +917,16 @@ export default function AdminAllPasses() {
                               <>{r.pass}{r.passExtra && <><br /><span className="hint">{r.passExtra}</span></>}</>
                             )}
                           </td>
-                          <td>{editing && isShop(r) ? <input style={{ width: '100%', padding: '6px 8px', fontSize: 13.5 }} value={edit.customer} onChange={e => setEdit({ ...edit, customer: e.target.value })} /> : r.customer}</td>
+                          <td>
+                            {editing && isShop(r) ? <input style={{ width: '100%', padding: '6px 8px', fontSize: 13.5 }} value={edit.customer} onChange={e => setEdit({ ...edit, customer: e.target.value })} /> : r.customer}
+                            {isShop(r) && (
+                              editing ? (
+                                <><br /><input type="email" style={{ width: '100%', padding: '6px 8px', fontSize: 13.5, marginTop: 4 }} placeholder="Owner email (for pass recovery)" value={edit.ownerEmail} onChange={e => setEdit({ ...edit, ownerEmail: e.target.value })} /></>
+                              ) : (
+                                <><br /><span className="hint">Owner email: {r.ownerEmail || '— not linked —'}</span></>
+                              )
+                            )}
+                          </td>
                           {g.key === 'kids' && (
                             <td>
                               {r.kids ? (
