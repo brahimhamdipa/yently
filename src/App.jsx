@@ -27,7 +27,7 @@ import ProviderFormPage from './components/ProviderFormPage'
 import ChatWidget from './components/ChatWidget'
 import AdminPage from './components/AdminPage'
 import { CartProvider } from './lib/CartContext'
-import { BusinessCartProvider, BUSINESS_PLANS, useBusinessCart, isKidsExtraPlanKey } from './lib/BusinessCartContext'
+import { BusinessCartProvider, BUSINESS_PLANS, useBusinessCart, isKidsExtraPlanKey, CLEAN_PLAN_KEY, DIRECT_PLAN_KEY, ADDON_SYSTEMS } from './lib/BusinessCartContext'
 import BarbersPage from './components/BarbersPage'
 import SimpleBarbershopPage from './components/SimpleBarbershopPage'
 import RestaurantsPage from './components/RestaurantsPage'
@@ -51,6 +51,7 @@ import ShopSellerFormPage from './components/ShopSellerFormPage'
 import ShopSellerSoonPage from './components/ShopSellerSoonPage'
 import LiveChatDemo from './components/LiveChatDemo'
 import TrackingPage from './components/TrackingPage'
+import PassRecoveryPage from './components/PassRecoveryPage'
 import BusinessCartPage from './components/BusinessCartPage'
 import BusinessSystemsPage from './components/BusinessSystemsPage'
 import KidsHubPage from './components/KidsHubPage'
@@ -100,6 +101,16 @@ const DEEP_LINK_SYSTEMS = new Set([
 // which school the places are for. A new extra line starts at 1
 // place; one already in the cart keeps the larger count and takes
 // the new slug (see addPlan in BusinessCartContext).
+// A Clean Link add-on from a shop's Setup page (?add=clean:website
+// &shop=<system-key>&slug=<SLUG>&addon=1) carries the system + slug
+// on the cart line itself (isAddon): it is an add-on to the payment
+// the customer already has — free for the rest of this month, $2/month
+// from the next payment, excluded from the bundle tiers, no tracking
+// code (see businessData.js). A Direct Upload add-on
+// (?add=direct:website&shop=<system-key>&slug=<SLUG>&addon=1)
+// works the same way at $5/month. ?shop= is a fresh param on
+// purpose: ?system= already opens a tab. A malformed add-on link
+// falls back to a plain line, like the ad page's Add to cart.
 function DeepLinkCartAdder({ go }) {
   const { addPlan } = useBusinessCart()
   const done = useRef(false)
@@ -110,6 +121,18 @@ function DeepLinkCartAdder({ go }) {
     if (!key || !BUSINESS_PLANS[key]) return
     done.current = true
     if (isKidsExtraPlanKey(key)) addPlan(key, 1, params.get('slug') || '')
+    else if (key === CLEAN_PLAN_KEY && params.get('addon') === '1') {
+      const shop = params.get('shop') || ''
+      const slug = params.get('slug') || ''
+      if (ADDON_SYSTEMS.has(shop) && slug) addPlan(key, 0, '', { isAddon: true, cleanSystem: shop, cleanShopSlug: slug, cleanSlug: slug })
+      else addPlan(key)
+    }
+    else if (key === DIRECT_PLAN_KEY && params.get('addon') === '1') {
+      const shop = params.get('shop') || ''
+      const slug = params.get('slug') || ''
+      if (ADDON_SYSTEMS.has(shop) && slug) addPlan(key, 0, '', { isAddon: true, directSystem: shop, directShopSlug: slug })
+      else addPlan(key)
+    }
     else addPlan(key)
     window.history.replaceState(null, '', window.location.pathname)
     go('business-cart')
@@ -128,6 +151,7 @@ export default function App() {
     if (path === '/demo-live-chat' || path === '/demo-chat') return 'demo-live-chat'
     if (path === '/direct-upload') return 'direct-upload'
     if (path === '/extra-students') return 'extra-students'
+    if (path === '/pass-recovery') return 'pass-recovery'
     if (path !== '' && path !== '/') return 'provider-form'
     const system = new URLSearchParams(window.location.search).get('system')
     if (system && DEEP_LINK_SYSTEMS.has(system)) return system
@@ -135,7 +159,7 @@ export default function App() {
   })
   const [formSlug, setFormSlug] = useState(() => {
     const path = window.location.pathname.replace(/\/$/, '')
-    if (path !== '' && path !== '/' && path !== '/admin' && path !== '/track' && path !== '/demo-live-chat' && path !== '/demo-chat' && path !== '/direct-upload' && path !== '/extra-students') return decodeURIComponent(path.slice(1))
+    if (path !== '' && path !== '/' && path !== '/admin' && path !== '/track' && path !== '/demo-live-chat' && path !== '/demo-chat' && path !== '/direct-upload' && path !== '/extra-students' && path !== '/pass-recovery') return decodeURIComponent(path.slice(1))
     return null
   })
   const [providerId, setProviderId] = useState(null)
@@ -146,6 +170,7 @@ export default function App() {
   // to wherever the customer came from (not always the store).
   const [prev, setPrev] = useState(null)
   const [moreOpen, setMoreOpen] = useState(false)
+  const [helpOpen, setHelpOpen] = useState(false)
   const [formAuthed, setFormAuthed] = useState(false)
   const moreRef = useRef(null)
 
@@ -166,27 +191,29 @@ export default function App() {
     if (t === 'category') setCategorySlug(param)
     if (t === 'item-detail') setItemId(param)
     if (t === 'provider-form') setFormSlug(param)
-    setTab(t); setMoreOpen(false)
+    setTab(t); setMoreOpen(false); setHelpOpen(false)
     if (t === 'store-detail' && param) window.location.hash = 'store/' + param
     // Keep the address bar honest for the hidden routes: entering
     // admin shows /admin, entering a provider form shows /<name>,
     // entering the live-chat demo shows /demo-live-chat, entering
-    // order tracking shows /track, and leaving any of them returns
-    // to /.
+    // order tracking shows /track, entering pass recovery shows
+    // /pass-recovery, and leaving any of them returns to /.
     const path = window.location.pathname.replace(/\/$/, '')
     const onAdmin = path === '/admin'
     const onTrack = path === '/track'
     const onDemo = path === '/demo-live-chat' || path === '/demo-chat'
     const onDirect = path === '/direct-upload'
     const onExtra = path === '/extra-students'
-    const onForm = path !== '' && path !== '/' && !onAdmin && !onTrack && !onDemo && !onDirect && !onExtra
+    const onPass = path === '/pass-recovery'
+    const onForm = path !== '' && path !== '/' && !onAdmin && !onTrack && !onDemo && !onDirect && !onExtra && !onPass
     if (t === 'admin' && !onAdmin) window.history.replaceState(null, '', '/admin')
     else if (t === 'track' && !onTrack) window.history.replaceState(null, '', '/track')
     else if (t === 'demo-live-chat' && !onDemo) window.history.replaceState(null, '', '/demo-live-chat')
     else if (t === 'direct-upload' && !onDirect) window.history.replaceState(null, '', '/direct-upload')
     else if (t === 'extra-students' && !onExtra) window.history.replaceState(null, '', '/extra-students')
+    else if (t === 'pass-recovery' && !onPass) window.history.replaceState(null, '', '/pass-recovery')
     else if (t === 'provider-form' && param && !onForm) window.history.replaceState(null, '', '/' + param)
-    else if (t !== 'admin' && t !== 'track' && t !== 'provider-form' && t !== 'demo-live-chat' && t !== 'direct-upload' && t !== 'extra-students' && (onAdmin || onTrack || onForm || onDemo || onDirect || onExtra)) window.history.replaceState(null, '', '/')
+    else if (t !== 'admin' && t !== 'track' && t !== 'provider-form' && t !== 'demo-live-chat' && t !== 'direct-upload' && t !== 'extra-students' && t !== 'pass-recovery' && (onAdmin || onTrack || onForm || onDemo || onDirect || onExtra || onPass)) window.history.replaceState(null, '', '/')
   }
   // Back to the page the customer actually came from (or nowhere on a
   // fresh load, in which case pages hide their back link).
@@ -209,9 +236,10 @@ export default function App() {
   const inCars = ['cars', 'sell', 'contact', 'car-seller', 'car-seller-soon'].includes(tab)
   const inKids = KIDS_TABS.includes(tab)
   const inFlights = ['flights', 'flights-hub', 'reserve', 'flight-pay', 'flight-contact'].includes(tab)
-  // "More" holds Cars + Services + Guides + Track Order + About Us
-  // now that Yently Kids is a top-level item.
-  const inMore = ['services', 'services-home', 'services-contact', 'about', 'guides', 'track', 'clothes'].includes(tab) || inCars
+  // "More" holds Cars + Services + Help Center (Guides, Pass
+  // Recovery) + Track Order + About Us now that Yently Kids is a
+  // top-level item.
+  const inMore = ['services', 'services-home', 'services-contact', 'about', 'guides', 'pass-recovery', 'track', 'clothes'].includes(tab) || inCars
 
   return (
     <div className="app">
@@ -233,7 +261,13 @@ export default function App() {
                 <span className="dropdown-menu">
                   <a onClick={() => go('cars')}>Cars</a>
                   <a onClick={() => go('services')}>Services</a>
-                  <a onClick={() => go('guides')}>Guides</a>
+                  <a onClick={() => setHelpOpen(o => !o)}>Help Center {helpOpen ? '▾' : '▸'}</a>
+                  {helpOpen && (
+                    <>
+                      <a style={{ paddingLeft: 28 }} onClick={() => go('guides')}>Guides</a>
+                      <a style={{ paddingLeft: 28 }} onClick={() => go('pass-recovery')}>Pass Recovery</a>
+                    </>
+                  )}
                   <a onClick={() => go('track')}>Track Order</a>
                   <a onClick={() => go('about')}>About Us</a>
                 </span>
@@ -347,6 +381,7 @@ export default function App() {
         {tab === 'guides' && <GuidesPage go={go} />}
         {tab === 'admin' && <AdminPage />}
         {tab === 'track' && <TrackingPage go={go} />}
+        {tab === 'pass-recovery' && <PassRecoveryPage go={go} />}
         {tab === 'provider-form' && <ProviderFormPage slug={formSlug} goBack={goBack} onAuthedChange={setFormAuthed} go={go} />}
       </main>
       <footer className="footer">
