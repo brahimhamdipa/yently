@@ -801,7 +801,9 @@
       '<div class="row"><button id="d-save">Save draft</button>' +
       '<button id="d-upload" class="secondary">' + (directUploadOn ? 'Upload — goes live right away' : 'Upload for approval') + '</button></div>' +
       '<p class="info" id="d-status">Draft status: ' + esc(draftStatus) + (draftStatus === 'pending' ? ' — waiting for Yently to approve it.' : draftStatus === 'approved' ? ' — approved, live now.' : ' — not sent yet.') + '</p>' +
-      '<p class="error" id="d-err" hidden></p></div>' +
+      '<p class="error" id="d-err" hidden></p>' +
+      '<p class="info" id="setup-clean-link">Want a short link for this page? <a href="/?add=clean:website&shop=rentals&slug=' + encodeURIComponent(SLUG) + '&addon=1">Add a Clean Link</a> — $2/month, free for the rest of this month.</p></div>' +
+      '<p class="info" id="setup-direct-upload">Want your uploads to go live right away? <a href="/?add=direct:website&shop=rentals&slug=' + encodeURIComponent(SLUG) + '&addon=1">Add Direct Upload</a> — $5/month, free for the rest of this month.</p>' +
       '<div class="card"><h3>Cars</h3>' +
       '<p class="info">Cars go live right away — no approval needed.</p>' +
       '<div id="cars-list"></div>' +
@@ -838,6 +840,15 @@
       '<div class="row"><button type="button" id="setup-chats-toggle" class="secondary">Open chats</button></div>' +
       '<div id="setup-chats"></div></div>';
     el.innerHTML = h;
+    /* Clean Link add-on: hide the line when the shop already has a
+       clean link (public RPC; shown by default until the check
+       answers, so a slow or missing RPC never hides the offer). */
+    rpc('clean_link_exists', { p_system: 'rentals', p_slug: SLUG }).then(function (has) {
+      if (has === true) { var cleanEl = $('setup-clean-link'); if (cleanEl) cleanEl.style.display = 'none'; }
+    }).catch(function () {});
+    /* Direct Upload add-on: hide the line when the switch is
+       already ON (directUploadOn, fetched in openSetup). */
+    if (directUploadOn) { var duEl = $('setup-direct-upload'); if (duEl) duEl.style.display = 'none'; }
     wireShopChatInbox();
     renderCarsList();
     renderDriversList();
