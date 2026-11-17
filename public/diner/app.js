@@ -939,11 +939,22 @@
       '<div class="row" style="margin-top:16px"><button id="setup-save" class="secondary">Save draft</button>' +
       '<button id="setup-upload">' + (directUploadOn ? 'Upload — goes live right away' : 'Upload for approval') + '</button></div>' +
       '<div id="setup-out" style="margin-top:12px"></div>' +
+      '<p class="info" id="setup-clean-link">Want a short link for this page? <a href="/?add=clean:website&shop=diner&slug=' + encodeURIComponent(SLUG) + '&addon=1">Add a Clean Link</a> — $2/month, free for the rest of this month.</p>' +
+      '<p class="info" id="setup-direct-upload">Want your uploads to go live right away? <a href="/?add=direct:website&shop=diner&slug=' + encodeURIComponent(SLUG) + '&addon=1">Add Direct Upload</a> — $5/month, free for the rest of this month.</p>' +
       '<div class="card"><h3>Chats</h3>' +
       '<p class="info">Messages from visitors on this page. Visitors only see the chat bubble once Yently switches live chat on for this shop.</p>' +
       '<div class="row"><button type="button" id="setup-chats-toggle" class="secondary">Open chats</button></div>' +
       '<div id="setup-chats"></div></div>';
     el.innerHTML = html;
+    /* Clean Link add-on: hide the line when the shop already has a
+       clean link (public RPC; shown by default until the check
+       answers, so a slow or missing RPC never hides the offer). */
+    rpc('clean_link_exists', { p_system: 'diner', p_slug: SLUG }).then(function (has) {
+      if (has === true) { var cleanEl = $('setup-clean-link'); if (cleanEl) cleanEl.style.display = 'none'; }
+    }).catch(function () {});
+    /* Direct Upload add-on: hide the line when the switch is
+       already ON (directUploadOn, fetched in openSetup). */
+    if (directUploadOn) { var duEl = $('setup-direct-upload'); if (duEl) duEl.style.display = 'none'; }
     wireShopChatInbox();
     var menuEl = $('setup-menu');
     function menuRow(item, i) {
