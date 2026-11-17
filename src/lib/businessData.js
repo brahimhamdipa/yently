@@ -82,6 +82,34 @@ import {
 // kids_coding_order, kids_reading_order),
 // because each plan is a different product with a different
 // follow-up. No payment is taken here.
+//
+// System keys (the 21 folder apps) -> the name the owner sees in an
+// add-on order's subject and note. Used only for Clean Link and
+// Direct Upload add-on lines, which carry their system on the cart
+// line itself.
+const SYSTEM_LABELS = {
+  diner: 'Restaurant',
+  barbers: 'Barbershop',
+  pos: 'POS',
+  dealer: 'Dealer',
+  employee: 'Employee',
+  bodyshop: 'Bodyshop',
+  houses: 'Houses',
+  doctor: 'Doctor',
+  holiday: 'Holiday',
+  rentals: 'Car Rental',
+  laundry: 'Laundry',
+  gym: 'Gym',
+  'kids-math': 'Kids Math',
+  'kids-english': 'Kids English',
+  'kids-arabic': 'Kids Arabic',
+  'kids-french': 'Kids French',
+  'kids-spanish': 'Kids Spanish',
+  'kids-science': 'Kids Science',
+  'kids-geography': 'Kids Geography',
+  'kids-coding': 'Kids Coding',
+  'kids-reading': 'Kids Reading',
+}
 const INSERT_BY_KEY = {
   [RESTAURANT_PLAN_KEY]: insertRestaurantOrder,
   [POS_PLAN_KEY]: insertPosOrder,
@@ -185,7 +213,43 @@ export async function placeBusinessOrder({ name, email, phone, note, items }) {
         ? `Extra students for school "${schoolSlug}" — free for the rest of this month; new monthly amount $${newMonthlyTotal}/month starts with the next payment.`
         : `Extra students — free for the rest of this month; new monthly amount $${newMonthlyTotal}/month starts with the next payment.`)
       : null
-    const itemNote = extraNoteLine ? (note ? `${note}\n${extraNoteLine}` : extraNoteLine) : note
+    // A Clean Link add-on line (isAddon, from a shop's Setup page):
+    // the line is an add-on to the payment the customer already has —
+    // free for the rest of this month, $2/month from the next payment
+    // — so its order row carries the system + slug, its note says so,
+    // and its owner email gets its own subject (see cleanLinkData.js).
+    // The ad-page Clean Link flow is untouched: a plain (non-add-on)
+    // line still takes system/slug/clean_slug from the localStorage
+    // meta, or leaves them null.
+    const isCleanAddon = item.key === CLEAN_PLAN_KEY && item.isAddon === true
+    const cleanSystem = isCleanAddon ? String(item.cleanSystem || '') : ''
+    const cleanShopSlug = isCleanAddon ? String(item.cleanShopSlug || '') : ''
+    const cleanSlug = isCleanAddon ? String(item.cleanSlug || item.cleanShopSlug || '') : ''
+    const cleanLabel = isCleanAddon ? (SYSTEM_LABELS[cleanSystem] || cleanSystem || 'Clean Link') : ''
+    const cleanNoteLine = isCleanAddon
+      ? `Clean Link for ${cleanLabel} "${cleanShopSlug}" — free for the rest of this month; new monthly amount $2/month starts with the next payment.`
+      : null
+    // A Direct Upload add-on line (isAddon, from a shop's Setup
+    // page): the line is an add-on to the payment the customer
+    // already has — free for the rest of this month, $5/month from
+    // the next payment — so its note names the system + slug and its
+    // owner email gets its own subject (see directUploadData.js).
+    // The system + slug go in the NOTE, not on the order row:
+    // direct_upload_order has no system / shop_slug columns (its
+    // DDL was never in the repo — see AdminAllOrders.jsx), so
+    // writing them would fail the insert. They also travel in
+    // emailExtras, so the owner email shows them. The ad-page
+    // Direct Upload flow is untouched: a plain (non-add-on) line
+    // inserts exactly as before.
+    const isDirectAddon = item.key === DIRECT_PLAN_KEY && item.isAddon === true
+    const directSystem = isDirectAddon ? String(item.directSystem || '') : ''
+    const directShopSlug = isDirectAddon ? String(item.directShopSlug || '') : ''
+    const directLabel = isDirectAddon ? (SYSTEM_LABELS[directSystem] || directSystem || 'Direct Upload') : ''
+    const directNoteLine = isDirectAddon
+      ? `Direct Upload for ${directLabel} "${directShopSlug}" — free for the rest of this month; new monthly amount $5/month starts with the next payment.`
+      : null
+    const noteLine = extraNoteLine || cleanNoteLine || directNoteLine
+    const itemNote = noteLine ? (note ? `${note}\n${noteLine}` : noteLine) : note
     await insert({
       customer_name: name,
       customer_email: email,
@@ -194,6 +258,7 @@ export async function placeBusinessOrder({ name, email, phone, note, items }) {
       price: item.price,
       note: itemNote,
       ...((isKids || isExtra) ? { extra_kids: extraKids } : {}),
+      ...(isCleanAddon ? { system: cleanSystem, shop_slug: cleanShopSlug, clean_slug: cleanSlug } : {}),
     }, {
       plan: item.name,
       price: item.price,
@@ -204,16 +269,32 @@ export async function placeBusinessOrder({ name, email, phone, note, items }) {
         school_slug: schoolSlug,
         new_monthly_total: `New monthly amount: $${newMonthlyTotal}/month — starts with the next payment; free for the rest of this month.`,
       } : {}),
+      ...(isCleanAddon ? {
+        isCleanAddon: true,
+        system: cleanSystem,
+        systemLabel: cleanLabel,
+        shop_slug: cleanShopSlug,
+        clean_slug: cleanSlug,
+        new_monthly_total: 'New monthly amount: $2/month — starts with the next payment; free for the rest of this month.',
+      } : {}),
+      ...(isDirectAddon ? {
+        isDirectAddon: true,
+        system: directSystem,
+        systemLabel: directLabel,
+        shop_slug: directShopSlug,
+        new_monthly_total: 'New monthly amount: $5/month — starts with the next payment; free for the rest of this month.',
+      } : {}),
     })
-    // Tracking row for this plan — EXCEPT Extra Students lines,
-    // which get no tracking code at all (no warning either). The
+    // Tracking row for this plan — EXCEPT Extra Students lines and
+    // Clean Link / Direct Upload add-on lines, which get no tracking
+    // code at all (no warning either). The
     // insert above returns no id (submitAndNotify inserts with no
     // .select()), so the RPC finds the just-placed row server-side
     // (orderId null). createOrderTracking never throws and returns
     // null on failure — the order is already placed at this point
     // and stays placed either way.
     let tracking_code = null
-    if (!isExtra) {
+    if (!isExtra && !isCleanAddon && !isDirectAddon) {
       const orderTable = TABLE_BY_KEY[item.key]
       if (!orderTable) {
         console.warn('No tracking order table for plan key ' + item.key + ' — order placed without tracking')

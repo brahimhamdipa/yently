@@ -33,10 +33,17 @@ export async function insertCleanLinkOrder(data, emailExtras) {
     shop_slug: data.shop_slug || meta.shop_slug || null,
     clean_slug: data.clean_slug || meta.clean_slug || null,
   }
+  // A Clean Link add-on (from a shop's Setup page) gets its own
+  // owner-email subject naming the system, so the owner sees at a
+  // glance which page the link is for. The ad-page flow is
+  // unchanged: no isCleanAddon flag, same subject as before.
+  const subject = emailExtras && emailExtras.isCleanAddon
+    ? `Clean Link — ${emailExtras.systemLabel || 'Clean Link'} — ${data.customer_name}`
+    : `New Clean Link order — ${data.customer_name}`
   const placed = await submitAndNotify({
     table: 'clean_link_order',
     data: row,
-    subject: `New Clean Link order — ${data.customer_name}`,
+    subject,
     emailExtras,
   })
   clearCleanLinkMeta()

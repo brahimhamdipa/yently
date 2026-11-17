@@ -22,7 +22,9 @@ import { createContext, useContext, useEffect, useState } from 'react'
 // inserts the order rows and emails the owner, who then sets each
 // page up. Connecting carts to the bank comes later.
 //
-// The cart is an array of {key, name, price, extraKids, schoolSlug} —
+// The cart is an array of {key, name, price, extraKids, schoolSlug,
+// isAddon, cleanSystem, cleanShopSlug, cleanSlug,
+// directSystem, directShopSlug} —
 // one of each plan max. A website plan is one line, quantity 1:
 // buying it twice is two separate orders, not quantity 2 of one site.
 // extraKids is only ever non-zero on Kids lines (students beyond the
@@ -33,6 +35,20 @@ import { createContext, useContext, useEffect, useState } from 'react'
 // never change how many plans the bundle tiers count. schoolSlug is
 // only ever set on Extra Students lines: the school the places are
 // for (from the ?slug= deep link or the /extra-students page).
+// isAddon is only ever true on a Clean Link or Direct Upload line
+// added from a shop's Setup page (?add=<plan>&shop=<system-key>
+// &slug=<SLUG>&addon=1): it is an add-on to the payment the
+// customer already has — free for the rest of this month, $2/month
+// (Clean Link) or $5/month (Direct Upload) from the next payment —
+// so it never counts toward the bundle tiers and is never
+// discounted, like an Extra Students line. cleanSystem is the system
+// key (diner, kids-arabic, …), cleanShopSlug the shop's slug, and
+// cleanSlug the short link word (the shop's slug by default) — all
+// three travel on a Clean Link line so checkout can write the order
+// row without the localStorage side-channel the ad page uses.
+// A Direct Upload line carries directSystem + directShopSlug
+// instead (no cleanSlug analog — the switch is keyed by
+// system + slug).
 const BusinessCartCtx = createContext(null)
 
 const STORAGE_KEY = 'autofly-business-cart'
@@ -227,6 +243,18 @@ export function isKidsExtraPlanKey(key) {
   return KIDS_EXTRA_PLAN_KEYS.has(key)
 }
 
+// System keys an add-on deep link may name (?shop=): all 21 folder
+// apps. Shared by the Clean Link and Direct Upload add-ons.
+// Anything else falls back to a plain line (see DeepLinkCartAdder
+// in App.jsx).
+export const ADDON_SYSTEMS = new Set([
+  'diner', 'barbers', 'pos', 'dealer', 'employee', 'bodyshop',
+  'houses', 'doctor', 'holiday', 'rentals', 'laundry', 'gym',
+  'kids-math', 'kids-english', 'kids-arabic', 'kids-french',
+  'kids-spanish', 'kids-science', 'kids-geography', 'kids-coding',
+  'kids-reading',
+])
+
 // Monthly price of one Extra Students line: $1 per extra place.
 // Base price is $0 — the school's $5/month base is a separate line.
 export function kidsExtraLinePrice(extraKids) {
@@ -285,8 +313,11 @@ export const BUSINESS_PLANS = {
 // total, 3 plans = 15%, 4 or more = 20%. Extra Students lines do
 // NOT count toward the tiers and are NOT discounted — they only add
 // places to a school that already pays its $5/month, so discounting
-// them would discount the same school twice. Their $1-per-place
-// amount IS still in the totals the customer sees: listTotal is the
+// them would discount the same school twice. Clean Link and Direct
+// Upload add-on lines (isAddon, from a shop's Setup page) behave
+// the same way: they only add to a payment the customer already
+// has ($2/month Clean Link, $5/month Direct Upload). Their amounts
+// ARE still in the totals the customer sees: listTotal is the
 // billable list plus the extra lines, savings is the discount on the
 // billable list only, and total is billable-after-discount plus the
 // extra lines in full. count is the number of billable (non-extra)
@@ -299,8 +330,8 @@ export const BUSINESS_PLANS = {
 // already inside its line price, so they get the same tier rate.
 export function bundleFor(cart) {
   const items = Array.isArray(cart) ? cart : []
-  const billable = items.filter(i => !isKidsExtraPlanKey(i.key))
-  const extras = items.filter(i => isKidsExtraPlanKey(i.key))
+  const billable = items.filter(i => !isKidsExtraPlanKey(i.key) && !i.isAddon)
+  const extras = items.filter(i => isKidsExtraPlanKey(i.key) || i.isAddon)
   const count = billable.length
   const rate = count >= 4 ? 0.20 : count === 3 ? 0.15 : count === 2 ? 0.10 : 0
   const billableList = Math.round(billable.reduce((s, i) => s + (Number(i.price) || 0), 0) * 100) / 100
@@ -326,6 +357,11 @@ export function BusinessCartProvider({ children }) {
       // Students lines, and the line price is recomputed from it
       // (Kids: base + $1 per extra kid; Extra Students: $1 per place).
       // A stored schoolSlug survives only on Extra Students lines.
+      // A stored Clean Link add-on (isAddon + cleanSystem +
+      // cleanShopSlug + cleanSlug) survives only on a Clean Link line
+      // whose system is one of the 21 folder apps. A stored Direct
+      // Upload add-on (isAddon + directSystem + directShopSlug)
+      // survives the same way on a Direct Upload line.
       const seen = new Set()
       const items = []
       for (const i of raw) {
@@ -334,12 +370,16 @@ export function BusinessCartProvider({ children }) {
         const plan = BUSINESS_PLANS[i.key]
         const isExtra = isKidsExtraPlanKey(plan.key)
         const extraKids = (isKidsPlanKey(plan.key) || isExtra) ? Math.max(0, Number(i.extraKids) || 0) : 0
+        const isCleanAddon = plan.key === CLEAN_PLAN_KEY && i.isAddon === true && typeof i.cleanSystem === 'string' && ADDON_SYSTEMS.has(i.cleanSystem)
+        const isDirectAddon = plan.key === DIRECT_PLAN_KEY && i.isAddon === true && typeof i.directSystem === 'string' && ADDON_SYSTEMS.has(i.directSystem)
         items.push({
           key: plan.key,
           name: plan.name,
           price: isExtra ? kidsExtraLinePrice(extraKids) : extraKids > 0 ? kidsLinePrice(extraKids) : plan.price,
           extraKids,
           ...(isExtra ? { schoolSlug: String(i.schoolSlug || '') } : {}),
+          ...(isCleanAddon ? { isAddon: true, cleanSystem: i.cleanSystem, cleanShopSlug: String(i.cleanShopSlug || ''), cleanSlug: String(i.cleanSlug || i.cleanShopSlug || '') } : {}),
+          ...(isDirectAddon ? { isAddon: true, directSystem: i.directSystem, directShopSlug: String(i.directShopSlug || '') } : {}),
         })
       }
       return items
@@ -355,11 +395,16 @@ export function BusinessCartProvider({ children }) {
   const count = cart.length
 
   // Adding a plan already in the cart is a no-op — one of each max —
-  // EXCEPT Extra Students lines (see below). extraKids only applies
+  // EXCEPT Extra Students lines (see below) and Clean Link / Direct
+  // Upload add-on lines (also below). extraKids only applies
   // to Kids plans: the number of students beyond the first 3, folded
   // into the line price (+$1 each). schoolSlug only applies to Extra
-  // Students lines: the school the places are for.
-  const addPlan = (key, extraKids = 0, schoolSlug = '') => {
+  // Students lines: the school the places are for. opts only applies
+  // to add-on lines: { isAddon, cleanSystem, cleanShopSlug,
+  // cleanSlug } for a Clean Link line, { isAddon, directSystem,
+  // directShopSlug } for a Direct Upload line — both from a shop's
+  // Setup page.
+  const addPlan = (key, extraKids = 0, schoolSlug = '', opts = {}) => {
     const plan = BUSINESS_PLANS[key]
     if (!plan) return
     const slug = String(schoolSlug || '').trim()
@@ -386,6 +431,46 @@ export function BusinessCartProvider({ children }) {
       })
       return
     }
+    if (key === CLEAN_PLAN_KEY && opts.isAddon === true && ADDON_SYSTEMS.has(opts.cleanSystem)) {
+      // A Clean Link add-on from a shop's Setup page: the line
+      // carries the system + slug so checkout can write the order
+      // row (no localStorage side-channel). A billable (ad-page)
+      // Clean Link line already in the cart is left alone — an
+      // add-on never overwrites it — and an add-on line already in
+      // the cart just refreshes its fields, so re-tapping the Setup
+      // link never duplicates the line.
+      const cleanSlug = String(opts.cleanSlug || opts.cleanShopSlug || '').trim()
+      const shopSlug = String(opts.cleanShopSlug || '').trim()
+      if (!shopSlug || !cleanSlug) return
+      setLastOrder(null)
+      setCartState(c => {
+        const existing = c.find(i => i.key === key)
+        if (!existing) return [...c, { key: plan.key, name: plan.name, price: plan.price, extraKids: 0, isAddon: true, cleanSystem: opts.cleanSystem, cleanShopSlug: shopSlug, cleanSlug }]
+        if (!existing.isAddon) return c
+        return c.map(i => (i.key === key ? { ...i, isAddon: true, cleanSystem: opts.cleanSystem, cleanShopSlug: shopSlug, cleanSlug } : i))
+      })
+      return
+    }
+    if (key === DIRECT_PLAN_KEY && opts.isAddon === true && ADDON_SYSTEMS.has(opts.directSystem)) {
+      // A Direct Upload add-on from a shop's Setup page: the line
+      // carries the system + slug so checkout can write the order
+      // row's note and email (direct_upload_order has no system /
+      // shop_slug columns — see businessData.js). A billable
+      // (ad-page) Direct Upload line already in the cart is left
+      // alone — an add-on never overwrites it — and an add-on line
+      // already in the cart just refreshes its fields, so re-tapping
+      // the Setup link never duplicates the line.
+      const shopSlug = String(opts.directShopSlug || '').trim()
+      if (!shopSlug) return
+      setLastOrder(null)
+      setCartState(c => {
+        const existing = c.find(i => i.key === key)
+        if (!existing) return [...c, { key: plan.key, name: plan.name, price: plan.price, extraKids: 0, isAddon: true, directSystem: opts.directSystem, directShopSlug: shopSlug }]
+        if (!existing.isAddon) return c
+        return c.map(i => (i.key === key ? { ...i, isAddon: true, directSystem: opts.directSystem, directShopSlug: shopSlug } : i))
+      })
+      return
+    }
     const kids = isKidsPlanKey(key) ? Math.max(0, Number(extraKids) || 0) : 0
     setLastOrder(null)
     setCartState(c => (c.some(i => i.key === key) ? c : [...c, { key: plan.key, name: plan.name, price: kids > 0 ? kidsLinePrice(kids) : plan.price, extraKids: kids }]))
@@ -396,7 +481,11 @@ export function BusinessCartProvider({ children }) {
   // number of places on an Extra Students line (from the cart line
   // itself). The line price is recomputed; the plan still counts
   // once for the bundle tiers — and an Extra Students line never
-  // counts toward them at all. An Extra Students count may go down
+  // counts toward them at all. A Clean Link or Direct Upload
+  // add-on line (isAddon, from a shop's Setup page) behaves the
+  // same way: it never counts toward the tiers and is never
+  // discounted — it only adds to a payment the customer already
+  // has. An Extra Students count may go down
   // to 0 (a 0-place line is skipped at checkout, see
   // businessData.js). A no-op for other plans and unknown keys.
   const updateExtraKids = (key, extraKids) => {
