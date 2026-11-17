@@ -39,6 +39,8 @@ export default function BusinessCartPage({ go }) {
   const bundle = bundleFor(cart)
   const orderBundle = lastOrder ? bundleFor(lastOrder) : null
   const hasExtras = cart.some(i => isKidsExtraPlanKey(i.key))
+  const hasCleanAddon = cart.some(i => i.key === 'clean:website' && i.isAddon === true)
+  const hasDirectAddon = cart.some(i => i.key === 'direct:website' && i.isAddon === true)
 
   // Save the placed order's tracking codes once, for the Tracking
   // page (/track) to auto-fill. The ref holds the signature of the
@@ -109,6 +111,12 @@ export default function BusinessCartPage({ go }) {
                 {isKidsExtraPlanKey(i.key) && Number(i.extraKids) > 0 && (
                   <> Includes {i.extraKids} extra student{Number(i.extraKids) === 1 ? '' : 's'}{i.schoolSlug ? <> for school “{i.schoolSlug}”</> : null} — free for the rest of this month; your new monthly amount is ${(KIDS_BASE_PRICE + Number(i.extraKids) * KIDS_EXTRA_KID_PRICE).toFixed(2)}/month from the next payment.</>
                 )}
+                {i.key === 'clean:website' && i.isAddon && (
+                  <> Clean Link add-on for “{i.cleanShopSlug}” — free for the rest of this month; your new monthly amount is $2.00/month from the next payment. Your short link will be yently.com/{i.cleanSlug}.</>
+                )}
+                {i.key === 'direct:website' && i.isAddon && (
+                  <> Direct Upload add-on for “{i.directShopSlug}” — free for the rest of this month; your new monthly amount is $5.00/month from the next payment. Your uploads will go live right away.</>
+                )}
               </p>
               {i.tracking_code && (
                 <p>Your order number: <b>{i.tracking_code}</b>{' '}
@@ -160,6 +168,16 @@ export default function BusinessCartPage({ go }) {
                       )}
                     </div>
                   )}
+                  {i.key === 'clean:website' && i.isAddon && (
+                    <div style={{ marginTop: 8 }}>
+                      <div className="hint">Add-on for your page “{i.cleanShopSlug}” — $2.00/month from the next payment, free for the rest of this month. Your short link will be yently.com/{i.cleanSlug}.</div>
+                    </div>
+                  )}
+                  {i.key === 'direct:website' && i.isAddon && (
+                    <div style={{ marginTop: 8 }}>
+                      <div className="hint">Add-on for your page “{i.directShopSlug}” — $5.00/month from the next payment, free for the rest of this month. Your uploads will go live right away once Yently switches it on.</div>
+                    </div>
+                  )}
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <b>${Number(i.price).toFixed(2)}/month</b>
@@ -194,6 +212,12 @@ export default function BusinessCartPage({ go }) {
             )}
             {hasExtras && (
               <p className="hint">Extra student places are added in full — they don't count toward the bundle discount.</p>
+            )}
+            {hasCleanAddon && (
+              <p className="hint">Clean Link add-ons are added in full — they don't count toward the bundle discount.</p>
+            )}
+            {hasDirectAddon && (
+              <p className="hint">Direct Upload add-ons are added in full — they don't count toward the bundle discount.</p>
             )}
             <button type="submit" disabled={submitting}>{submitting ? 'Placing…' : 'Place order'}</button>
             {status && <p className="status">{status}</p>}
