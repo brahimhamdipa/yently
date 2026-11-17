@@ -43,6 +43,8 @@ const KNOWN = new Set([
   'demo-tv-gallery',
   'direct-upload',
   'track', // public order tracking — never a clean link (see /track route)
+  'extra-students', // extra-student places — never a clean link
+  'pass-recovery', // pass recovery — never a clean link (see /pass-recovery route)
   'pos',
   'diner',
   'barbers',
