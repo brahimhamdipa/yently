@@ -77,6 +77,7 @@
      approval. Checked once when Setup opens and cached for the
      session; any failure leaves it off, so the old wording stays. */
   var directUploadOn = false;
+  var hasCleanLink = false; // the school already has a clean link — hides the Setup add-on line (clean_link_exists, fetched in openSetup)
   var studentLimit = 3; // students included in the plan (3) + paid extra kids; fetched in openSetup, falls back to 3
   var staffCreds = null; // {u, p} in memory only, never stored
   var teacherPass = null; // teacher password in memory only, never stored
@@ -569,6 +570,12 @@
         directUploadOn = (on === true);
       }).catch(function () { directUploadOn = false; });
     }).then(function () {
+      /* Clean Link: hide the Setup add-on line when the school
+         already has one (clean_link_exists, public RPC). */
+      return rpc('clean_link_exists', { p_system: 'kids-english', p_slug: SLUG }).then(function (has) {
+        hasCleanLink = (has === true);
+      }).catch(function () { hasCleanLink = false; });
+    }).then(function () {
       renderSetup();
     }).catch(function () {
       el.innerHTML = '<h2>Setup</h2><div class="card"><p class="error">Could not load your draft. Please try again in a moment.</p></div>';
@@ -596,6 +603,8 @@
       '<button id="setup-add-student" class="secondary">+ Add student</button></div>' +
       '<div id="setup-student-out" style="margin-top:8px"></div>' +
       '<p class="info" id="setup-extra-students"></p>' +
+      '<p class="info" id="setup-clean-link"></p>' +
+      '<p class="info" id="setup-direct-upload"></p>' +
       '<h2>Words</h2><p class="info">Each word has a meaning or hint the children see while they play.</p><div id="setup-words"></div>' +
       '<button id="setup-add-word" class="secondary">+ Add word</button>' +
       '<div class="row" style="margin-top:16px"><button id="setup-save" class="secondary">Save draft</button>' +
@@ -693,6 +702,20 @@
         extraEl.innerHTML = draft.students.length >= studentLimit
           ? 'Need more students? You have ' + draft.students.length + ' of ' + studentLimit + ' places — <a href="/?add=kids-extra-english&slug=' + encodeURIComponent(SLUG) + '">add extra students</a> for $1/month each — free for the rest of this month.'
           : 'Need more students? <a href="/?add=kids-extra-english&slug=' + encodeURIComponent(SLUG) + '">Extra students</a> are $1/month each — free for the rest of this month.';
+      }
+      /* Clean Link add-on: a short yently.com link for this school,
+         $2/month from the next payment — free for the rest of this
+         month. Hidden when the school already has a clean link. */
+      var cleanEl = $('setup-clean-link');
+      if (cleanEl) {
+        cleanEl.innerHTML = hasCleanLink ? '' : 'Want a short link for this page? <a href="/?add=clean:website&shop=kids-english&slug=' + encodeURIComponent(SLUG) + '&addon=1">Add a Clean Link</a> — $2/month, free for the rest of this month.';
+      }
+      /* Direct Upload add-on: $5/month from the next payment —
+         free for the rest of this month. Hidden when the switch
+         is already ON (directUploadOn, fetched in openSetup). */
+      var duEl = $('setup-direct-upload');
+      if (duEl) {
+        duEl.innerHTML = directUploadOn ? '' : 'Want your uploads to go live right away? <a href="/?add=direct:website&shop=kids-english&slug=' + encodeURIComponent(SLUG) + '&addon=1">Add Direct Upload</a> — $5/month, free for the rest of this month.';
       }
       var addBtn = $('setup-add-student');
       if (addBtn) addBtn.disabled = draft.students.length >= studentLimit;
