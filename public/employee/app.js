@@ -17,6 +17,17 @@
 (function () {
   'use strict';
 
+  /* Belt-and-braces against sideways scroll on phones: the file
+     input in Setup can push the page past the viewport. (The proper
+     home for these two rules is this app's style.css; this copy
+     rides with app.js so the page is safe even if the stylesheet
+     lags behind.) */
+  (function () {
+    var st = document.createElement('style');
+    st.textContent = 'input[type="file"]{max-width:100%}body{overflow-x:hidden}';
+    document.head.appendChild(st);
+  })();
+
   function folderBase() {
     var p = location.pathname;
     var last = p.split('/').pop();
@@ -124,6 +135,7 @@
   var logEmployeeCode = null; // staff code preselected in Log Time, from an Employees card
   var delConfirmId = null; // record id awaiting an in-page delete confirmation
   var delErr = ''; // last records delete error, shown inline above the list
+  var clearConfirm = false; // true while the clear-all-records confirmation is open
   var staffEditId = null; // staff id being edited in Setup, null = adding
   var staffDelConfirmId = null; // staff id awaiting an in-page delete confirmation
   var empSearch = ''; // public employees search text, kept while typing
@@ -397,17 +409,22 @@
   }
 
   /* ---------- Employee password gate (Log Time + Records) ---------- */
+  /* Employee password gate (Log Time + Records). The prompt is
+     rendered into whichever view container it is given, so the
+     lookups MUST stay scoped to that container: both views live in
+     the DOM at once, and a global getElementById would wire the
+     first copy's button and leave the second copy's Unlock dead. */
   function empGate(el, heading, after) {
     el.innerHTML = '<h2>' + heading + '</h2><div class="card">' +
       '<p class="info">Enter the employee password for this business to continue.</p>' +
       '<label>Employee password</label><input id="emp-pass" type="password" autocomplete="current-password">' +
       '<div class="row"><button id="emp-go">Unlock</button></div>' +
       '<p class="error" id="emp-err" hidden></p></div>';
-    $('emp-go').addEventListener('click', function () {
-      var pw = $('emp-pass').value;
+    el.querySelector('#emp-go').addEventListener('click', function () {
+      var pw = el.querySelector('#emp-pass').value;
       rpc('check_employee_employee_pass', { p_slug: SLUG, p_password: pw }).then(function (ok) {
         if (!ok) {
-          var e = $('emp-err');
+          var e = el.querySelector('#emp-err');
           e.hidden = false;
           e.textContent = 'Wrong employee password.';
           return;
@@ -416,7 +433,7 @@
         empUnlocked = true;
         after();
       }).catch(function (err) {
-        var e = $('emp-err');
+        var e = el.querySelector('#emp-err');
         e.hidden = false;
         e.textContent = 'Error: ' + err.message;
       });
@@ -490,7 +507,7 @@
   function loadRecords(quiet) {
     return rpc('list_employee_records', { p_slug: SLUG, p_epass: empPass }).then(function (d) {
       records = d || [];
-      if (currentView === 'records' && delConfirmId === null) renderRecordsList();
+      if (currentView === 'records' && delConfirmId === null && !clearConfirm) renderRecordsList();
       return records;
     }).catch(function (e) { if (!quiet) throw e; });
   }
@@ -519,6 +536,11 @@
     if (!records.length) { el.innerHTML = '<div class="card"><p class="info">No records yet.</p></div>'; return; }
     var h = '';
     if (delErr) h += '<p class="error">' + esc(delErr) + '</p>';
+    if (clearConfirm) {
+      h += '<p><b>Clear all records?</b> This deletes every record for this business and cannot be undone.</p><div class="row"><button class="small danger" data-clear-yes>Yes, clear all</button><button class="small secondary" data-clear-no>Keep them</button></div>';
+    } else if (records.length) {
+      h += '<div class="row"><button class="small danger" data-clear>Clear all records</button></div>';
+    }
     records.forEach(function (r) {
       var d = r.data || {};
       var hrs = recordHours(r);
@@ -553,6 +575,24 @@
         rpc('delete_employee_record', { p_slug: SLUG, p_epass: empPass, p_id: id })
           .then(function () { delConfirmId = null; delErr = ''; return loadRecords(); })
           .catch(function (e) { delConfirmId = null; delErr = 'Error: ' + e.message; renderRecordsList(); });
+      });
+    });
+    el.querySelectorAll('[data-clear]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        clearConfirm = true;
+        delErr = '';
+        renderRecordsList();
+      });
+    });
+    el.querySelectorAll('[data-clear-no]').forEach(function (b) {
+      b.addEventListener('click', function () { clearConfirm = false; renderRecordsList(); });
+    });
+    el.querySelectorAll('[data-clear-yes]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        b.disabled = true;
+        rpc('clear_employee_records', { p_slug: SLUG, p_epass: empPass })
+          .then(function () { clearConfirm = false; delErr = ''; return loadRecords(); })
+          .catch(function (e) { clearConfirm = false; delErr = 'Error: ' + e.message; renderRecordsList(); });
       });
     });
   }
@@ -618,7 +658,6 @@
       '<p class="info" id="d-status">' + esc(draftStatusText()) + '</p>' +
       '<p class="error" id="d-err" hidden></p>' +
       '<p class="info" id="setup-clean-link">Want a short link for this page? <a href="/?add=clean:website&shop=employee&slug=' + encodeURIComponent(SLUG) + '&addon=1">Add a Clean Link</a> — $2/month, free for the rest of this month.</p></div>' +
-      '<p class="info" id="setup-direct-upload">Want your uploads to go live right away? <a href="/?add=direct:website&shop=employee&slug=' + encodeURIComponent(SLUG) + '&addon=1">Add Direct Upload</a> — $5/month, free for the rest of this month.</p>' +
       '<div class="card"><h3>Staff</h3>' +
       '<p class="info">Staff go live right away — no approval needed.</p>' +
       '<div id="staff-list"></div>' +
@@ -641,9 +680,6 @@
     rpc('clean_link_exists', { p_system: 'employee', p_slug: SLUG }).then(function (has) {
       if (has === true) { var cleanEl = $('setup-clean-link'); if (cleanEl) cleanEl.style.display = 'none'; }
     }).catch(function () {});
-    /* Direct Upload add-on: hide the line when the switch is
-       already ON (directUploadOn, fetched in openSetup). */
-    if (directUploadOn) { var duEl = $('setup-direct-upload'); if (duEl) duEl.style.display = 'none'; }
     wireShopChatInbox();
     renderJobsList();
     renderStaffList();
