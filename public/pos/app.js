@@ -17,6 +17,19 @@
 (function () {
   'use strict';
 
+  /* Sideways-scroll guard (Setup file inputs): Setup is the only page
+     with <input type="file">, and a file input's intrinsic phone width
+     can push the page past the viewport. The per-system style.css is a
+     separate file, so these two rules are injected here instead — the
+     same two rules as the diner fix: cap file inputs at the card width,
+     and never let the page scroll sideways. The body rule is handed to
+     the viewport, so the sticky header keeps working. */
+  (function () {
+    var st = document.createElement('style');
+    st.textContent = 'input[type="file"]{max-width:100%}body{overflow-x:hidden}';
+    (document.head || document.documentElement).appendChild(st);
+  })();
+
   function folderBase() {
     var p = location.pathname;
     var last = p.split('/').pop();
@@ -131,6 +144,8 @@
   var scanOverlay = null; // fixed overlay holding the camera view
   var voidConfirmId = null; // sale id awaiting an in-page void confirmation
   var voidErr = ''; // last void error, shown inline above the sales list
+  var delSaleId = null; // sale id awaiting an in-page delete confirmation (Receipts)
+  var clearSalesConfirm = false; // true while the clear-all-receipts confirm is showing
   var delConfirmId = null; // item id awaiting an in-page delete confirmation
   var shopQuery = ''; // current Shop search text, kept across re-renders
   var sellQuery = ''; // current Sell search/scan text, kept across re-renders
@@ -460,16 +475,26 @@
 
   /* ---------- Sell (cashier) ---------- */
   function empGate(el, heading, after) {
+    /* The gate can be rendered into two hidden views at once (Sell and
+       Receipts both live in the page), so the ids below can exist twice
+       in the document. Look the button, input and error up INSIDE this
+       view's container only — a global getElementById would find the
+       first copy in the page and wire the wrong button, leaving this
+       view's Unlock button dead. That was why an employee could not
+       unlock Receipts after visiting Sell first (and why unlocking
+       from Sell could fire the Receipts callback too). The server
+       check itself (check_pos_employee_pass) is sound — this was
+       purely the page wiring the wrong button. */
     el.innerHTML = '<h2>' + heading + '</h2><div class="card">' +
       '<p class="info">Enter the employee password for this store to open the register.</p>' +
       '<label>Employee password</label><input id="emp-pass" type="password" autocomplete="current-password">' +
       '<div class="row"><button id="emp-go">Unlock</button></div>' +
       '<p class="error" id="emp-err" hidden></p></div>';
-    $('emp-go').addEventListener('click', function () {
-      var pw = $('emp-pass').value;
+    el.querySelector('#emp-go').addEventListener('click', function () {
+      var pw = el.querySelector('#emp-pass').value;
       rpc('check_pos_employee_pass', { p_slug: SLUG, p_password: pw }).then(function (ok) {
         if (!ok) {
-          var e = $('emp-err');
+          var e = el.querySelector('#emp-err');
           e.hidden = false;
           e.textContent = 'Wrong employee password.';
           return;
@@ -478,7 +503,7 @@
         empUnlocked = true;
         after();
       }).catch(function (err) {
-        var e = $('emp-err');
+        var e = el.querySelector('#emp-err');
         e.hidden = false;
         e.textContent = 'Error: ' + err.message;
       });
@@ -741,6 +766,12 @@
     if (!sales.length) { el.innerHTML = '<div class="card"><p class="info">No sales yet.</p></div>'; return; }
     var h = '';
     if (voidErr) h += '<p class="error">' + esc(voidErr) + '</p>';
+    /* Clear all: two-step confirm, same pattern as Void below. */
+    if (clearSalesConfirm) {
+      h += '<p><b>Clear all receipts? This deletes every receipt for this store and cannot be undone.</b></p><div class="row"><button class="small danger" data-clear-yes>Yes, clear all</button><button class="small secondary" data-clear-no>Keep them</button></div>';
+    } else {
+      h += '<div class="row"><button class="small danger" data-clear>Clear all receipts</button></div>';
+    }
     sales.forEach(function (s) {
       var items = s.items || [];
       var names = items.map(function (l) { return esc(l.name) + ' × ' + l.qty; }).join(', ');
@@ -754,6 +785,9 @@
             ? '<p><b>Void this sale? The stock goes back.</b></p><div class="row"><button class="small danger" data-void-yes="' + s.id + '">Yes, void it</button><button class="small secondary" data-void-no="' + s.id + '">Keep it</button></div>'
             : '<button class="small danger" data-void="' + s.id + '">Void sale</button>')
           : '') +
+        (delSaleId === s.id
+          ? '<p><b>Delete this receipt? The sale stays counted — use Void first if the stock should go back.</b></p><div class="row"><button class="small danger" data-del-yes="' + s.id + '">Yes, delete</button><button class="small secondary" data-del-no="' + s.id + '">Keep it</button></div>'
+          : '<button class="small danger" data-del="' + s.id + '">Delete receipt</button>') +
         '</div>';
     });
     el.innerHTML = h;
@@ -775,6 +809,42 @@
           .then(function () { voidConfirmId = null; voidErr = ''; return loadStore(); })
           .then(function () { return loadSales(); })
           .catch(function (e) { voidConfirmId = null; voidErr = 'Error: ' + e.message; renderReceiptsList(); });
+      });
+    });
+    el.querySelectorAll('[data-del]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        delSaleId = Number(b.getAttribute('data-del'));
+        voidErr = '';
+        renderReceiptsList();
+      });
+    });
+    el.querySelectorAll('[data-del-no]').forEach(function (b) {
+      b.addEventListener('click', function () { delSaleId = null; renderReceiptsList(); });
+    });
+    el.querySelectorAll('[data-del-yes]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var id = Number(b.getAttribute('data-del-yes'));
+        b.disabled = true;
+        rpc('delete_pos_sale', { p_slug: SLUG, p_epass: empPass, p_sale_id: id })
+          .then(function () { delSaleId = null; voidErr = ''; return loadSales(); })
+          .catch(function (e) { delSaleId = null; voidErr = 'Error: ' + e.message; renderReceiptsList(); });
+      });
+    });
+    el.querySelectorAll('[data-clear]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        clearSalesConfirm = true;
+        renderReceiptsList();
+      });
+    });
+    el.querySelectorAll('[data-clear-no]').forEach(function (b) {
+      b.addEventListener('click', function () { clearSalesConfirm = false; renderReceiptsList(); });
+    });
+    el.querySelectorAll('[data-clear-yes]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        b.disabled = true;
+        rpc('clear_pos_sales', { p_slug: SLUG, p_epass: empPass })
+          .then(function () { clearSalesConfirm = false; voidErr = ''; return loadSales(); })
+          .catch(function (e) { clearSalesConfirm = false; voidErr = 'Error: ' + e.message; renderReceiptsList(); });
       });
     });
   }
@@ -934,7 +1004,6 @@
       '<p class="info" id="d-status">Draft status: ' + esc(draftStatus) + (draftStatus === 'pending' ? ' — waiting for Yently to approve it.' : draftStatus === 'approved' ? ' — approved, live now.' : ' — not sent yet.') + '</p>' +
       '<p class="error" id="d-err" hidden></p>' +
       '<p class="info" id="setup-clean-link">Want a short link for this page? <a href="/?add=clean:website&shop=pos&slug=' + encodeURIComponent(SLUG) + '&addon=1">Add a Clean Link</a> — $2/month, free for the rest of this month.</p></div>' +
-      '<p class="info" id="setup-direct-upload">Want your uploads to go live right away? <a href="/?add=direct:website&shop=pos&slug=' + encodeURIComponent(SLUG) + '&addon=1">Add Direct Upload</a> — $5/month, free for the rest of this month.</p>' +
       '<div class="card"><h3>Items</h3>' +
       '<p class="info">Items go live right away — no approval needed. Stock drops by itself with every sale.</p>' +
       '<div id="items-list"></div>' +
@@ -966,9 +1035,6 @@
     rpc('clean_link_exists', { p_system: 'pos', p_slug: SLUG }).then(function (has) {
       if (has === true) { var cleanEl = $('setup-clean-link'); if (cleanEl) cleanEl.style.display = 'none'; }
     }).catch(function () {});
-    /* Direct Upload add-on: hide the line when the switch is
-       already ON (directUploadOn, fetched in openSetup). */
-    if (directUploadOn) { var duEl = $('setup-direct-upload'); if (duEl) duEl.style.display = 'none'; }
     wireShopChatInbox();
     renderItemsList();
     $('d-save').addEventListener('click', function () { saveDraft(false); });
