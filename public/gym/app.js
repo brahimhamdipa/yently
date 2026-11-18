@@ -18,6 +18,17 @@
 (function () {
   'use strict';
 
+  /* Belt-and-braces against sideways scroll on phones (diner root
+     cause, 2026-11-18): Setup has file inputs and style.css gives
+     body no overflow-x guard and file inputs no max-width — the
+     .icon-field override is width:auto + min-width:180px. Injected
+     here so the guard ships with this file (style.css is separate). */
+  (function () {
+    var st = document.createElement('style');
+    st.textContent = 'input[type="file"]{max-width:100%;}body{overflow-x:hidden;}';
+    document.head.appendChild(st);
+  })();
+
   function folderBase() {
     var p = location.pathname;
     var last = p.split('/').pop();
@@ -130,6 +141,10 @@
   var trainerDelId = null; // trainer id awaiting an in-page delete confirmation
   var trainerPhoto = ''; // photo URL for the trainer being added/edited in Setup
   var cancelConfirmId = null; // booking id awaiting an in-page cancel confirmation
+  var bookingDelId = null; // booking id awaiting an in-page delete confirmation
+  var clearBookingsConfirm = false; // true while the clear-all-bookings confirmation is showing
+  var checkinDelId = null; // check-in id awaiting an in-page delete confirmation
+  var clearCheckinsConfirm = false; // true while the clear-all-check-ins confirmation is showing
   var removeConfirmId = null; // member id awaiting an in-page remove confirmation
   var bookingsErr = ''; // last bookings error, shown inline above the list
   var membersErr = ''; // last members error, shown inline above the list
@@ -655,16 +670,24 @@
 
   /* ---------- Staff gate (employee password) ---------- */
   function empGate(el, heading, after) {
+    /* FIX (diner root cause, 2026-11-18): this gate is rendered into TWO
+       views — Members and Bookings — and both <section>s stay in the DOM
+       at once. The old code wired the prompt with GLOBAL
+       document.getElementById('emp-go'), which always returns the FIRST
+       copy in DOM order: the second view's Unlock button had no listener
+       (dead tap) and the listener landed on the first copy's button
+       (unlocking the wrong tab). All lookups are now scoped to the
+       container this copy was written into, so each copy wires itself. */
     el.innerHTML = '<h2>' + heading + '</h2><div class="card">' +
       '<p class="info">Enter the employee password for this gym to see this page.</p>' +
       '<label>Employee password</label><input id="emp-pass" type="password" autocomplete="current-password">' +
       '<div class="row"><button id="emp-go">Unlock</button></div>' +
       '<p class="error" id="emp-err" hidden></p></div>';
-    $('emp-go').addEventListener('click', function () {
-      var pw = $('emp-pass').value;
+    el.querySelector('#emp-go').addEventListener('click', function () {
+      var pw = el.querySelector('#emp-pass').value;
       rpc('check_gym_employee_pass', { p_slug: SLUG, p_password: pw }).then(function (ok) {
         if (!ok) {
-          var e = $('emp-err');
+          var e = el.querySelector('#emp-err');
           e.hidden = false;
           e.textContent = 'Wrong employee password.';
           return;
@@ -673,7 +696,7 @@
         empUnlocked = true;
         after();
       }).catch(function (err) {
-        var e = $('emp-err');
+        var e = el.querySelector('#emp-err');
         e.hidden = false;
         e.textContent = 'Error: ' + err.message;
       });
@@ -765,10 +788,55 @@
         cl.innerHTML = '<p class="info">No check-ins yet.</p>';
       } else {
         var ch = '';
+        if (clearCheckinsConfirm) {
+          ch += '<p><b>Clear all check-ins? This deletes every check-in for this gym and cannot be undone.</b></p><div class="row"><button class="small danger" data-clear-checkins-yes>Yes, clear all</button><button class="small secondary" data-clear-checkins-no>Keep them</button></div>';
+        } else {
+          ch += '<div class="row"><button class="small danger" data-clear-checkins>Clear all check-ins</button></div>';
+        }
         checkins.forEach(function (c) {
-          ch += '<div class="cart-line"><div><b>' + esc(c.member_name) + '</b><br><span class="info">' + esc(c.member_id) + '</span></div><span class="info">' + esc(fmtDT(c.checked_in_at)) + '</span></div>';
+          ch += '<div class="cart-line"><div><b>' + esc(c.member_name) + '</b><br><span class="info">' + esc(c.member_id) + '</span></div><span class="info">' + esc(fmtDT(c.checked_in_at)) + '</span><button class="small danger" data-del-checkin="' + c.id + '">Delete</button></div>';
+          if (checkinDelId === c.id) {
+            ch += '<p><b>Delete this check-in?</b></p><div class="row"><button class="small danger" data-del-checkin-yes="' + c.id + '">Yes, delete</button><button class="small secondary" data-del-checkin-no="' + c.id + '">Keep it</button></div>';
+          }
         });
         cl.innerHTML = ch;
+        cl.querySelectorAll('[data-del-checkin]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            checkinDelId = Number(btn.getAttribute('data-del-checkin'));
+            membersErr = '';
+            renderMembersList();
+          });
+        });
+        cl.querySelectorAll('[data-del-checkin-no]').forEach(function (btn) {
+          btn.addEventListener('click', function () { checkinDelId = null; renderMembersList(); });
+        });
+        cl.querySelectorAll('[data-del-checkin-yes]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var id = Number(btn.getAttribute('data-del-checkin-yes'));
+            btn.disabled = true;
+            rpc('delete_gym_checkin', { p_slug: SLUG, p_epass: empPass, p_id: id })
+              .then(function () { checkinDelId = null; membersErr = ''; return loadMembers(); })
+              .catch(function (e) { checkinDelId = null; membersErr = 'Error: ' + e.message; renderMembersList(); });
+          });
+        });
+        cl.querySelectorAll('[data-clear-checkins]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            clearCheckinsConfirm = true;
+            membersErr = '';
+            renderMembersList();
+          });
+        });
+        cl.querySelectorAll('[data-clear-checkins-no]').forEach(function (btn) {
+          btn.addEventListener('click', function () { clearCheckinsConfirm = false; renderMembersList(); });
+        });
+        cl.querySelectorAll('[data-clear-checkins-yes]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            btn.disabled = true;
+            rpc('clear_gym_checkins', { p_slug: SLUG, p_epass: empPass })
+              .then(function () { clearCheckinsConfirm = false; membersErr = ''; return loadMembers(); })
+              .catch(function (e) { clearCheckinsConfirm = false; membersErr = 'Error: ' + e.message; renderMembersList(); });
+          });
+        });
       }
     }
   }
@@ -809,6 +877,11 @@
     if (!bookings.length) { el.innerHTML = '<div class="card"><p class="info">No bookings yet.</p></div>'; return; }
     var h = '';
     if (bookingsErr) h += '<p class="error">' + esc(bookingsErr) + '</p>';
+    if (clearBookingsConfirm) {
+      h += '<p><b>Clear all bookings? This deletes every booking for this gym and cannot be undone.</b></p><div class="row"><button class="small danger" data-clear-bookings-yes>Yes, clear all</button><button class="small secondary" data-clear-bookings-no>Keep them</button></div>';
+    } else {
+      h += '<div class="row"><button class="small danger" data-clear-bookings>Clear all bookings</button></div>';
+    }
     bookings.forEach(function (b) {
       var st = String(b.status || 'pending');
       h += '<div class="card"><h3>Booking ' + esc(refOf(b.id)) + ' ' + statusBadge(st) + '</h3>' +
@@ -823,6 +896,10 @@
       }
       if (cancelConfirmId === b.id) {
         h += '<p><b>Cancel this booking?</b></p><div class="row"><button class="small danger" data-cancel-yes="' + b.id + '">Yes, cancel</button><button class="small secondary" data-cancel-no="' + b.id + '">Keep it</button></div>';
+      }
+      h += '<div class="row"><button class="small danger" data-del-booking="' + b.id + '">Delete</button></div>';
+      if (bookingDelId === b.id) {
+        h += '<p><b>Delete this booking?</b></p><div class="row"><button class="small danger" data-del-booking-yes="' + b.id + '">Yes, delete</button><button class="small secondary" data-del-booking-no="' + b.id + '">Keep it</button></div>';
       }
       h += '</div>';
     });
@@ -854,6 +931,43 @@
         rpc('update_gym_booking', { p_slug: SLUG, p_epass: empPass, p_kind: 'booking', p_id: id, p_status: 'cancelled' })
           .then(function () { cancelConfirmId = null; bookingsErr = ''; return loadBookings(); })
           .catch(function (e) { cancelConfirmId = null; bookingsErr = 'Error: ' + e.message; renderBookingsList(); });
+      });
+    });
+    el.querySelectorAll('[data-del-booking]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        bookingDelId = Number(btn.getAttribute('data-del-booking'));
+        bookingsErr = '';
+        renderBookingsList();
+      });
+    });
+    el.querySelectorAll('[data-del-booking-no]').forEach(function (btn) {
+      btn.addEventListener('click', function () { bookingDelId = null; renderBookingsList(); });
+    });
+    el.querySelectorAll('[data-del-booking-yes]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = Number(btn.getAttribute('data-del-booking-yes'));
+        btn.disabled = true;
+        rpc('delete_gym_booking', { p_slug: SLUG, p_epass: empPass, p_id: id })
+          .then(function () { bookingDelId = null; bookingsErr = ''; return loadBookings(); })
+          .catch(function (e) { bookingDelId = null; bookingsErr = 'Error: ' + e.message; renderBookingsList(); });
+      });
+    });
+    el.querySelectorAll('[data-clear-bookings]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        clearBookingsConfirm = true;
+        bookingsErr = '';
+        renderBookingsList();
+      });
+    });
+    el.querySelectorAll('[data-clear-bookings-no]').forEach(function (btn) {
+      btn.addEventListener('click', function () { clearBookingsConfirm = false; renderBookingsList(); });
+    });
+    el.querySelectorAll('[data-clear-bookings-yes]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        btn.disabled = true;
+        rpc('clear_gym_bookings', { p_slug: SLUG, p_epass: empPass })
+          .then(function () { clearBookingsConfirm = false; bookingsErr = ''; return loadBookings(); })
+          .catch(function (e) { clearBookingsConfirm = false; bookingsErr = 'Error: ' + e.message; renderBookingsList(); });
       });
     });
   }
@@ -917,7 +1031,6 @@
       '<p class="info" id="d-status">Draft status: ' + esc(draftStatus) + (draftStatus === 'pending' ? ' — waiting for Yently to approve it.' : draftStatus === 'approved' ? ' — approved, live now.' : ' — not sent yet.') + '</p>' +
       '<p class="error" id="d-err" hidden></p>' +
       '<p class="info" id="setup-clean-link">Want a short link for this page? <a href="/?add=clean:website&shop=gym&slug=' + encodeURIComponent(SLUG) + '&addon=1">Add a Clean Link</a> — $2/month, free for the rest of this month.</p></div>' +
-      '<p class="info" id="setup-direct-upload">Want your uploads to go live right away? <a href="/?add=direct:website&shop=gym&slug=' + encodeURIComponent(SLUG) + '&addon=1">Add Direct Upload</a> — $5/month, free for the rest of this month.</p>' +
       '<div class="card"><h3>Membership plans</h3>' +
       '<p class="info">Plans are part of the draft — save the draft to keep plan changes.</p>' +
       '<div id="plans-list"></div>' +
@@ -972,9 +1085,6 @@
     rpc('clean_link_exists', { p_system: 'gym', p_slug: SLUG }).then(function (has) {
       if (has === true) { var cleanEl = $('setup-clean-link'); if (cleanEl) cleanEl.style.display = 'none'; }
     }).catch(function () {});
-    /* Direct Upload add-on: hide the line when the switch is
-       already ON (directUploadOn, fetched in openSetup). */
-    if (directUploadOn) { var duEl = $('setup-direct-upload'); if (duEl) duEl.style.display = 'none'; }
     wireShopChatInbox();
     renderPlansList();
     renderClassesList();
