@@ -770,9 +770,11 @@
     if (!el) return;
     if (!bookings.length) { el.innerHTML = '<div class="card"><p class="info">No orders yet.</p></div>'; return; }
     var h = '';
+    var finishedCount = bookings.filter(function (b) { return b.status === 'delivered' || b.status === 'cancelled'; }).length;
+    var stayingCount = bookings.length - finishedCount;
     if (bookingsErr) h += '<p class="error">' + esc(bookingsErr) + '</p>';
     if (clearOrdersConfirm) {
-      h += '<p><b>Clear all orders? This deletes every order for this laundry and cannot be undone.</b></p><div class="row"><button class="small danger" data-clear-orders-yes>Yes, clear all</button><button class="small secondary" data-clear-orders-no>Keep them</button></div>';
+      h += '<p><b>Clear all ' + finishedCount + ' finished order' + (finishedCount === 1 ? '' : 's') + '?</b> ' + stayingCount + ' order' + (stayingCount === 1 ? '' : 's') + ' not yet delivered will stay.</p><div class="row"><button class="small danger" data-clear-orders-yes>Yes, clear all</button><button class="small secondary" data-clear-orders-no>Keep them</button></div>';
     } else {
       h += '<div class="row"><button class="small danger" data-clear-orders>Clear all orders</button></div>';
     }
