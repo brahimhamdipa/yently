@@ -21,6 +21,17 @@
 (function () {
   'use strict';
 
+  /* Belt-and-braces against sideways scroll on phones: the file
+     input in Setup can push the page past the viewport. (The proper
+     home for these two rules is this app's style.css; this copy
+     rides with app.js so the page is safe even if the stylesheet
+     lags behind.) */
+  (function () {
+    var st = document.createElement('style');
+    st.textContent = 'input[type="file"]{max-width:100%}body{overflow-x:hidden}';
+    document.head.appendChild(st);
+  })();
+
   function folderBase() {
     var p = location.pathname;
     var last = p.split('/').pop();
@@ -136,6 +147,10 @@
   var delEstId = null; // estimate id awaiting an in-page delete confirmation
   var delCustId = null; // customer id awaiting an in-page delete confirmation
   var delCarId = null; // loan car id awaiting an in-page delete confirmation
+  var clearJobsConfirm = false; // true while the clear-all-jobs confirmation is open
+  var clearEstConfirm = false; // true while the clear-all-estimates confirmation is open
+  var clearCustConfirm = false; // true while the clear-all-customers confirmation is open
+  var clearCarConfirm = false; // true while the clear-all-loan-cars confirmation is open
   var estStatus = ''; // last estimate action, shown above the estimates table
 
   function $(id) { return document.getElementById(id); }
@@ -337,17 +352,43 @@
     var tabs = document.querySelectorAll('#tabs button');
     tabs.forEach(function (b) { b.classList.toggle('active', b.getAttribute('data-view') === view); });
     if (view === 'request') renderRequest();
+    /* One 5s timer shared by the four working tabs (jobsTimer is
+       cleared at the top of show() on every view switch). Each tab
+       refetches loadData(true) and re-renders only its own rows, and
+       only while no delete confirmation is open in that tab, so a
+       poll never clobbers an in-progress confirm. */
     if (view === 'jobs') {
       renderJobs();
       jobsTimer = setInterval(function () {
-        if (currentView === 'jobs' && empUnlocked) {
-          loadData(true).then(function () { if (currentView === 'jobs') renderJobsRows(); });
+        if (currentView === 'jobs' && empUnlocked && delJobId === null) {
+          loadData(true).then(function () { if (currentView === 'jobs' && delJobId === null) renderJobsRows(); });
         }
       }, 5000);
     }
-    if (view === 'estimates') renderEstimates();
-    if (view === 'customers') renderCustomers();
-    if (view === 'loancars') renderLoanCars();
+    if (view === 'estimates') {
+      renderEstimates();
+      jobsTimer = setInterval(function () {
+        if (currentView === 'estimates' && empUnlocked && delEstId === null) {
+          loadData(true).then(function () { if (currentView === 'estimates' && delEstId === null) renderEstimatesRows(); });
+        }
+      }, 5000);
+    }
+    if (view === 'customers') {
+      renderCustomers();
+      jobsTimer = setInterval(function () {
+        if (currentView === 'customers' && empUnlocked && delCustId === null) {
+          loadData(true).then(function () { if (currentView === 'customers' && delCustId === null) renderCustomersRows(); });
+        }
+      }, 5000);
+    }
+    if (view === 'loancars') {
+      renderLoanCars();
+      jobsTimer = setInterval(function () {
+        if (currentView === 'loancars' && empUnlocked && delCarId === null) {
+          loadData(true).then(function () { if (currentView === 'loancars' && delCarId === null) renderLoanCarsRows(); });
+        }
+      }, 5000);
+    }
     if (view === 'setup') renderSetup();
     window.scrollTo(0, 0);
   }
@@ -363,17 +404,22 @@
   }
 
   /* ---------- employee gate (working tabs) ---------- */
+  /* Employee gate (working tabs). The prompt is rendered into
+     whichever view container it is given, so the lookups MUST stay
+     scoped to that container: all four working views live in the
+     DOM at once, and a global getElementById would wire the first
+     copy's button and leave the other copies' Unlock dead. */
   function empGate(el, heading, after) {
     el.innerHTML = '<h2>' + heading + '</h2><div class="card">' +
       '<p class="info">Enter the employee password for this shop to open the working tabs.</p>' +
       '<label>Employee password</label><input id="emp-pass" type="password" autocomplete="current-password">' +
       '<div class="row"><button id="emp-go">Unlock</button></div>' +
       '<p class="error" id="emp-err" hidden></p></div>';
-    $('emp-go').addEventListener('click', function () {
-      var pw = $('emp-pass').value;
+    el.querySelector('#emp-go').addEventListener('click', function () {
+      var pw = el.querySelector('#emp-pass').value;
       rpc('check_bodyshop_employee_pass', { p_slug: SLUG, p_password: pw }).then(function (ok) {
         if (!ok) {
-          var e = $('emp-err');
+          var e = el.querySelector('#emp-err');
           e.hidden = false;
           e.textContent = 'Wrong employee password.';
           return;
@@ -382,7 +428,7 @@
         empUnlocked = true;
         after();
       }).catch(function (err) {
-        var e = $('emp-err');
+        var e = el.querySelector('#emp-err');
         e.hidden = false;
         e.textContent = 'Error: ' + err.message;
       });
@@ -473,6 +519,9 @@
     el.innerHTML = '<h2>Jobs — ' + esc(shop.name) + '</h2>' +
       '<div class="note">The workflow is estimate, then job, then invoice: an accepted estimate becomes a job here, and a finished job is marked Invoiced. The list refreshes on its own every few seconds.</div>' +
       '<div id="jobs-msg"></div>' +
+      (clearJobsConfirm
+        ? '<p><b>Clear all jobs?</b> This deletes every job for this shop and cannot be undone.</p><div class="row"><button class="small danger" data-clear-jobs-yes>Yes, clear all</button><button class="small secondary" data-clear-jobs-no>Keep them</button></div>'
+        : ((shopData.jobs || []).length ? '<div class="row"><button class="small danger" data-clear-jobs>Clear all jobs</button></div>' : '')) +
       '<label>Search jobs</label><input id="jobs-search" type="text" value="' + esc(jobsSearch) + '" placeholder="Job number, customer, or vehicle…">' +
       '<label>Status</label><select id="jobs-status"><option' + (jobsStatus === 'All' ? ' selected' : '') + '>All</option>' + jobStatusOptions(jobsStatus) + '</select>' +
       '<div class="table-wrap"><table class="data"><thead><tr><th>Job no.</th><th>Customer</th><th>Vehicle</th><th>Insurer</th><th>Estimate no.</th><th>Total</th><th>Status</th><th></th></tr></thead>' +
@@ -490,6 +539,21 @@
     $('jobs-search').addEventListener('input', function (e) { jobsSearch = e.target.value; renderJobsRows(); });
     $('jobs-status').addEventListener('change', function (e) { jobsStatus = e.target.value; renderJobsRows(); });
     $('job-add').addEventListener('click', addJob);
+    el.querySelectorAll('[data-clear-jobs]').forEach(function (b) {
+      b.addEventListener('click', function () { clearJobsConfirm = true; jobsErr = ''; renderJobs(); });
+    });
+    el.querySelectorAll('[data-clear-jobs-no]').forEach(function (b) {
+      b.addEventListener('click', function () { clearJobsConfirm = false; renderJobs(); });
+    });
+    el.querySelectorAll('[data-clear-jobs-yes]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        b.disabled = true;
+        rpc('clear_bodyshop_jobs', { p_slug: SLUG, p_epass: empPass })
+          .then(function () { clearJobsConfirm = false; jobsErr = ''; return loadData(true); })
+          .then(function () { renderJobs(); })
+          .catch(function (e) { clearJobsConfirm = false; jobsErr = 'Error: ' + e.message; renderJobs(); });
+      });
+    });
   }
   function renderJobsRows() {
     var tb = $('jobs-rows');
@@ -639,6 +703,9 @@
     }
     el.innerHTML = '<h2>Estimates — ' + esc(shop.name) + '</h2>' +
       '<div class="note">Accepting a pending estimate marks it Accepted and raises a job for it on the Jobs tab. Declining closes it without a job. Staff can also add an estimate below — a customer asking in person, or one that came in by phone.</div>' +
+      (clearEstConfirm
+        ? '<p><b>Clear all estimates?</b> This deletes every estimate for this shop and cannot be undone.</p><div class="row"><button class="small danger" data-clear-est-yes>Yes, clear all</button><button class="small secondary" data-clear-est-no>Keep them</button></div>'
+        : ((shopData.estimates || []).length ? '<div class="row"><button class="small danger" data-clear-est>Clear all estimates</button></div>' : '')) +
       (estStatus ? '<p class="info" id="est-status">' + esc(estStatus) + '</p>' : '') +
       '<label>Search estimates</label><input id="est-search" type="text" value="' + esc(estSearch) + '" placeholder="Estimate no., customer, or vehicle…">' +
       '<div class="table-wrap"><table class="data"><thead><tr><th>Estimate no.</th><th>Customer</th><th>Vehicle</th><th>Parts</th><th>Labour</th><th>Total</th><th>Status</th><th>Note</th><th></th></tr></thead>' +
@@ -653,6 +720,21 @@
       '<p class="error" id="est-err" hidden></p></div>';
     renderEstimatesRows();
     $('est-search').addEventListener('input', function (e) { estSearch = e.target.value; renderEstimatesRows(); });
+    el.querySelectorAll('[data-clear-est]').forEach(function (b) {
+      b.addEventListener('click', function () { clearEstConfirm = true; renderEstimates(); });
+    });
+    el.querySelectorAll('[data-clear-est-no]').forEach(function (b) {
+      b.addEventListener('click', function () { clearEstConfirm = false; renderEstimates(); });
+    });
+    el.querySelectorAll('[data-clear-est-yes]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        b.disabled = true;
+        rpc('clear_bodyshop_estimates', { p_slug: SLUG, p_epass: empPass })
+          .then(function () { clearEstConfirm = false; estStatus = ''; return loadData(true); })
+          .then(function () { renderEstimates(); })
+          .catch(function (e) { clearEstConfirm = false; estStatus = 'Error: ' + e.message; renderEstimates(); });
+      });
+    });
     $('est-add').addEventListener('click', function () {
       var err = $('est-err');
       var customer = $('est-customer').value.trim();
@@ -742,6 +824,9 @@
     }
     var editing = (shopData.customers || []).filter(function (c) { return c.id === editCustomerId; })[0];
     el.innerHTML = '<h2>Customers — ' + esc(shop.name) + '</h2>' +
+      (clearCustConfirm
+        ? '<p><b>Clear all customers?</b> This deletes every customer for this shop and cannot be undone.</p><div class="row"><button class="small danger" data-clear-cust-yes>Yes, clear all</button><button class="small secondary" data-clear-cust-no>Keep them</button></div>'
+        : ((shopData.customers || []).length ? '<div class="row"><button class="small danger" data-clear-cust>Clear all customers</button></div>' : '')) +
       '<label>Search customers</label><input id="cust-search" type="text" value="' + esc(custSearch) + '" placeholder="Name, phone, email, or vehicle…">' +
       '<div class="table-wrap"><table class="data"><thead><tr><th>No.</th><th>Name</th><th>Phone</th><th>Email</th><th>Vehicle</th><th>Insurer</th><th></th><th></th></tr></thead>' +
       '<tbody id="cust-rows"></tbody></table></div>' +
@@ -756,6 +841,30 @@
       '<p class="error" id="cust-err" hidden></p></div>';
     renderCustomersRows();
     $('cust-search').addEventListener('input', function (e) { custSearch = e.target.value; renderCustomersRows(); });
+    el.querySelectorAll('[data-clear-cust]').forEach(function (b) {
+      b.addEventListener('click', function () { clearCustConfirm = true; renderCustomers(); });
+    });
+    el.querySelectorAll('[data-clear-cust-no]').forEach(function (b) {
+      b.addEventListener('click', function () { clearCustConfirm = false; renderCustomers(); });
+    });
+    el.querySelectorAll('[data-clear-cust-yes]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        b.disabled = true;
+        rpc('clear_bodyshop_customers', { p_slug: SLUG, p_epass: empPass })
+          .then(function () {
+            clearCustConfirm = false;
+            if (editCustomerId != null) editCustomerId = null;
+            return loadData(true);
+          })
+          .then(function () { renderCustomers(); })
+          .catch(function (e) {
+            clearCustConfirm = false;
+            renderCustomers();
+            var er = $('cust-err');
+            if (er) { er.hidden = false; er.textContent = 'Error: ' + e.message; }
+          });
+      });
+    });
     $('cust-save').addEventListener('click', function () {
       var err = $('cust-err');
       var name = $('cust-name').value.trim();
@@ -859,6 +968,9 @@
     }
     el.innerHTML = '<h2>Loan Cars — ' + esc(shop.name) + '</h2>' +
       '<div class="note">Cars lent to customers while their own car is in the shop. Change the status and job number in the row, then tap Update — setting a car back to Available clears its job.</div>' +
+      (clearCarConfirm
+        ? '<p><b>Clear all loan cars?</b> This deletes every loan car for this shop and cannot be undone.</p><div class="row"><button class="small danger" data-clear-car-yes>Yes, clear all</button><button class="small secondary" data-clear-car-no>Keep them</button></div>'
+        : ((shopData.loancars || []).length ? '<div class="row"><button class="small danger" data-clear-car>Clear all loan cars</button></div>' : '')) +
       '<label>Search loan cars</label><input id="loan-search" type="text" value="' + esc(loanSearch) + '" placeholder="Car number, vehicle, or job…">' +
       '<div class="table-wrap"><table class="data"><thead><tr><th>Car number</th><th>Vehicle</th><th>Status</th><th>Job</th><th></th></tr></thead>' +
       '<tbody id="loan-rows"></tbody></table></div>' +
@@ -869,6 +981,26 @@
       '<p class="error" id="car-err" hidden></p></div>';
     renderLoanCarsRows();
     $('loan-search').addEventListener('input', function (e) { loanSearch = e.target.value; renderLoanCarsRows(); });
+    el.querySelectorAll('[data-clear-car]').forEach(function (b) {
+      b.addEventListener('click', function () { clearCarConfirm = true; renderLoanCars(); });
+    });
+    el.querySelectorAll('[data-clear-car-no]').forEach(function (b) {
+      b.addEventListener('click', function () { clearCarConfirm = false; renderLoanCars(); });
+    });
+    el.querySelectorAll('[data-clear-car-yes]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        b.disabled = true;
+        rpc('clear_bodyshop_loancars', { p_slug: SLUG, p_epass: empPass })
+          .then(function () { clearCarConfirm = false; return loadData(true); })
+          .then(function () { renderLoanCars(); })
+          .catch(function (e) {
+            clearCarConfirm = false;
+            renderLoanCars();
+            var er = $('car-err');
+            if (er) { er.hidden = false; er.textContent = 'Error: ' + e.message; }
+          });
+      });
+    });
     $('loan-add').addEventListener('click', function () {
       var err = $('car-err');
       var number = $('loan-new-number').value.trim();
@@ -943,7 +1075,6 @@
       '<p class="info" id="d-status">Draft status: ' + esc(draftStatus) + (draftStatus === 'pending' ? ' — waiting for Yently to approve it.' : draftStatus === 'approved' ? ' — approved, live now.' : ' — not sent yet.') + '</p>' +
       '<p class="error" id="d-err" hidden></p>' +
       '<p class="info" id="setup-clean-link">Want a short link for this page? <a href="/?add=clean:website&shop=bodyshop&slug=' + encodeURIComponent(SLUG) + '&addon=1">Add a Clean Link</a> — $2/month, free for the rest of this month.</p></div>' +
-      '<p class="info" id="setup-direct-upload">Want your uploads to go live right away? <a href="/?add=direct:website&shop=bodyshop&slug=' + encodeURIComponent(SLUG) + '&addon=1">Add Direct Upload</a> — $5/month, free for the rest of this month.</p>' +
       '<div class="card"><h3>Chats</h3>' +
       '<p class="info">Messages from visitors on this page. Visitors only see the chat bubble once Yently switches live chat on for this shop.</p>' +
       '<div class="row"><button type="button" id="setup-chats-toggle" class="secondary">Open chats</button></div>' +
@@ -955,9 +1086,6 @@
     rpc('clean_link_exists', { p_system: 'bodyshop', p_slug: SLUG }).then(function (has) {
       if (has === true) { var cleanEl = $('setup-clean-link'); if (cleanEl) cleanEl.style.display = 'none'; }
     }).catch(function () {});
-    /* Direct Upload add-on: hide the line when the switch is
-       already ON (directUploadOn, fetched in openSetup). */
-    if (directUploadOn) { var duEl = $('setup-direct-upload'); if (duEl) duEl.style.display = 'none'; }
     $('d-save').addEventListener('click', function () { saveDraft(false); });
     $('d-upload').addEventListener('click', function () { saveDraft(true); });
     wireIconField();
