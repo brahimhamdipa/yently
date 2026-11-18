@@ -516,11 +516,13 @@
         .catch(function (e) { el.innerHTML = '<h2>Jobs</h2><p class="error">Error: ' + esc(e.message) + '</p>'; });
       return;
     }
+    var finishedJobs = (shopData.jobs || []).filter(function (j) { return j.status === 'Completed' || j.status === 'Invoiced'; }).length;
+    var stayingJobs = (shopData.jobs || []).length - finishedJobs;
     el.innerHTML = '<h2>Jobs — ' + esc(shop.name) + '</h2>' +
       '<div class="note">The workflow is estimate, then job, then invoice: an accepted estimate becomes a job here, and a finished job is marked Invoiced. The list refreshes on its own every few seconds.</div>' +
       '<div id="jobs-msg"></div>' +
       (clearJobsConfirm
-        ? '<p><b>Clear all jobs?</b> This deletes every job for this shop and cannot be undone.</p><div class="row"><button class="small danger" data-clear-jobs-yes>Yes, clear all</button><button class="small secondary" data-clear-jobs-no>Keep them</button></div>'
+        ? '<p><b>Clear all ' + finishedJobs + ' finished job' + (finishedJobs === 1 ? '' : 's') + ' (Completed or Invoiced)?</b> ' + stayingJobs + ' job' + (stayingJobs === 1 ? '' : 's') + ' in progress will stay.</p><div class="row"><button class="small danger" data-clear-jobs-yes>Yes, clear all</button><button class="small secondary" data-clear-jobs-no>Keep them</button></div>'
         : ((shopData.jobs || []).length ? '<div class="row"><button class="small danger" data-clear-jobs>Clear all jobs</button></div>' : '')) +
       '<label>Search jobs</label><input id="jobs-search" type="text" value="' + esc(jobsSearch) + '" placeholder="Job number, customer, or vehicle…">' +
       '<label>Status</label><select id="jobs-status"><option' + (jobsStatus === 'All' ? ' selected' : '') + '>All</option>' + jobStatusOptions(jobsStatus) + '</select>' +
@@ -701,10 +703,12 @@
         .catch(function (e) { el.innerHTML = '<h2>Estimates</h2><p class="error">Error: ' + esc(e.message) + '</p>'; });
       return;
     }
+    var finishedEst = (shopData.estimates || []).filter(function (e) { return e.status === 'Accepted' || e.status === 'Declined'; }).length;
+    var stayingEst = (shopData.estimates || []).length - finishedEst;
     el.innerHTML = '<h2>Estimates — ' + esc(shop.name) + '</h2>' +
       '<div class="note">Accepting a pending estimate marks it Accepted and raises a job for it on the Jobs tab. Declining closes it without a job. Staff can also add an estimate below — a customer asking in person, or one that came in by phone.</div>' +
       (clearEstConfirm
-        ? '<p><b>Clear all estimates?</b> This deletes every estimate for this shop and cannot be undone.</p><div class="row"><button class="small danger" data-clear-est-yes>Yes, clear all</button><button class="small secondary" data-clear-est-no>Keep them</button></div>'
+        ? '<p><b>Clear all ' + finishedEst + ' finished estimate' + (finishedEst === 1 ? '' : 's') + ' (Accepted or Declined)?</b> ' + stayingEst + ' pending estimate' + (stayingEst === 1 ? '' : 's') + ' will stay.</p><div class="row"><button class="small danger" data-clear-est-yes>Yes, clear all</button><button class="small secondary" data-clear-est-no>Keep them</button></div>'
         : ((shopData.estimates || []).length ? '<div class="row"><button class="small danger" data-clear-est>Clear all estimates</button></div>' : '')) +
       (estStatus ? '<p class="info" id="est-status">' + esc(estStatus) + '</p>' : '') +
       '<label>Search estimates</label><input id="est-search" type="text" value="' + esc(estSearch) + '" placeholder="Estimate no., customer, or vehicle…">' +
