@@ -514,10 +514,12 @@
     var el = $('view-bookings');
     var active = bookings.filter(function (b) { return b.status === 'active'; });
     var past = bookings.filter(function (b) { return b.status !== 'active'; });
+    var finished = bookings.filter(function (b) { return b.status === 'done' || b.status === 'cancelled'; }).length;
+    var staying = bookings.length - finished;
     var html = '<h2>Bookings</h2><p class="info">Bookings refresh on their own every few seconds.</p>';
     /* Clear all: two-step confirm, same pattern as Cancel below. */
     if (clearBookingsConfirm) {
-      html += '<p><b>Clear all bookings? This deletes every booking for this shop and cannot be undone.</b></p><div class="row"><button class="small danger" data-clear-yes>Yes, clear all</button><button class="small secondary" data-clear-no>Keep them</button></div>';
+      html += '<p><b>Clear all ' + finished + ' finished booking' + (finished === 1 ? '' : 's') + '?</b> ' + staying + ' active booking' + (staying === 1 ? '' : 's') + ' will stay.</p><div class="row"><button class="small danger" data-clear-yes>Yes, clear all</button><button class="small secondary" data-clear-no>Keep them</button></div>';
     } else if (bookings.length) {
       html += '<div class="row"><button class="small danger" data-clear>Clear all bookings</button></div>';
     }
