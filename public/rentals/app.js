@@ -713,9 +713,11 @@
     if (!el) return;
     if (!bookings.length) { el.innerHTML = '<div class="card"><p class="info">No bookings yet.</p></div>'; return; }
     var h = '';
+    var finishedCount = bookings.filter(function (b) { return b.status === 'done' || b.status === 'cancelled'; }).length;
+    var stayingCount = bookings.length - finishedCount;
     if (bookingsErr) h += '<p class="error">' + esc(bookingsErr) + '</p>';
     if (clearBookingsConfirm) {
-      h += '<p><b>Clear all bookings? This deletes every booking for this car rental business and cannot be undone.</b></p><div class="row"><button class="small danger" data-clear-bookings-yes>Yes, clear all</button><button class="small secondary" data-clear-bookings-no>Keep them</button></div>';
+      h += '<p><b>Clear all ' + finishedCount + ' finished booking' + (finishedCount === 1 ? '' : 's') + '?</b> ' + stayingCount + ' active booking' + (stayingCount === 1 ? '' : 's') + ' will stay.</p><div class="row"><button class="small danger" data-clear-bookings-yes>Yes, clear all</button><button class="small secondary" data-clear-bookings-no>Keep them</button></div>';
     } else {
       h += '<div class="row"><button class="small danger" data-clear-bookings>Clear all bookings</button></div>';
     }
