@@ -13,6 +13,19 @@
 (function () {
   'use strict';
 
+  /* Sideways-scroll guard (Setup file inputs): Setup is the only page
+     with <input type="file">, and a file input's intrinsic phone width
+     can push the page past the viewport. The per-system style.css is a
+     separate file, so these two rules are injected here instead — the
+     same two rules as the diner fix: cap file inputs at the card width,
+     and never let the page scroll sideways. The body rule is handed to
+     the viewport, so the sticky header keeps working. */
+  (function () {
+    var st = document.createElement('style');
+    st.textContent = 'input[type="file"]{max-width:100%}body{overflow-x:hidden}';
+    (document.head || document.documentElement).appendChild(st);
+  })();
+
   function folderBase() {
     var p = location.pathname;
     var last = p.split('/').pop();
@@ -115,6 +128,8 @@
   var empUnlocked = false; // true once the employee password is entered, or when the shop has none set
   var bookings = []; // employee view (full details)
   var cancelBookingId = null; // booking id awaiting an in-page cancel confirmation
+  var delBookingId = null; // booking id awaiting an in-page delete confirmation
+  var clearBookingsConfirm = false; // true while the clear-all-bookings confirm is showing
   var serving = []; // public Serving Now rows (initials only)
   var bookingsTimer = null;
   var servingTimer = null;
@@ -500,6 +515,12 @@
     var active = bookings.filter(function (b) { return b.status === 'active'; });
     var past = bookings.filter(function (b) { return b.status !== 'active'; });
     var html = '<h2>Bookings</h2><p class="info">Bookings refresh on their own every few seconds.</p>';
+    /* Clear all: two-step confirm, same pattern as Cancel below. */
+    if (clearBookingsConfirm) {
+      html += '<p><b>Clear all bookings? This deletes every booking for this shop and cannot be undone.</b></p><div class="row"><button class="small danger" data-clear-yes>Yes, clear all</button><button class="small secondary" data-clear-no>Keep them</button></div>';
+    } else if (bookings.length) {
+      html += '<div class="row"><button class="small danger" data-clear>Clear all bookings</button></div>';
+    }
     if (active.length === 0) {
       html += '<p class="info">No active bookings right now.</p>';
     }
@@ -519,7 +540,10 @@
         '<button class="secondary" data-done="' + b.id + '">Mark done</button>' +
         (cancelBookingId === b.id
           ? '<span><b>Cancel this booking?</b> <button class="danger" data-cancel-yes="' + b.id + '">Yes, cancel</button> <button class="secondary" data-cancel-no="' + b.id + '">Keep it</button></span>'
-          : '<button class="danger" data-cancel="' + b.id + '">Cancel</button>') + '</div></div>';
+          : '<button class="danger" data-cancel="' + b.id + '">Cancel</button>') +
+        (delBookingId === b.id
+          ? '<span><b>Delete this booking?</b> <button class="small danger" data-del-yes="' + b.id + '">Yes, delete</button> <button class="small secondary" data-del-no="' + b.id + '">Keep it</button></span>'
+          : '<button class="small danger" data-del="' + b.id + '">Delete</button>') + '</div></div>';
     });
     if (past.length > 0) {
       html += '<h2>Past bookings</h2>';
@@ -527,7 +551,11 @@
         var d = b.data || {};
         html += '<div class="card"><h3>' + esc(d.name) + ' — ' + esc(d.service) + '</h3>' +
           '<p class="info">' + esc(d.date || '') + (d.time ? ' at ' + esc(d.time) : '') +
-          ' · ' + esc(b.status) + '</p></div>';
+          ' · ' + esc(b.status) + '</p>' +
+          '<div class="row" style="margin-top:10px">' +
+          (delBookingId === b.id
+            ? '<span><b>Delete this booking?</b> <button class="small danger" data-del-yes="' + b.id + '">Yes, delete</button> <button class="small secondary" data-del-no="' + b.id + '">Keep it</button></span>'
+            : '<button class="small danger" data-del="' + b.id + '">Delete</button>') + '</div></div>';
       });
     }
     el.innerHTML = html;
@@ -562,6 +590,37 @@
         var id = btn.getAttribute('data-cancel-yes');
         cancelBookingId = null;
         update(id, 'cancelled', null);
+      });
+    });
+    el.querySelectorAll('[data-del]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        delBookingId = Number(btn.getAttribute('data-del'));
+        renderBookings();
+      });
+    });
+    el.querySelectorAll('[data-del-no]').forEach(function (btn) {
+      btn.addEventListener('click', function () { delBookingId = null; renderBookings(); });
+    });
+    el.querySelectorAll('[data-del-yes]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = btn.getAttribute('data-del-yes');
+        delBookingId = null;
+        rpc('delete_barbershop_booking', { p_slug: SLUG, p_booking_id: Number(id), p_epass: empPass }).then(fetchBookings).catch(fetchBookings);
+      });
+    });
+    el.querySelectorAll('[data-clear]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        clearBookingsConfirm = true;
+        renderBookings();
+      });
+    });
+    el.querySelectorAll('[data-clear-no]').forEach(function (btn) {
+      btn.addEventListener('click', function () { clearBookingsConfirm = false; renderBookings(); });
+    });
+    el.querySelectorAll('[data-clear-yes]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        clearBookingsConfirm = false;
+        rpc('clear_barbershop_bookings', { p_slug: SLUG, p_epass: empPass }).then(fetchBookings).catch(fetchBookings);
       });
     });
   }
@@ -677,7 +736,6 @@
       '<button id="setup-upload">' + (directUploadOn ? 'Upload — goes live right away' : 'Upload for approval') + '</button></div>' +
       '<div id="setup-out" style="margin-top:12px"></div>' +
       '<p class="info" id="setup-clean-link">Want a short link for this page? <a href="/?add=clean:website&shop=barbers&slug=' + encodeURIComponent(SLUG) + '&addon=1">Add a Clean Link</a> — $2/month, free for the rest of this month.</p>' +
-      '<p class="info" id="setup-direct-upload">Want your uploads to go live right away? <a href="/?add=direct:website&shop=barbers&slug=' + encodeURIComponent(SLUG) + '&addon=1">Add Direct Upload</a> — $5/month, free for the rest of this month.</p>' +
       '<div class="card"><h3>Chats</h3>' +
       '<p class="info">Messages from visitors on this page. Visitors only see the chat bubble once Yently switches live chat on for this shop.</p>' +
       '<div class="row"><button type="button" id="setup-chats-toggle" class="secondary">Open chats</button></div>' +
@@ -689,9 +747,6 @@
     rpc('clean_link_exists', { p_system: 'barbers', p_slug: SLUG }).then(function (has) {
       if (has === true) { var cleanEl = $('setup-clean-link'); if (cleanEl) cleanEl.style.display = 'none'; }
     }).catch(function () {});
-    /* Direct Upload add-on: hide the line when the switch is
-       already ON (directUploadOn, fetched in openSetup). */
-    if (directUploadOn) { var duEl = $('setup-direct-upload'); if (duEl) duEl.style.display = 'none'; }
     wireShopChatInbox();
     var listEl = $('setup-services');
     function serviceRow(s, i) {
