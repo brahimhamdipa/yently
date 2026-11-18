@@ -794,9 +794,11 @@
     if (!el) return;
     if (!bookings.length) { el.innerHTML = '<div class="card"><p class="info">No inquiries yet.</p></div>'; return; }
     var h = '';
+    var finishedCount = bookings.filter(function (b) { return b.status === 'done' || b.status === 'cancelled'; }).length;
+    var stayingCount = bookings.length - finishedCount;
     if (bookingsErr) h += '<p class="error">' + esc(bookingsErr) + '</p>';
     if (clearInqConfirm) {
-      h += '<p><b>Clear all inquiries?</b> This deletes every inquiry for this agency and cannot be undone.</p><div class="row"><button class="small danger" data-clear-inq-yes>Yes, clear all</button><button class="small secondary" data-clear-inq-no>Keep them</button></div>';
+      h += '<p><b>Clear all ' + finishedCount + ' finished inquir' + (finishedCount === 1 ? 'y' : 'ies') + '?</b> ' + stayingCount + ' active inquir' + (stayingCount === 1 ? 'y' : 'ies') + ' will stay.</p><div class="row"><button class="small danger" data-clear-inq-yes>Yes, clear all</button><button class="small secondary" data-clear-inq-no>Keep them</button></div>';
     } else if (bookings.length) {
       h += '<div class="row"><button class="small danger" data-clear-inq>Clear all inquiries</button></div>';
     }
