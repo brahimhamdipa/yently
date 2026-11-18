@@ -902,8 +902,8 @@
   function renderReceipt() {
     var el = $('view-receipt');
     var list = receiptOrders.slice().reverse(); // newest first
-    var activeCount = receiptOrders.filter(function (o) { return o.status === 'active'; }).length;
-    var doneCount = receiptOrders.length - activeCount;
+    var doneCount = receiptOrders.filter(function (o) { return o.status === 'done'; }).length;
+    var stayingCount = receiptOrders.length - doneCount;
     var html = '<h2>Receipt</h2><p class="info">All orders for this restaurant, from every phone. Orders refresh on their own every few seconds.</p>';
     if (receiptOrders.length === 0) {
       html += '<p class="info">No orders yet. New orders appear here by themselves — no need to refresh.</p>';
@@ -912,7 +912,7 @@
     }
     html += '<div class="row" style="margin-bottom:12px">' +
       (clearReceipts
-        ? '<span><b>Clear all ' + receiptOrders.length + ' receipts?</b> This permanently deletes ' + activeCount + ' still-active order' + (activeCount === 1 ? '' : 's') + ' and ' + doneCount + ' fulfilled order' + (doneCount === 1 ? '' : 's') + '. <button class="danger" data-clear-yes>Yes, clear all</button> <button class="secondary" data-clear-no>Keep them</button></span>'
+        ? '<span><b>Clear all ' + doneCount + ' fulfilled receipt' + (doneCount === 1 ? '' : 's') + '?</b> ' + stayingCount + ' still-active order' + (stayingCount === 1 ? '' : 's') + ' will stay. <button class="danger" data-clear-yes>Yes, clear all</button> <button class="secondary" data-clear-no>Keep them</button></span>'
         : '<button class="secondary" data-clear>Clear all receipts</button>') + '</div>';
     list.forEach(function (order) {
       var d = order.data || {};
