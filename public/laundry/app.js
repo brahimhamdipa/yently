@@ -18,6 +18,17 @@
 (function () {
   'use strict';
 
+  /* Belt-and-braces against sideways scroll on phones (diner root
+     cause, 2026-11-18): Setup has file inputs and style.css gives
+     body no overflow-x guard and file inputs no max-width — the
+     .icon-field override is width:auto + min-width:180px. Injected
+     here so the guard ships with this file (style.css is separate). */
+  (function () {
+    var st = document.createElement('style');
+    st.textContent = 'input[type="file"]{max-width:100%;}body{overflow-x:hidden;}';
+    document.head.appendChild(st);
+  })();
+
   function folderBase() {
     var p = location.pathname;
     var last = p.split('/').pop();
@@ -123,6 +134,8 @@
   var currentView = 'services';
   var serviceEditId = null; // service being edited in Setup, null = adding
   var cancelConfirmId = null; // order id awaiting an in-page cancel confirmation
+  var orderDelId = null; // order id awaiting an in-page delete confirmation
+  var clearOrdersConfirm = false; // true while the clear-all-orders confirmation is showing
   var bookingsErr = ''; // last orders error, shown inline above the list
   var delConfirmId = null; // service id awaiting an in-page delete confirmation
   var serviceSearch = ''; // public services search text, kept while typing
@@ -758,6 +771,11 @@
     if (!bookings.length) { el.innerHTML = '<div class="card"><p class="info">No orders yet.</p></div>'; return; }
     var h = '';
     if (bookingsErr) h += '<p class="error">' + esc(bookingsErr) + '</p>';
+    if (clearOrdersConfirm) {
+      h += '<p><b>Clear all orders? This deletes every order for this laundry and cannot be undone.</b></p><div class="row"><button class="small danger" data-clear-orders-yes>Yes, clear all</button><button class="small secondary" data-clear-orders-no>Keep them</button></div>';
+    } else {
+      h += '<div class="row"><button class="small danger" data-clear-orders>Clear all orders</button></div>';
+    }
     bookings.forEach(function (b) {
       var st = String(b.status || 'pending');
       h += '<div class="card"><h3>Order ' + esc(refOf(b.id)) + ' ' + statusBadge(st) + '</h3>' +
@@ -775,6 +793,10 @@
       }
       if (cancelConfirmId === b.id) {
         h += '<p><b>Cancel this order?</b></p><div class="row"><button class="small danger" data-cancel-yes="' + b.id + '">Yes, cancel</button><button class="small secondary" data-cancel-no="' + b.id + '">Keep it</button></div>';
+      }
+      h += '<div class="row"><button class="small danger" data-del-order="' + b.id + '">Delete</button></div>';
+      if (orderDelId === b.id) {
+        h += '<p><b>Delete this order?</b></p><div class="row"><button class="small danger" data-del-order-yes="' + b.id + '">Yes, delete</button><button class="small secondary" data-del-order-no="' + b.id + '">Keep it</button></div>';
       }
       h += '</div>';
     });
@@ -806,6 +828,43 @@
         rpc('update_laundry_booking', { p_slug: SLUG, p_epass: empPass, p_kind: 'order', p_id: id, p_status: 'cancelled' })
           .then(function () { cancelConfirmId = null; bookingsErr = ''; return loadBookings(); })
           .catch(function (e) { cancelConfirmId = null; bookingsErr = 'Error: ' + e.message; renderOrdersList(); });
+      });
+    });
+    el.querySelectorAll('[data-del-order]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        orderDelId = Number(btn.getAttribute('data-del-order'));
+        bookingsErr = '';
+        renderOrdersList();
+      });
+    });
+    el.querySelectorAll('[data-del-order-no]').forEach(function (btn) {
+      btn.addEventListener('click', function () { orderDelId = null; renderOrdersList(); });
+    });
+    el.querySelectorAll('[data-del-order-yes]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = Number(btn.getAttribute('data-del-order-yes'));
+        btn.disabled = true;
+        rpc('delete_laundry_booking', { p_slug: SLUG, p_epass: empPass, p_id: id })
+          .then(function () { orderDelId = null; bookingsErr = ''; return loadBookings(); })
+          .catch(function (e) { orderDelId = null; bookingsErr = 'Error: ' + e.message; renderOrdersList(); });
+      });
+    });
+    el.querySelectorAll('[data-clear-orders]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        clearOrdersConfirm = true;
+        bookingsErr = '';
+        renderOrdersList();
+      });
+    });
+    el.querySelectorAll('[data-clear-orders-no]').forEach(function (btn) {
+      btn.addEventListener('click', function () { clearOrdersConfirm = false; renderOrdersList(); });
+    });
+    el.querySelectorAll('[data-clear-orders-yes]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        btn.disabled = true;
+        rpc('clear_laundry_bookings', { p_slug: SLUG, p_epass: empPass })
+          .then(function () { clearOrdersConfirm = false; bookingsErr = ''; return loadBookings(); })
+          .catch(function (e) { clearOrdersConfirm = false; bookingsErr = 'Error: ' + e.message; renderOrdersList(); });
       });
     });
   }
@@ -867,7 +926,6 @@
       '<p class="info" id="d-status">Draft status: ' + esc(draftStatus) + (draftStatus === 'pending' ? ' — waiting for Yently to approve it.' : draftStatus === 'approved' ? ' — approved, live now.' : ' — not sent yet.') + '</p>' +
       '<p class="error" id="d-err" hidden></p>' +
       '<p class="info" id="setup-clean-link">Want a short link for this page? <a href="/?add=clean:website&shop=laundry&slug=' + encodeURIComponent(SLUG) + '&addon=1">Add a Clean Link</a> — $2/month, free for the rest of this month.</p></div>' +
-      '<p class="info" id="setup-direct-upload">Want your uploads to go live right away? <a href="/?add=direct:website&shop=laundry&slug=' + encodeURIComponent(SLUG) + '&addon=1">Add Direct Upload</a> — $5/month, free for the rest of this month.</p>' +
       '<div class="card"><h3>Services</h3>' +
       '<p class="info">Services go live right away — no approval needed.</p>' +
       '<div id="services-list"></div>' +
@@ -894,9 +952,6 @@
     rpc('clean_link_exists', { p_system: 'laundry', p_slug: SLUG }).then(function (has) {
       if (has === true) { var cleanEl = $('setup-clean-link'); if (cleanEl) cleanEl.style.display = 'none'; }
     }).catch(function () {});
-    /* Direct Upload add-on: hide the line when the switch is
-       already ON (directUploadOn, fetched in openSetup). */
-    if (directUploadOn) { var duEl = $('setup-direct-upload'); if (duEl) duEl.style.display = 'none'; }
     wireShopChatInbox();
     renderServicesList();
     $('d-save').addEventListener('click', function () { saveDraft(false); });
