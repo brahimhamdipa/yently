@@ -17,6 +17,17 @@
 (function () {
   'use strict';
 
+  /* Belt-and-braces against sideways scroll on phones: the file
+     input in Setup can push the page past the viewport. (The proper
+     home for these two rules is this app's style.css; this copy
+     rides with app.js so the page is safe even if the stylesheet
+     lags behind.) */
+  (function () {
+    var st = document.createElement('style');
+    st.textContent = 'input[type="file"]{max-width:100%}body{overflow-x:hidden}';
+    document.head.appendChild(st);
+  })();
+
   function folderBase() {
     var p = location.pathname;
     var last = p.split('/').pop();
@@ -128,6 +139,8 @@
   var currentView = 'homes';
   var listingEditId = null; // listing being edited in Setup, null = adding
   var cancelConfirmId = null; // inquiry id awaiting an in-page cancel confirmation
+  var delInqConfirmId = null; // inquiry id awaiting an in-page delete confirmation
+  var clearInqConfirm = false; // true while the clear-all-inquiries confirmation is open
   var bookingsErr = ''; // last inquiries error, shown inline above the list
   var delConfirmId = null; // listing id awaiting an in-page delete confirmation
   var slideIdx = {}; // listing id -> current slideshow picture index
@@ -718,17 +731,23 @@
   }
 
   /* ---------- Inquiries (employee password) ---------- */
+  /* Employee password gate (Inquiries). The prompt is rendered
+     into the view container it is given, so the lookups MUST stay
+     scoped to that container: every view lives in the DOM at once,
+     and a global getElementById would wire the first copy's button
+     and leave any other copy's Unlock dead. (Only Inquiries calls
+     this today, but the scoping keeps it safe if a second tab does.) */
   function empGate(el, heading, after) {
     el.innerHTML = '<h2>' + heading + '</h2><div class="card">' +
       '<p class="info">Enter the employee password for this agency to see inquiries.</p>' +
       '<label>Employee password</label><input id="emp-pass" type="password" autocomplete="current-password">' +
       '<div class="row"><button id="emp-go">Unlock</button></div>' +
       '<p class="error" id="emp-err" hidden></p></div>';
-    $('emp-go').addEventListener('click', function () {
-      var pw = $('emp-pass').value;
+    el.querySelector('#emp-go').addEventListener('click', function () {
+      var pw = el.querySelector('#emp-pass').value;
       rpc('check_houses_employee_pass', { p_slug: SLUG, p_password: pw }).then(function (ok) {
         if (!ok) {
-          var e = $('emp-err');
+          var e = el.querySelector('#emp-err');
           e.hidden = false;
           e.textContent = 'Wrong employee password.';
           return;
@@ -737,7 +756,7 @@
         empUnlocked = true;
         after();
       }).catch(function (err) {
-        var e = $('emp-err');
+        var e = el.querySelector('#emp-err');
         e.hidden = false;
         e.textContent = 'Error: ' + err.message;
       });
@@ -746,7 +765,7 @@
   function loadBookings(quiet) {
     return rpc('list_houses_bookings', { p_slug: SLUG, p_epass: empPass }).then(function (d) {
       bookings = d || [];
-      if (currentView === 'inquiries') renderBookingsList();
+      if (currentView === 'inquiries' && cancelConfirmId === null && delInqConfirmId === null && !clearInqConfirm) renderBookingsList();
       return bookings;
     }).catch(function (e) { if (!quiet) throw e; });
   }
@@ -776,16 +795,27 @@
     if (!bookings.length) { el.innerHTML = '<div class="card"><p class="info">No inquiries yet.</p></div>'; return; }
     var h = '';
     if (bookingsErr) h += '<p class="error">' + esc(bookingsErr) + '</p>';
+    if (clearInqConfirm) {
+      h += '<p><b>Clear all inquiries?</b> This deletes every inquiry for this agency and cannot be undone.</p><div class="row"><button class="small danger" data-clear-inq-yes>Yes, clear all</button><button class="small secondary" data-clear-inq-no>Keep them</button></div>';
+    } else if (bookings.length) {
+      h += '<div class="row"><button class="small danger" data-clear-inq>Clear all inquiries</button></div>';
+    }
     bookings.forEach(function (b) {
+      var actions = '';
+      if (cancelConfirmId === b.id) {
+        actions = '<p><b>Cancel this inquiry?</b></p><div class="row"><button class="small danger" data-cancel-yes="' + b.id + '" data-kind="' + b.kind + '">Yes, cancel</button><button class="small secondary" data-cancel-no="' + b.id + '">Keep it</button></div>';
+      } else if (delInqConfirmId === b.id) {
+        actions = '<p><b>Delete this inquiry?</b></p><div class="row"><button class="small danger" data-del-inq-yes="' + b.id + '" data-kind="' + b.kind + '">Yes, delete</button><button class="small secondary" data-del-inq-no="' + b.id + '">Keep it</button></div>';
+      } else if (b.status === 'active') {
+        actions = '<div class="row"><button class="small" data-done="' + b.id + '" data-kind="' + b.kind + '">Mark done</button><button class="small danger" data-cancel="' + b.id + '" data-kind="' + b.kind + '">Cancel</button><button class="small danger" data-del-inq="' + b.id + '">Delete</button></div>';
+      } else {
+        actions = '<div class="row"><button class="small danger" data-del-inq="' + b.id + '">Delete</button></div>';
+      }
       h += '<div class="card"><h3>Inquiry #' + esc(b.id) +
         (b.status && b.status !== 'active' ? ' <span class="voided">(' + esc(b.status) + ')</span>' : '') + '</h3>' +
         '<p class="info">' + esc(fmtDT(b.created_at)) + '</p>' +
         '<p>' + bookingDetails(b) + '</p>' +
-        (b.status === 'active'
-          ? (cancelConfirmId === b.id
-            ? '<p><b>Cancel this inquiry?</b></p><div class="row"><button class="small danger" data-cancel-yes="' + b.id + '" data-kind="' + b.kind + '">Yes, cancel</button><button class="small secondary" data-cancel-no="' + b.id + '">Keep it</button></div>'
-            : '<div class="row"><button class="small" data-done="' + b.id + '" data-kind="' + b.kind + '">Mark done</button><button class="small danger" data-cancel="' + b.id + '" data-kind="' + b.kind + '">Cancel</button></div>')
-          : '') +
+        actions +
         '</div>';
     });
     el.innerHTML = h;
@@ -817,6 +847,44 @@
         rpc('update_houses_booking', { p_slug: SLUG, p_epass: empPass, p_kind: kind, p_id: id, p_status: 'cancelled' })
           .then(function () { cancelConfirmId = null; bookingsErr = ''; return loadBookings(); })
           .catch(function (e) { cancelConfirmId = null; bookingsErr = 'Error: ' + e.message; renderBookingsList(); });
+      });
+    });
+    el.querySelectorAll('[data-del-inq]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        delInqConfirmId = Number(btn.getAttribute('data-del-inq'));
+        bookingsErr = '';
+        renderBookingsList();
+      });
+    });
+    el.querySelectorAll('[data-del-inq-no]').forEach(function (btn) {
+      btn.addEventListener('click', function () { delInqConfirmId = null; renderBookingsList(); });
+    });
+    el.querySelectorAll('[data-del-inq-yes]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = Number(btn.getAttribute('data-del-inq-yes'));
+        var kind = btn.getAttribute('data-kind');
+        btn.disabled = true;
+        rpc('delete_houses_inquiry', { p_slug: SLUG, p_epass: empPass, p_kind: kind, p_id: id })
+          .then(function () { delInqConfirmId = null; bookingsErr = ''; return loadBookings(); })
+          .catch(function (e) { delInqConfirmId = null; bookingsErr = 'Error: ' + e.message; renderBookingsList(); });
+      });
+    });
+    el.querySelectorAll('[data-clear-inq]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        clearInqConfirm = true;
+        bookingsErr = '';
+        renderBookingsList();
+      });
+    });
+    el.querySelectorAll('[data-clear-inq-no]').forEach(function (btn) {
+      btn.addEventListener('click', function () { clearInqConfirm = false; renderBookingsList(); });
+    });
+    el.querySelectorAll('[data-clear-inq-yes]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        btn.disabled = true;
+        rpc('clear_houses_inquiries', { p_slug: SLUG, p_epass: empPass })
+          .then(function () { clearInqConfirm = false; bookingsErr = ''; return loadBookings(); })
+          .catch(function (e) { clearInqConfirm = false; bookingsErr = 'Error: ' + e.message; renderBookingsList(); });
       });
     });
   }
@@ -881,7 +949,6 @@
       '<p class="info" id="d-status">Draft status: ' + esc(draftStatus) + (draftStatus === 'pending' ? ' — waiting for Yently to approve it.' : draftStatus === 'approved' ? ' — approved, live now.' : ' — not sent yet.') + '</p>' +
       '<p class="error" id="d-err" hidden></p>' +
       '<p class="info" id="setup-clean-link">Want a short link for this page? <a href="/?add=clean:website&shop=houses&slug=' + encodeURIComponent(SLUG) + '&addon=1">Add a Clean Link</a> — $2/month, free for the rest of this month.</p></div>' +
-      '<p class="info" id="setup-direct-upload">Want your uploads to go live right away? <a href="/?add=direct:website&shop=houses&slug=' + encodeURIComponent(SLUG) + '&addon=1">Add Direct Upload</a> — $5/month, free for the rest of this month.</p>' +
       '<div class="card"><h3>Listings</h3>' +
       '<p class="info">Listings go live right away — no approval needed.</p>' +
       '<div id="listings-list"></div>' +
@@ -915,9 +982,6 @@
     rpc('clean_link_exists', { p_system: 'houses', p_slug: SLUG }).then(function (has) {
       if (has === true) { var cleanEl = $('setup-clean-link'); if (cleanEl) cleanEl.style.display = 'none'; }
     }).catch(function () {});
-    /* Direct Upload add-on: hide the line when the switch is
-       already ON (directUploadOn, fetched in openSetup). */
-    if (directUploadOn) { var duEl = $('setup-direct-upload'); if (duEl) duEl.style.display = 'none'; }
     wireShopChatInbox();
     renderListingsList();
     $('d-save').addEventListener('click', function () { saveDraft(false); });
