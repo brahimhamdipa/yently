@@ -19,6 +19,19 @@
 (function () {
   'use strict';
 
+  /* Sideways-scroll guard (Setup file inputs): Setup is the only page
+     with <input type="file">, and a file input's intrinsic phone width
+     can push the page past the viewport. The per-system style.css is a
+     separate file, so these two rules are injected here instead — the
+     same two rules as the diner fix: cap file inputs at the card width,
+     and never let the page scroll sideways. The body rule is handed to
+     the viewport, so the sticky header keeps working. */
+  (function () {
+    var st = document.createElement('style');
+    st.textContent = 'input[type="file"]{max-width:100%}body{overflow-x:hidden}';
+    (document.head || document.documentElement).appendChild(st);
+  })();
+
   function folderBase() {
     var p = location.pathname;
     var last = p.split('/').pop();
@@ -125,6 +138,8 @@
   var currentView = 'vehicles';
   var vehicleEditId = null; // vehicle being edited in Setup, null = adding
   var cancelConfirmId = null; // booking id awaiting an in-page cancel confirmation
+  var delBookingId = null; // booking id awaiting an in-page delete confirmation
+  var clearBookingsConfirm = false; // true while the clear-all-bookings confirm is showing
   var bookingsErr = ''; // last bookings error, shown inline above the list
   var delConfirmId = null; // vehicle id awaiting an in-page delete confirmation
   var vehicleSearch = ''; // public vehicles search text, kept while typing
@@ -733,6 +748,12 @@
     if (!bookings.length) { el.innerHTML = '<div class="card"><p class="info">No bookings yet.</p></div>'; return; }
     var h = '';
     if (bookingsErr) h += '<p class="error">' + esc(bookingsErr) + '</p>';
+    /* Clear all: two-step confirm, same pattern as Cancel below. */
+    if (clearBookingsConfirm) {
+      h += '<p><b>Clear all bookings? This deletes every booking for this dealership and cannot be undone.</b></p><div class="row"><button class="small danger" data-clear-yes>Yes, clear all</button><button class="small secondary" data-clear-no>Keep them</button></div>';
+    } else {
+      h += '<div class="row"><button class="small danger" data-clear>Clear all bookings</button></div>';
+    }
     bookings.forEach(function (b) {
       var kindLabel = b.kind === 'tradein' ? 'Trade-in' : 'Test drive';
       h += '<div class="card"><h3>' + kindLabel + ' #' + esc(b.id) +
@@ -744,6 +765,9 @@
             ? '<p><b>Cancel this booking?</b></p><div class="row"><button class="small danger" data-cancel-yes="' + b.id + '" data-kind="' + b.kind + '">Yes, cancel</button><button class="small secondary" data-cancel-no="' + b.id + '">Keep it</button></div>'
             : '<div class="row"><button class="small" data-done="' + b.id + '" data-kind="' + b.kind + '">Mark done</button><button class="small danger" data-cancel="' + b.id + '" data-kind="' + b.kind + '">Cancel</button></div>')
           : '') +
+        (delBookingId === b.id
+          ? '<p><b>Delete this booking?</b></p><div class="row"><button class="small danger" data-del-yes="' + b.id + '" data-kind="' + b.kind + '">Yes, delete</button><button class="small secondary" data-del-no="' + b.id + '">Keep it</button></div>'
+          : '<div class="row"><button class="small danger" data-del="' + b.id + '" data-kind="' + b.kind + '">Delete</button></div>') +
         '</div>';
     });
     el.innerHTML = h;
@@ -775,6 +799,43 @@
         rpc('update_dealer_booking', { p_slug: SLUG, p_epass: empPass, p_kind: kind, p_id: id, p_status: 'cancelled' })
           .then(function () { cancelConfirmId = null; bookingsErr = ''; return loadBookings(); })
           .catch(function (e) { cancelConfirmId = null; bookingsErr = 'Error: ' + e.message; renderBookingsList(); });
+      });
+    });
+    el.querySelectorAll('[data-del]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        delBookingId = Number(btn.getAttribute('data-del'));
+        bookingsErr = '';
+        renderBookingsList();
+      });
+    });
+    el.querySelectorAll('[data-del-no]').forEach(function (btn) {
+      btn.addEventListener('click', function () { delBookingId = null; renderBookingsList(); });
+    });
+    el.querySelectorAll('[data-del-yes]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = Number(btn.getAttribute('data-del-yes'));
+        var kind = btn.getAttribute('data-kind');
+        btn.disabled = true;
+        rpc('delete_dealer_booking', { p_slug: SLUG, p_epass: empPass, p_kind: kind, p_id: id })
+          .then(function () { delBookingId = null; bookingsErr = ''; return loadBookings(); })
+          .catch(function (e) { delBookingId = null; bookingsErr = 'Error: ' + e.message; renderBookingsList(); });
+      });
+    });
+    el.querySelectorAll('[data-clear]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        clearBookingsConfirm = true;
+        renderBookingsList();
+      });
+    });
+    el.querySelectorAll('[data-clear-no]').forEach(function (btn) {
+      btn.addEventListener('click', function () { clearBookingsConfirm = false; renderBookingsList(); });
+    });
+    el.querySelectorAll('[data-clear-yes]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        btn.disabled = true;
+        rpc('clear_dealer_bookings', { p_slug: SLUG, p_epass: empPass })
+          .then(function () { clearBookingsConfirm = false; bookingsErr = ''; return loadBookings(); })
+          .catch(function (e) { clearBookingsConfirm = false; bookingsErr = 'Error: ' + e.message; renderBookingsList(); });
       });
     });
   }
@@ -836,7 +897,6 @@
       '<p class="info" id="d-status">Draft status: ' + esc(draftStatus) + (draftStatus === 'pending' ? ' — waiting for Yently to approve it.' : draftStatus === 'approved' ? ' — approved, live now.' : ' — not sent yet.') + '</p>' +
       '<p class="error" id="d-err" hidden></p>' +
       '<p class="info" id="setup-clean-link">Want a short link for this page? <a href="/?add=clean:website&shop=dealer&slug=' + encodeURIComponent(SLUG) + '&addon=1">Add a Clean Link</a> — $2/month, free for the rest of this month.</p></div>' +
-      '<p class="info" id="setup-direct-upload">Want your uploads to go live right away? <a href="/?add=direct:website&shop=dealer&slug=' + encodeURIComponent(SLUG) + '&addon=1">Add Direct Upload</a> — $5/month, free for the rest of this month.</p>' +
       '<div class="card"><h3>Vehicles</h3>' +
       '<p class="info">Vehicles go live right away — no approval needed.</p>' +
       '<div id="vehicles-list"></div>' +
@@ -874,9 +934,6 @@
     rpc('clean_link_exists', { p_system: 'dealer', p_slug: SLUG }).then(function (has) {
       if (has === true) { var cleanEl = $('setup-clean-link'); if (cleanEl) cleanEl.style.display = 'none'; }
     }).catch(function () {});
-    /* Direct Upload add-on: hide the line when the switch is
-       already ON (directUploadOn, fetched in openSetup). */
-    if (directUploadOn) { var duEl = $('setup-direct-upload'); if (duEl) duEl.style.display = 'none'; }
     wireShopChatInbox();
     renderVehiclesList();
     $('d-save').addEventListener('click', function () { saveDraft(false); });
