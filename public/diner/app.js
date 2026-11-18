@@ -126,6 +126,10 @@
   var kitchenOrders = [];
   var delOrderId = null; // kitchen order id awaiting an in-page delete confirmation
   var kitchenTimer = null;
+  var receiptOrders = []; // all orders from the server (any device) for the Receipt view
+  var receiptTimer = null;
+  var delReceiptId = null; // receipt order id awaiting an in-page delete confirmation
+  var clearReceipts = false; // true while the Receipt "Clear all" confirmation is showing
   var currentView = 'menu';
   var menuSearch = ''; // public menu search text, kept while typing
   var slideIdx = 0; // featured slideshow: index into slideItems
@@ -369,16 +373,28 @@
      for everybody, set by the admin. Nothing is stored: a reload
      asks again. Restaurants with no password set skip this entirely
      (empUnlocked starts true for them, see the start block). */
-  function renderEmpPrompt(el, after) {
-    el.innerHTML = '<h2>Order</h2><div class="card">' +
+  function renderEmpPrompt(el, after, heading) {
+    /* The prompt can be rendered into several hidden views at once
+       (Menu, My Order, Kitchen, Receipt all live in the page), so
+       the ids below can exist more than once in the document. Look
+       the button, input and output up INSIDE this view's container
+       only — a global getElementById would find the first copy in
+       the page and wire the wrong button, leaving this view's Unlock
+       button dead. That was why an employee could not log in from
+       the Kitchen or Receipt page after visiting the other one
+       first (and why unlocking from one could land them on the
+       other tab). The server check itself
+       (check_diner_employee_pass) is sound — this was purely the
+       page wiring the wrong button. */
+    el.innerHTML = '<h2>' + esc(heading || 'Order') + '</h2><div class="card">' +
       '<p class="info">Enter the employee password for this restaurant to order and use the kitchen.</p>' +
       '<label>Employee password</label><input id="emp-pass" type="password" autocomplete="current-password">' +
       '<div class="row"><button id="emp-go">Unlock</button></div>' +
       '<div id="emp-out" style="margin-top:12px"></div></div>';
-    $('emp-go').addEventListener('click', function () {
+    el.querySelector('#emp-go').addEventListener('click', function () {
       ensureAudio(); // user gesture: lets the Kitchen beep play later
-      var out = $('emp-out');
-      var p = $('emp-pass').value;
+      var out = el.querySelector('#emp-out');
+      var p = el.querySelector('#emp-pass').value;
       out.innerHTML = '<p class="info">Checking…</p>';
       rpc('check_diner_employee_pass', { p_slug: SLUG, p_password: p }).then(function (ok) {
         if (ok === true) {
@@ -395,18 +411,23 @@
   }
   function needEmp(el, view) {
     if (empUnlocked) return false;
-    renderEmpPrompt(el, function () { show(view); });
+    var heading = view === 'kitchen' ? 'Kitchen' : view === 'receipt' ? 'Receipt' : view === 'order' ? 'My Order' : 'Order';
+    renderEmpPrompt(el, function () { show(view); }, heading);
     return true;
   }
 
   function stopKitchenPoll() {
     if (kitchenTimer) { clearInterval(kitchenTimer); kitchenTimer = null; }
   }
+  function stopReceiptPoll() {
+    if (receiptTimer) { clearInterval(receiptTimer); receiptTimer = null; }
+  }
 
   function show(view) {
     currentView = view;
     if (view !== 'setup') stopShopChat();
     if (view !== 'kitchen') stopKitchenPoll();
+    if (view !== 'receipt') stopReceiptPoll();
     if (view !== 'menu') stopSlideTimer();
     ['menu', 'order', 'kitchen', 'receipt', 'setup'].forEach(function (v) {
       $('view-' + v).hidden = v !== view;
@@ -417,7 +438,7 @@
     if (view === 'menu') renderMenu();
     if (view === 'order') renderOrder();
     if (view === 'kitchen') openKitchen();
-    if (view === 'receipt') renderReceipt();
+    if (view === 'receipt') openReceipt();
     if (view === 'setup') openSetup();
     window.scrollTo(0, 0);
   }
@@ -850,15 +871,110 @@
     restoreRemoteFocus();
   }
 
-  /* ---------- Receipt (visitor's own orders, printable) ---------- */
+  /* ---------- Receipt (the cashier's live list — every order, any device) ---------- */
+  /* Was: the visitor's own orders from this browser only (myOrders in
+     localStorage), rendered once when the tab opened and never
+     refreshed — so a cashier with the page open all day never saw
+     orders placed on other phones. Now: the same server list the
+     Kitchen polls (list_diner_orders_open, employee-password
+     checked), refreshed every 5 seconds while the Receipt tab is
+     open, newest first. No beep here — the Kitchen is the one that
+     beeps. The visitor's own orders are still in the server list
+     (they were sent to the kitchen), so nothing is lost; the local
+     list is kept only as a fallback when the server cannot be
+     reached yet. */
+  function openReceipt() {
+    if (needEmp($('view-receipt'), 'receipt')) return;
+    delReceiptId = null;
+    clearReceipts = false;
+    fetchReceipt();
+    stopReceiptPoll();
+    receiptTimer = setInterval(fetchReceipt, 5000);
+  }
+  function fetchReceipt() {
+    rpc('list_diner_orders_open', { p_slug: SLUG, p_epass: empPass }).then(function (rows) {
+      receiptOrders = rows || [];
+      if (currentView === 'receipt') renderReceipt();
+    }).catch(function () {
+      if (currentView === 'receipt' && receiptOrders.length === 0) renderReceiptLocal();
+    });
+  }
   function renderReceipt() {
     var el = $('view-receipt');
-    if (needEmp(el, 'receipt')) return;
-    if (myOrders.length === 0) {
-      el.innerHTML = '<h2>Receipt</h2><p class="info">No orders from this browser yet. Orders you send from the Order tab will show here so you can print them.</p>';
+    var list = receiptOrders.slice().reverse(); // newest first
+    var activeCount = receiptOrders.filter(function (o) { return o.status === 'active'; }).length;
+    var doneCount = receiptOrders.length - activeCount;
+    var html = '<h2>Receipt</h2><p class="info">All orders for this restaurant, from every phone. Orders refresh on their own every few seconds.</p>';
+    if (receiptOrders.length === 0) {
+      html += '<p class="info">No orders yet. New orders appear here by themselves — no need to refresh.</p>';
+      el.innerHTML = html;
       return;
     }
-    var html = '<h2>Receipt</h2><div class="note">Your orders from this browser. Show one to your server or print it.</div>';
+    html += '<div class="row" style="margin-bottom:12px">' +
+      (clearReceipts
+        ? '<span><b>Clear all ' + receiptOrders.length + ' receipts?</b> This permanently deletes ' + activeCount + ' still-active order' + (activeCount === 1 ? '' : 's') + ' and ' + doneCount + ' fulfilled order' + (doneCount === 1 ? '' : 's') + '. <button class="danger" data-clear-yes>Yes, clear all</button> <button class="secondary" data-clear-no>Keep them</button></span>'
+        : '<button class="secondary" data-clear>Clear all receipts</button>') + '</div>';
+    list.forEach(function (order) {
+      var d = order.data || {};
+      var items = d.items || [];
+      var total = 0;
+      var rows = '';
+      items.forEach(function (it) {
+        total += (Number(it.price) || 0) * (Number(it.qty) || 0);
+        rows += '<div class="order-line"><span>' + esc(it.qty) + ' × ' + esc(it.name) + '</span><span>' + money((Number(it.price) || 0) * (Number(it.qty) || 0)) + '</span></div>';
+      });
+      html += '<div class="card"><h3>Table ' + esc(d.table) + ' — ' + (order.status === 'done' ? 'Fulfilled' : 'Active') + '</h3>' +
+        '<p class="info">' + new Date(d.createdAt || order.created_at).toLocaleString() + '</p>' +
+        rows + '<div class="total">Total: ' + money(total) + '</div>' +
+        '<div class="row" style="margin-top:10px">' +
+        '<button class="secondary" data-print="' + order.id + '">Print receipt</button>' +
+        (delReceiptId === order.id
+          ? '<span><b>Delete this receipt?</b> <button class="danger" data-delreceipt-yes="' + order.id + '">Yes, delete</button> <button class="secondary" data-delreceipt-no="' + order.id + '">Keep it</button></span>'
+          : '<button class="secondary" data-delreceipt="' + order.id + '">Delete</button>') + '</div></div>';
+    });
+    el.innerHTML = html;
+    el.querySelectorAll('[data-print]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var card = btn.closest('.card');
+        if (card) { $('print-area').innerHTML = card.outerHTML; window.print(); }
+      });
+    });
+    el.querySelectorAll('[data-delreceipt]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        delReceiptId = Number(btn.getAttribute('data-delreceipt'));
+        renderReceipt();
+      });
+    });
+    el.querySelectorAll('[data-delreceipt-no]').forEach(function (btn) {
+      btn.addEventListener('click', function () { delReceiptId = null; renderReceipt(); });
+    });
+    el.querySelectorAll('[data-delreceipt-yes]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = Number(btn.getAttribute('data-delreceipt-yes'));
+        delReceiptId = null;
+        rpc('delete_diner_order_open', { p_slug: SLUG, p_order_id: id, p_epass: empPass }).then(fetchReceipt).catch(fetchReceipt);
+      });
+    });
+    var clearBtn = el.querySelector('[data-clear]');
+    if (clearBtn) clearBtn.addEventListener('click', function () { clearReceipts = true; renderReceipt(); });
+    var clearNo = el.querySelector('[data-clear-no]');
+    if (clearNo) clearNo.addEventListener('click', function () { clearReceipts = false; renderReceipt(); });
+    var clearYes = el.querySelector('[data-clear-yes]');
+    if (clearYes) clearYes.addEventListener('click', function () {
+      clearReceipts = false;
+      rpc('clear_diner_orders_open', { p_slug: SLUG, p_epass: empPass }).then(fetchReceipt).catch(fetchReceipt);
+    });
+  }
+  /* Fallback when the server list cannot be reached yet: the old
+     view — this browser's own orders, printable. Shown only until
+     the first successful fetch. */
+  function renderReceiptLocal() {
+    var el = $('view-receipt');
+    if (myOrders.length === 0) {
+      el.innerHTML = '<h2>Receipt</h2><p class="error">Could not load orders. Please try again in a moment.</p>';
+      return;
+    }
+    var html = '<h2>Receipt</h2><div class="note">Could not reach the live list right now — showing your orders from this browser instead.</div>';
     myOrders.slice().reverse().forEach(function (o, idx) {
       var total = 0;
       var rows = '';

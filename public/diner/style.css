@@ -92,3 +92,13 @@ img.icon-preview { width: 40px; height: 40px; object-fit: cover; border-radius: 
    selected button from across the room. */
 #view-kitchen button:focus-visible,
 #view-kitchen button.remote-focus, #view-kitchen input[type="checkbox"].remote-focus { outline: 4px solid #f5a623; outline-offset: 2px; background: #fff7e0; color: #111827; }
+/* Setup page: never scroll sideways. The Setup page is the only
+   one with file inputs (icon picture + one per menu item), and a
+   file input's intrinsic width on a phone can push the page a few
+   millimetres wider than the screen — the navy header is what
+   shows past the right edge. Cap file inputs at the card width,
+   and stop the page itself from ever scrolling sideways. The rule
+   sits on body, whose overflow is handed to the viewport, so the
+   sticky header keeps working. */
+input[type="file"] { max-width: 100%; }
+body { overflow-x: hidden; }
