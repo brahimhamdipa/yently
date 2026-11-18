@@ -28,6 +28,7 @@ import AdminCars from './admin/AdminCars'
 import AdminDirectUpload from './admin/AdminDirectUpload'
 import AdminLiveChat from './admin/AdminLiveChat'
 import AdminVault from './admin/AdminVault'
+import AdminAdvancedSearch from './admin/AdminAdvancedSearch'
 
 // Six numbered menus, top left. A leaf has a section (an AdminPage
 // section) or a table (a Manage table, opened inside the Manage
@@ -217,6 +218,7 @@ const MENUS = [
     ] },
   ] },
   { n: 6, name: 'My Vault', items: [
+    { label: 'Advanced Search', section: 'advanced-search' },
     { label: 'My Vault', section: 'vault' },
   ] },
 ]
@@ -416,6 +418,7 @@ export default function AdminPage() {
       {section === 'cancellations' && <AdminCancellations />}
       {section === 'all-orders' && <AdminAllOrders />}
       {section === 'barcode-generator' && <AdminBarcodeGenerator />}
+      {section === 'advanced-search' && <AdminAdvancedSearch onGoSection={goSection} onGoTable={goTable} />}
       {section === 'vault' && <AdminVault />}
       <button type="button" className="admin-to-top no-print" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>↑ Top</button>
     </div>
