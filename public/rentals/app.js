@@ -19,6 +19,17 @@
 (function () {
   'use strict';
 
+  /* Second-pass fix (2026-11-18, diner root-cause sweep, mechanism 3):
+     Setup sideways scroll. The icon file input has min-width: 180px in
+     style.css with no max-width cap, and body has no overflow-x guard.
+     style.css is outside this pass's scope, so the guard is injected
+     here instead of in the stylesheet. */
+  (function () {
+    var st = document.createElement('style');
+    st.textContent = 'input[type="file"]{max-width:100%;}body{overflow-x:hidden;}';
+    document.head.appendChild(st);
+  })();
+
   function folderBase() {
     var p = location.pathname;
     var last = p.split('/').pop();
@@ -126,6 +137,8 @@
   var driverEditId = null; // driver being edited in Setup, null = adding
   var cancelConfirmId = null; // booking id awaiting an in-page cancel confirmation
   var bookingsErr = ''; // last bookings error, shown inline above the list
+  var delBookingId = null; // booking id awaiting an in-page delete confirmation
+  var clearBookingsConfirm = false; // true while the clear-all bookings confirmation is showing
   var delConfirmId = null; // car id awaiting an in-page delete confirmation
   var delDriverConfirmId = null; // driver id awaiting an in-page delete confirmation
   var carSearch = ''; // public cars search text, kept while typing
@@ -701,7 +714,15 @@
     if (!bookings.length) { el.innerHTML = '<div class="card"><p class="info">No bookings yet.</p></div>'; return; }
     var h = '';
     if (bookingsErr) h += '<p class="error">' + esc(bookingsErr) + '</p>';
+    if (clearBookingsConfirm) {
+      h += '<p><b>Clear all bookings? This deletes every booking for this car rental business and cannot be undone.</b></p><div class="row"><button class="small danger" data-clear-bookings-yes>Yes, clear all</button><button class="small secondary" data-clear-bookings-no>Keep them</button></div>';
+    } else {
+      h += '<div class="row"><button class="small danger" data-clear-bookings>Clear all bookings</button></div>';
+    }
     bookings.forEach(function (b) {
+      var delBtn = (delBookingId === b.id
+        ? '<span><b>Delete this booking?</b> <button class="small danger" data-del-booking-yes="' + b.id + '" data-kind="booking">Yes, delete</button> <button class="small secondary" data-del-booking-no="' + b.id + '">Keep it</button></span>'
+        : '<button class="small danger" data-del-booking="' + b.id + '">Delete</button>');
       h += '<div class="card"><h3>Booking #RB-' + esc(b.id) +
         (b.status && b.status !== 'active' ? ' <span class="voided">(' + esc(b.status) + ')</span>' : '') + '</h3>' +
         '<p class="info">' + esc(fmtDT(b.created_at)) + '</p>' +
@@ -709,8 +730,8 @@
         (b.status === 'active'
           ? (cancelConfirmId === b.id
             ? '<p><b>Cancel this booking?</b></p><div class="row"><button class="small danger" data-cancel-yes="' + b.id + '" data-kind="booking">Yes, cancel</button><button class="small secondary" data-cancel-no="' + b.id + '">Keep it</button></div>'
-            : '<div class="row"><button class="small" data-done="' + b.id + '" data-kind="booking">Mark done</button><button class="small danger" data-cancel="' + b.id + '" data-kind="booking">Cancel</button></div>')
-          : '') +
+            : '<div class="row"><button class="small" data-done="' + b.id + '" data-kind="booking">Mark done</button><button class="small danger" data-cancel="' + b.id + '" data-kind="booking">Cancel</button>' + delBtn + '</div>')
+          : '<div class="row">' + delBtn + '</div>') +
         '</div>';
     });
     el.innerHTML = h;
@@ -727,6 +748,7 @@
     el.querySelectorAll('[data-cancel]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         cancelConfirmId = Number(btn.getAttribute('data-cancel'));
+        delBookingId = null;
         bookingsErr = '';
         renderBookingsList();
       });
@@ -742,6 +764,45 @@
         rpc('update_rentals_booking', { p_slug: SLUG, p_epass: empPass, p_kind: kind, p_id: id, p_status: 'cancelled' })
           .then(function () { cancelConfirmId = null; bookingsErr = ''; return loadBookings(); })
           .catch(function (e) { cancelConfirmId = null; bookingsErr = 'Error: ' + e.message; renderBookingsList(); });
+      });
+    });
+    el.querySelectorAll('[data-del-booking]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        delBookingId = Number(btn.getAttribute('data-del-booking'));
+        cancelConfirmId = null;
+        bookingsErr = '';
+        renderBookingsList();
+      });
+    });
+    el.querySelectorAll('[data-del-booking-no]').forEach(function (btn) {
+      btn.addEventListener('click', function () { delBookingId = null; renderBookingsList(); });
+    });
+    el.querySelectorAll('[data-del-booking-yes]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = Number(btn.getAttribute('data-del-booking-yes'));
+        var kind = btn.getAttribute('data-kind');
+        btn.disabled = true;
+        rpc('delete_rentals_booking', { p_slug: SLUG, p_epass: empPass, p_kind: kind, p_id: id })
+          .then(function () { delBookingId = null; bookingsErr = ''; return loadBookings(); })
+          .catch(function (e) { delBookingId = null; bookingsErr = 'Error: ' + e.message; renderBookingsList(); });
+      });
+    });
+    el.querySelectorAll('[data-clear-bookings]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        clearBookingsConfirm = true;
+        bookingsErr = '';
+        renderBookingsList();
+      });
+    });
+    el.querySelectorAll('[data-clear-bookings-no]').forEach(function (btn) {
+      btn.addEventListener('click', function () { clearBookingsConfirm = false; renderBookingsList(); });
+    });
+    el.querySelectorAll('[data-clear-bookings-yes]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        btn.disabled = true;
+        rpc('clear_rentals_bookings', { p_slug: SLUG, p_epass: empPass })
+          .then(function () { clearBookingsConfirm = false; bookingsErr = ''; return loadBookings(); })
+          .catch(function (e) { clearBookingsConfirm = false; bookingsErr = 'Error: ' + e.message; renderBookingsList(); });
       });
     });
   }
@@ -803,7 +864,6 @@
       '<p class="info" id="d-status">Draft status: ' + esc(draftStatus) + (draftStatus === 'pending' ? ' — waiting for Yently to approve it.' : draftStatus === 'approved' ? ' — approved, live now.' : ' — not sent yet.') + '</p>' +
       '<p class="error" id="d-err" hidden></p>' +
       '<p class="info" id="setup-clean-link">Want a short link for this page? <a href="/?add=clean:website&shop=rentals&slug=' + encodeURIComponent(SLUG) + '&addon=1">Add a Clean Link</a> — $2/month, free for the rest of this month.</p></div>' +
-      '<p class="info" id="setup-direct-upload">Want your uploads to go live right away? <a href="/?add=direct:website&shop=rentals&slug=' + encodeURIComponent(SLUG) + '&addon=1">Add Direct Upload</a> — $5/month, free for the rest of this month.</p>' +
       '<div class="card"><h3>Cars</h3>' +
       '<p class="info">Cars go live right away — no approval needed.</p>' +
       '<div id="cars-list"></div>' +
@@ -846,9 +906,6 @@
     rpc('clean_link_exists', { p_system: 'rentals', p_slug: SLUG }).then(function (has) {
       if (has === true) { var cleanEl = $('setup-clean-link'); if (cleanEl) cleanEl.style.display = 'none'; }
     }).catch(function () {});
-    /* Direct Upload add-on: hide the line when the switch is
-       already ON (directUploadOn, fetched in openSetup). */
-    if (directUploadOn) { var duEl = $('setup-direct-upload'); if (duEl) duEl.style.display = 'none'; }
     wireShopChatInbox();
     renderCarsList();
     renderDriversList();
