@@ -105,6 +105,42 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
+  /* Speaker button (Nov 2026): tap the 🔊 button to hear a word read
+     aloud with the browser's built-in speech (window.speechSynthesis).
+     Never auto-plays — only on tap. Cancels any speech already playing
+     first; a graceful no-op when speechSynthesis is unavailable. Words
+     are passed as-is (Arabic harakat included, never stripped). */
+  function speakWord(text, lang) {
+    if (!text) return;
+    try {
+      if (!('speechSynthesis' in window) || !window.speechSynthesis) return;
+      window.speechSynthesis.cancel();
+      var target = lang || 'en-US';
+      var u = new SpeechSynthesisUtterance(String(text));
+      u.lang = target;
+      u.rate = 0.9;
+      try {
+        var prefix = target.split('-')[0].toLowerCase();
+        var voices = window.speechSynthesis.getVoices() || [];
+        for (var i = 0; i < voices.length; i++) {
+          if (voices[i] && voices[i].lang && String(voices[i].lang).toLowerCase().indexOf(prefix) === 0) { u.voice = voices[i]; break; }
+        }
+      } catch (e) {}
+      window.speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+  function speakBtnHtml(text, lang) {
+    return '<button type="button" class="speak-btn" data-speak="' + esc(text) + '"' + (lang ? ' data-speak-lang="' + esc(lang) + '"' : '') + ' aria-label="Hear it" title="Hear it" style="font-size:20px;padding:4px 8px;margin-left:8px;cursor:pointer;background:#fff;border:1px solid #ccc;border-radius:8px;line-height:1;vertical-align:middle">\uD83D\uDD0A</button>';
+  }
+  function wireSpeakButtons(scope) {
+    if (!scope || !scope.querySelectorAll) return;
+    scope.querySelectorAll('[data-speak]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        speakWord(btn.getAttribute('data-speak'), btn.getAttribute('data-speak-lang') || undefined);
+      });
+    });
+  }
   function rpc(name, body) {
     return fetch(SUPABASE_URL + '/rest/v1/rpc/' + name, {
       method: 'POST',
@@ -380,11 +416,12 @@
     var html = '<h2>' + esc(GAME_NAMES[game]) + '</h2>' + roundHeader();
     if (game === 'spell') {
       html += '<div class="card question-card"><p class="hint-label">What word means this?</p>' +
-        '<p class="question-big">💬 ' + esc(q.meaning) + '</p>' +
+        '<p class="question-big">💬 ' + esc(q.meaning) + ' ' + speakBtnHtml(q.meaning) + '</p>' +
         '<label>Type the word</label><input id="spell-answer" type="text" autocomplete="off" autocapitalize="off" placeholder="Type here…">' +
         '<div class="row"><button id="spell-check">Check ✅</button></div>' +
         '<div id="round-out" style="margin-top:12px"></div></div>';
       el.innerHTML = html;
+      wireSpeakButtons(el);
       var input = $('spell-answer');
       input.focus();
       $('spell-check').addEventListener('click', function () { checkSpell(el); });
@@ -396,12 +433,13 @@
     if (game === 'pick-word') {
       var opts = shuffle([q.word].concat(wrongChoices(q.word, words().map(function (w) { return w.word; }))));
       html += '<div class="card question-card"><p class="hint-label">Which word means this?</p>' +
-        '<p class="question-big">💬 ' + esc(q.meaning) + '</p><div class="choice-grid">';
+        '<p class="question-big">💬 ' + esc(q.meaning) + ' ' + speakBtnHtml(q.meaning) + '</p><div class="choice-grid">';
       opts.forEach(function (opt) {
         html += '<button class="choice-btn" data-choice="' + esc(opt) + '">' + esc(opt) + '</button>';
       });
       html += '</div><div id="round-out" style="margin-top:12px"></div></div>';
       el.innerHTML = html;
+      wireSpeakButtons(el);
       el.querySelectorAll('[data-choice]').forEach(function (btn) {
         btn.addEventListener('click', function () { answerChoice(el, btn, btn.getAttribute('data-choice') === q.word, q.word); });
       });
@@ -410,12 +448,13 @@
     /* pick-meaning */
     var meanings = shuffle([q.meaning].concat(wrongChoices(q.meaning, words().map(function (w) { return w.meaning; }))));
     html += '<div class="card question-card"><p class="hint-label">What does this word mean?</p>' +
-      '<p class="question-big">🔤 ' + esc(q.word) + '</p><div class="choice-grid">';
+      '<p class="question-big">🔤 ' + esc(q.word) + ' ' + speakBtnHtml(q.word) + '</p><div class="choice-grid">';
     meanings.forEach(function (m) {
       html += '<button class="choice-btn meaning-btn" data-choice="' + esc(m) + '">' + esc(m) + '</button>';
     });
     html += '</div><div id="round-out" style="margin-top:12px"></div></div>';
     el.innerHTML = html;
+    wireSpeakButtons(el);
     el.querySelectorAll('[data-choice]').forEach(function (btn) {
       btn.addEventListener('click', function () { answerChoice(el, btn, btn.getAttribute('data-choice') === q.meaning, q.meaning); });
     });
@@ -431,14 +470,15 @@
       score++;
       var rl = el.querySelector('.round-line');
       if (rl) rl.innerHTML = 'Round ' + (round + 1) + ' of ' + questions.length + ' &nbsp;·&nbsp; ' + esc(player) + ' &nbsp;·&nbsp; ⭐ ' + score;
-      out.innerHTML = '<p class="good">' + praise() + ' "' + esc(q.word) + '" is right! ⭐</p>' + nextButtonHtml();
+      out.innerHTML = '<p class="good">' + praise() + ' "' + esc(q.word) + '" is right! ' + speakBtnHtml(q.word) + ' ⭐</p>' + nextButtonHtml();
     } else {
-      out.innerHTML = '<p class="try-again">Good try! The word is <strong>' + esc(q.word) + '</strong>. You will get the next one! 💪</p>' + nextButtonHtml();
+      out.innerHTML = '<p class="try-again">Good try! The word is <strong>' + esc(q.word) + '</strong>. ' + speakBtnHtml(q.word) + ' You will get the next one! 💪</p>' + nextButtonHtml();
     }
     var checkBtn = $('spell-check');
     if (checkBtn) checkBtn.disabled = true;
     var input = $('spell-answer');
     if (input) input.disabled = true;
+    wireSpeakButtons(out);
     wireNext(el);
   }
   function answerChoice(el, btn, correct, rightText) {
@@ -451,11 +491,12 @@
       var rl = el.querySelector('.round-line');
       if (rl) rl.innerHTML = 'Round ' + (round + 1) + ' of ' + questions.length + ' &nbsp;·&nbsp; ' + esc(player) + ' &nbsp;·&nbsp; ⭐ ' + score;
       btn.classList.add('correct');
-      out.innerHTML = '<p class="good">' + praise() + '</p>' + nextButtonHtml();
+      out.innerHTML = '<p class="good">' + praise() + ' ' + speakBtnHtml(rightText) + '</p>' + nextButtonHtml();
     } else {
       btn.classList.add('wrong');
-      out.innerHTML = '<p class="try-again">Good try! The right answer is <strong>' + esc(rightText) + '</strong>. You will get the next one! 💪</p>' + nextButtonHtml();
+      out.innerHTML = '<p class="try-again">Good try! The right answer is <strong>' + esc(rightText) + '</strong>. ' + speakBtnHtml(rightText) + ' You will get the next one! 💪</p>' + nextButtonHtml();
     }
+    wireSpeakButtons(out);
     wireNext(el);
   }
   function renderResult(el) {
