@@ -129,6 +129,42 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
+  /* Speaker button (Nov 2026): tap the 🔊 button to hear a word read
+     aloud with the browser's built-in speech (window.speechSynthesis).
+     Never auto-plays — only on tap. Cancels any speech already playing
+     first; a graceful no-op when speechSynthesis is unavailable. Words
+     are passed as-is (Arabic harakat included, never stripped). */
+  function speakWord(text, lang) {
+    if (!text) return;
+    try {
+      if (!('speechSynthesis' in window) || !window.speechSynthesis) return;
+      window.speechSynthesis.cancel();
+      var target = lang || 'ar-SA';
+      var u = new SpeechSynthesisUtterance(String(text));
+      u.lang = target;
+      u.rate = 0.9;
+      try {
+        var prefix = target.split('-')[0].toLowerCase();
+        var voices = window.speechSynthesis.getVoices() || [];
+        for (var i = 0; i < voices.length; i++) {
+          if (voices[i] && voices[i].lang && String(voices[i].lang).toLowerCase().indexOf(prefix) === 0) { u.voice = voices[i]; break; }
+        }
+      } catch (e) {}
+      window.speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+  function speakBtnHtml(text, lang) {
+    return '<button type="button" class="speak-btn" data-speak="' + esc(text) + '"' + (lang ? ' data-speak-lang="' + esc(lang) + '"' : '') + ' aria-label="Hear it" title="Hear it" style="font-size:20px;padding:4px 8px;margin-left:8px;cursor:pointer;background:#fff;border:1px solid #ccc;border-radius:8px;line-height:1;vertical-align:middle">\uD83D\uDD0A</button>';
+  }
+  function wireSpeakButtons(scope) {
+    if (!scope || !scope.querySelectorAll) return;
+    scope.querySelectorAll('[data-speak]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        speakWord(btn.getAttribute('data-speak'), btn.getAttribute('data-speak-lang') || undefined);
+      });
+    });
+  }
   function shuffle(arr) {
     var a = arr.slice();
     for (var i = a.length - 1; i > 0; i--) {
@@ -281,6 +317,7 @@
     el.innerHTML = html;
     wireStudentButtons(el);
     wirePinBox(el);
+    wireSpeakButtons(el);
     el.querySelectorAll('[data-game]').forEach(function (btn) {
       btn.addEventListener('click', function () { startGame(btn.getAttribute('data-game')); });
     });
@@ -372,7 +409,7 @@
       ' — Question ' + (game.idx + 1) + ' of ' + game.rounds.length +
       ' &nbsp;•&nbsp; النقاط: ' + game.score + ' — Score: ' + game.score + '</p>' +
       '<p class="question-label">' + esc(round.questionLabel) + '</p>' +
-      '<div class="big-question">' + esc(round.question) + '</div>' +
+      '<div class="big-question">' + esc(round.question) + ' ' + speakBtnHtml(round.question) + '</div>' +
       '<div class="choices-grid">';
     round.choices.forEach(function (c) {
       var cls = 'choice-btn';
@@ -384,7 +421,7 @@
     });
     html += '</div>';
     if (game.picked !== null) {
-      html += '<p class="praise">' + (game.correct ? PRAISE[Math.floor(Math.random() * PRAISE.length)] : TRY_AGAIN + '<br>الإجابة الصحيحة: ' + esc(round.answer) + ' — The right answer: ' + esc(round.answer)) + '</p>' +
+      html += '<p class="praise">' + (game.correct ? PRAISE[Math.floor(Math.random() * PRAISE.length)] : TRY_AGAIN + '<br>الإجابة الصحيحة: ' + esc(round.answer) + ' — The right answer: ' + esc(round.answer) + ' ' + speakBtnHtml(round.answer, game.kind === 'words' ? 'en-US' : 'ar-SA')) + '</p>' +
         '<button id="next-round">' + (game.idx + 1 >= game.rounds.length ? '🏁 النتيجة — See my score' : '➡️ التالي — Next') + '</button>';
     }
     html += '</div>';
