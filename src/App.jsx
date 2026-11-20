@@ -234,12 +234,11 @@ export default function App() {
   const KIDS_TABS = ['kids-hub', 'kids-math', 'kids-english', 'kids-arabic', 'kids-french', 'kids-spanish', 'kids-science', 'kids-geography', 'kids-coding', 'kids-reading', 'kids-books']
   const inBusiness = BUSINESS_TABS.includes(tab)
   const inCars = ['cars', 'sell', 'contact', 'car-seller', 'car-seller-soon'].includes(tab)
-  const inKids = KIDS_TABS.includes(tab)
   const inFlights = ['flights', 'flights-hub', 'reserve', 'flight-pay', 'flight-contact'].includes(tab)
-  // "More" holds Cars + Services + Help Center (Guides, Pass
-  // Recovery) + Track Order + About Us now that Yently Kids is a
-  // top-level item.
-  const inMore = ['services', 'services-home', 'services-contact', 'about', 'guides', 'pass-recovery', 'track', 'clothes'].includes(tab) || inCars
+  // "More" holds Services + Help Center (Guides, Pass
+  // Recovery) + Track Order + About Us. Cars is a top-level
+  // button now, and Yently Kids moved to Systems.
+  const inMore = ['services', 'services-home', 'services-contact', 'about', 'guides', 'pass-recovery', 'track', 'clothes'].includes(tab)
 
   return (
     <div className="app">
@@ -252,14 +251,13 @@ export default function App() {
         <div className="header-right">
           <nav>
             <button className={inBusiness ? 'active' : ''} onClick={() => go('business-hub')}>Systems</button>
-            <button className={inKids ? 'active' : ''} onClick={() => go('kids-hub')}>Yently Kids</button>
-            <button className={GROCERY_TABS.includes(tab) ? 'active' : ''} onClick={() => go('products')}>Shop</button>
             <button className={inFlights ? 'active' : ''} onClick={() => go('flights-hub')}>Flights</button>
+            <button className={GROCERY_TABS.includes(tab) ? 'active' : ''} onClick={() => go('products')}>Shop</button>
+            <button className={inCars ? 'active' : ''} onClick={() => go('cars')}>Cars</button>
             <span className="dropdown" ref={moreRef}>
               <button className={inMore ? 'active' : ''} onClick={() => setMoreOpen(o => !o)}>More ▾</button>
               {moreOpen && (
                 <span className="dropdown-menu">
-                  <a onClick={() => go('cars')}>Cars</a>
                   <a onClick={() => go('services')}>Services</a>
                   <a onClick={() => setHelpOpen(o => !o)}>Help Center {helpOpen ? '▾' : '▸'}</a>
                   {helpOpen && (
@@ -286,7 +284,7 @@ export default function App() {
           </div>
         </div>
         </div>
-        <div className="announce-bar">YENTLY | Everything you need, <span className="slogan-word"><span className="slogan-g">g</span><span className="slogan-y">y</span><span className="slogan-ently">ently</span></span> in one place</div>
+        <div className="announce-bar">Business systems, flight tickets, and shopping — all in one place.</div>
       </header>
       <main className="main">
         {tab === 'cars' && <CarSection go={go} />}
