@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { shrinkImage } from '../lib/storeUpload'
+import { COUNTRIES, useCountryFilter, normalizeCountry } from '../lib/countryFilter'
 import { fmtNum } from './CarSection'
 import CarsMenu from './CarsMenu'
 
@@ -17,7 +18,7 @@ import CarsMenu from './CarsMenu'
 // cars/<seller-slug>/, shrunk in the browser first (max 1600px).
 // ---------------------------------------------------------------------------
 
-const EMPTY_CAR = { year: '', make: '', model: '', name: '', mileage: '', price: '', description: '', phone: '', email: '' }
+const EMPTY_CAR = { year: '', make: '', model: '', name: '', mileage: '', price: '', description: '', phone: '', email: '', country: '' }
 
 async function uploadCarPictures(files, slug) {
   const urls = []
@@ -38,16 +39,28 @@ const SAMPLE_JSON = [
     year: 2019, make: 'Ford', model: 'Focus', name: '2019 Ford Focus',
     mileage: 61200, price: 7500,
     description: 'One-owner hatchback, clean title, new brakes.',
-    phone: '', email: '', photos: [],
+    phone: '', email: '', country: 'US', photos: [],
   },
 ]
 
 function CarForm({ seller, creds, initial, onDone, onCancel }) {
-  const [form, setForm] = useState(initial || EMPTY_CAR)
+  const { country: detectedCountry, ready: countryReady } = useCountryFilter()
+  const [form, setForm] = useState(() => {
+    if (initial) return { ...EMPTY_CAR, ...initial, country: normalizeCountry(initial.country) || '' }
+    return { ...EMPTY_CAR, country: '' }
+  })
   const [photos, setPhotos] = useState(initial && initial.photos ? initial.photos : [])
   const [newFiles, setNewFiles] = useState([])
   const [status, setStatus] = useState('')
   const [saving, setSaving] = useState(false)
+
+  // New car: default the Country field to the visitor's detected country,
+  // falling back to US. Never overwrites a country the seller already picked.
+  useEffect(() => {
+    if (!initial && countryReady) {
+      setForm(f => (f.country ? f : { ...f, country: detectedCountry || 'US' }))
+    }
+  }, [initial, countryReady, detectedCountry])
 
   const fillName = () => {
     const name = [form.year, form.make, form.model].filter(Boolean).join(' ')
@@ -74,6 +87,7 @@ function CarForm({ seller, creds, initial, onDone, onCancel }) {
         p_phone: form.phone.trim() || null,
         p_email: form.email.trim() || null,
         p_photos: allPhotos,
+        p_country: form.country || null,
       }
       if (initial && initial.id) {
         await supabase.rpc('update_car_listing', { ...args, p_id: initial.id })
@@ -105,6 +119,17 @@ function CarForm({ seller, creds, initial, onDone, onCancel }) {
       <div className="row">
         <input placeholder="Mileage" type="number" value={form.mileage} onChange={e => setForm({ ...form, mileage: e.target.value })} />
         <input placeholder="Price ($)" type="number" value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} />
+      </div>
+      <div className="row">
+        <label style={{ flex: 1 }}>
+          <span className="field-label">Country — where the car is</span>
+          <select value={form.country} onChange={e => setForm({ ...form, country: e.target.value })} style={{ width: '100%' }}>
+            <option value="">Select country</option>
+            {COUNTRIES.map(c => (
+              <option key={c.code} value={c.code}>{c.name}</option>
+            ))}
+          </select>
+        </label>
       </div>
       <textarea placeholder="Description — condition, features, anything a buyer should know" value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} rows={3} />
       <div className="row">
@@ -293,13 +318,14 @@ export default function CarSellerFormPage({ go }) {
         <div className="table-wrap">
           <table className="admin-table">
             <thead>
-              <tr><th>Car</th><th>Price</th><th>Status</th><th className="no-print"></th></tr>
+              <tr><th>Car</th><th>Price</th><th>Country</th><th>Status</th><th className="no-print"></th></tr>
             </thead>
             <tbody>
               {cars.map(car => (
                 <tr key={car.id}>
                   <td>{car.name}</td>
                   <td>{car.price ? `$${fmtNum(car.price)}` : ''}</td>
+                  <td>{car.country || ''}</td>
                   <td>{car.status}</td>
                   <td className="no-print" style={{ whiteSpace: 'nowrap' }}>
                     <button type="button" className="btn-mini" onClick={() => { setEditing(car); setShowAdd(false) }}>Edit</button>{' '}
@@ -322,7 +348,7 @@ export default function CarSellerFormPage({ go }) {
         <CarForm
           seller={seller}
           creds={creds}
-          initial={{ id: editing.id, year: editing.year || '', make: editing.make || '', model: editing.model || '', name: editing.name, mileage: editing.mileage || '', price: editing.price || '', description: editing.description || '', phone: editing.phone || '', email: editing.email || '', photos: editing.photos || [] }}
+          initial={{ id: editing.id, year: editing.year || '', make: editing.make || '', model: editing.model || '', name: editing.name, mileage: editing.mileage || '', price: editing.price || '', description: editing.description || '', phone: editing.phone || '', email: editing.email || '', country: editing.country || '', photos: editing.photos || [] }}
           onDone={() => { setEditing(null); loadCars(creds) }}
           onCancel={() => setEditing(null)}
         />
@@ -334,7 +360,7 @@ export default function CarSellerFormPage({ go }) {
 
       <div className="form-card wide">
         <h3>Add many cars at once (from a list file)</h3>
-        <p className="hint">Make a list of cars in a list file — one entry per car, with year, make, model, name, mileage, price, description, phone, email, and photos (a list of picture links). Load the file here, check the list, then upload it for approval.</p>
+        <p className="hint">Make a list of cars in a list file — one entry per car, with year, make, model, name, mileage, price, description, phone, email, country, and photos (a list of picture links). Load the file here, check the list, then upload it for approval.</p>
         <div className="row">
           <button type="button" onClick={downloadSample}>Download an example list file</button>
           <label className="hint" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

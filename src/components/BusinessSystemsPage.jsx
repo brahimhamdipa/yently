@@ -87,6 +87,12 @@ export default function BusinessSystemsPage({ go }) {
         ))}
       </div>
 
+      <div className="hero-card">
+        <h3>Yently Kids Systems</h3>
+        <p style={{ margin: '4px 0 12px' }}>Learning that feels like play — nine subjects, one link per school.</p>
+        <button type="button" onClick={() => go && go('kids-hub')}>See Yently Kids →</button>
+      </div>
+
       <div className="hero-card" style={{ textAlign: 'center' }}>
         <h3>Bundle &amp; save</h3>
         <p>2 systems 10% off, 3 systems 15% off, 4+ systems 20% off — your saving is applied automatically, no code needed.</p>

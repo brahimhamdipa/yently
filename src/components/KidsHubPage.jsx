@@ -1,6 +1,6 @@
 import { KidsTopBar } from './KidsMenu'
 
-// Yently Kids hub page — reached from More ▾ → Yently Kids. Same
+// Yently Kids hub page — reached from Systems → Yently Kids Systems. Same
 // shape as the Business Systems hub: every subject in one place,
 // each row linking to its own ad page. Prices match the ad pages
 // exactly (every subject $5/month for the first 3 students,

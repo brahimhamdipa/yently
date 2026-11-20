@@ -19,22 +19,22 @@ export default function FlightsHubPage({ go }) {
         <h3>How it works</h3>
         <ol className="steps">
           <li>
-            <b>1. Ask for an estimation.</b> Tell us where you're flying, when, and who's going — with the form, or by chat, call, text, WhatsApp or email. It costs nothing to ask.
+            <b>Ask for an estimation.</b> Tell us where you're flying, when, and who's going — with the form, or by chat, call, text, WhatsApp or email. It costs nothing to ask.
             <div style={{ marginTop: 8 }}>
               <button type="button" onClick={() => go && go('flights')}>Get a flight estimation →</button>
             </div>
           </li>
           <li>
-            <b>2. We check the price — fast.</b> We check the prices and get back to you as soon as possible, ideally while we're still talking. Flight prices can change in minutes, so the whole thing works best in one conversation — stay in the chat or on the call while we check.
+            <b>We check the price — fast.</b> We check the prices and get back to you as soon as possible, ideally while we're still talking. Flight prices can change in minutes, so the whole thing works best in one conversation — stay in the chat or on the call while we check.
           </li>
           <li>
-            <b>3. Agree the price, then reserve.</b> When you like the price, fill in the Flight Reservation form. Every traveler's name must match their passport exactly — airlines won't accept a different spelling.
+            <b>Agree the price, then reserve.</b> When you like the price, fill in the Flight Reservation form. Every traveler's name must match their passport exactly — airlines won't accept a different spelling.
             <div style={{ marginTop: 8 }}>
               <button type="button" onClick={() => go && go('reserve')}>Fill the Flight Reservation form →</button>
             </div>
           </li>
           <li>
-            <b>4. Pay the exact amount we agreed.</b> Tap Pay Flight and pay exactly what we agreed — no more, no less. Once we've got your payment, we email your confirmation, receipt and all the details.
+            <b>Pay the exact amount we agreed.</b> Tap Pay Flight and pay exactly what we agreed — no more, no less. Once we've got your payment, we email your confirmation, receipt and all the details.
             <div style={{ marginTop: 8 }}>
               <button type="button" onClick={() => go && go('flight-pay')} style={{ background: '#f5c542', color: '#111827', fontWeight: 700 }}>Pay Flight →</button>
             </div>

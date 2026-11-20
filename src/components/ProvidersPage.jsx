@@ -3,6 +3,7 @@ import { Lightbox } from './CarSection'
 import { GroceryTopBar } from './GroceryMenu'
 import { loadProviders } from '../lib/storeData'
 import ScrollTopButton from './ScrollTopButton'
+import { useCountryFilter, matchesCountry } from '../lib/countryFilter'
 
 // Stores list — data now comes from the store_providers table
 // (replaces the old Stores/*/store.txt folders). Search matches name,
@@ -10,6 +11,9 @@ import ScrollTopButton from './ScrollTopButton'
 // Cards look like Online Store cards: picture, name, place, a 3-line
 // description, then a blue "Shop with us" (the store's order page) and
 // a gray "View details →" (the store page itself).
+// Stores are also filtered by the browsing country (top bar): a store
+// shows only when its country matches, and a store with no country set
+// is hidden while any country filter is active.
 function ProviderCard({ store, onShop, onView }) {
   const [idx, setIdx] = useState(0)
   const [zoom, setZoom] = useState(false)
@@ -51,6 +55,7 @@ export default function ProvidersPage({ go, onShop, onView }) {
   const [stores, setStores] = useState(null)
   const [error, setError] = useState('')
   const [query, setQuery] = useState('')
+  const { country, countryName } = useCountryFilter()
 
   useEffect(() => {
     loadProviders().then(setStores).catch(e => setError(e.message))
@@ -59,12 +64,13 @@ export default function ProvidersPage({ go, onShop, onView }) {
   const filtered = useMemo(() => {
     if (!stores) return []
     const needle = query.trim().toLowerCase()
-    if (!needle) return stores
-    return stores.filter(s =>
-      [s.id, s.name, s.country, s.city, s.zip, s.address, s.phone, s.email, s.about]
+    return stores.filter(s => {
+      if (!matchesCountry(s.country, country)) return false
+      if (!needle) return true
+      return [s.id, s.name, s.country, s.city, s.zip, s.address, s.phone, s.email, s.about]
         .join(' ').toLowerCase().includes(needle)
-    )
-  }, [stores, query])
+    })
+  }, [stores, query, country])
 
   return (
     <div>
@@ -73,11 +79,12 @@ export default function ProvidersPage({ go, onShop, onView }) {
       <div className="hero-card">
         <h2>🏬 Yently Stores</h2>
         <p>Our stores are virtual for now — we deliver snacks and lunches straight to your workplace. Order today and everything arrives early tomorrow morning, in your company's delivery window. Search by store name, country, city or zip code.</p>
+        <p><strong>How it works:</strong> Order 24 hours before midnight. We prepare the orders and deliver them to the delivery location you picked when ordering. Delivery time is based on the agreement with your organization — it can be a couple of times a day. Track your orders at yently.com — from the “Track your order” link in the footer at the bottom of every page, or from More → Track Order.</p>
         <p className="scope-banner">📍 We serve the Harrisburg area only — Carlisle, Mechanicsburg, Dillsburg, Camp Hill, Enola and Harrisburg — and we're growing slowly. Closed June and July. Full service from August 2027.</p>
         <div className="filters">
           <input placeholder="Search stores (e.g. Paris, Morocco, 10007)" value={query} onChange={e => setQuery(e.target.value)} />
         </div>
-        {stores && <p className="hint">{filtered.length} store{filtered.length === 1 ? '' : 's'} found</p>}
+        {stores && <p className="hint">{filtered.length} store{filtered.length === 1 ? '' : 's'} found{country ? ` in ${countryName || country}` : ''}</p>}
       </div>
 
       {error && (
@@ -85,7 +92,7 @@ export default function ProvidersPage({ go, onShop, onView }) {
       )}
       {!error && stores === null && <div className="hero-card"><p>Loading stores...</p></div>}
       {!error && stores && filtered.length === 0 && (
-        <div className="hero-card"><p>No stores match. Add stores from Admin → ➕ Add: Provider / Item / Category.</p></div>
+        <div className="hero-card"><p>No stores match.{country ? ` Nothing is listed for ${countryName || country} yet — try switching country in the bar above, or choose “Show all countries”.` : ''} Add stores from Admin → ➕ Add: Provider / Item / Category.</p></div>
       )}
 
       <div className="grid">

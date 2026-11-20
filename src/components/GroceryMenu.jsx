@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useCart } from '../lib/CartContext'
+import CountryFilterBar from './CountryFilterBar'
 
 // Shared submenu for the whole Shopping area — same look and behavior as
 // the Cars / Flights menus. "My Cart" carries the live cart item count.
@@ -37,12 +38,16 @@ export default function GroceryMenu({ go }) {
 }
 
 // Top bar for every Shopping-area page: submenu button on the left,
-// cart icon with the live item count on the right.
+// country filter in the middle, cart icon with the live item count on
+// the right.
 export function GroceryTopBar({ go }) {
   const { count } = useCart()
   return (
     <div className="g-topbar">
       <GroceryMenu go={go} />
+      <div style={{ flex: 1, minWidth: 0, margin: '0 8px', display: 'flex' }}>
+        <CountryFilterBar itemLabel="products and stores" />
+      </div>
       <button className="cart-fab" onClick={() => go && go('grocery-cart')} aria-label="My Cart">
         🛒{count > 0 && <span className="cart-fab-count">{count}</span>}
       </button>

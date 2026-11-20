@@ -5,6 +5,7 @@ import { loadItems, loadItemCategories, loadSubCategories, loadItemVariants, mon
 import { StockLine, CardSlideshow, VariantMatrix, BarcodeScanner } from './StoreBits'
 import FilterPopup from './FilterPopup'
 import ScrollTopButton from './ScrollTopButton'
+import { useCountryFilter, matchesCountry } from '../lib/countryFilter'
 
 // Products page: EVERY active store item, from every store, in one
 // place — the same look as a store's order page (search + cards), but
@@ -14,7 +15,10 @@ import ScrollTopButton from './ScrollTopButton'
 // category, its variants (from subCategory). An item shows when it
 // matches the search AND (no category checked OR it is linked to a
 // checked category) AND (no variant checked OR one of its linked
-// categories offers a checked variant).
+// categories offers a checked variant). Items are also filtered by the
+// browsing country (top bar): an item shows only when its provider's
+// country matches, and a provider with no country set is hidden while
+// any country filter is active.
 export default function ProductsPage({ go }) {
   const [items, setItems] = useState(null)
   const [categories, setCategories] = useState([])
@@ -26,6 +30,7 @@ export default function ProductsPage({ go }) {
   const [selCats, setSelCats] = useState([])
   const [selSubs, setSelSubs] = useState([])
   const { count, addStore } = useCart()
+  const { country, countryName } = useCountryFilter()
   // The variant each item's matrix has matched (item id -> subCategory
   // row, or null while the choice is incomplete). Add to cart stays
   // disabled until the matrix has matched one (for items with 2+
@@ -47,17 +52,23 @@ export default function ProductsPage({ go }) {
           loadItemVariants(items.map(i => i.id)).then(setItemVariants).catch(() => {})
     }, [items])
 
-  
+  // Country filter first: only items whose provider's country matches
+  // the browsing country survive. '' (show all) keeps everything.
+  const countryItems = useMemo(() => {
+    if (!items) return null
+    return items.filter(i => matchesCountry(i.provider?.country, country))
+  }, [items, country])
+
     // Filter categories come from the available products themselves
   // (same as a Shop-with-us page): only categories that have products
   // appear, and only their subcategories are offered.
     const prodCategories = useMemo(() => {
     const map = {}
-    for (const i of items || []) {
+    for (const i of countryItems || []) {
       for (const c of i.categories || []) map[c.id] = c
                                  }
 return Object.values(map).sort((a, b) => a.label.localeCompare(b.label))
-    }, [items])
+    }, [countryItems])
   const prodSubcats = useMemo(() => {
     const ids = new Set(prodCategories.map(c => c.id))
     return subcats.filter(s => ids.has(s.category_id))
@@ -65,17 +76,17 @@ return Object.values(map).sort((a, b) => a.label.localeCompare(b.label))
 
     
   const filtered = useMemo(() => {
-    if (!items) return []
+    if (!countryItems) return []
     const needle = query.trim().toLowerCase()
     
-    return items.filter(i => {
+    return countryItems.filter(i => {
       if (needle && ![i.name, i.description, String(i.price), i.provider?.name, i.barCode || ''].join(' ').toLowerCase().includes(needle)) return false
       const cats = i.categories || []
       if (selCats.length > 0 && !cats.some(c => selCats.includes(c.id))) return false
       if (selSubs.length > 0 && itemVariants && !(itemVariants[i.id] || []).some(v => selSubs.includes(v.id))) return false
       return true
     })
-    }, [items, query, selCats, selSubs, subcats, itemVariants])
+    }, [countryItems, query, selCats, selSubs, subcats, itemVariants])
 
   const toggle = (list, setList, id) =>
     setList(list.includes(id) ? list.filter(x => x !== id) : [...list, id])
@@ -111,6 +122,7 @@ return Object.values(map).sort((a, b) => a.label.localeCompare(b.label))
       <div className="hero-card">
         <h2>🛍️ Products</h2>
         <p>Every item from every store, in one place. Search, filter by category, and add to your cart — your cart groups each store's items into their own section at checkout.</p>
+        <p><strong>How it works:</strong> Order 24 hours before midnight. We prepare the orders and deliver them to the delivery location you picked when ordering. Delivery time is based on the agreement with your organization — it can be a couple of times a day. Track your orders at yently.com — from the “Track your order” link in the footer at the bottom of every page, or from More → Track Order.</p>
         <p className="scope-banner">📍 We serve the Harrisburg area only — Carlisle, Mechanicsburg, Dillsburg, Camp Hill, Enola and Harrisburg — and we're growing slowly. Closed June and July. Full service from August 2027.</p>
         {count > 0 && (
           <p><button type="button" className="link-btn" onClick={() => go('grocery-cart')}>🛒 View My Cart ({count})</button></p>
@@ -125,7 +137,7 @@ return Object.values(map).sort((a, b) => a.label.localeCompare(b.label))
           <BarcodeScanner onScan={onScan} />
         </div>
         {scanStatus && <p className="status">{scanStatus}</p>}
-        {items && <p className="hint">{filtered.length} item{filtered.length === 1 ? '' : 's'}</p>}
+        {items && <p className="hint">{filtered.length} item{filtered.length === 1 ? '' : 's'}{country ? ` in ${countryName || country}` : ''}</p>}
       </div>
 
       {error && (
@@ -133,7 +145,7 @@ return Object.values(map).sort((a, b) => a.label.localeCompare(b.label))
       )}
       {!error && items === null && <div className="hero-card"><p>Loading products...</p></div>}
       {!error && items && filtered.length === 0 && (
-        <div className="hero-card"><p>No products match. Try a different search, clear the filters, or add some items from Admin.</p></div>
+        <div className="hero-card"><p>No products match.{country ? ` Nothing is listed for ${countryName || country} yet — try switching country in the bar above, or choose “Show all countries”.` : ''} Try a different search, clear the filters, or add some items from Admin.</p></div>
       )}
 
       <div className="grid">
@@ -187,4 +199,3 @@ return Object.values(map).sort((a, b) => a.label.localeCompare(b.label))
     </div>
   )
 }
-

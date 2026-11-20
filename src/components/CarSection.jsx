@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { submitAndNotify } from '../lib/notify'
+import { useCountryFilter, matchesCountry } from '../lib/countryFilter'
+import CountryFilterBar from './CountryFilterBar'
 import CarsMenu from './CarsMenu'
 
 // ---------------------------------------------------------------------------
@@ -26,6 +28,7 @@ function shapeCar(row) {
     description: row.description,
     phone: row.phone,
     email: row.email,
+    country: row.country,
     images: Array.isArray(row.photos) ? row.photos : [],
   }
 }
@@ -146,6 +149,7 @@ function DetailsModal({ car, onClose, onInterested }) {
     ['Model', car.model],
     ['Mileage', car.mileage ? `${fmtNum(car.mileage)} miles` : ''],
     ['Price', car.price ? `$${fmtNum(car.price)}` : ''],
+    ['Country', car.country],
     ['Phone', car.phone],
     ['Email', car.email],
   ].filter(([, v]) => v !== '' && v !== null && v !== undefined)
@@ -220,6 +224,7 @@ export default function CarSection({ go }) {
   const [maxPrice, setMaxPrice] = useState('')
   const [detailsCar, setDetailsCar] = useState(null)
   const [interestCar, setInterestCar] = useState(null)
+  const { country, countryName } = useCountryFilter()
 
   useEffect(() => {
     let alive = true
@@ -230,6 +235,7 @@ export default function CarSection({ go }) {
   }, [])
 
   const filtered = cars.filter(c => {
+    if (!matchesCountry(c.country, country)) return false
     if (filterText && !c.name.toLowerCase().includes(filterText.toLowerCase())) return false
     if (maxPrice && priceNum(c.price) > Number(maxPrice)) return false
     return true
@@ -237,7 +243,10 @@ export default function CarSection({ go }) {
 
   return (
     <div>
-      <CarsMenu go={go} />
+      <div className="g-topbar">
+        <CarsMenu go={go} />
+        <CountryFilterBar itemLabel="cars" />
+      </div>
 
       <div className="hero-card">
         <h2>Buy your next car, fully online</h2>
@@ -257,7 +266,7 @@ export default function CarSection({ go }) {
       )}
 
       {!loading && !loadError && filtered.length === 0 && (
-        <div className="hero-card"><p>No cars match. Try a different search or price.</p></div>
+        <div className="hero-card"><p>{country ? `No cars match in ${countryName || 'this country'}. Try a different search, price, or country — or choose "Show all countries" to see every car.` : 'No cars match. Try a different search or price, or pick a different country above.'}</p></div>
       )}
 
       <div className="grid">
