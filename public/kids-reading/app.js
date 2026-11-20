@@ -119,6 +119,42 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
+  /* Speaker button (Nov 2026): tap the 🔊 button to hear a word read
+     aloud with the browser's built-in speech (window.speechSynthesis).
+     Never auto-plays — only on tap. Cancels any speech already playing
+     first; a graceful no-op when speechSynthesis is unavailable. Words
+     are passed as-is (Arabic harakat included, never stripped). */
+  function speakWord(text, lang) {
+    if (!text) return;
+    try {
+      if (!('speechSynthesis' in window) || !window.speechSynthesis) return;
+      window.speechSynthesis.cancel();
+      var target = lang || 'en-US';
+      var u = new SpeechSynthesisUtterance(String(text));
+      u.lang = target;
+      u.rate = 0.9;
+      try {
+        var prefix = target.split('-')[0].toLowerCase();
+        var voices = window.speechSynthesis.getVoices() || [];
+        for (var i = 0; i < voices.length; i++) {
+          if (voices[i] && voices[i].lang && String(voices[i].lang).toLowerCase().indexOf(prefix) === 0) { u.voice = voices[i]; break; }
+        }
+      } catch (e) {}
+      window.speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+  function speakBtnHtml(text, lang) {
+    return '<button type="button" class="speak-btn" data-speak="' + esc(text) + '"' + (lang ? ' data-speak-lang="' + esc(lang) + '"' : '') + ' aria-label="Hear it" title="Hear it" style="font-size:20px;padding:4px 8px;margin-left:8px;cursor:pointer;background:#fff;border:1px solid #ccc;border-radius:8px;line-height:1;vertical-align:middle">\uD83D\uDD0A</button>';
+  }
+  function wireSpeakButtons(scope) {
+    if (!scope || !scope.querySelectorAll) return;
+    scope.querySelectorAll('[data-speak]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        speakWord(btn.getAttribute('data-speak'), btn.getAttribute('data-speak-lang') || undefined);
+      });
+    });
+  }
   function saveFinishedLocal() {
     try { localStorage.setItem(FINISHED_KEY, JSON.stringify(finishedLocal)); } catch (e) {}
   }
@@ -259,7 +295,7 @@
         var done = isFinished(book.id);
         h += '<div class="book-card' + (done ? ' finished' : '') + '" data-book="' + esc(book.id) + '" role="button" tabindex="0">' +
           '<div class="book-emoji">' + esc(book.emoji || '📚') + '</div>' +
-          '<h3>' + esc(book.title) + '</h3>' +
+          '<h3>' + esc(book.title) + ' ' + speakBtnHtml(book.title) + '</h3>' +
           '<div class="book-author">' + esc(book.author || '') + '</div>' +
           '<div class="book-pages">' + pages + ' page' + (pages === 1 ? '' : 's') + '</div>' +
           (done ? '<span class="book-done">✓ Finished</span>' : '') +
@@ -268,6 +304,7 @@
       h += '</div>';
     }
     el.innerHTML = h;
+    wireSpeakButtons(el);
     $('sign-out').addEventListener('click', function () {
       currentStudent = null;
       studentPin = '';
@@ -344,9 +381,9 @@
     var done = isFinished(book.id);
     var html = '<div class="reader">' +
       '<div class="reader-emoji">' + esc(book.emoji || '📚') + '</div>' +
-      '<h2>' + esc(book.title) + '</h2>' +
+      '<h2>' + esc(book.title) + ' ' + speakBtnHtml(book.title) + '</h2>' +
       '<div class="reader-author">' + esc(book.author || '') + '</div>' +
-      '<div class="reader-page">' + esc(pages[readingPage]) + '</div>' +
+      '<div class="reader-page">' + esc(pages[readingPage]) + ' ' + speakBtnHtml(pages[readingPage]) + '</div>' +
       '<div class="reader-count">Page ' + (readingPage + 1) + ' of ' + pages.length + '</div>' +
       '<div class="reader-nav">' +
       '<button id="reader-prev" class="secondary"' + (readingPage === 0 ? ' disabled' : '') + '>← Prev</button>' +
@@ -361,6 +398,7 @@
     }
     html += '<div style="margin-top:16px"><button id="back-shelf" class="secondary">← Back to bookshelf</button></div></div>';
     el.innerHTML = html;
+    wireSpeakButtons(el);
     $('reader-prev').addEventListener('click', function () {
       if (readingPage > 0) { readingPage--; renderReader(); }
     });
