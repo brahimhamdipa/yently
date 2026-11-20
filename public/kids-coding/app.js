@@ -116,6 +116,50 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
+  /* Speaker button (Nov 2026): tap the 🔊 button to hear a word read
+     aloud with the browser's built-in speech (window.speechSynthesis).
+     Never auto-plays — only on tap. Cancels any speech already playing
+     first; a graceful no-op when speechSynthesis is unavailable. Words
+     are passed as-is (Arabic harakat included, never stripped). */
+  function speakWord(text, lang) {
+    if (!text) return;
+    try {
+      if (!('speechSynthesis' in window) || !window.speechSynthesis) return;
+      window.speechSynthesis.cancel();
+      var target = lang || 'en-US';
+      var u = new SpeechSynthesisUtterance(String(text));
+      u.lang = target;
+      u.rate = 0.9;
+      try {
+        var prefix = target.split('-')[0].toLowerCase();
+        var voices = window.speechSynthesis.getVoices() || [];
+        for (var i = 0; i < voices.length; i++) {
+          if (voices[i] && voices[i].lang && String(voices[i].lang).toLowerCase().indexOf(prefix) === 0) { u.voice = voices[i]; break; }
+        }
+      } catch (e) {}
+      window.speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+  function speakBtnHtml(text, lang) {
+    return '<button type="button" class="speak-btn" data-speak="' + esc(text) + '"' + (lang ? ' data-speak-lang="' + esc(lang) + '"' : '') + ' aria-label="Hear it" title="Hear it" style="font-size:20px;padding:4px 8px;margin-left:8px;cursor:pointer;background:#fff;border:1px solid #ccc;border-radius:8px;line-height:1;vertical-align:middle">\uD83D\uDD0A</button>';
+  }
+  function wireSpeakButtons(scope) {
+    if (!scope || !scope.querySelectorAll) return;
+    scope.querySelectorAll('[data-speak]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        speakWord(btn.getAttribute('data-speak'), btn.getAttribute('data-speak-lang') || undefined);
+      });
+    });
+  }
+  /* Plain words for the robot blocks (no emoji), so the speaker
+     reads "Move forward" instead of the emoji. */
+  function speakLabel(b) {
+    if (b.t === 'fwd') return 'Move forward';
+    if (b.t === 'left') return 'Turn left';
+    if (b.t === 'right') return 'Turn right';
+    return 'Repeat ' + (b.k || 2) + ' times the next block';
+  }
   function loadSolved() {
     try { return JSON.parse(localStorage.getItem(SOLVED_KEY) || '{}'); }
     catch (e) { return {}; }
@@ -262,7 +306,7 @@
     var h = '<ol class="program-list">';
     program.forEach(function (b, i) {
       h += '<li class="' + (running && runSteps[runIdx] && runSteps[runIdx].block === i ? 'active-step' : '') + '">' +
-        '<span>' + esc(blockLabel(b)) + '</span>' +
+        '<span>' + esc(blockLabel(b)) + '</span> ' + speakBtnHtml(speakLabel(b)) +
         '<button class="small danger" data-rm-block="' + i + '" aria-label="Remove block">✕</button></li>';
     });
     h += '</ol>';
@@ -334,8 +378,8 @@
       return;
     }
     /* Maze + program builder */
-    html += '<div class="card"><h3>' + esc(p.name) + ' ' + starsText(puzzleStars(p.id)) + '</h3>';
-    if (p.hint) html += '<p class="info">💡 Hint: ' + esc(p.hint) + '</p>';
+    html += '<div class="card"><h3>' + esc(p.name) + ' ' + speakBtnHtml(p.name) + ' ' + starsText(puzzleStars(p.id)) + '</h3>';
+    if (p.hint) html += '<p class="info">💡 Hint: ' + esc(p.hint) + ' ' + speakBtnHtml(p.hint) + '</p>';
     html += '<p class="info">Get the robot to the ⭐ in ' + p.par + ' blocks or fewer for 3 stars!</p>';
     html += '<div id="maze-wrap">' + gridHtml(p) + '</div>';
     if (playMsg) html += '<div class="note' + (playMsgKind === 'win' ? ' win-note' : '') + '">' + esc(playMsg) + '</div>';
@@ -347,18 +391,19 @@
     html += '<h3>Add a block 👇</h3>' +
       '<p class="info">“Repeat” repeats the <b>next</b> block — for example, Repeat 3× then Move forward moves 3 steps.</p>' +
       '<div class="row palette">' +
-      '<button data-add-block="fwd">➡️ Move forward</button>' +
-      '<button data-add-block="left">↩️ Turn left</button>' +
-      '<button data-add-block="right">↪️ Turn right</button>' +
-      '<button data-add-block="rep2">🔁 Repeat 2×</button>' +
-      '<button data-add-block="rep3">🔁 Repeat 3×</button>' +
-      '<button data-add-block="rep4">🔁 Repeat 4×</button>' +
+      '<button data-add-block="fwd">➡️ Move forward</button>' + speakBtnHtml('Move forward') +
+      '<button data-add-block="left">↩️ Turn left</button>' + speakBtnHtml('Turn left') +
+      '<button data-add-block="right">↪️ Turn right</button>' + speakBtnHtml('Turn right') +
+      '<button data-add-block="rep2">🔁 Repeat 2×</button>' + speakBtnHtml('Repeat 2 times the next block') +
+      '<button data-add-block="rep3">🔁 Repeat 3×</button>' + speakBtnHtml('Repeat 3 times the next block') +
+      '<button data-add-block="rep4">🔁 Repeat 4×</button>' + speakBtnHtml('Repeat 4 times the next block') +
       '</div></div>';
     el.innerHTML = html;
     wireStudentButtons(el);
     wireSignOut(el);
     wirePuzzleButtons(el);
     wirePinBox(el);
+    wireSpeakButtons(el);
     el.querySelectorAll('[data-add-block]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         if (running) return;
