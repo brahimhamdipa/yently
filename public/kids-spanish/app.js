@@ -100,6 +100,42 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
+  /* Speaker button (Nov 2026): tap the 🔊 button to hear a word read
+     aloud with the browser's built-in speech (window.speechSynthesis).
+     Never auto-plays — only on tap. Cancels any speech already playing
+     first; a graceful no-op when speechSynthesis is unavailable. Words
+     are passed as-is (Arabic harakat included, never stripped). */
+  function speakWord(text, lang) {
+    if (!text) return;
+    try {
+      if (!('speechSynthesis' in window) || !window.speechSynthesis) return;
+      window.speechSynthesis.cancel();
+      var target = lang || 'es-ES';
+      var u = new SpeechSynthesisUtterance(String(text));
+      u.lang = target;
+      u.rate = 0.9;
+      try {
+        var prefix = target.split('-')[0].toLowerCase();
+        var voices = window.speechSynthesis.getVoices() || [];
+        for (var i = 0; i < voices.length; i++) {
+          if (voices[i] && voices[i].lang && String(voices[i].lang).toLowerCase().indexOf(prefix) === 0) { u.voice = voices[i]; break; }
+        }
+      } catch (e) {}
+      window.speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+  function speakBtnHtml(text, lang) {
+    return '<button type="button" class="speak-btn" data-speak="' + esc(text) + '"' + (lang ? ' data-speak-lang="' + esc(lang) + '"' : '') + ' aria-label="Hear it" title="Hear it" style="font-size:20px;padding:4px 8px;margin-left:8px;cursor:pointer;background:#fff;border:1px solid #ccc;border-radius:8px;line-height:1;vertical-align:middle">\uD83D\uDD0A</button>';
+  }
+  function wireSpeakButtons(scope) {
+    if (!scope || !scope.querySelectorAll) return;
+    scope.querySelectorAll('[data-speak]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        speakWord(btn.getAttribute('data-speak'), btn.getAttribute('data-speak-lang') || undefined);
+      });
+    });
+  }
   function rpc(name, body) {
     return fetch(SUPABASE_URL + '/rest/v1/rpc/' + name, {
       method: 'POST',
@@ -313,26 +349,27 @@
       '<h2>' + esc(gameTitle(game)) + '</h2>';
     if (game === 'spell') {
       html += '<div class="card question"><p class="info">How do you say this in Spanish?</p>' +
-        '<div class="big-word">' + esc(w.meaning) + '</div>' +
+        '<div class="big-word">' + esc(w.meaning) + ' ' + speakBtnHtml(w.meaning, 'en-US') + '</div>' +
         '<input id="spell-input" type="text" placeholder="Type the Spanish word…" autocomplete="off" autocapitalize="off">' +
         '<button id="spell-check" class="big-btn">Check ✅</button>' +
         '<div id="round-out" style="margin-top:12px"></div></div>';
     } else if (game === 'pick') {
       html += '<div class="card question"><p class="info">Which Spanish word means this?</p>' +
-        '<div class="big-word">' + esc(w.meaning) + '</div><div class="choice-grid">';
+        '<div class="big-word">' + esc(w.meaning) + ' ' + speakBtnHtml(w.meaning, 'en-US') + '</div><div class="choice-grid">';
       choicesFor(w, 'word').forEach(function (c) {
         html += '<button class="big-choice" data-choice="' + esc(c.word) + '">' + esc(c.word) + '</button>';
       });
       html += '</div><div id="round-out" style="margin-top:12px"></div></div>';
     } else {
       html += '<div class="card question"><p class="info">What does this Spanish word mean?</p>' +
-        '<div class="big-word">' + esc(w.word) + '</div><div class="choice-grid">';
+        '<div class="big-word">' + esc(w.word) + ' ' + speakBtnHtml(w.word) + '</div><div class="choice-grid">';
       choicesFor(w, 'meaning').forEach(function (c) {
         html += '<button class="big-choice" data-choice="' + esc(c.meaning) + '">' + esc(c.meaning) + '</button>';
       });
       html += '</div><div id="round-out" style="margin-top:12px"></div></div>';
     }
     el.innerHTML = html;
+    wireSpeakButtons(el);
     if (game === 'spell') {
       var input = $('spell-input');
       input.focus();
@@ -352,9 +389,9 @@
     var w = rounds[roundIdx];
     var h;
     if (lastAnswer.correct) {
-      h = '<div class="note good">' + esc(praise()) + ' 🎉</div>';
+      h = '<div class="note good">' + esc(praise()) + ' ' + speakBtnHtml(w.word) + ' 🎉</div>';
     } else {
-      h = '<div class="note bad">' + esc(tryAgain()) + ' The right answer is <b>' + esc(w.word) + '</b> — ' + esc(w.meaning) + '.</div>';
+      h = '<div class="note bad">' + esc(tryAgain()) + ' The right answer is <b>' + esc(w.word) + '</b> — ' + esc(w.meaning) + '. ' + speakBtnHtml(w.word) + '</div>';
     }
     h += '<button id="next-round" class="big-btn">' + (roundIdx + 1 >= rounds.length ? 'See my score! 🏆' : 'Next 👉') + '</button>';
     return h;
@@ -368,6 +405,7 @@
     var out = $('round-out');
     if (!out) return;
     out.innerHTML = feedbackHtml();
+    wireSpeakButtons(out);
     var next = $('next-round');
     if (next) next.addEventListener('click', function () {
       roundIdx++;
