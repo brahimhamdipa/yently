@@ -115,6 +115,42 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
+  /* Speaker button (Nov 2026): tap the 🔊 button to hear a word read
+     aloud with the browser's built-in speech (window.speechSynthesis).
+     Never auto-plays — only on tap. Cancels any speech already playing
+     first; a graceful no-op when speechSynthesis is unavailable. Words
+     are passed as-is (Arabic harakat included, never stripped). */
+  function speakWord(text, lang) {
+    if (!text) return;
+    try {
+      if (!('speechSynthesis' in window) || !window.speechSynthesis) return;
+      window.speechSynthesis.cancel();
+      var target = lang || 'en-US';
+      var u = new SpeechSynthesisUtterance(String(text));
+      u.lang = target;
+      u.rate = 0.9;
+      try {
+        var prefix = target.split('-')[0].toLowerCase();
+        var voices = window.speechSynthesis.getVoices() || [];
+        for (var i = 0; i < voices.length; i++) {
+          if (voices[i] && voices[i].lang && String(voices[i].lang).toLowerCase().indexOf(prefix) === 0) { u.voice = voices[i]; break; }
+        }
+      } catch (e) {}
+      window.speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+  function speakBtnHtml(text, lang) {
+    return '<button type="button" class="speak-btn" data-speak="' + esc(text) + '"' + (lang ? ' data-speak-lang="' + esc(lang) + '"' : '') + ' aria-label="Hear it" title="Hear it" style="font-size:20px;padding:4px 8px;margin-left:8px;cursor:pointer;background:#fff;border:1px solid #ccc;border-radius:8px;line-height:1;vertical-align:middle">\uD83D\uDD0A</button>';
+  }
+  function wireSpeakButtons(scope) {
+    if (!scope || !scope.querySelectorAll) return;
+    scope.querySelectorAll('[data-speak]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        speakWord(btn.getAttribute('data-speak'), btn.getAttribute('data-speak-lang') || undefined);
+      });
+    });
+  }
   function shuffle(arr) {
     var a = arr.slice();
     for (var i = a.length - 1; i > 0; i--) {
@@ -366,7 +402,7 @@
     var choices = q.choices || [];
     var html = '<h2>🔬 ' + esc(quizTopicLabel) + ' · ' + esc(playLevel) + '</h2>' +
       '<div class="progress">Question ' + (quizIdx + 1) + ' of ' + quiz.length + ' · ' + esc(playStudent) + ' · Score: ' + quizScore + '</div>' +
-      '<div class="card"><div class="question">' + esc(q.q) + '</div><div class="choice-list">';
+      '<div class="card"><div class="question">' + esc(q.q) + ' ' + speakBtnHtml(q.q) + '</div><div class="choice-list">';
     choices.forEach(function (c, i) {
       var cls = '';
       if (quizAnswered) {
@@ -381,11 +417,12 @@
       html += right
         ? '<div class="good" style="margin-top:14px">✅ Correct! Great job! 🎉</div>'
         : '<div class="bad" style="margin-top:14px">Not quite — the answer was <b>' + esc(choices[q.answer] || '') + '</b>. You will get the next one!</div>';
-      if (q.fact) html += '<div class="fact-box" style="margin-top:12px">💡 <b>Fun fact:</b> ' + esc(q.fact) + '</div>';
+      if (q.fact) html += '<div class="fact-box" style="margin-top:12px">💡 <b>Fun fact:</b> ' + esc(q.fact) + ' ' + speakBtnHtml(q.fact) + '</div>';
       html += '<div class="row" style="margin-top:14px"><button id="quiz-next">' + (quizIdx + 1 >= quiz.length ? 'See my score! ⭐' : 'Next question →') + '</button></div>';
     }
     html += '</div>';
     el.innerHTML = html;
+    wireSpeakButtons(el);
     el.querySelectorAll('[data-choice]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         if (quizAnswered) return;
