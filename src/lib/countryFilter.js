@@ -406,6 +406,7 @@ export function matchesCountry(itemCountry, code) {
 let sharedCountry = null // null = not resolved yet; '' = show all
 let sharedReady = false
 let detectionStarted = false
+let manualChoice = false // true once the visitor picks a country this visit
 
 function emitCountryChange() {
   try {
@@ -417,28 +418,19 @@ function emitCountryChange() {
   }
 }
 
-function storeCountry(code) {
-  try {
-    window.localStorage.setItem(COUNTRY_STORAGE_KEY, code)
-  } catch {
-    // private mode etc. — the in-memory value still works for this visit
-  }
-}
-
 // React hook: { country, countryName, setCountry, clearCountry, ready }.
-// country is an ISO code, or '' for show-all. On mount: a stored choice
-// wins at once; otherwise the language-region fallback (or 'US') shows
-// immediately and detectCountry() updates it in the background —
-// rendering is never blocked on the lookup.
+// country is an ISO code, or '' for show-all. On mount the
+// language-region fallback (or 'US') shows immediately and
+// detectCountry() updates it in the background — rendering is never
+// blocked on the lookup. A manual choice lasts for this visit only: it
+// is kept in memory, never stored, so a refresh re-detects the browsing
+// country.
 export function useCountryFilter() {
   const [state, setState] = useState(() => {
     if (sharedCountry !== null) return { country: sharedCountry, ready: sharedReady }
-    const stored = getStoredCountry()
-    if (stored !== null) {
-      sharedCountry = stored
-      sharedReady = true
-      return { country: stored, ready: true }
-    }
+    // No stored choice: a manual pick lasts for this visit only, so every
+    // page load starts from the browser-language fallback ('US') and the
+    // IP lookup below updates it.
     const fallback = languageRegionCode() || 'US'
     sharedCountry = fallback
     sharedReady = false
@@ -454,34 +446,32 @@ export function useCountryFilter() {
       })
     }
     window.addEventListener('yently-country-change', onChange)
+    // Drop any choice stored by the old version, so it can never resurface.
+    try { window.localStorage.removeItem(COUNTRY_STORAGE_KEY) } catch { /* ignore */ }
     if (!detectionStarted) {
       detectionStarted = true
-      if (getStoredCountry() === null) {
-        detectCountry()
-          .then((res) => {
-            // A choice stored meanwhile wins over the lookup.
-            if (getStoredCountry() !== null) {
-              sharedCountry = getStoredCountry()
-            } else if (res && res.code) {
-              sharedCountry = res.code
-            }
-            sharedReady = true
-            emitCountryChange()
-          })
-          .catch(() => {
-            sharedReady = true
-            emitCountryChange()
-          })
-      } else {
-        sharedReady = true
-      }
+      detectCountry()
+        .then((res) => {
+          // A manual choice made meanwhile wins over the lookup.
+          if (!manualChoice && res && res.code) {
+            sharedCountry = res.code
+          }
+          sharedReady = true
+          emitCountryChange()
+        })
+        .catch(() => {
+          sharedReady = true
+          emitCountryChange()
+        })
     }
     return () => window.removeEventListener('yently-country-change', onChange)
   }, [])
 
   const setCountry = (code) => {
     const next = code || ''
-    storeCountry(next)
+    // Visit-only: deliberately NOT stored — a refresh re-detects the
+    // browsing country instead of keeping a manual pick.
+    manualChoice = true
     sharedCountry = next
     sharedReady = true
     emitCountryChange()
