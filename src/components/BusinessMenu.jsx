@@ -3,13 +3,15 @@ import { useBusinessCart } from '../lib/BusinessCartContext'
 
 // Shared submenu for ALL Business Systems pages — same look and
 // behavior as the Shopping / Cars / Flights menus (white circular
-// button, plain list). Eight top rows: My Cart (with the live
+// button, plain list). Nine top rows: My Cart (with the live
 // business-cart count), Business Systems (the hub page), Restaurant,
-// POS, Barber, then two branches that open in place (like the Admin
+// POS, Barber, then branches that open in place (like the Admin
 // menu branches): "More Systems" (Dealer, Employee, Bodyshop, Houses, Doctor, Holiday,
 // Car Rental, Laundry, Gym, Simple Website), Services (Custom Coding —
-// moved here from the main menu's More list), and "Add-ons" (TV Gallery, Live Chat, Clean Link, Direct
-// Upload). Each branch button shows a right arrow when closed and a
+// moved here from the main menu's More list), "Add-ons" (TV Gallery, Live Chat, Clean Link, Direct
+// Upload), and "Learning Systems" (the Kids submenu minus My Cart:
+// Yently Kids, Math, English, Arabic, More Subjects, Books for Kids).
+// Each branch button shows a right arrow when closed and a
 // down arrow when open, and its links are indented like sub-items,
 // same size, same plain weight — none of them bold. One cart and one
 // submenu for the whole area, because every page here sells the same
@@ -18,6 +20,8 @@ export default function BusinessMenu({ go }) {
   const [open, setOpen] = useState(false)
   const [moreOpen, setMoreOpen] = useState(false)
   const [addonsOpen, setAddonsOpen] = useState(false)
+  const [learningOpen, setLearningOpen] = useState(false)
+  const [subjectsOpen, setSubjectsOpen] = useState(false)
   const ref = useRef(null)
   const { count } = useBusinessCart()
 
@@ -86,6 +90,43 @@ export default function BusinessMenu({ go }) {
           )}
           {addonsOpen && (
             <button onClick={() => pick('direct-upload')} style={{ display: 'block', width: '100%', background: 'white', color: '#111827', textAlign: 'left', padding: '12px 16px 12px 32px', fontSize: '14.5px', fontWeight: '400', borderTop: '1px solid #f1f2f5' }}>Direct Upload</button>
+          )}
+          <button onClick={() => setLearningOpen(o => !o)}>Learning Systems {learningOpen ? '▾' : '▸'}</button>
+          {learningOpen && (
+            <button onClick={() => pick('kids-hub')} style={{ display: 'block', width: '100%', background: 'white', color: '#111827', textAlign: 'left', padding: '12px 16px 12px 32px', fontSize: '14.5px', fontWeight: '400', borderTop: '1px solid #f1f2f5' }}>Yently Kids</button>
+          )}
+          {learningOpen && (
+            <button onClick={() => pick('kids-math')} style={{ display: 'block', width: '100%', background: 'white', color: '#111827', textAlign: 'left', padding: '12px 16px 12px 32px', fontSize: '14.5px', fontWeight: '400', borderTop: '1px solid #f1f2f5' }}>Math</button>
+          )}
+          {learningOpen && (
+            <button onClick={() => pick('kids-english')} style={{ display: 'block', width: '100%', background: 'white', color: '#111827', textAlign: 'left', padding: '12px 16px 12px 32px', fontSize: '14.5px', fontWeight: '400', borderTop: '1px solid #f1f2f5' }}>English</button>
+          )}
+          {learningOpen && (
+            <button onClick={() => pick('kids-arabic')} style={{ display: 'block', width: '100%', background: 'white', color: '#111827', textAlign: 'left', padding: '12px 16px 12px 32px', fontSize: '14.5px', fontWeight: '400', borderTop: '1px solid #f1f2f5' }}>Arabic</button>
+          )}
+          {learningOpen && (
+            <button onClick={() => setSubjectsOpen(o => !o)} style={{ display: 'block', width: '100%', background: 'white', color: '#111827', textAlign: 'left', padding: '12px 16px 12px 32px', fontSize: '14.5px', fontWeight: '400', borderTop: '1px solid #f1f2f5' }}>More Subjects {subjectsOpen ? '▾' : '▸'}</button>
+          )}
+          {learningOpen && subjectsOpen && (
+            <button onClick={() => pick('kids-french')} style={{ display: 'block', width: '100%', background: 'white', color: '#111827', textAlign: 'left', padding: '12px 16px 12px 32px', fontSize: '14.5px', fontWeight: '400', borderTop: '1px solid #f1f2f5' }}>French</button>
+          )}
+          {learningOpen && subjectsOpen && (
+            <button onClick={() => pick('kids-spanish')} style={{ display: 'block', width: '100%', background: 'white', color: '#111827', textAlign: 'left', padding: '12px 16px 12px 32px', fontSize: '14.5px', fontWeight: '400', borderTop: '1px solid #f1f2f5' }}>Spanish</button>
+          )}
+          {learningOpen && subjectsOpen && (
+            <button onClick={() => pick('kids-science')} style={{ display: 'block', width: '100%', background: 'white', color: '#111827', textAlign: 'left', padding: '12px 16px 12px 32px', fontSize: '14.5px', fontWeight: '400', borderTop: '1px solid #f1f2f5' }}>Science</button>
+          )}
+          {learningOpen && subjectsOpen && (
+            <button onClick={() => pick('kids-geography')} style={{ display: 'block', width: '100%', background: 'white', color: '#111827', textAlign: 'left', padding: '12px 16px 12px 32px', fontSize: '14.5px', fontWeight: '400', borderTop: '1px solid #f1f2f5' }}>Geography</button>
+          )}
+          {learningOpen && subjectsOpen && (
+            <button onClick={() => pick('kids-coding')} style={{ display: 'block', width: '100%', background: 'white', color: '#111827', textAlign: 'left', padding: '12px 16px 12px 32px', fontSize: '14.5px', fontWeight: '400', borderTop: '1px solid #f1f2f5' }}>Coding</button>
+          )}
+          {learningOpen && subjectsOpen && (
+            <button onClick={() => pick('kids-reading')} style={{ display: 'block', width: '100%', background: 'white', color: '#111827', textAlign: 'left', padding: '12px 16px 12px 32px', fontSize: '14.5px', fontWeight: '400', borderTop: '1px solid #f1f2f5' }}>Reading</button>
+          )}
+          {learningOpen && (
+            <button onClick={() => pick('kids-books')} style={{ display: 'block', width: '100%', background: 'white', color: '#111827', textAlign: 'left', padding: '12px 16px 12px 32px', fontSize: '14.5px', fontWeight: '400', borderTop: '1px solid #f1f2f5' }}>Books for Kids</button>
           )}
         </div>
       )}
