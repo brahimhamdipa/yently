@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { BusinessTopBar } from './BusinessMenu'
 
 // Business Systems hub page — the first nav button and the default
@@ -10,7 +11,10 @@ import { BusinessTopBar } from './BusinessMenu'
 // extra student beyond the first 3 included in the $5/month Kids
 // price, no free month on Kids. No Add to cart here on purpose: each ad page
 // has its own. Bundle tiers (2 plans 10% off, 3 plans 15% off, 4+
-// plans 20% off) apply automatically in My Cart.
+// plans 20% off) apply automatically in My Cart. "Learning Systems"
+// below Add-ons mirrors the Kids ☰ submenu (KidsMenu.jsx): every
+// Kids menu row except My Cart, with the same destinations and the
+// same "More Subjects" branch opening in place.
 const SYSTEMS = [
   { name: 'Restaurant', price: 40, blurb: 'Your own ordering page — menu, live kitchen, and orders.', tab: 'restaurants', video: true },
   { name: 'POS', price: 50, blurb: 'Your own register — stock, sales, and receipts.', tab: 'pos', video: true },
@@ -34,6 +38,57 @@ const ADDONS = [
   { name: 'Clean Link', price: 2, blurb: 'Your shop at a clean address — yently.com/your-name.', tab: 'clean-link' },
   { name: 'Direct Upload', price: 5, blurb: 'Your uploads go live straight away — no waiting for approval.', tab: 'direct-upload' },
 ]
+
+// "Learning Systems" expander — the Kids submenu rows except My
+// Cart, as a dropdown on the Systems page. Destinations match the
+// Kids ☰ submenu exactly (KidsMenu.jsx): Yently Kids opens the hub,
+// each subject opens its ad page, Books for Kids opens its page.
+const LEARNING_ROWS = [
+  { label: 'Yently Kids', tab: 'kids-hub' },
+  { label: 'Math', tab: 'kids-math' },
+  { label: 'English', tab: 'kids-english' },
+  { label: 'Arabic', tab: 'kids-arabic' },
+]
+const MORE_SUBJECTS = [
+  { label: 'French', tab: 'kids-french' },
+  { label: 'Spanish', tab: 'kids-spanish' },
+  { label: 'Science', tab: 'kids-science' },
+  { label: 'Geography', tab: 'kids-geography' },
+  { label: 'Coding', tab: 'kids-coding' },
+  { label: 'Reading', tab: 'kids-reading' },
+]
+
+function LearningSystems({ go }) {
+  const [open, setOpen] = useState(false)
+  const [moreOpen, setMoreOpen] = useState(false)
+  const rowStyle = { display: 'block', width: '100%', background: 'white', color: '#111827', textAlign: 'left', padding: '12px 16px', borderRadius: 0, fontSize: '14.5px', fontWeight: 400, borderTop: '1px solid #f1f2f5' }
+  const subRowStyle = { ...rowStyle, padding: '12px 16px 12px 32px' }
+  return (
+    <div className="hero-card" style={{ padding: 0, overflow: 'hidden' }}>
+      <button
+        type="button"
+        onClick={() => setOpen(o => !o)}
+        aria-expanded={open}
+        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', background: 'white', color: '#111827', textAlign: 'left', padding: '20px 24px', borderRadius: 0, fontSize: 18, fontWeight: 700 }}
+      >
+        <span>🧒 Learning Systems</span>
+        <span aria-hidden="true" style={{ fontSize: 16 }}>{open ? '▴' : '▾'}</span>
+      </button>
+      {open && (
+        <div>
+          {LEARNING_ROWS.map(r => (
+            <button key={r.tab} type="button" onClick={() => go && go(r.tab)} style={rowStyle}>{r.label}</button>
+          ))}
+          <button type="button" onClick={() => setMoreOpen(o => !o)} aria-expanded={moreOpen} style={rowStyle}>More Subjects {moreOpen ? '▾' : '▸'}</button>
+          {moreOpen && MORE_SUBJECTS.map(r => (
+            <button key={r.tab} type="button" onClick={() => go && go(r.tab)} style={subRowStyle}>{r.label}</button>
+          ))}
+          <button type="button" onClick={() => go && go('kids-books')} style={rowStyle}>Books for Kids</button>
+        </div>
+      )}
+    </div>
+  )
+}
 
 function SystemRow({ item, first, go }) {
   return (
@@ -86,6 +141,8 @@ export default function BusinessSystemsPage({ go }) {
           <SystemRow key={s.tab} item={s} first={i === 0} go={go} />
         ))}
       </div>
+
+      <LearningSystems go={go} />
 
       <div className="hero-card">
         <h3>Yently Kids Systems</h3>

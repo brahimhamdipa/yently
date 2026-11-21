@@ -145,7 +145,7 @@ return Object.values(map).sort((a, b) => a.label.localeCompare(b.label))
       )}
       {!error && items === null && <div className="hero-card"><p>Loading products...</p></div>}
       {!error && items && filtered.length === 0 && (
-        <div className="hero-card"><p>No products match.{country ? ` Nothing is listed for ${countryName || country} yet — try switching country in the bar above, or choose “Show all countries”.` : ''} Try a different search, clear the filters, or add some items from Admin.</p></div>
+        <div className="hero-card"><p>No products match.{country ? ` Nothing is listed for ${countryName || country} yet — try switching country in the bar above, or tap “All” above.` : ''} Try a different search, clear the filters, or add some items from Admin.</p></div>
       )}
 
       <div className="grid">

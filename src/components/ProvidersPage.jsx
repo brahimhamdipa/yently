@@ -92,7 +92,7 @@ export default function ProvidersPage({ go, onShop, onView }) {
       )}
       {!error && stores === null && <div className="hero-card"><p>Loading stores...</p></div>}
       {!error && stores && filtered.length === 0 && (
-        <div className="hero-card"><p>No stores match.{country ? ` Nothing is listed for ${countryName || country} yet — try switching country in the bar above, or choose “Show all countries”.` : ''} Add stores from Admin → ➕ Add: Provider / Item / Category.</p></div>
+        <div className="hero-card"><p>No stores match.{country ? ` Nothing is listed for ${countryName || country} yet — try switching country in the bar above, or tap “All” above.` : ''} Add stores from Admin → ➕ Add: Provider / Item / Category.</p></div>
       )}
 
       <div className="grid">

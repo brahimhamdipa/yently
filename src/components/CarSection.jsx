@@ -2,8 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { submitAndNotify } from '../lib/notify'
 import { useCountryFilter, matchesCountry } from '../lib/countryFilter'
-import CountryFilterBar from './CountryFilterBar'
-import CarsMenu from './CarsMenu'
+import { CarsTopBar } from './CarsMenu'
 
 // ---------------------------------------------------------------------------
 // Database-driven inventory (2026-11-09 rebuild).
@@ -243,10 +242,7 @@ export default function CarSection({ go }) {
 
   return (
     <div>
-      <div className="g-topbar">
-        <CarsMenu go={go} />
-        <CountryFilterBar itemLabel="cars" />
-      </div>
+      <CarsTopBar go={go} />
 
       <div className="hero-card">
         <h2>Buy your next car, fully online</h2>
@@ -266,7 +262,7 @@ export default function CarSection({ go }) {
       )}
 
       {!loading && !loadError && filtered.length === 0 && (
-        <div className="hero-card"><p>{country ? `No cars match in ${countryName || 'this country'}. Try a different search, price, or country — or choose "Show all countries" to see every car.` : 'No cars match. Try a different search or price, or pick a different country above.'}</p></div>
+        <div className="hero-card"><p>{country ? `No cars match in ${countryName || 'this country'}. Try a different search, price, or country — or tap "All" above to see every car.` : 'No cars match. Try a different search or price, or pick a different country above.'}</p></div>
       )}
 
       <div className="grid">
