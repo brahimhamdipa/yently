@@ -46,7 +46,7 @@ export function GroceryTopBar({ go }) {
     <div className="g-topbar">
       <GroceryMenu go={go} />
       <div style={{ flex: 1, minWidth: 0, margin: '0 8px', display: 'flex' }}>
-        <CountryFilterBar itemLabel="products and stores" />
+        <CountryFilterBar />
       </div>
       <button className="cart-fab" onClick={() => go && go('grocery-cart')} aria-label="My Cart">
         🛒{count > 0 && <span className="cart-fab-count">{count}</span>}
