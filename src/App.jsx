@@ -9,6 +9,8 @@ import ContactPage from './components/ContactPage'
 import FlightReservationPage from './components/FlightReservationPage'
 import FlightContactPage from './components/FlightContactPage'
 import FlightsHubPage from './components/FlightsHubPage'
+import ShopHubPage from './components/ShopHubPage'
+import CarHubPage from './components/CarHubPage'
 import FlightPayPage from './components/FlightPayPage'
 import ClothesPage from './components/ClothesPage'
 import ServicesPage from './components/ServicesPage'
@@ -87,7 +89,7 @@ const DEEP_LINK_SYSTEMS = new Set([
   'kids-hub', 'kids-math', 'kids-english', 'kids-arabic', 'kids-french',
   'kids-spanish', 'kids-science', 'kids-geography', 'kids-coding',
   'kids-reading', 'kids-books',
-  'flights', 'flights-hub', 'reserve', 'flight-pay', 'flight-contact',
+  'flights', 'flights-hub', 'shop-hub', 'cars-hub', 'reserve', 'flight-pay', 'flight-contact', 'services',
 ])
 
 // Reads ?add=<plan key> once, adds that plan to the shared Business
@@ -229,16 +231,18 @@ export default function App() {
     if (m) { setProviderId(decodeURIComponent(m[1])); setTab('store-detail') }
   }, [])
 
-  const GROCERY_TABS = ['grocery-cart', 'lunches', 'meats', 'grocery-contact', 'stores', 'store-detail', 'store-order', 'category', 'products', 'item-detail', 'shop-seller', 'shop-seller-soon']
+  const GROCERY_TABS = ['grocery-cart', 'lunches', 'meats', 'grocery-contact', 'stores', 'store-detail', 'store-order', 'category', 'products', 'item-detail', 'shop-seller', 'shop-seller-soon', 'shop-hub']
   const BUSINESS_TABS = ['business-hub', 'restaurants', 'pos', 'barbers', 'dealer', 'employee', 'bodyshop', 'houses', 'doctor', 'holiday', 'rentals', 'laundry', 'gym', 'simple-barbershop', 'tv-gallery', 'live-chat', 'clean-link', 'direct-upload', 'demo-live-chat', 'business-cart']
   const KIDS_TABS = ['kids-hub', 'kids-math', 'kids-english', 'kids-arabic', 'kids-french', 'kids-spanish', 'kids-science', 'kids-geography', 'kids-coding', 'kids-reading', 'kids-books']
-  const inBusiness = BUSINESS_TABS.includes(tab)
-  const inCars = ['cars', 'sell', 'contact', 'car-seller', 'car-seller-soon'].includes(tab)
+  const inBusiness = BUSINESS_TABS.includes(tab) || tab === 'services'
+  const inCars = ['cars', 'sell', 'contact', 'car-seller', 'car-seller-soon', 'cars-hub'].includes(tab)
   const inFlights = ['flights', 'flights-hub', 'reserve', 'flight-pay', 'flight-contact'].includes(tab)
-  // "More" holds Services + Help Center (Guides, Pass
-  // Recovery) + Track Order + About Us. Cars is a top-level
+  // "More" holds Help Center (Guides, Pass Recovery) + Track Order +
+  // About Us. Services moved to the Systems submenu (BusinessMenu),
+  // between More Systems and Add-ons — the Systems button stays
+  // highlighted while on the Services page. Cars is a top-level
   // button now, and Yently Kids moved to Systems.
-  const inMore = ['services', 'services-home', 'services-contact', 'about', 'guides', 'pass-recovery', 'track', 'clothes'].includes(tab)
+  const inMore = ['services-home', 'services-contact', 'about', 'guides', 'pass-recovery', 'track', 'clothes'].includes(tab)
 
   return (
     <div className="app">
@@ -252,13 +256,12 @@ export default function App() {
           <nav>
             <button className={inBusiness ? 'active' : ''} onClick={() => go('business-hub')}>Systems</button>
             <button className={inFlights ? 'active' : ''} onClick={() => go('flights-hub')}>Flights</button>
-            <button className={GROCERY_TABS.includes(tab) ? 'active' : ''} onClick={() => go('products')}>Shop</button>
-            <button className={inCars ? 'active' : ''} onClick={() => go('cars')}>Cars</button>
+            <button className={GROCERY_TABS.includes(tab) ? 'active' : ''} onClick={() => go('shop-hub')}>Shop</button>
+            <button className={inCars ? 'active' : ''} onClick={() => go('cars-hub')}>Cars</button>
             <span className="dropdown" ref={moreRef}>
               <button className={inMore ? 'active' : ''} onClick={() => setMoreOpen(o => !o)}>More ▾</button>
               {moreOpen && (
                 <span className="dropdown-menu">
-                  <a onClick={() => go('services')}>Services</a>
                   <a onClick={() => setHelpOpen(o => !o)}>Help Center {helpOpen ? '▾' : '▸'}</a>
                   {helpOpen && (
                     <>
@@ -288,6 +291,7 @@ export default function App() {
       </header>
       <main className="main">
         {tab === 'cars' && <CarSection go={go} />}
+        {tab === 'cars-hub' && <CarHubPage go={go} />}
         {tab === 'sell' && <SellPage go={go} />}
         {tab === 'car-seller' && <CarSellerFormPage go={go} />}
         {tab === 'car-seller-soon' && <CarSellerSoonPage go={go} />}
@@ -299,6 +303,7 @@ export default function App() {
         {tab === 'flight-contact' && <FlightContactPage go={go} />}
         {GROCERY_TABS.includes(tab) && (
           <CartProvider>
+            {tab === 'shop-hub' && <ShopHubPage go={go} />}
             {tab === 'grocery-cart' && <GroceryCartPage go={go} />}
             {tab === 'lunches' && (
               <GrocerySoonPage go={go} title="Lunches & Snacks" emoji="🥪" topic="Lunches/Snacks"
