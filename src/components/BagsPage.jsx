@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { GroceryTopBar } from './GroceryMenu'
 import { useCart } from '../lib/CartContext'
-import { loadItems, loadBagSlots, money } from '../lib/storeData'
+import { loadItems, loadBagSlots, loadBagSlotItems, money } from '../lib/storeData'
 import { StockLine } from './StoreBits'
 import ScrollTopButton from './ScrollTopButton'
 import { useCountryFilter, matchesCountry } from '../lib/countryFilter'
@@ -17,6 +17,10 @@ import { useCountryFilter, matchesCountry } from '../lib/countryFilter'
 export default function BagsPage({ go }) {
   const [items, setItems] = useState(null)
   const [slots, setSlots] = useState(null)
+  // Explicit picks per bag: { [bagId]: { [slot_no]: [itemId, ...] } }.
+  // A slot with picks shows ONLY those products; a slot with none falls
+  // back to the whole category pool (see optionsFor).
+  const [slotPicks, setSlotPicks] = useState(null)
   const [error, setError] = useState('')
   const [query, setQuery] = useState('')
   const [justAdded, setJustAdded] = useState('')
@@ -42,8 +46,17 @@ export default function BagsPage({ go }) {
 
   useEffect(() => {
     if (!bags) return
-    if (bags.length === 0) { setSlots([]); return }
+    if (bags.length === 0) { setSlots([]); setSlotPicks({}); return }
     loadBagSlots(bags.map(b => b.id)).then(setSlots).catch(e => setError(e.message))
+    loadBagSlotItems(bags.map(b => b.id)).then(rows => {
+      const map = {}
+      for (const r of rows || []) {
+        if (!map[r.bag_item_id]) map[r.bag_item_id] = {}
+        if (!map[r.bag_item_id][r.slot_no]) map[r.bag_item_id][r.slot_no] = []
+        map[r.bag_item_id][r.slot_no].push(r.item_id)
+      }
+      setSlotPicks(map)
+    }).catch(e => setError(e.message))
   }, [bags])
 
   const slotsByBag = useMemo(() => {
@@ -56,11 +69,18 @@ export default function BagsPage({ go }) {
   }, [slots])
 
   // Choice products for a slot: active store-3 items in the slot's
-  // category (bags themselves are never options).
-  const optionsFor = (slot) => (items || [])
-    .filter(i => i.is_active && !(i.categories || []).some(c => c.slug === 'yently-bags'))
-    .filter(i => (i.categories || []).some(c => c.slug === slot.category_slug))
-    .sort((a, b) => a.name.localeCompare(b.name))
+  // category (bags themselves are never options). If the admin picked
+  // explicit products for this slot, ONLY those are offered; otherwise
+  // the whole category pool is offered, as before.
+  const optionsFor = (bag, slot) => {
+    const pool = (items || [])
+      .filter(i => i.is_active && !(i.categories || []).some(c => c.slug === 'yently-bags'))
+      .filter(i => (i.categories || []).some(c => c.slug === slot.category_slug))
+      .sort((a, b) => a.name.localeCompare(b.name))
+    const picks = (slotPicks && bag && slotPicks[bag.id] && slotPicks[bag.id][slot.slot_no]) || null
+    if (picks && picks.length > 0) return pool.filter(i => picks.includes(i.id))
+    return pool
+  }
 
   // What the same picks would cost bought one by one, at the cheapest
   // choice on each line — the honest floor for the saving. The bag
@@ -70,7 +90,7 @@ export default function BagsPage({ go }) {
     if (bagSlots.length === 0) return null
     let total = 0
     for (const s of bagSlots) {
-      const opts = optionsFor(s)
+      const opts = optionsFor(bag, s)
       if (opts.length === 0) return null
       total += Math.min(...opts.map(o => Number(o.price))) * (s.qty || 1)
     }
@@ -88,7 +108,7 @@ export default function BagsPage({ go }) {
     const bagSlots = slotsByBag[bag.id] || []
     const choices = {}
     for (const s of bagSlots) {
-      const opts = optionsFor(s)
+      const opts = optionsFor(bag, s)
       if (opts.length === 1) choices[s.slot_no] = opts[0].id
     }
     setPickerChoices(choices)
@@ -205,7 +225,7 @@ export default function BagsPage({ go }) {
             {(slotsByBag[detailsBag.id] || []).map(s => (
               <div key={s.slot_no} style={{ padding: '10px 0', borderBottom: '1px solid #e5e7eb' }}>
                 <b>{s.slot_label}{s.qty > 1 ? ` × ${s.qty}` : ''}</b>
-                <p className="hint" style={{ margin: '4px 0 0' }}>{optionsFor(s).map(o => o.name).join(' · ') || 'Choices coming soon.'}</p>
+                <p className="hint" style={{ margin: '4px 0 0' }}>{optionsFor(detailsBag, s).map(o => o.name).join(' · ') || 'Choices coming soon.'}</p>
               </div>
             ))}
             <div className="item-actions" style={{ marginTop: 16 }}>
@@ -223,7 +243,7 @@ export default function BagsPage({ go }) {
             <h3 style={{ marginTop: 0, paddingRight: 24 }}>{pickerBag.name} — {money(pickerBag.price)}</h3>
             <p className="hint">Pick one on each line.{pickerSep !== null && pickerSep > Number(pickerBag.price) ? ` Bought separately from ${money(pickerSep)} — the` : ' The'} price stays {money(pickerBag.price)} whatever you pick. Delivery only.</p>
             {pickerSlots.map(s => {
-              const opts = optionsFor(s)
+              const opts = optionsFor(pickerBag, s)
               const onlyOne = opts.length === 1
               return (
                 <div key={s.slot_no} style={{ padding: '10px 0', borderBottom: '1px solid #e5e7eb' }}>
