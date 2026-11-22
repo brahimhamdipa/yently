@@ -746,12 +746,21 @@
           ? 'Need more students? You have ' + draft.students.length + ' of ' + studentLimit + ' places — <a href="/?add=kids-extra-spanish&slug=' + encodeURIComponent(SLUG) + '">add extra students</a> for $1/month each — free for the rest of this month.'
           : 'Need more students? <a href="/?add=kids-extra-spanish&slug=' + encodeURIComponent(SLUG) + '">Extra students</a> are $1/month each — free for the rest of this month.';
       }
-      /* Clean Link add-on: a short yently.com link for this school,
-         $2/month from the next payment — free for the rest of this
-         month. Hidden when the school already has a clean link. */
+      /* Clean Link add-on: pick the type (Clean Link $5/month;
+         Golden Link $10/month and Your Own Domain $20/month are
+         disabled in the dropdown until they launch), then Add opens
+         the cart with the add-on link for this school — free for
+         the rest of this month. Hidden when the school already has
+         a clean link. */
       var cleanEl = $('setup-clean-link');
       if (cleanEl) {
-        cleanEl.innerHTML = hasCleanLink ? '' : 'Want a short link for this page? <a href="/?add=clean:website&shop=kids-spanish&slug=' + encodeURIComponent(SLUG) + '&addon=1">Add a Clean Link</a> — $2/month, free for the rest of this month.';
+        cleanEl.innerHTML = hasCleanLink ? '' : 'Want a short link for this page? <select id="setup-clean-link-type"><option value="clean:website">Clean Link — $5/month</option><option value="clean:golden" disabled>Golden Link — $10/month (Available soon)</option><option value="clean:domain" disabled>Your Own Domain — $20/month (Available soon)</option></select> <button type="button" id="setup-clean-link-add" class="secondary">Add</button> — free for the rest of this month.';
+        /* Clean Link add-on: pick the type, then Add opens the cart
+           with the add-on link for this shop. Golden Link and Your Own
+           Domain are disabled in the dropdown until they launch — to
+           sell one, remove `disabled` from its option above. */
+        var cleanLinkAdd = $('setup-clean-link-add');
+        if (cleanLinkAdd) cleanLinkAdd.onclick = function () { var t = $('setup-clean-link-type'); window.location.href = '/?add=' + encodeURIComponent(t ? t.value : 'clean:website') + '&shop=kids-spanish&slug=' + encodeURIComponent(SLUG) + '&addon=1'; };
       }
       /* Direct Upload add-on: $5/month from the next payment —
          free for the rest of this month. Hidden when the switch
