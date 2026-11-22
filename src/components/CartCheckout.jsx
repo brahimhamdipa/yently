@@ -277,6 +277,15 @@ export default function CartCheckout({ products, onOrderPlaced }) {
     setPopup(null)
   }
 
+  // Escape closes the location popup too, the same as the X and a
+  // click outside the panel (backdrop onClick below).
+  useEffect(() => {
+    if (!popup) return
+    const onKey = (e) => { if (e.key === 'Escape') closePopup() }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [popup])
+
   const selectPopupRow = (row) => {
     if (!popup) return
     setSelectedLoc(s => ({ ...s, [popup.sectionKey]: { mode: popup.mode, label: locDisplay(row, popup.mode) } }))
@@ -561,7 +570,7 @@ export default function CartCheckout({ products, onOrderPlaced }) {
                 {!canDeliver && !canPickup && <p className="hint">Nothing in this section supports delivery or pickup — remove those items to continue.</p>}
                 {sel && sel.mode === fulfillment && (
                   <div className="addr-box">
-                    <b>{sel.mode === 'delivery' ? 'Delivery from:' : 'Pickup at:'}</b>
+                    <b>{sel.mode === 'delivery' ? 'Delivery to:' : 'Pickup at:'}</b>
                     <p>📍 {sel.label}</p>
                   </div>
                 )}
@@ -617,11 +626,11 @@ export default function CartCheckout({ products, onOrderPlaced }) {
         const needle = popupQuery.trim().toLowerCase()
         const rows = needle ? popup.rows.filter(r => JSON.stringify(r).toLowerCase().includes(needle)) : popup.rows
         return (
-          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-            <div style={{ background: '#fff', borderRadius: 12, padding: 20, width: '100%', maxWidth: 520, maxHeight: '80vh', overflowY: 'auto', position: 'relative' }}>
+          <div onClick={closePopup} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+            <div onClick={e => e.stopPropagation()} style={{ background: '#fff', borderRadius: 12, padding: 20, width: '100%', maxWidth: 520, maxHeight: '80vh', overflowY: 'auto', position: 'relative' }}>
               <button type="button" onClick={closePopup} aria-label="Close" style={{ position: 'absolute', top: 8, right: 12, fontSize: 20, lineHeight: 1, background: 'none', border: 'none', cursor: 'pointer' }}>✕</button>
               <h3 style={{ marginTop: 0, paddingRight: 24 }}>{popup.mode === 'delivery' ? 'Choose a delivery location' : 'Choose a pickup location'}</h3>
-              <input placeholder="Search locations..." value={popupQuery} onChange={e => setPopupQuery(e.target.value)} autoFocus style={{ width: '100%', boxSizing: 'border-box' }} />
+              <input placeholder="Search locations..." value={popupQuery} onChange={e => setPopupQuery(e.target.value)} autoFocus style={{ width: '100%', boxSizing: 'border-box', fontSize: 16 }} />
               <div style={{ marginTop: 12 }}>
                 {rows.length === 0 && <p className="hint">No locations match.</p>}
                 {rows.map((r, i) => (
