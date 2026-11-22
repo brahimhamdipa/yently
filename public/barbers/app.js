@@ -737,7 +737,7 @@
       '<div class="row" style="margin-top:16px"><button id="setup-save" class="secondary">Save draft</button>' +
       '<button id="setup-upload">' + (directUploadOn ? 'Upload — goes live right away' : 'Upload for approval') + '</button></div>' +
       '<div id="setup-out" style="margin-top:12px"></div>' +
-      '<p class="info" id="setup-clean-link">Want a short link for this page? <a href="/?add=clean:website&shop=barbers&slug=' + encodeURIComponent(SLUG) + '&addon=1">Add a Clean Link</a> — $2/month, free for the rest of this month.</p>' +
+      '<p class="info" id="setup-clean-link">Want a short link for this page? <select id="setup-clean-link-type"><option value="clean:website">Clean Link — $5/month</option><option value="clean:golden" disabled>Golden Link — $10/month (Available soon)</option><option value="clean:domain" disabled>Your Own Domain — $20/month (Available soon)</option></select> <button type="button" id="setup-clean-link-add" class="secondary">Add</button> — free for the rest of this month.</p>' +
       '<div class="card"><h3>Chats</h3>' +
       '<p class="info">Messages from visitors on this page. Visitors only see the chat bubble once Yently switches live chat on for this shop.</p>' +
       '<div class="row"><button type="button" id="setup-chats-toggle" class="secondary">Open chats</button></div>' +
@@ -749,6 +749,12 @@
     rpc('clean_link_exists', { p_system: 'barbers', p_slug: SLUG }).then(function (has) {
       if (has === true) { var cleanEl = $('setup-clean-link'); if (cleanEl) cleanEl.style.display = 'none'; }
     }).catch(function () {});
+    /* Clean Link add-on: pick the type, then Add opens the cart
+       with the add-on link for this shop. Golden Link and Your Own
+       Domain are disabled in the dropdown until they launch — to
+       sell one, remove `disabled` from its option above. */
+    var cleanLinkAdd = $('setup-clean-link-add');
+    if (cleanLinkAdd) cleanLinkAdd.onclick = function () { var t = $('setup-clean-link-type'); window.location.href = '/?add=' + encodeURIComponent(t ? t.value : 'clean:website') + '&shop=barbers&slug=' + encodeURIComponent(SLUG) + '&addon=1'; };
     wireShopChatInbox();
     var listEl = $('setup-services');
     function serviceRow(s, i) {
