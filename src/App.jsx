@@ -21,6 +21,7 @@ import ProvidersPage from './components/ProvidersPage'
 import ProviderPage from './components/ProviderPage'
 import StoreOrderPage from './components/StoreOrderPage'
 import ProductsPage from './components/ProductsPage'
+import BagsPage from './components/BagsPage'
 import CategoryPage from './components/CategoryPage'
 import ItemDetailPage from './components/ItemDetailPage'
 import ProviderFormPage from './components/ProviderFormPage'
@@ -242,7 +243,7 @@ export default function App() {
     if (m) { setProviderId(decodeURIComponent(m[1])); setTab('store-detail') }
   }, [])
 
-  const GROCERY_TABS = ['grocery-cart', 'lunches', 'meats', 'grocery-contact', 'stores', 'store-detail', 'store-order', 'category', 'products', 'item-detail', 'shop-seller', 'shop-seller-soon', 'shop-hub']
+  const GROCERY_TABS = ['grocery-cart', 'lunches', 'meats', 'grocery-contact', 'stores', 'store-detail', 'store-order', 'category', 'products', 'bags', 'item-detail', 'shop-seller', 'shop-seller-soon', 'shop-hub']
   const BUSINESS_TABS = ['business-hub', 'restaurants', 'pos', 'barbers', 'dealer', 'employee', 'bodyshop', 'houses', 'doctor', 'holiday', 'rentals', 'laundry', 'gym', 'simple-barbershop', 'tv-gallery', 'live-chat', 'clean-link', 'direct-upload', 'demo-live-chat', 'business-cart', 'services']
   const KIDS_TABS = ['kids-hub', 'kids-math', 'kids-english', 'kids-arabic', 'kids-french', 'kids-spanish', 'kids-science', 'kids-geography', 'kids-coding', 'kids-reading', 'kids-books']
   const inBusiness = BUSINESS_TABS.includes(tab)
@@ -331,6 +332,7 @@ export default function App() {
             {tab === 'store-detail' && <ProviderPage providerId={providerId} go={go} goBack={goBack} />}
             {tab === 'store-order' && <StoreOrderPage providerId={orderProviderId} go={go} goBack={goBack} />}
             {tab === 'products' && <ProductsPage go={go} />}
+            {tab === 'bags' && <BagsPage go={go} />}
             {tab === 'category' && <CategoryPage slug={categorySlug} go={go} />}
             {tab === 'item-detail' && <ItemDetailPage itemId={itemId} go={go} goBack={goBack} />}
             {tab === 'shop-seller' && <ShopSellerFormPage go={go} />}
