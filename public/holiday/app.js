@@ -820,7 +820,7 @@
       '<button id="d-upload" class="secondary">' + (directUploadOn ? 'Upload — goes live right away' : 'Upload for approval') + '</button></div>' +
       '<p class="info" id="d-status">Draft status: ' + esc(draftStatus) + (draftStatus === 'pending' ? ' — waiting for Yently to approve it.' : draftStatus === 'approved' ? ' — approved, live now.' : ' — not sent yet.') + '</p>' +
       '<p class="error" id="d-err" hidden></p>' +
-      '<p class="info" id="setup-clean-link">Want a short link for this page? <a href="/?add=clean:website&shop=holiday&slug=' + encodeURIComponent(SLUG) + '&addon=1">Add a Clean Link</a> — $2/month, free for the rest of this month.</p></div>' +
+      '<p class="info" id="setup-clean-link">Want a short link for this page? <select id="setup-clean-link-type"><option value="clean:website">Clean Link — $5/month</option><option value="clean:golden" disabled>Golden Link — $10/month (Available soon)</option><option value="clean:domain" disabled>Your Own Domain — $20/month (Available soon)</option></select> <button type="button" id="setup-clean-link-add" class="secondary">Add</button> — free for the rest of this month.</p></div>' +
       '<div class="card"><h3>Properties</h3>' +
       '<p class="info">Properties go live right away — no approval needed.</p>' +
       '<div id="properties-list"></div>' +
@@ -850,6 +850,12 @@
     rpc('clean_link_exists', { p_system: 'holiday', p_slug: SLUG }).then(function (has) {
       if (has === true) { var cleanEl = $('setup-clean-link'); if (cleanEl) cleanEl.style.display = 'none'; }
     }).catch(function () {});
+    /* Clean Link add-on: pick the type, then Add opens the cart
+       with the add-on link for this shop. Golden Link and Your Own
+       Domain are disabled in the dropdown until they launch — to
+       sell one, remove `disabled` from its option above. */
+    var cleanLinkAdd = $('setup-clean-link-add');
+    if (cleanLinkAdd) cleanLinkAdd.onclick = function () { var t = $('setup-clean-link-type'); window.location.href = '/?add=' + encodeURIComponent(t ? t.value : 'clean:website') + '&shop=holiday&slug=' + encodeURIComponent(SLUG) + '&addon=1'; };
     wireShopChatInbox();
     renderPropertiesList();
     $('d-save').addEventListener('click', function () { saveDraft(false); });
