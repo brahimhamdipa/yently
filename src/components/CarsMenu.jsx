@@ -34,11 +34,9 @@ export default function CarsMenu({ go }) {
 }
 
 // Top bar for every Cars-area page: submenu button on the left,
-// country filter in the middle, cart icon on the right (same one-line
-// layout as the Shopping top bar). The cart button opens the shared
-// My Cart — cars have no cart of their own (an interested buyer
-// contacts the seller), and Cars pages render outside any cart
-// provider, so the button carries no count badge.
+// country filter in the middle (same one-line layout as the Shopping
+// top bar). No cart button: Cars has no cart of its own (an interested
+// buyer contacts the seller).
 export function CarsTopBar({ go }) {
   return (
     <div className="g-topbar">
@@ -46,9 +44,6 @@ export function CarsTopBar({ go }) {
       <div style={{ flex: 1, minWidth: 0, margin: '0 8px', display: 'flex' }}>
         <CountryFilterBar />
       </div>
-      <button className="cart-fab" onClick={() => go && go('business-cart')} aria-label="My Cart">
-        🛒
-      </button>
     </div>
   )
 }

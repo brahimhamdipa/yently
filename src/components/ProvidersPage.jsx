@@ -79,8 +79,6 @@ export default function ProvidersPage({ go, onShop, onView }) {
       <div className="hero-card">
         <h2>🏬 Yently Stores</h2>
         <p>Our stores are virtual for now — we deliver snacks and lunches straight to your workplace. Order today and everything arrives early tomorrow morning, in your company's delivery window. Search by store name, country, city or zip code.</p>
-        <p><strong>How it works:</strong> Order 24 hours before midnight. We prepare the orders and deliver them to the delivery location you picked when ordering. Delivery time is based on the agreement with your organization — it can be a couple of times a day. Track your orders at yently.com — from the “Track your order” link in the footer at the bottom of every page, or from More → Track Order.</p>
-        <p className="scope-banner">📍 We serve the Harrisburg area only — Carlisle, Mechanicsburg, Dillsburg, Camp Hill, Enola and Harrisburg — and we're growing slowly. Closed June and July. Full service from August 2027.</p>
         <div className="filters">
           <input placeholder="Search stores (e.g. Paris, Morocco, 10007)" value={query} onChange={e => setQuery(e.target.value)} />
         </div>

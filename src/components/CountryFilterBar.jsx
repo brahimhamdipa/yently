@@ -78,7 +78,7 @@ export default function CountryFilterBar() {
             onChange={e => setQuery(e.target.value)}
             placeholder="Search countries…"
             aria-label="Search countries"
-            style={{ margin: 8, marginBottom: 4, padding: '8px 10px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14, outline: 'none' }}
+            style={{ margin: 8, marginBottom: 4, padding: '8px 10px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 16, outline: 'none' }}
           />
           <div style={{ overflowY: 'auto', padding: '4px 0 8px' }}>
             {filtered.length === 0 && (

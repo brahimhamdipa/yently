@@ -40,6 +40,8 @@ export default function CarHubPage({ go }) {
         </ol>
       </div>
 
+      <div aria-hidden="true" style={{ height: 1, background: '#e5e7eb', margin: '36px 0 28px' }} />
+
       <div className="hero-card" style={{ textAlign: 'center' }}>
         <h3>Find your car</h3>
         <p>Browse the listings, or list a car of your own.</p>

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import ServicesMenu from './ServicesMenu'
+import { BusinessTopBar } from './BusinessMenu'
 import { submitAndNotify } from '../lib/notify'
 
 // Voice message recorder (optional): records with the device microphone
@@ -132,7 +132,7 @@ export default function ServicesPage({ go }) {
         emailExtras,
         attachment,
       })
-      setStatus('✓ Sent! Thanks — our Services team will get back to you shortly.')
+      setStatus('✓ Sent! Thanks — our Custom Coding team will get back to you shortly.')
       setForm({ name: '', email: '', phone: '', company: '', companyUrl: '', language: '', message: '' })
       setVoice(null)
     } catch (err) {
@@ -143,10 +143,11 @@ export default function ServicesPage({ go }) {
 
   return (
     <div>
-      <ServicesMenu go={go} />
-      <div className="hero-card">
-        <h2>Custom Coding</h2>
-        <p><b>You talk, we listen.</b> Tell us the plan in your head — From a simple, personal website to a complete system for a small or medium business. From just a part of a code, in any language, to the whole system: we're here to help you achieve it.</p>
+      <BusinessTopBar go={go} />
+      <div className="hero-card" style={{ background: '#161d44', color: '#fff', textAlign: 'center' }}>
+        <h2 style={{ color: '#fff' }}>💻 Custom Coding</h2>
+        <p style={{ fontSize: 18, color: '#f5c542' }}>You talk, we listen.</p>
+        <p>Tell us the plan in your head — From a simple, personal website to a complete system for a small or medium business. From just a part of a code, in any language, to the whole system: we&apos;re here to help you achieve it.</p>
       </div>
 
       <div className="form-card wide">

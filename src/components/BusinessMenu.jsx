@@ -7,8 +7,9 @@ import { useBusinessCart } from '../lib/BusinessCartContext'
 // business-cart count), Business Systems (the hub page), Restaurant,
 // POS, Barber, then branches that open in place (like the Admin
 // menu branches): "More Systems" (Dealer, Employee, Bodyshop, Houses, Doctor, Holiday,
-// Car Rental, Laundry, Gym, Simple Website), Services (Custom Coding —
-// moved here from the main menu's More list), "Add-ons" (TV Gallery, Live Chat, Clean Link, Direct
+// Car Rental, Laundry, Gym, Simple Website), Custom Coding (moved here
+// from the main menu's More list, where it was labelled "Services"),
+// "Add-ons" (TV Gallery, Live Chat, Clean Link, Direct
 // Upload), and "Learning Systems" (the Kids submenu minus My Cart:
 // Yently Kids, Math, English, Arabic, More Subjects, Books for Kids).
 // Each branch button shows a right arrow when closed and a
@@ -77,7 +78,7 @@ export default function BusinessMenu({ go }) {
           {moreOpen && (
             <button onClick={() => pick('simple-barbershop')} style={{ display: 'block', width: '100%', background: 'white', color: '#111827', textAlign: 'left', padding: '12px 16px 12px 32px', fontSize: '14.5px', fontWeight: '400', borderTop: '1px solid #f1f2f5' }}>Simple Website</button>
           )}
-          <button onClick={() => pick('services')}>Services</button>
+          <button onClick={() => pick('services')}>Custom Coding</button>
           <button onClick={() => setAddonsOpen(o => !o)}>Add-ons {addonsOpen ? '▾' : '▸'}</button>
           {addonsOpen && (
             <a href="/demo-tv-gallery" style={{ display: 'block', width: '100%', background: 'white', color: '#111827', textAlign: 'left', padding: '12px 16px 12px 32px', fontSize: '14.5px', textDecoration: 'none', borderTop: '1px solid #f1f2f5' }}>TV Gallery</a>

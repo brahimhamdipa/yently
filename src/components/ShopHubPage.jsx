@@ -20,7 +20,6 @@ export default function ShopHubPage({ go }) {
         <h3>About Shop</h3>
         <p>Shop is a worldwide shopping platform. It shows you all available products and the participant stores of the country you&apos;re browsing from — to see another country&apos;s products, just choose the country above, beside the menu.</p>
         <p>We&apos;re not adding stores right now — we&apos;re growing slowly. Our focus is serving snacks and lunches to participant organizations and companies (and some houses too), and for now we&apos;re limited to small regions — the Harrisburg area today.</p>
-        <p className="scope-banner">📍 We serve the Harrisburg area only — Carlisle, Mechanicsburg, Dillsburg, Camp Hill, Enola and Harrisburg — and we&apos;re growing slowly. Closed June and July. Full service from August 2027.</p>
       </div>
 
       <div className="form-card wide">
@@ -41,6 +40,8 @@ export default function ShopHubPage({ go }) {
         </ol>
         <p className="hint">This year only, as an exception, Shop is closed in June and July.</p>
       </div>
+
+      <div aria-hidden="true" style={{ height: 1, background: '#e5e7eb', margin: '36px 0 28px' }} />
 
       <div className="hero-card" style={{ textAlign: 'center' }}>
         <h3>Start shopping</h3>

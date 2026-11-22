@@ -122,8 +122,6 @@ return Object.values(map).sort((a, b) => a.label.localeCompare(b.label))
       <div className="hero-card">
         <h2>🛍️ Products</h2>
         <p>Every item from every store, in one place. Search, filter by category, and add to your cart — your cart groups each store's items into their own section at checkout.</p>
-        <p><strong>How it works:</strong> Order 24 hours before midnight. We prepare the orders and deliver them to the delivery location you picked when ordering. Delivery time is based on the agreement with your organization — it can be a couple of times a day. Track your orders at yently.com — from the “Track your order” link in the footer at the bottom of every page, or from More → Track Order.</p>
-        <p className="scope-banner">📍 We serve the Harrisburg area only — Carlisle, Mechanicsburg, Dillsburg, Camp Hill, Enola and Harrisburg — and we're growing slowly. Closed June and July. Full service from August 2027.</p>
         {count > 0 && (
           <p><button type="button" className="link-btn" onClick={() => go('grocery-cart')}>🛒 View My Cart ({count})</button></p>
         )}
