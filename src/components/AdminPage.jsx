@@ -4,7 +4,6 @@ import { supabase } from '../lib/supabaseClient'
 
 import { isAdminUser } from '../lib/admin'
 
-import AdminProducts from './AdminProducts'
 
 
 import AdminSubmissions from './AdminSubmissions'
@@ -38,7 +37,6 @@ import AdminAdvancedSearch from './admin/AdminAdvancedSearch'
 // table names.
 const MENUS = [
   { n: 1, name: 'Shop', items: [
-    { label: 'Products & Stock', section: 'products' },
     { label: 'Barcode Generator', section: 'barcode-generator' },
     { label: 'Orders', section: 'shop-orders' },
     { label: 'Form Submissions', section: 'submissions' },
@@ -239,7 +237,7 @@ export default function AdminPage() {
 
   const [authMsg, setAuthMsg] = useState('')
 
-  const [section, setSection] = useState('products')
+  const [section, setSection] = useState('shop-orders')
 
   const [openMenu, setOpenMenu] = useState(null) // null or 1..6
 
@@ -401,7 +399,6 @@ export default function AdminPage() {
           )}
         </div>
       </div>
-      {section === 'products' && <AdminProducts />}
       {section === 'cars' && <AdminCars />}
       {section === 'direct-upload' && <AdminDirectUpload />}
       {section === 'live-chat' && <AdminLiveChat />}
