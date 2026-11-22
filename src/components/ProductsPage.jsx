@@ -80,6 +80,10 @@ return Object.values(map).sort((a, b) => a.label.localeCompare(b.label))
     const needle = query.trim().toLowerCase()
     
     return countryItems.filter(i => {
+      // Yently Bags live on their own page (flavor picking happens
+      // there) — they never list here, where Add to cart would add
+      // a bag with no picks.
+      if ((i.categories || []).some(c => c.slug === 'yently-bags')) return false
       if (needle && ![i.name, i.description, String(i.price), i.provider?.name, i.barCode || ''].join(' ').toLowerCase().includes(needle)) return false
       const cats = i.categories || []
       if (selCats.length > 0 && !cats.some(c => selCats.includes(c.id))) return false

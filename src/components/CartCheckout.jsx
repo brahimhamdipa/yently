@@ -17,10 +17,20 @@ export const priceOf = (p) => Number(p.sale_price ?? p.price)
 // (a subCategory row of one of the item's categories) before adding.
 // The variant part is the subCategory row id; the label is resolved
 // at display time via loadItemVariants, and sent to the order RPCs
-// as the per-line 'variant' text.
+// as the per-line 'variant' text. A Yently Bag line is
+// 's:<bagId>:b<pickId>-<pickId>...' — one picked component item id
+// per slot, in slot order (see bagKey in CartContext); its label is
+// the picked products' names joined with ' · ', resolved via
+// loadItemsByIds, and it travels the same 'variant' path into the
+// order, receipt and owner email.
 const parseStoreKey = (k) => {
-  const m = k.slice(2).match(/^(\d+)(?::v(\d+))?$/)
-  return m ? { id: Number(m[1]), variantId: m[2] ? Number(m[2]) : null } : { id: Number(k.slice(2)), variantId: null }
+  const m = k.slice(2).match(/^(\d+)(?::v(\d+)|:b([\d-]+))?$/)
+  if (!m) return { id: Number(k.slice(2)), variantId: null, bagPickIds: null }
+  return {
+    id: Number(m[1]),
+    variantId: m[2] ? Number(m[2]) : null,
+    bagPickIds: m[3] ? m[3].split('-').map(Number).filter(n => n > 0) : null,
+  }
 }
 
 // The unified "Your cart" section: EVERYTHING the customer added —
@@ -65,6 +75,10 @@ export default function CartCheckout({ products, onOrderPlaced }) {
   // Variant (subCategory) rows per store item, for variant cart lines:
   // { itemId: [rows] }.
   const [itemVariants, setItemVariants] = useState({})
+
+  // Picked component items of Yently Bag lines, for their labels:
+  // the bag line's key only carries the pick ids (see parseStoreKey).
+  const [pickItems, setPickItems] = useState([])
 
   // sectionKey -> { mode, label } once a popup location is picked.
   const [selectedLoc, setSelectedLoc] = useState({})
@@ -124,7 +138,7 @@ export default function CartCheckout({ products, onOrderPlaced }) {
 
   const storeLines = Object.entries(cart)
     .filter(([k]) => k.startsWith('s:'))
-    .map(([k, qty]) => { const { id, variantId } = parseStoreKey(k); return { key: k, item: storeById[id], qty, variantId } })
+    .map(([k, qty]) => { const { id, variantId, bagPickIds } = parseStoreKey(k); return { key: k, item: storeById[id], qty, variantId, bagPickIds } })
     .filter(x => x.item && x.qty > 0)
 
   // Store item ids currently in the cart (deduped — one item can sit
@@ -158,6 +172,25 @@ export default function CartCheckout({ products, onOrderPlaced }) {
     return row ? formatVariant(row) : null
   }
 
+  // Component item ids picked on Yently Bag lines (deduped), and their
+  // names — the bag label is the picked products' names in slot order.
+  const bagPickIds = useMemo(
+    () => [...new Set(storeLines.flatMap(l => l.bagPickIds || []))],
+    [storeLines]
+  )
+  useEffect(() => {
+    if (bagPickIds.length === 0) { setPickItems([]); return }
+    let alive = true
+    loadItemsByIds(bagPickIds).then(d => { if (alive) setPickItems(d) }).catch(() => {})
+    return () => { alive = false }
+  }, [bagPickIds.join(',')])
+  const pickById = useMemo(() => Object.fromEntries(pickItems.map(i => [i.id, i])), [pickItems])
+  const bagPickLabelFor = (pickIds) => {
+    if (!pickIds || pickIds.length === 0) return null
+    const names = pickIds.map(id => pickById[id]?.name).filter(Boolean)
+    return names.length > 0 ? names.join(' · ') : null
+  }
+
   // Sections: grocery first, then one per store, in cart order.
   const sections = useMemo(() => {
     const out = []
@@ -181,7 +214,7 @@ export default function CartCheckout({ products, onOrderPlaced }) {
         }
         out.push(byProvider[pid])
       }
-      const variantLabel = variantLabelFor(l.item.id, l.variantId)
+      const variantLabel = l.bagPickIds ? bagPickLabelFor(l.bagPickIds) : variantLabelFor(l.item.id, l.variantId)
       byProvider[pid].lines.push({
         key: l.key, itemId: l.item.id, variantId: l.variantId, variantLabel,
         name: variantLabel ? `${l.item.name} (${variantLabel})` : l.item.name, unit: null,
@@ -191,7 +224,7 @@ export default function CartCheckout({ products, onOrderPlaced }) {
       })
     }
     return out
-  }, [groceryLines, storeLines, itemVariants])
+  }, [groceryLines, storeLines, itemVariants, pickById])
 
   // No default fulfillment: null until the customer picks a mode the
   // section's lines all support.

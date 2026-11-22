@@ -47,6 +47,10 @@ export default function ItemDetailPage({ itemId, go, goBack }) {
 
   const rows = itemVariants || []
   const complete = rows.length < 2 || picked !== null
+  // A Yently Bag is never added from here: its flavors are picked on
+  // the Yently Bags page, so a plain add would put a bag in the cart
+  // with no picks. Show the way there instead.
+  const isBag = (item?.categories || []).some(c => c.slug === 'yently-bags')
   const handleAdd = () => {
     const variant = picked || (rows.length === 1 ? rows[0] : null)
     addStore(item, 1, variant)
@@ -119,12 +123,16 @@ export default function ItemDetailPage({ itemId, go, goBack }) {
               <VariantMatrix rows={rows} onChange={setPicked} />
             )}
             <div className="item-actions">
-              <button
-                disabled={out || !complete}
-                onClick={handleAdd}
-              >
-                {out ? 'Out of stock' : '🛒 Add to cart'}
-              </button>
+              {isBag ? (
+                <button type="button" onClick={() => go('bags')}>🎒 Pick your flavors on the Yently Bags page</button>
+              ) : (
+                <button
+                  disabled={out || !complete}
+                  onClick={handleAdd}
+                >
+                  {out ? 'Out of stock' : '🛒 Add to cart'}
+                </button>
+              )}
               <button type="button" className="btn-soft" onClick={() => go('store-detail', item.provider_id)}>About store</button>
             </div>
             {added && (

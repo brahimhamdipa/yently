@@ -4,7 +4,7 @@ import CountryFilterBar from './CountryFilterBar'
 
 // Shared submenu for the whole Shopping area — same look and behavior as
 // the Cars / Flights menus. "My Cart" carries the live cart item count.
-// Five links only: My Cart, Products, Stores, Contact Us, Seller login.
+// Six links: My Cart, Yently Bags, Products, Stores, Contact Us, Seller login.
 export default function GroceryMenu({ go }) {
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
@@ -27,6 +27,7 @@ export default function GroceryMenu({ go }) {
       {open && (
         <div className="car-submenu">
           <button onClick={() => pick('grocery-cart')}>My Cart {count > 0 && <span className="menu-count">{count}</span>}</button>
+          <button onClick={() => pick('bags')}>Yently Bags</button>
           <button onClick={() => pick('products')}>Products</button>
           <button onClick={() => pick('stores')}>Stores</button>
           <button onClick={() => pick('grocery-contact')}>Contact Us</button>
