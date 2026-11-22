@@ -81,6 +81,18 @@ export async function loadBagSlots(bagIds) {
   return data || []
 }
 
+// A slot's explicit product picks: rows of store_bag_slot_items
+// (bag_item_id, slot_no, item_id). When a slot has picks, the shop
+// shows ONLY those products for it; when it has none, the slot falls
+// back to every active item in its category. Empty input -> [].
+export async function loadBagSlotItems(bagIds) {
+  if (!bagIds || bagIds.length === 0) return []
+  const { data, error } = await supabase.from('store_bag_slot_items')
+    .select('*').in('bag_item_id', bagIds).order('bag_item_id').order('slot_no')
+  if (error) throw error
+  return data || []
+}
+
 // One item with provider + categories attached (the item detail page).
 export async function loadItem(id) {
   const { data, error } = await supabase.from('store_items')
