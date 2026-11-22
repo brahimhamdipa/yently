@@ -8,6 +8,8 @@ import { ProviderForm, ItemForm, ProviderFormEditor, FromDelForm, ToPickForm, It
 
 import { money } from '../../lib/storeData'
 
+import { ADDON_SYSTEM_OPTIONS } from '../../lib/addonSystems'
+
 // Editing/Deleting section: one page per table, same pattern as the
 // Products & Stock page — a form above the table (blank for a new row,
 // filled when Edit is tapped) and Edit/Delete on every row. No popups.
@@ -160,10 +162,10 @@ const blankDraft = (table) => {
   if (table === 'barbershop_shops') return { slug: '', name: '', u: '', p: '', epass: '', note: '' }
   if (table === 'barbershop_approvals') return {}
   if (table === 'barbershop_bookings') return {}
-  if (table === 'barbershop_orders') return { customer_name: '', customer_email: '', customer_phone: '', plan: 'Barbershop booking page', price: 15, note: '' }
+  if (table === 'barbershop_orders') return { customer_name: '', customer_email: '', customer_phone: '', plan: 'Barbershop booking page', price: 20, note: '' }
   if (table === 'tv_gallery_orders') return { customer_name: '', customer_email: '', customer_phone: '', plan: 'TV Gallery page', price: 2, note: '' }
   if (table === 'live_chat_orders') return { customer_name: '', customer_email: '', customer_phone: '', plan: 'Live chat page', price: 3, note: '' }
-  if (table === 'clean_link_orders') return { customer_name: '', customer_email: '', customer_phone: '', plan: 'Clean Link', price: 2, note: '', system: '', shop_slug: '', clean_slug: '', status: 'pending' }
+  if (table === 'clean_link_orders') return { customer_name: '', customer_email: '', customer_phone: '', plan: 'Clean Link', price: 5, note: '', system: '', shop_slug: '', clean_slug: '', status: 'pending' }
   if (table === 'direct_upload_orders') return { customer_name: '', customer_email: '', customer_phone: '', plan: 'Direct Upload', price: 5, note: '' }
   if (table === 'pos_stores') return { slug: '', name: '', u: '', p: '', epass: '', note: '' }
   if (table === 'pos_approvals') return {}
@@ -437,23 +439,12 @@ export default function AdminStoreManage({ table: tableProp, onTableChange }) {
 
   // Clean links: the systems a clean link can open — the same list the
   // Clean Link ad page offers (system values match the middleware).
-  const CLEAN_LINK_SYSTEMS = [
-    { label: 'Restaurant', value: 'diner' },
-    { label: 'POS', value: 'pos' },
-    { label: 'Barbershop', value: 'barbers' },
-    { label: 'Dealer', value: 'dealer' },
-    { label: 'Employee', value: 'employee' },
-    { label: 'Bodyshop', value: 'bodyshop' },
-    { label: 'Kids — Math', value: 'kids-math' },
-    { label: 'Kids — English', value: 'kids-english' },
-    { label: 'Kids — Arabic', value: 'kids-arabic' },
-    { label: 'Kids — French', value: 'kids-french' },
-    { label: 'Kids — Spanish', value: 'kids-spanish' },
-    { label: 'Kids — Science', value: 'kids-science' },
-    { label: 'Kids — Geography', value: 'kids-geography' },
-    { label: 'Kids — Coding', value: 'kids-coding' },
-    { label: 'Kids — Reading', value: 'kids-reading' },
-  ]
+  // The system dropdown for the manual "Add a clean link" form —
+  // the shared add-on list, so a new system appears here by itself.
+  // (The manual form only ever creates a base Clean Link —
+  // yently.com/<name> — Golden Link and Your Own Domain are set up
+  // from their order rows, by hand.)
+  const CLEAN_LINK_SYSTEMS = ADDON_SYSTEM_OPTIONS
 
   const loadCleanLinks = async () => {
     const { data } = await supabase.from('clean_links').select('id, slug, system, shop_slug').order('slug')
@@ -651,8 +642,12 @@ export default function AdminStoreManage({ table: tableProp, onTableChange }) {
 
   // Clean Link activation: one tap inserts the clean link row
   // (activate_clean_link RPC) so yently.com/<slug> opens the shop.
-  // A taken slug fails here with a plain message.
+  // A taken slug fails here with a plain message. Only base Clean
+  // Link rows activate this way — a Golden Link or Your Own Domain
+  // row is set up by hand (no automatic link, no wildcard/DNS
+  // automation), so the function refuses those rows outright.
   const activateCleanLink = async (row) => {
+    if (row.plan !== 'Clean Link') { setStatus('Golden Link and Your Own Domain rows are set up by hand — no automatic activation for them.'); return }
     const { data, error } = await supabase.rpc('activate_clean_link', { p_order_id: row.id })
     if (error) { setStatus('Cannot activate: ' + error.message); return }
     setStatus(`✓ Clean link live — yently.com/${data?.slug || row.clean_slug} now opens the ${data?.system || row.system} shop.`)
@@ -1515,7 +1510,7 @@ export default function AdminStoreManage({ table: tableProp, onTableChange }) {
             {table === 'barbershop_bookings' && <><td>{barbershopShopsList.find(x => x.id === r.shop_id)?.name || r.shop_id}</td><td>{r.booking_data?.name || '—'}</td><td>{r.booking_data?.service || '—'}</td><td>{r.booking_data?.date || '—'}</td><td>{r.status}</td></>}
             {table === 'barbershop_orders' && <><td>{r.customer_email || '—'}</td><td>{r.customer_phone || '—'}</td><td>{r.plan || '—'}</td><td>{money(r.price)}</td></>}
             {table === 'tv_gallery_orders' && <><td>{r.customer_email || '—'}</td><td>{r.customer_phone || '—'}</td><td>{r.plan || '—'}</td><td>{money(r.price)}</td></>}
-            {table === 'clean_link_orders' && <><td>{r.customer_email || '—'}</td><td>{r.customer_phone || '—'}</td><td>{r.plan || '—'}</td><td>{money(r.price)}</td><td>{r.system || '—'}</td><td>{r.shop_slug || '—'}</td><td>{r.clean_slug ? 'yently.com/' + r.clean_slug : '—'}</td><td>{r.status || '—'}</td></>}
+            {table === 'clean_link_orders' && <><td>{r.customer_email || '—'}</td><td>{r.customer_phone || '—'}</td><td>{r.plan || '—'}</td><td>{money(r.price)}</td><td>{r.system || '—'}</td><td>{r.shop_slug || '—'}</td><td>{r.clean_slug ? (r.plan === 'Golden Link' ? r.clean_slug + '.yently.com' : r.plan === 'Your Own Domain' ? r.clean_slug : 'yently.com/' + r.clean_slug) : '—'}</td><td>{r.status || '—'}</td></>}
             {table === 'direct_upload_orders' && <><td>{r.customer_email || '—'}</td><td>{r.customer_phone || '—'}</td><td>{r.plan || '—'}</td><td>{money(r.price)}</td></>}
             {table === 'pos_stores' && <><td>{r.slug}</td><td>{r.u}</td><td>{r.draft_status}</td></>}
             {table === 'pos_approvals' && <><td>{r.slug}</td><td>{r.draft_status}</td></>}
@@ -1550,7 +1545,7 @@ export default function AdminStoreManage({ table: tableProp, onTableChange }) {
                   {table === 'bodyshop_approvals' && <><button type="button" className="btn-mini" onClick={() => setDetail(r)}>Details</button>{' '}{r.draft_status === 'pending' && <button type="button" className="btn-mini" onClick={() => approveBodyshop(r)}>Approve</button>}{' '}</>}
                   {KIDS_APPROVAL_TABLES.includes(table) && <><button type="button" className="btn-mini" onClick={() => setDetail(r)}>Details</button>{' '}{r.draft_status === 'pending' && <button type="button" className="btn-mini" onClick={() => approveKids(r)}>Approve</button>}{' '}</>}
                   {table === 'item_batches' && <><button type="button" className="btn-mini" onClick={() => setDetail(r)}>Details</button>{' '}{r.status === 'pending' && <button type="button" className="btn-mini" onClick={() => approveItemBatch(r)}>Approve</button>}{' '}</>}
-                  {table === 'clean_link_orders' && <>{r.status === 'pending' && <button type="button" className="btn-mini" onClick={() => activateCleanLink(r)}>Activate</button>}{' '}</>}
+                  {table === 'clean_link_orders' && <>{r.status === 'pending' && r.plan === 'Clean Link' && <button type="button" className="btn-mini" onClick={() => activateCleanLink(r)}>Activate</button>}{r.status === 'pending' && r.plan !== 'Clean Link' && <span className="hint">Set up manually</span>}{' '}</>}
                   {table !== 'barber_orders' && table !== 'restaurant_orders' && table !== 'intake_submissions' && table !== 'diner_approvals' && table !== 'diner_orders' && table !== 'barbershop_approvals' && table !== 'barbershop_bookings' && table !== 'barbershop_orders' && table !== 'pos_approvals' && table !== 'pos_sales' && table !== 'item_batches' && table !== 'pos_orders' && table !== 'dealer_approvals' && table !== 'dealer_testdrives' && table !== 'dealer_tradeins' && table !== 'dealer_orders' && table !== 'employee_approvals' && table !== 'employee_timelogs' && table !== 'employee_orders' && table !== 'bodyshop_approvals' && table !== 'bodyshop_jobs' && table !== 'bodyshop_orders' && table !== 'tv_gallery_orders' && table !== 'clean_link_orders' && table !== 'direct_upload_orders' && !KIDS_APPROVAL_TABLES.includes(table) && !KIDS_ORDER_TABLES.includes(table) && <button type="button" className="btn-mini" onClick={() => table === 'items' ? editItem(r) : table === 'passes' ? editPass(r) : setDraft({...r})}>Edit</button>}
                 </td>
                 <td>{table !== 'diner_approvals' && table !== 'barbershop_approvals' && table !== 'pos_approvals' && table !== 'dealer_approvals' && table !== 'employee_approvals' && table !== 'bodyshop_approvals' && !KIDS_APPROVAL_TABLES.includes(table) && <button type="button" className="btn-mini" onClick={() => remove(r)}>Delete</button>}</td>

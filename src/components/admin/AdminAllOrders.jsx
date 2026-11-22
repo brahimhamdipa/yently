@@ -48,7 +48,7 @@ const PLANS = [
   // Systems (13)
   { table: 'restaurant_order', label: 'Restaurant', group: 'systems', price: 40 },
   { table: 'pos_order', label: 'Point of sale', group: 'systems', price: 50 },
-  { table: 'barbershop_order', label: 'Barbershop', group: 'systems', price: 15 },
+  { table: 'barbershop_order', label: 'Barbershop', group: 'systems', price: 20 },
   { table: 'dealer_order', label: 'Dealer', group: 'systems', price: 20 },
   { table: 'employee_order', label: 'Employee', group: 'systems', price: 20 },
   { table: 'bodyshop_order', label: 'Bodyshop', group: 'systems', price: 20 },
@@ -62,7 +62,7 @@ const PLANS = [
   // Add-ons (4)
   { table: 'tv_gallery_order', label: 'TV Gallery', group: 'addons', price: 2 },
   { table: 'live_chat_order', label: 'Live Chat', group: 'addons', price: 3 },
-  { table: 'clean_link_order', label: 'Clean Link', group: 'addons', price: 2 },
+  { table: 'clean_link_order', label: 'Clean Link', group: 'addons', price: 5 },
   { table: 'direct_upload_order', label: 'Direct Upload', group: 'addons', price: 5 },
   // Yently Kids (9)
   { table: 'kids_math_order', label: 'Kids Math', group: 'kids', price: 5 },
@@ -83,6 +83,22 @@ const GROUPS = [
 ]
 
 const PLAN_BY_TABLE = Object.fromEntries(PLANS.map(p => [p.table, p]))
+
+// Clean Link rows share one table but three list prices, by the
+// plan name on the row: Clean Link $5, Golden Link $10, Your Own
+// Domain $20. The summary above still shows the table at $5 (the
+// Clean Link price) — this is only for the per-row "price was
+// changed" flag in the expanded details.
+const CLEAN_LIST_PRICES = { 'Clean Link': 5, 'Golden Link': 10, 'Your Own Domain': 20 }
+const cleanListPrice = (r) => (r.table === 'clean_link_order' ? (CLEAN_LIST_PRICES[r.plan] ?? PLAN_BY_TABLE[r.table]?.price) : PLAN_BY_TABLE[r.table]?.price)
+
+// The address a Clean Link row points at, by its plan name.
+const cleanLinkDisplay = (r) => {
+  if (!r.clean_slug) return '—'
+  if (r.plan === 'Golden Link') return r.clean_slug + '.yently.com'
+  if (r.plan === 'Your Own Domain') return r.clean_slug
+  return 'yently.com/' + r.clean_slug
+}
 
 // Raw sort time: missing/unparseable created_at sorts as the oldest
 // possible, so a direct_upload_order row without created_at still
@@ -504,7 +520,7 @@ export default function AdminAllOrders() {
               {filtered.map(r => {
                 const expanded = expandedKey === r.key
                 const editing = editingKey === r.key
-                const listPrice = PLAN_BY_TABLE[r.table]?.price
+                const listPrice = cleanListPrice(r)
                 return (
                   <Fragment key={r.key}>
                     <tr onClick={() => setExpandedKey(expanded ? null : r.key)} style={{ cursor: 'pointer' }}>
@@ -582,7 +598,7 @@ export default function AdminAllOrders() {
                               <p><b>Order #{r.id}</b> · {r.label}</p>
                               {r.table === 'clean_link_order' && (
                                 <>
-                                  <p><b>Clean link:</b> {r.clean_slug ? 'yently.com/' + r.clean_slug : '—'}</p>
+                                  <p><b>Clean link:</b> {cleanLinkDisplay(r)}</p>
                                   <p><b>System:</b> {r.system || '—'} · <b>Shop:</b> {r.shop_slug || '—'} · <b>Business name:</b> {r.business_name || '—'} · <b>Status:</b> {r.status || '—'}</p>
                                 </>
                               )}
