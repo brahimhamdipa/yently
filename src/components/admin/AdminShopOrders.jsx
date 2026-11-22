@@ -4,7 +4,7 @@ import { money } from '../../lib/storeData'
 import { supabase } from '../../lib/supabaseClient'
 import CancelOrderForm from './CancelOrderForm'
 
-// Shop Orders: every shop order — store_orders + grocery_orders —
+// Shop Orders: every shop order — store_orders —
 // each joined to its tracking row (kind='shop', matched on
 // order_table + order_id). One row per source order, newest first.
 //
@@ -40,11 +40,7 @@ import CancelOrderForm from './CancelOrderForm'
 // backfill paste 02b (the live table could have drifted from the
 // repo DDL). Items are still read defensively below — never guessed:
 // when the items cannot be resolved from the row, the panel says
-// "Items: see the original order". grocery_orders columns are
-// confirmed from app code (CartCheckout place_grocery_order +
-// send-notification record): id, customer_name, customer_email,
-// customer_phone, fulfillment, delivery_address, items jsonb
-// [{qty, name, price}], total, status, payment_status, created_at.
+// "Items: see the original order".
 //
 // One bad table never blanks the page: each source is grabbed on its
 // own (same grab() pattern as AdminAllOrders) and a failure just
@@ -60,8 +56,7 @@ const rowTime = (r) => {
 }
 
 // Resolve an items list from a source row, or null when it cannot be
-// resolved. grocery_orders.items is jsonb [{qty,name,price}];
-// store_orders may or may not carry an items column at all — the RPC
+// resolved. store_orders may or may not carry an items column at all — the RPC
 // result has it, the stored row might not.
 const resolveItems = (row) => {
   const items = row?.items
@@ -112,9 +107,8 @@ export default function AdminShopOrders() {
       try { return await fetchAll(table) }
       catch (e) { failedTables.push(table); return [] }
     }
-    const [storeRows, groceryRows, trackingRows, providers] = await Promise.all([
+    const [storeRows, trackingRows, providers] = await Promise.all([
       grab('store_orders'),
-      grab('grocery_orders'),
       (async () => {
         try {
           const { data, error } = await supabase.from('order_tracking').select('*').eq('kind', 'shop').order('created_at', { ascending: false })
@@ -153,29 +147,6 @@ export default function AdminShopOrders() {
         total: o?.total !== undefined && o?.total !== null ? Number(o.total) : null,
         statusSource: o?.status || '',
         is_hold: o?.is_hold === true,
-        created_at: o?.created_at || null,
-        tracking,
-        code: tracking?.code || null,
-      })
-    }
-    for (const o of groceryRows || []) {
-      const tracking = trackingByKey['grocery_orders:' + o?.id] || null
-      const items = resolveItems(o)
-      all.push({
-        key: 'grocery_orders:' + o?.id,
-        sourceTable: 'grocery_orders',
-        id: o?.id,
-        store: 'Online Store',
-        customer_name: o?.customer_name || '',
-        customer_email: o?.customer_email || '',
-        customer_phone: o?.customer_phone || '',
-        fulfillment: o?.fulfillment || '',
-        delivery_address: o?.delivery_address || '',
-        pickup_address: '',
-        items,
-        total: o?.total !== undefined && o?.total !== null ? Number(o.total) : null,
-        statusSource: o?.status || '',
-        is_hold: false,
         created_at: o?.created_at || null,
         tracking,
         code: tracking?.code || null,
@@ -284,7 +255,7 @@ export default function AdminShopOrders() {
     <div>
       <div className="hero-card">
         <h2>🛒 Shop Orders {summary.total > 0 && `(${summary.total})`}</h2>
-        <p>Every shop order — store orders and Online Store orders — with its tracking status. Tap a row for the items, customer details and tracking history. Mark delivered asks first. Orders without a tracking code predate tracking; holds are arranged with the customer later, not fulfilled here.</p>
+        <p>Every shop order — with its tracking status. Tap a row for the items, customer details and tracking history. Mark delivered asks first. Orders without a tracking code predate tracking; holds are arranged with the customer later, not fulfilled here.</p>
       </div>
 
       {status && <p>{status}</p>}
@@ -404,7 +375,7 @@ export default function AdminShopOrders() {
                     {expanded && (
                       <tr>
                         <td colSpan={8}>
-                          <p><b>Order {r.code || ('#' + (r.id ?? '—'))}</b> · {r.store} · {r.sourceTable === 'grocery_orders' ? 'Online Store' : 'Store order'} · <b>Status:</b> {cap(s) || '—'}{r.is_hold ? ' · Hold — arranged with the customer later, not fulfilled here' : ''}</p>
+                          <p><b>Order {r.code || ('#' + (r.id ?? '—'))}</b> · {r.store} · Store order · <b>Status:</b> {cap(s) || '—'}{r.is_hold ? ' · Hold — arranged with the customer later, not fulfilled here' : ''}</p>
                           <p><b>Customer:</b> {r.customer_name || '—'}{r.customer_email ? ` · ${r.customer_email}` : ''}{r.customer_phone ? ` · ${r.customer_phone}` : ''}</p>
                           <p><b>{cap(r.fulfillment) || '—'}:</b> {place}</p>
                           <p><b>Items:</b></p>
