@@ -69,6 +69,18 @@ export async function loadItems({ providerId, activeOnly = true } = {}) {
   return attachItemCategories(data || [])
 }
 
+// A Yently Bag's recipe: one row per slot in store_bag_slots
+// (bag_item_id, slot_no, slot_label, category_slug, qty). The slot's
+// choices are the active store items in that category — loaded with
+// loadItems, not here. Empty input -> [].
+export async function loadBagSlots(bagIds) {
+  if (!bagIds || bagIds.length === 0) return []
+  const { data, error } = await supabase.from('store_bag_slots')
+    .select('*').in('bag_item_id', bagIds).order('bag_item_id').order('slot_no')
+  if (error) throw error
+  return data || []
+}
+
 // One item with provider + categories attached (the item detail page).
 export async function loadItem(id) {
   const { data, error } = await supabase.from('store_items')

@@ -8,9 +8,12 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 // Cart shape: { key: qty } where key is 'g:<grocery product id>' or
 // 's:<store item id>', or 's:<store item id>:v<variant row id>' when the
 // customer picked a variant (flavor, color, size, pack, ...) for that
-// item. Two variants of the same item are two separate lines. Older
-// saved carts used bare product ids; those are migrated to 'g:' keys on
-// load, so nobody loses their cart.
+// item. A Yently Bag line is 's:<bag item id>:b<pick id>-<pick id>...',
+// one picked component item id per slot, in slot order (see addBag).
+// Two variants of the same item are two separate lines, and two bags
+// with different picks are two separate lines. Older saved carts used
+// bare product ids; those are migrated to 'g:' keys on load, so nobody
+// loses their cart.
 const CartCtx = createContext(null)
 
 const STORAGE_KEY = 'autofly-grocery-cart'
@@ -69,6 +72,16 @@ export function CartProvider({ children }) {
     return add(key, qty, item.stock ?? undefined)
   }
 
+  // A Yently Bag: the line key carries one picked component item id per
+  // slot, in slot order (':b' + ids joined by '-'), so the checkout can
+  // show exactly which flavors the customer picked. The bag price is
+  // flat — it never depends on the picks. pickIds must be store item
+  // ids, one per slot of the bag.
+  const addBag = (bag, pickIds, qty = 1) => {
+    const key = bagKey(bag.id, pickIds)
+    return add(key, qty, bag.stock ?? undefined)
+  }
+
   const setQty = (key, qty, max) =>
     setCartState(c => {
       const next = { ...c }
@@ -86,10 +99,17 @@ export function CartProvider({ children }) {
     })
 
   return (
-    <CartCtx.Provider value={{ cart, count, add, addGrocery, addStore, setQty, clearCart, removeSection, lastOrder, setLastOrder }}>
+    <CartCtx.Provider value={{ cart, count, add, addGrocery, addStore, addBag, setQty, clearCart, removeSection, lastOrder, setLastOrder }}>
       {children}
     </CartCtx.Provider>
   )
+}
+
+// Cart key for a Yently Bag line: 's:<bag item id>:b<pick id>-<pick id>...',
+// one picked component item id per slot, in slot order. Shared by the
+// Bags page (addBag) and the checkout (parseStoreKey in CartCheckout).
+export function bagKey(bagId, pickIds) {
+  return 's:' + bagId + ':b' + (pickIds || []).map(id => Number(id)).join('-')
 }
 
 export function useCart() {
