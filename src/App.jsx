@@ -27,7 +27,7 @@ import ProviderFormPage from './components/ProviderFormPage'
 import ChatWidget from './components/ChatWidget'
 import AdminPage from './components/AdminPage'
 import { CartProvider } from './lib/CartContext'
-import { BusinessCartProvider, BUSINESS_PLANS, useBusinessCart, isKidsExtraPlanKey, CLEAN_PLAN_KEY, DIRECT_PLAN_KEY, ADDON_SYSTEMS } from './lib/BusinessCartContext'
+import { BusinessCartProvider, BUSINESS_PLANS, useBusinessCart, isKidsExtraPlanKey, CLEAN_PLAN_KEY, CLEAN_GOLDEN_PLAN_KEY, CLEAN_DOMAIN_PLAN_KEY, DIRECT_PLAN_KEY, ADDON_SYSTEMS } from './lib/BusinessCartContext'
 import BarbersPage from './components/BarbersPage'
 import SimpleBarbershopPage from './components/SimpleBarbershopPage'
 import RestaurantsPage from './components/RestaurantsPage'
@@ -104,9 +104,10 @@ const DEEP_LINK_SYSTEMS = new Set([
 // A Clean Link add-on from a shop's Setup page (?add=clean:website
 // &shop=<system-key>&slug=<SLUG>&addon=1) carries the system + slug
 // on the cart line itself (isAddon): it is an add-on to the payment
-// the customer already has — free for the rest of this month, $2/month
-// from the next payment, excluded from the bundle tiers, no tracking
-// code (see businessData.js). A Direct Upload add-on
+// the customer already has — free for the rest of this month, $5/month
+// from the next payment for Clean Link ($10/month Golden Link,
+// $20/month Your Own Domain), excluded from the bundle tiers, no
+// tracking code (see businessData.js). A Direct Upload add-on
 // (?add=direct:website&shop=<system-key>&slug=<SLUG>&addon=1)
 // works the same way at $5/month. ?shop= is a fresh param on
 // purpose: ?system= already opens a tab. A malformed add-on link
@@ -122,6 +123,18 @@ function DeepLinkCartAdder({ go }) {
     done.current = true
     if (isKidsExtraPlanKey(key)) addPlan(key, 1, params.get('slug') || '')
     else if (key === CLEAN_PLAN_KEY && params.get('addon') === '1') {
+      const shop = params.get('shop') || ''
+      const slug = params.get('slug') || ''
+      if (ADDON_SYSTEMS.has(shop) && slug) addPlan(key, 0, '', { isAddon: true, cleanSystem: shop, cleanShopSlug: slug, cleanSlug: slug })
+      else addPlan(key)
+    }
+    else if (key === CLEAN_GOLDEN_PLAN_KEY && params.get('addon') === '1') {
+      const shop = params.get('shop') || ''
+      const slug = params.get('slug') || ''
+      if (ADDON_SYSTEMS.has(shop) && slug) addPlan(key, 0, '', { isAddon: true, cleanSystem: shop, cleanShopSlug: slug, cleanSlug: slug })
+      else addPlan(key)
+    }
+    else if (key === CLEAN_DOMAIN_PLAN_KEY && params.get('addon') === '1') {
       const shop = params.get('shop') || ''
       const slug = params.get('slug') || ''
       if (ADDON_SYSTEMS.has(shop) && slug) addPlan(key, 0, '', { isAddon: true, cleanSystem: shop, cleanShopSlug: slug, cleanSlug: slug })
