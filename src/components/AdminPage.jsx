@@ -22,6 +22,7 @@ import AdminShopOrders from './admin/AdminShopOrders'
 import AdminAllRequests from './admin/AdminAllRequests'
 import AdminCancellations from './admin/AdminCancellations'
 import AdminBarcodeGenerator from './admin/AdminBarcodeGenerator'
+import AdminBags from './admin/AdminBags'
 import AdminCars from './admin/AdminCars'
 import AdminDirectUpload from './admin/AdminDirectUpload'
 import AdminLiveChat from './admin/AdminLiveChat'
@@ -49,6 +50,7 @@ const MENUS = [
       { label: 'Pickup Add.Edit.Del', table: 'topick' },
       { label: 'Category Add.Edit.Del', table: 'itemcats' },
       { label: 'SubCategory Add.Edit.Del', table: 'subcats' },
+      { label: 'Yently Bags', section: 'bags' },
     ] },
     { label: 'Add', section: 'store-add' },
     { label: 'Sign out', action: 'signout' },
@@ -414,6 +416,7 @@ export default function AdminPage() {
       {section === 'cancellations' && <AdminCancellations />}
       {section === 'all-orders' && <AdminAllOrders />}
       {section === 'barcode-generator' && <AdminBarcodeGenerator />}
+      {section === 'bags' && <AdminBags />}
       {section === 'advanced-search' && <AdminAdvancedSearch onGoSection={goSection} onGoTable={goTable} />}
       {section === 'vault' && <AdminVault />}
       <button type="button" className="admin-to-top no-print" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>↑ Top</button>
