@@ -255,6 +255,11 @@ export async function placeBusinessOrder({ name, email, phone, note, items }) {
       ...((isKids || isExtra) ? { extra_kids: extraKids } : {}),
       ...(isCleanAddon ? { system: cleanSystem, shop_slug: cleanShopSlug, clean_slug: cleanSlug } : {}),
     }, {
+      // sold: marks this as a System / Add-on JUST PURCHASED. The
+      // Edge Function renders the big red header + organised layout
+      // for these emails only (see send-notification/index.ts);
+      // every other submission email keeps the plain layout.
+      sold: item.name,
       plan: item.name,
       price: item.price,
       ...(bundleNote ? { bundle_discount: bundleNote } : {}),
