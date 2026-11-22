@@ -25,6 +25,7 @@ import { insertKidsGeographyOrder } from './kidsGeographyData'
 import { insertKidsCodingOrder } from './kidsCodingData'
 import { insertKidsReadingOrder } from './kidsReadingData'
 import { createOrderTracking, TABLE_BY_KEY } from './orderTracking'
+import { ADDON_SYSTEM_LABELS } from './addonSystems'
 import {
   bundleFor,
   RESTAURANT_PLAN_KEY,
@@ -43,6 +44,8 @@ import {
   TV_PLAN_KEY,
   CHAT_PLAN_KEY,
   CLEAN_PLAN_KEY,
+  CLEAN_GOLDEN_PLAN_KEY,
+  CLEAN_DOMAIN_PLAN_KEY,
   DIRECT_PLAN_KEY,
   isKidsPlanKey,
   isKidsExtraPlanKey,
@@ -83,32 +86,20 @@ import {
 // because each plan is a different product with a different
 // follow-up. No payment is taken here.
 //
-// System keys (the 21 folder apps) -> the name the owner sees in an
-// add-on order's subject and note. Used only for Clean Link and
-// Direct Upload add-on lines, which carry their system on the cart
-// line itself.
-const SYSTEM_LABELS = {
-  diner: 'Restaurant',
-  barbers: 'Barbershop',
-  pos: 'POS',
-  dealer: 'Dealer',
-  employee: 'Employee',
-  bodyshop: 'Bodyshop',
-  houses: 'Houses',
-  doctor: 'Doctor',
-  holiday: 'Holiday',
-  rentals: 'Car Rental',
-  laundry: 'Laundry',
-  gym: 'Gym',
-  'kids-math': 'Kids Math',
-  'kids-english': 'Kids English',
-  'kids-arabic': 'Kids Arabic',
-  'kids-french': 'Kids French',
-  'kids-spanish': 'Kids Spanish',
-  'kids-science': 'Kids Science',
-  'kids-geography': 'Kids Geography',
-  'kids-coding': 'Kids Coding',
-  'kids-reading': 'Kids Reading',
+// System keys -> the name the owner sees in an add-on order's
+// subject and note. One list for all add-ons (see
+// src/lib/addonSystems.js): adding a system there adds it here
+// too, including Store and Cars sellers.
+const SYSTEM_LABELS = ADDON_SYSTEM_LABELS
+
+// The address a Clean Link type points at, for order notes and the
+// cart page: yently.com/<name> for a Clean Link, <name>.yently.com
+// for a Golden Link, and the domain name itself for Your Own Domain.
+export function cleanLinkAddress(planKey, cleanSlug) {
+  const slug = String(cleanSlug || '')
+  if (planKey === CLEAN_GOLDEN_PLAN_KEY) return slug + '.yently.com'
+  if (planKey === CLEAN_DOMAIN_PLAN_KEY) return slug
+  return 'yently.com/' + slug
 }
 const INSERT_BY_KEY = {
   [RESTAURANT_PLAN_KEY]: insertRestaurantOrder,
@@ -127,6 +118,8 @@ const INSERT_BY_KEY = {
   [TV_PLAN_KEY]: insertTvGalleryOrder,
   [CHAT_PLAN_KEY]: insertLiveChatOrder,
   [CLEAN_PLAN_KEY]: insertCleanLinkOrder,
+  [CLEAN_GOLDEN_PLAN_KEY]: insertCleanLinkOrder,
+  [CLEAN_DOMAIN_PLAN_KEY]: insertCleanLinkOrder,
   [DIRECT_PLAN_KEY]: insertDirectUploadOrder,
   [KIDS_MATH_PLAN_KEY]: insertKidsMathOrder,
   [KIDS_ENGLISH_PLAN_KEY]: insertKidsEnglishOrder,
@@ -213,21 +206,23 @@ export async function placeBusinessOrder({ name, email, phone, note, items }) {
         ? `Extra students for school "${schoolSlug}" — free for the rest of this month; new monthly amount $${newMonthlyTotal}/month starts with the next payment.`
         : `Extra students — free for the rest of this month; new monthly amount $${newMonthlyTotal}/month starts with the next payment.`)
       : null
-    // A Clean Link add-on line (isAddon, from a shop's Setup page):
-    // the line is an add-on to the payment the customer already has —
-    // free for the rest of this month, $2/month from the next payment
-    // — so its order row carries the system + slug, its note says so,
-    // and its owner email gets its own subject (see cleanLinkData.js).
-    // The ad-page Clean Link flow is untouched: a plain (non-add-on)
-    // line still takes system/slug/clean_slug from the localStorage
-    // meta, or leaves them null.
-    const isCleanAddon = item.key === CLEAN_PLAN_KEY && item.isAddon === true
+    // A Clean Link, Golden Link or Your Own Domain add-on line
+    // (isAddon, from a shop's Setup page): the line is an add-on to
+    // the payment the customer already has — free for the rest of
+    // this month, $5/$10/$20 a month by type from the next payment
+    // — so its order row carries the system + slug, its note says
+    // so, and its owner email gets its own subject (see
+    // cleanLinkData.js). The ad-page flow is untouched: a plain
+    // (non-add-on) line still takes system/slug/clean_slug from the
+    // localStorage meta, or leaves them null — and insertCleanLinkOrder
+    // refuses to place a line whose system is still unknown.
+    const isCleanAddon = (item.key === CLEAN_PLAN_KEY || item.key === CLEAN_GOLDEN_PLAN_KEY || item.key === CLEAN_DOMAIN_PLAN_KEY) && item.isAddon === true
     const cleanSystem = isCleanAddon ? String(item.cleanSystem || '') : ''
     const cleanShopSlug = isCleanAddon ? String(item.cleanShopSlug || '') : ''
     const cleanSlug = isCleanAddon ? String(item.cleanSlug || item.cleanShopSlug || '') : ''
-    const cleanLabel = isCleanAddon ? (SYSTEM_LABELS[cleanSystem] || cleanSystem || 'Clean Link') : ''
+    const cleanLabel = isCleanAddon ? (SYSTEM_LABELS[cleanSystem] || cleanSystem || item.name) : ''
     const cleanNoteLine = isCleanAddon
-      ? `Clean Link for ${cleanLabel} "${cleanShopSlug}" — free for the rest of this month; new monthly amount $2/month starts with the next payment.`
+      ? `${item.name} for ${cleanLabel} "${cleanShopSlug}" — free for the rest of this month; new monthly amount $${Number(item.price)}/month starts with the next payment. The link will be ${cleanLinkAddress(item.key, cleanSlug)}.`
       : null
     // A Direct Upload add-on line (isAddon, from a shop's Setup
     // page): the line is an add-on to the payment the customer
@@ -275,7 +270,7 @@ export async function placeBusinessOrder({ name, email, phone, note, items }) {
         systemLabel: cleanLabel,
         shop_slug: cleanShopSlug,
         clean_slug: cleanSlug,
-        new_monthly_total: 'New monthly amount: $2/month — starts with the next payment; free for the rest of this month.',
+        new_monthly_total: `New monthly amount: $${Number(item.price)}/month — starts with the next payment; free for the rest of this month.`,
       } : {}),
       ...(isDirectAddon ? {
         isDirectAddon: true,
