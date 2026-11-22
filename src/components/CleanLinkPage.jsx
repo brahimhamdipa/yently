@@ -109,7 +109,7 @@ function TypeAddButton({ type, ready, inCart, onAdd, go }) {
         </div>
       ) : (
         <div>
-          <button onClick={onAdd} disabled={!ready}>Add to cart — ${type.price}/month</button>
+          <button onClick={onAdd} disabled={!ready} style={!ready ? { background: '#9ca3af', borderColor: '#9ca3af', cursor: 'not-allowed', opacity: 0.7 } : undefined}>Add to cart — ${type.price}/month</button>
           {!type.available && <p className="hint">Available soon — this button is switched off until {type.name} launches.</p>}
           {type.available && !ready && <p className="hint">Pick your system and type your page name and the names you want in the form below first.</p>}
         </div>
