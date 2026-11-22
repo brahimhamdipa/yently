@@ -6,7 +6,6 @@ import { isAdminUser } from '../lib/admin'
 
 import AdminProducts from './AdminProducts'
 
-import AdminOrders from './AdminOrders'
 
 import AdminSubmissions from './AdminSubmissions'
 
@@ -41,7 +40,7 @@ const MENUS = [
   { n: 1, name: 'Shop', items: [
     { label: 'Products & Stock', section: 'products' },
     { label: 'Barcode Generator', section: 'barcode-generator' },
-    { label: 'Orders', section: 'orders' },
+    { label: 'Orders', section: 'shop-orders' },
     { label: 'Form Submissions', section: 'submissions' },
     { label: 'Stores', children: [
       { label: 'Store Passes', table: 'forms' },
@@ -406,7 +405,6 @@ export default function AdminPage() {
       {section === 'cars' && <AdminCars />}
       {section === 'direct-upload' && <AdminDirectUpload />}
       {section === 'live-chat' && <AdminLiveChat />}
-      {section === 'orders' && <AdminOrders />}
       {section === 'submissions' && <AdminSubmissions />}
       {section === 'store-add' && <AdminStoreAdd />}
       {section === 'store-manage' && <AdminStoreManage table={manageTable} onTableChange={setManageTable} />}
