@@ -150,10 +150,14 @@ export default function ServicesPage({ go }) {
         <p>Tell us the plan in your head — From a simple, personal website to a complete system for a small or medium business. From just a part of a code, in any language, to the whole system: we&apos;re here to help you achieve it.</p>
       </div>
 
+      <div aria-hidden="true" style={{ height: 1, background: '#e5e7eb', margin: '36px 0 28px' }} />
+
       <div className="form-card wide">
         <h3>🌍 Don't let the language be a barrier</h3>
         <p>Tell us what you need using your own tongue language — we have translators, and we'll take care of the rest. Just tell us what you need and we will help.</p>
       </div>
+
+      <div aria-hidden="true" style={{ height: 1, background: '#e5e7eb', margin: '36px 0 28px' }} />
 
       <div className="form-card wide">
         <h3>How it works <span className="hint">(websites as an example)</span></h3>
@@ -165,6 +169,8 @@ export default function ServicesPage({ go }) {
         </ol>
         <p className="hint">All of this is just to give you an idea of how it works. Don't hesitate — just tell us your needs and we'll talk.</p>
       </div>
+
+      <div aria-hidden="true" style={{ height: 1, background: '#e5e7eb', margin: '36px 0 28px' }} />
 
       <form className="form-card wide" onSubmit={handleSubmit}>
         <h3>Tell us what you need</h3>
