@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { submitAndNotify } from '../lib/notify'
 import { useBusinessCart, CHAT_PLAN_KEY, CHAT_PLAN_PRICE } from '../lib/BusinessCartContext'
+import { ADDON_SYSTEM_OPTIONS, addonSystemLabel } from '../lib/addonSystems'
+import { saveLiveChatMeta } from '../lib/liveChatData'
 import { BusinessTopBar } from './BusinessMenu'
 import FloatingAddToCart from './FloatingAddToCart'
 
@@ -21,27 +23,77 @@ import FloatingAddToCart from './FloatingAddToCart'
 // answers their visitors from the Chats tab in their Setup page.
 // Nothing on this page promises instant signup. Connecting carts
 // to the bank comes later.
+// The Add to cart button is disabled until the system and page name
+// above it are filled in: Yently must know which page the chat is
+// for before the order is placed. The system + page name travel
+// with the order (see liveChatData.js) and with the request form.
+function normSlug(v) {
+  return String(v || '').toLowerCase().replace(/[^a-z0-9-]+/g, '').replace(/^-+|-+$/g, '')
+}
+
+// Tiny "?" help buttons beside each field, same as the Store Setup,
+// Clean Link and Direct Upload pages: tap to open a short
+// explanation under the field, tap again or anywhere else to close.
+const HELP = {
+  name: 'Your own name — the person asking for live chat. Yently uses it to know who the request is from.',
+  business: 'The name of your store, restaurant, school or business — the name customers know you by.',
+  email: 'Your email address — the one you actually read. Yently sends the answer here.',
+  phone: 'Your phone number, so Yently can reach you quickly if something about your request needs a word.',
+  system: 'Pick the kind of page the chat is for. Restaurant is your restaurant page, POS is your till page, Barbershop your barber page, Dealer, Employee, Bodyshop, Houses, Doctor, Holiday, Car Rental, Laundry and Gym the same idea — Store is your own store page, Cars is selling cars, and Kids is one of the nine school subjects, pick the subject.',
+  shopSlug: 'The word Yently gave you for your page — it is in the email with your page link. For Cars, type your seller username instead. Small letters only, no spaces — capitals and spaces are removed for you.',
+  message: 'Anything else that helps — you can leave it empty.',
+}
+
+function Help({ text }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef(null)
+  useEffect(() => {
+    if (!open) return
+    const onDown = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false) }
+    document.addEventListener('mousedown', onDown)
+    return () => document.removeEventListener('mousedown', onDown)
+  }, [open])
+  return (
+    <span className="help" ref={ref}>
+      <button type="button" className="help-btn" aria-label="Help" onClick={() => setOpen((o) => !o)}>?</button>
+      {open && <span className="help-pop">{text}</span>}
+    </span>
+  )
+}
+
 export default function LiveChatPage({ go }) {
   const { hasPlan, addPlan } = useBusinessCart()
   const inCart = hasPlan(CHAT_PLAN_KEY)
-  const [form, setForm] = useState({ name: '', business: '', email: '', phone: '', message: '' })
+  const [form, setForm] = useState({ name: '', business: '', email: '', phone: '', system: '', shop_slug: '', message: '' })
   const [status, setStatus] = useState('')
   const [busy, setBusy] = useState(false)
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value })
+  const shopReady = Boolean(form.system && normSlug(form.shop_slug))
+
+  const handleAddToCart = () => {
+    if (!shopReady) return
+    saveLiveChatMeta({ system: form.system, shop_slug: normSlug(form.shop_slug) })
+    addPlan(CHAT_PLAN_KEY)
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setBusy(true)
     setStatus('Sending your request...')
     try {
+      // The request carries the system + page name up front, so
+      // Yently knows which page the chat is for without asking back.
+      const where = `System: ${addonSystemLabel(form.system)}, Page: ${normSlug(form.shop_slug)}. `
       await submitAndNotify({
         table: 'car_inquiries',
-        data: { car_id: null, car_name: 'Live Chat Request', name: form.name, email: form.email, phone: form.phone, message: form.message },
+        data: { car_id: null, car_name: 'Live Chat Request', name: form.name, email: form.email, phone: form.phone, message: where + (form.message || '') },
         subject: `Live Chat request — ${form.name}`,
         emailExtras: { business_name: form.business.trim() },
       })
       setStatus('✓ Sent! Thanks — Yently will be in touch to set up live chat for your website.')
-      setForm({ name: '', business: '', email: '', phone: '', message: '' })
+      // Keep the system and page name filled, so the Add to cart
+      // button stays usable — only the contact fields reset.
+      setForm((f) => ({ ...f, name: '', business: '', email: '', phone: '', message: '' }))
     } catch (err) {
       setStatus('Error: ' + err.message)
     }
@@ -91,7 +143,10 @@ export default function LiveChatPage({ go }) {
             <button onClick={() => go && go('business-cart')}>Go to My Cart</button>
           </div>
         ) : (
-          <button onClick={() => addPlan(CHAT_PLAN_KEY)}>Add to cart — ${CHAT_PLAN_PRICE}/month</button>
+          <div>
+            <button onClick={handleAddToCart} disabled={!shopReady}>Add to cart — ${CHAT_PLAN_PRICE}/month</button>
+            {!shopReady && <p className="hint">Pick your system and type your page name in the form below first.</p>}
+          </div>
         )}
       </div>
 
@@ -101,22 +156,50 @@ export default function LiveChatPage({ go }) {
         <button type="button" onClick={() => go && go('demo-live-chat')}>Open the live demo</button>
       </div>
 
-      <form className="form-card wide" onSubmit={handleSubmit}>
+      <form className="form-card wide direct-help" onSubmit={handleSubmit}>
         <h3>Get live chat</h3>
         <div className="row">
-          <input required placeholder="Your name" value={form.name} onChange={set('name')} />
-          <input placeholder="Business name (optional)" value={form.business} onChange={set('business')} />
+          <div className="field">
+            <span className="field-label">Your name <Help text={HELP.name} /></span>
+            <input required placeholder="Your name" value={form.name} onChange={set('name')} />
+          </div>
+          <div className="field">
+            <span className="field-label">Business name (optional) <Help text={HELP.business} /></span>
+            <input placeholder="Business name (optional)" value={form.business} onChange={set('business')} />
+          </div>
         </div>
         <div className="row">
-          <input required placeholder="Email" type="email" value={form.email} onChange={set('email')} />
-          <input required placeholder="Phone" value={form.phone} onChange={set('phone')} />
+          <div className="field">
+            <span className="field-label">Email <Help text={HELP.email} /></span>
+            <input required placeholder="Email" type="email" value={form.email} onChange={set('email')} />
+          </div>
+          <div className="field">
+            <span className="field-label">Phone <Help text={HELP.phone} /></span>
+            <input required placeholder="Phone" value={form.phone} onChange={set('phone')} />
+          </div>
         </div>
-        <textarea className="big-message" placeholder="Tell us about your website (optional) — which page the chat goes on, anything that helps" value={form.message} onChange={set('message')} />
+        <div className="row">
+          <div className="field">
+            <span className="field-label">Which system is your page on? <Help text={HELP.system} /></span>
+            <select required value={form.system} onChange={set('system')}>
+              <option value="">Which system is your page on?</option>
+              {ADDON_SYSTEM_OPTIONS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+            </select>
+          </div>
+          <div className="field">
+            <span className="field-label">Your page name on Yently <Help text={HELP.shopSlug} /></span>
+            <input required placeholder="Your page name on Yently (e.g. your-shop)" value={form.shop_slug} onChange={set('shop_slug')} />
+          </div>
+        </div>
+        <div className="field">
+          <span className="field-label">Message (optional) <Help text={HELP.message} /></span>
+          <textarea className="big-message" placeholder="Tell us about your website (optional) — anything that helps" value={form.message} onChange={set('message')} />
+        </div>
         <button type="submit" disabled={busy}>Send request</button>
         {status && <p className="status">{status}</p>}
       </form>
 
-      <FloatingAddToCart planKey={CHAT_PLAN_KEY} name="Live chat page" price={CHAT_PLAN_PRICE} go={go} />
+      <FloatingAddToCart planKey={CHAT_PLAN_KEY} name="Live chat page" price={CHAT_PLAN_PRICE} go={go} ready={shopReady} notReadyHint="Pick your system and type your page name in the form above first." onAdd={handleAddToCart} />
     </div>
   )
 }

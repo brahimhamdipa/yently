@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import { useBusinessCart } from '../lib/BusinessCartContext'
+import { useBusinessCart, DIRECT_PLAN_KEY, DIRECT_PLAN_PRICE } from '../lib/BusinessCartContext'
+import { ADDON_SYSTEM_OPTIONS } from '../lib/addonSystems'
+import { saveDirectUploadMeta } from '../lib/directUploadData'
 import { submitAndNotify } from '../lib/notify'
 import { BusinessTopBar } from './BusinessMenu'
 import FloatingAddToCart from './FloatingAddToCart'
@@ -14,32 +16,15 @@ import FloatingAddToCart from './FloatingAddToCart'
 // to their page) goes live straight away, with no approval wait —
 // and every upload is still logged for the admin, so nothing is
 // lost track of. Works for every Business System, Store sellers, Car
-// sellers and all Yently Kids subjects. No payment is taken here,
+// sellers and all Yently Kids subjects — the system list is the
+// shared one (src/lib/addonSystems.js), so a new system appears
+// here by itself. No payment is taken here,
 // and nothing on this page explains how uploads are stored — only
 // what happens when the customer sends them.
-const DIRECT_PLAN_KEY = 'direct:website'
-const DIRECT_PLAN_PRICE = 5
-
-const SYSTEMS = [
-  { label: 'Restaurant', value: 'diner' },
-  { label: 'POS', value: 'pos' },
-  { label: 'Barbershop', value: 'barbers' },
-  { label: 'Dealer', value: 'dealer' },
-  { label: 'Employee', value: 'employee' },
-  { label: 'Bodyshop', value: 'bodyshop' },
-  { label: 'Store', value: 'store' },
-  { label: 'Cars', value: 'car-seller' },
-  { label: 'Kids — Math', value: 'kids-math' },
-  { label: 'Kids — English', value: 'kids-english' },
-  { label: 'Kids — Arabic', value: 'kids-arabic' },
-  { label: 'Kids — French', value: 'kids-french' },
-  { label: 'Kids — Spanish', value: 'kids-spanish' },
-  { label: 'Kids — Science', value: 'kids-science' },
-  { label: 'Kids — Geography', value: 'kids-geography' },
-  { label: 'Kids — Coding', value: 'kids-coding' },
-  { label: 'Kids — Reading', value: 'kids-reading' },
-]
-
+// The Add to cart button is disabled until the system and page name
+// above it are filled in: Yently must know which page the switch
+// is for before the order is placed. The system + page name travel
+// with the order (see directUploadData.js).
 function normSlug(v) {
   return String(v || '').toLowerCase().replace(/[^a-z0-9-]+/g, '').replace(/^-+|-+$/g, '')
 }
@@ -52,7 +37,7 @@ const HELP = {
   business: 'The name of your store, restaurant, school or business — the name customers know you by. Yently uses it to match your request to your page. Type it the way it appears on your page.',
   email: 'Your email address — the one you actually read. Yently sends the answer here: approved or not, and the link to add Direct Upload to your cart. Double-check the spelling — one wrong letter and the reply never reaches you.',
   phone: 'Your phone number, so Yently can reach you quickly if something about your request is unclear. Digits only is fine — spaces or dashes do no harm.',
-  system: 'Pick the kind of page Direct Upload is for. Restaurant is your restaurant page, POS is your till page, Barbershop your barber page, Dealer, Employee and Bodyshop the same idea. Store is your own store page, where you sell your items. Cars is selling cars, and Kids is one of the nine school subjects — pick the subject.',
+  system: 'Pick the kind of page Direct Upload is for. Restaurant is your restaurant page, POS is your till page, Barbershop your barber page, Dealer, Employee, Bodyshop, Houses, Doctor, Holiday, Car Rental, Laundry and Gym the same idea. Store is your own store page, where you sell your items. Cars is selling cars, and Kids is one of the nine school subjects — pick the subject.',
   shopSlug: 'The word Yently gave you for your page — it is in the email with your page link. For Cars, type your seller username instead. Small letters only, no spaces — capitals and spaces are removed for you.',
   message: 'Anything else that helps — you can leave it empty. For example what you upload most (new dishes, new items, new words), or how often you upload. The more Yently knows, the faster the approval.',
 }
@@ -85,6 +70,13 @@ export default function DirectUploadPage({ go }) {
   const [status, setStatus] = useState('')
   const [busy, setBusy] = useState(false)
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value })
+  const shopReady = Boolean(form.system && normSlug(form.shop_slug))
+
+  const handleAddToCart = () => {
+    if (!shopReady) return
+    saveDirectUploadMeta({ system: form.system, shop_slug: normSlug(form.shop_slug) })
+    addPlan(DIRECT_PLAN_KEY)
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -105,7 +97,10 @@ export default function DirectUploadPage({ go }) {
         subject: `New Direct Upload request — ${form.name}`,
       })
       setStatus('✓ Sent! Yently will look at your request — most are approved, and schools always are.')
-      setForm({ name: '', business: '', email: '', phone: '', system: '', shop_slug: '', message: '' })
+      // Keep the system and page name filled, so the Add to cart
+      // button stays usable once Yently approves — only the
+      // contact fields reset.
+      setForm((f) => ({ ...f, name: '', business: '', email: '', phone: '', message: '' }))
     } catch (err) {
       setStatus('Error: ' + err.message)
     }
@@ -149,7 +144,7 @@ export default function DirectUploadPage({ go }) {
             <span className="field-label">Which page is this for? <Help text={HELP.system} /></span>
             <select required value={form.system} onChange={set('system')}>
               <option value="">Which page is this for?</option>
-              {SYSTEMS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+              {ADDON_SYSTEM_OPTIONS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
             </select>
           </div>
           <div className="field">
@@ -200,13 +195,14 @@ export default function DirectUploadPage({ go }) {
           </div>
         ) : (
           <div>
-            <button onClick={() => addPlan(DIRECT_PLAN_KEY)}>Add to cart — ${DIRECT_PLAN_PRICE}/month</button>
+            <button onClick={handleAddToCart} disabled={!shopReady}>Add to cart — ${DIRECT_PLAN_PRICE}/month</button>
+            {!shopReady && <p className="hint">Pick your system and type your page name above first.</p>}
             <p className="hint">Add it once Yently approves your request above — most are approved, and schools always are.</p>
           </div>
         )}
       </div>
 
-      <FloatingAddToCart planKey={DIRECT_PLAN_KEY} name="Direct Upload" price={DIRECT_PLAN_PRICE} go={go} />
+      <FloatingAddToCart planKey={DIRECT_PLAN_KEY} name="Direct Upload" price={DIRECT_PLAN_PRICE} go={go} ready={shopReady} notReadyHint="Pick your system and type your page name above first." onAdd={handleAddToCart} />
     </div>
   )
 }

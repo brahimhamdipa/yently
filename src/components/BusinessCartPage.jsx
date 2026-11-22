@@ -24,7 +24,19 @@ const PLAN_HINTS = {
   'tv:website': 'Your own TV gallery page + up to 7 pictures, for your screens.',
   'chat:website': 'Your own chat bubble + every message by email, for your website.',
   'clean:website': 'A short, clean link for your system — your own yently.com address.',
+  'clean:golden': 'A golden link for your system — your own <name>.yently.com address.',
+  'clean:domain': 'Your own domain for your system — your own <name>.com address.',
   'direct:website': 'Your uploads go live straight away — no waiting for approval.',
+}
+
+// The three Clean Link types, for the cart lines and the order
+// confirmation: the address each type points at.
+const CLEAN_LINK_KEYS = ['clean:website', 'clean:golden', 'clean:domain']
+function cleanLinkAddress(key, cleanSlug) {
+  const slug = String(cleanSlug || '')
+  if (key === 'clean:golden') return slug + '.yently.com'
+  if (key === 'clean:domain') return slug
+  return 'yently.com/' + slug
 }
 
 export default function BusinessCartPage({ go }) {
@@ -39,7 +51,7 @@ export default function BusinessCartPage({ go }) {
   const bundle = bundleFor(cart)
   const orderBundle = lastOrder ? bundleFor(lastOrder) : null
   const hasExtras = cart.some(i => isKidsExtraPlanKey(i.key))
-  const hasCleanAddon = cart.some(i => i.key === 'clean:website' && i.isAddon === true)
+  const hasCleanAddon = cart.some(i => CLEAN_LINK_KEYS.includes(i.key) && i.isAddon === true)
   const hasDirectAddon = cart.some(i => i.key === 'direct:website' && i.isAddon === true)
 
   // Save the placed order's tracking codes once, for the Tracking
@@ -111,8 +123,8 @@ export default function BusinessCartPage({ go }) {
                 {isKidsExtraPlanKey(i.key) && Number(i.extraKids) > 0 && (
                   <> Includes {i.extraKids} extra student{Number(i.extraKids) === 1 ? '' : 's'}{i.schoolSlug ? <> for school “{i.schoolSlug}”</> : null} — free for the rest of this month; your new monthly amount is ${(KIDS_BASE_PRICE + Number(i.extraKids) * KIDS_EXTRA_KID_PRICE).toFixed(2)}/month from the next payment.</>
                 )}
-                {i.key === 'clean:website' && i.isAddon && (
-                  <> Clean Link add-on for “{i.cleanShopSlug}” — free for the rest of this month; your new monthly amount is $2.00/month from the next payment. Your short link will be yently.com/{i.cleanSlug}.</>
+                {CLEAN_LINK_KEYS.includes(i.key) && i.isAddon && (
+                  <> {i.name} add-on for “{i.cleanShopSlug}” — free for the rest of this month; your new monthly amount is ${Number(i.price).toFixed(2)}/month from the next payment. Your link will be {cleanLinkAddress(i.key, i.cleanSlug)}.</>
                 )}
                 {i.key === 'direct:website' && i.isAddon && (
                   <> Direct Upload add-on for “{i.directShopSlug}” — free for the rest of this month; your new monthly amount is $5.00/month from the next payment. Your uploads will go live right away.</>
@@ -168,9 +180,9 @@ export default function BusinessCartPage({ go }) {
                       )}
                     </div>
                   )}
-                  {i.key === 'clean:website' && i.isAddon && (
+                  {CLEAN_LINK_KEYS.includes(i.key) && i.isAddon && (
                     <div style={{ marginTop: 8 }}>
-                      <div className="hint">Add-on for your page “{i.cleanShopSlug}” — $2.00/month from the next payment, free for the rest of this month. Your short link will be yently.com/{i.cleanSlug}.</div>
+                      <div className="hint">Add-on for your page “{i.cleanShopSlug}” — ${Number(i.price).toFixed(2)}/month from the next payment, free for the rest of this month. Your link will be {cleanLinkAddress(i.key, i.cleanSlug)}.</div>
                     </div>
                   )}
                   {i.key === 'direct:website' && i.isAddon && (

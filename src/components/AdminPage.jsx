@@ -171,6 +171,7 @@ const MENUS = [
     ] },
     { label: 'Add-ons', children: [
       { label: 'TV Gallery Orders', table: 'tv_gallery_orders' },
+      { label: 'TV uploads', table: 'upload_forms' },
       { label: 'Live Chat Orders', section: 'live-chat' },
       { label: 'Clean Link Orders', table: 'clean_link_orders' },
       { label: 'Direct Upload Orders', table: 'direct_upload_orders' },

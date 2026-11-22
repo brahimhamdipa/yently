@@ -15,20 +15,38 @@ import { useBusinessCart } from '../lib/BusinessCartContext'
 // first 3: it is passed to addPlan and folded into the line price
 // (+$1 each). price must already be the TOTAL monthly price
 // (base + extras) for Kids lines, the plan price otherwise.
-export default function FloatingAddToCart({ planKey, name, price, extraKids = 0, go }) {
+// ready (default true) gates the pill for the add-ons that need to
+// know which system they are for first (Clean Link, Direct Upload,
+// Live Chat): while the system is not picked yet the pill is greyed
+// out, tapping it does nothing, and notReadyHint says what is
+// missing. onAdd (optional) replaces the plain addPlan call — the
+// add-on pages pass one that saves the system meta first, so the
+// order knows which page it is for. System pages pass neither and
+// behave exactly as before.
+export default function FloatingAddToCart({ planKey, name, price, extraKids = 0, go, ready = true, notReadyHint = '', onAdd = null }) {
   const { hasPlan, addPlan } = useBusinessCart()
   const inCart = hasPlan(planKey)
+  const disabled = !ready && !inCart
   return (
     <div style={{ position: 'fixed', right: 12, bottom: 12, zIndex: 55, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
       <span style={{ alignSelf: 'flex-start', fontSize: 11, fontWeight: 700, color: '#92400e', background: '#fef3c7', border: '1px solid #fde68a', borderRadius: 999, padding: '3px 9px' }}>Bundle &amp; save up to 20%</span>
       <button
         type="button"
-        onClick={() => (inCart ? go && go('business-cart') : addPlan(planKey, extraKids))}
+        disabled={disabled}
+        onClick={() => {
+          if (disabled) return
+          if (inCart) { if (go) go('business-cart'); return }
+          if (onAdd) { onAdd(); return }
+          addPlan(planKey, extraKids)
+        }}
         aria-label={inCart ? `${name} — in your cart, go to My Cart` : `Add ${name} to cart — $${price}/month`}
-        style={{ background: '#f5a623', color: '#fff', border: 'none', borderRadius: 999, padding: '12px 18px', fontWeight: 700, fontSize: 15, boxShadow: '0 4px 14px rgba(0,0,0,.25)', cursor: 'pointer' }}
+        style={{ background: disabled ? '#d1d5db' : '#f5a623', color: '#fff', border: 'none', borderRadius: 999, padding: '12px 18px', fontWeight: 700, fontSize: 15, boxShadow: '0 4px 14px rgba(0,0,0,.25)', cursor: disabled ? 'not-allowed' : 'pointer' }}
       >
         {inCart ? '✓ In your cart' : `🛒 Add to cart — $${price}/month`}
       </button>
+      {disabled && notReadyHint && (
+        <span style={{ alignSelf: 'flex-end', maxWidth: 260, textAlign: 'right', fontSize: 11, fontWeight: 600, color: '#92400e', background: '#fef3c7', border: '1px solid #fde68a', borderRadius: 8, padding: '4px 8px' }}>{notReadyHint}</span>
+      )}
     </div>
   )
 }

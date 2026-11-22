@@ -9,7 +9,7 @@ import { useBusinessCart } from '../lib/BusinessCartContext'
 // menu branches): "More Systems" (Dealer, Employee, Bodyshop, Houses, Doctor, Holiday,
 // Car Rental, Laundry, Gym, Simple Website), Custom Coding (moved here
 // from the main menu's More list, where it was labelled "Services"),
-// "Add-ons" (TV Gallery, Live Chat, Clean Link, Direct
+// "Add-ons" (Clean Link, TV Gallery, Live Chat, Direct
 // Upload), and "Learning Systems" (the Kids submenu minus My Cart:
 // Yently Kids, Math, English, Arabic, More Subjects, Books for Kids).
 // Each branch button shows a right arrow when closed and a
@@ -81,13 +81,13 @@ export default function BusinessMenu({ go }) {
           <button onClick={() => pick('services')}>Custom Coding</button>
           <button onClick={() => setAddonsOpen(o => !o)}>Add-ons {addonsOpen ? '▾' : '▸'}</button>
           {addonsOpen && (
+            <button onClick={() => pick('clean-link')} style={{ display: 'block', width: '100%', background: 'white', color: '#111827', textAlign: 'left', padding: '12px 16px 12px 32px', fontSize: '14.5px', fontWeight: '400', borderTop: '1px solid #f1f2f5' }}>Clean Link</button>
+          )}
+          {addonsOpen && (
             <a href="/demo-tv-gallery" style={{ display: 'block', width: '100%', background: 'white', color: '#111827', textAlign: 'left', padding: '12px 16px 12px 32px', fontSize: '14.5px', textDecoration: 'none', borderTop: '1px solid #f1f2f5' }}>TV Gallery</a>
           )}
           {addonsOpen && (
             <a href="/demo-live-chat" style={{ display: 'block', width: '100%', background: 'white', color: '#111827', textAlign: 'left', padding: '12px 16px 12px 32px', fontSize: '14.5px', textDecoration: 'none', borderTop: '1px solid #f1f2f5' }}>Live Chat</a>
-          )}
-          {addonsOpen && (
-            <button onClick={() => pick('clean-link')} style={{ display: 'block', width: '100%', background: 'white', color: '#111827', textAlign: 'left', padding: '12px 16px 12px 32px', fontSize: '14.5px', fontWeight: '400', borderTop: '1px solid #f1f2f5' }}>Clean Link</button>
           )}
           {addonsOpen && (
             <button onClick={() => pick('direct-upload')} style={{ display: 'block', width: '100%', background: 'white', color: '#111827', textAlign: 'left', padding: '12px 16px 12px 32px', fontSize: '14.5px', fontWeight: '400', borderTop: '1px solid #f1f2f5' }}>Direct Upload</button>

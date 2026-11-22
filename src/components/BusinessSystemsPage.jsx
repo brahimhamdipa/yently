@@ -4,9 +4,9 @@ import { BusinessTopBar } from './BusinessMenu'
 // Business Systems hub page — the first nav button and the default
 // tab. Every system and add-on in one place, each row linking to its
 // own ad page. Prices match the ad pages exactly (Restaurant $40,
-// POS $50, Barber $15, Dealer $20, Employee $20, Bodyshop $20, Houses $20,
+// POS $50, Barber $20, Dealer $20, Employee $20, Bodyshop $20, Houses $20,
 // Doctor $20, Holiday $20, Car Rental $20, Laundry $20, Gym $20,
-// Simple Website $10, TV Gallery $2, Live Chat $3 — all per month,
+// Simple Website $10, TV Gallery $2, Live Chat $3, Clean Link $5 — all per month,
 // first month free). Extra Students is a Kids add-on: $1/month per
 // extra student beyond the first 3 included in the $5/month Kids
 // price, no free month on Kids. No Add to cart here on purpose: each ad page
@@ -18,7 +18,7 @@ import { BusinessTopBar } from './BusinessMenu'
 const SYSTEMS = [
   { name: 'Restaurant', price: 40, blurb: 'Your own ordering page — menu, live kitchen, and orders.', tab: 'restaurants', video: true },
   { name: 'POS', price: 50, blurb: 'Your own register — stock, sales, and receipts.', tab: 'pos', video: true },
-  { name: 'Barber', price: 15, blurb: 'Your own booking page — live queue and a stopwatch for every cut.', tab: 'barbers', video: true },
+  { name: 'Barber', price: 20, blurb: 'Your own booking page — live queue and a stopwatch for every cut.', tab: 'barbers', video: true },
   { name: 'Dealer', price: 20, blurb: 'Your own dealer page — vehicles, test drives, and trade-ins.', tab: 'dealer', video: true },
   { name: 'Employee', price: 20, blurb: 'Your own employee time page — log time and keep records.', tab: 'employee', video: true },
   { name: 'Bodyshop', price: 20, blurb: 'Your own bodyshop page — estimates, jobs, and loan cars.', tab: 'bodyshop', video: true },
@@ -32,10 +32,10 @@ const SYSTEMS = [
 ]
 
 const ADDONS = [
+  { name: 'Clean Link', price: 5, blurb: 'Your shop at a clean address — yently.com/your-name. Golden Link and Your Own Domain coming soon.', tab: 'clean-link' },
   { name: 'TV Gallery', price: 2, blurb: 'Your pictures on the big screen — slideshow and one-picture display.', tab: 'tv-gallery' },
   { name: 'Live Chat', price: 3, blurb: 'A chat bubble on your website — every message to your email.', tab: 'live-chat' },
   { name: 'Extra Students', price: 1, blurb: '$1/month per extra student — the first 3 are included in the $5/month Kids price.', href: '/extra-students' },
-  { name: 'Clean Link', price: 2, blurb: 'Your shop at a clean address — yently.com/your-name.', tab: 'clean-link' },
   { name: 'Direct Upload', price: 5, blurb: 'Your uploads go live straight away — no waiting for approval.', tab: 'direct-upload' },
 ]
 

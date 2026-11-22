@@ -12,7 +12,7 @@ const PRICE_GROUPS = [
     rows: [
       { name: 'Restaurant', blurb: 'Your own ordering page + live kitchen screen', price: 40, tab: 'restaurants' },
       { name: 'POS', blurb: 'Your own point-of-sale register, stock + receipts', price: 50, tab: 'pos' },
-      { name: 'Barber', blurb: 'Booking page + Serving Now board', price: 15, tab: 'barbers' },
+      { name: 'Barber', blurb: 'Booking page + Serving Now board', price: 20, tab: 'barbers' },
       { name: 'Dealer', blurb: 'Your dealer website: vehicles, test drives, trade-ins', price: 20, tab: 'dealer' },
       { name: 'Employee', blurb: 'Time tracking + employee records', price: 20, tab: 'employee' },
       { name: 'Bodyshop', blurb: 'Estimates, jobs, customers + loan cars', price: 20, tab: 'bodyshop' },
@@ -28,9 +28,9 @@ const PRICE_GROUPS = [
   {
     title: 'Add-ons',
     rows: [
+      { name: 'Clean Link', blurb: 'A short, clean link for your system', price: 5, tab: 'clean-link' },
       { name: 'TV Gallery', blurb: 'Your pictures on a TV screen', price: 2, tab: 'tv-gallery' },
       { name: 'Live Chat', blurb: 'Live chat on your website', price: 3, tab: 'live-chat' },
-      { name: 'Clean Link', blurb: 'A short, clean link for your system', price: 2, tab: 'clean-link' },
       { name: 'Direct Upload', blurb: 'Your uploads go live straight away — no waiting for approval', price: 5, tab: 'direct-upload' },
     ],
   },

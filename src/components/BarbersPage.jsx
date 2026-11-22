@@ -9,7 +9,7 @@ import FloatingAddToCart from './FloatingAddToCart'
 // from More ▾ → Business Systems → Barber). One system: a shop's own
 // booking page — public Book, live Serving Now
 // with initials only, employee Bookings with a Stopwatch, owner Setup
-// with draft approval. The $15/month plan is in the shared Business
+// with draft approval. The $20/month plan is in the shared Business
 // Systems cart (add to cart below, or send a request), and the demo
 // barbershop card opens the demo-interest popup.
 // Nothing on this page promises text messages.
@@ -46,7 +46,7 @@ export default function BarbersPage({ go }) {
       <BusinessTopBar go={go} />
       <div className="hero-card" style={{ background: '#161d44', color: '#fff', textAlign: 'center' }}>
         <h2 style={{ color: '#fff' }}>✂️ Your barbershop, taking bookings online</h2>
-        <p style={{ fontSize: 18, color: '#f5c542' }}>Your booking page for $15/month. First month free. Live bookings, a live queue, and a stopwatch for every cut. No apps, no hardware.</p>
+        <p style={{ fontSize: 18, color: '#f5c542' }}>Your booking page for $20/month. First month free. Live bookings, a live queue, and a stopwatch for every cut. No apps, no hardware.</p>
         <p>Customers book from their phones. Your queue runs live in the shop — and your customers can watch it live too, privately.</p>
       </div>
 
@@ -79,7 +79,7 @@ export default function BarbersPage({ go }) {
 
       <div className="hero-card">
         <h3>Simple, honest pricing</h3>
-        <p><b>$15/month.</b> That's it — your booking page, live queue, and stopwatch. No setup fee, no commission on your bookings. First month free, cancel anytime.</p>
+        <p><b>$20/month.</b> That's it — your booking page, live queue, and stopwatch. No setup fee, no commission on your bookings. First month free, cancel anytime.</p>
       </div>
 
       <div className="hero-card" style={{ textAlign: 'center' }}>
