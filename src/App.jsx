@@ -14,8 +14,6 @@ import CarHubPage from './components/CarHubPage'
 import FlightPayPage from './components/FlightPayPage'
 import ClothesPage from './components/ClothesPage'
 import ServicesPage from './components/ServicesPage'
-import ServicesSoonPage from './components/ServicesSoonPage'
-import ServicesContactPage from './components/ServicesContactPage'
 import GroceryCartPage from './components/GroceryCartPage'
 import GrocerySoonPage from './components/GrocerySoonPage'
 import GroceryContactPage from './components/GroceryContactPage'
@@ -232,17 +230,17 @@ export default function App() {
   }, [])
 
   const GROCERY_TABS = ['grocery-cart', 'lunches', 'meats', 'grocery-contact', 'stores', 'store-detail', 'store-order', 'category', 'products', 'item-detail', 'shop-seller', 'shop-seller-soon', 'shop-hub']
-  const BUSINESS_TABS = ['business-hub', 'restaurants', 'pos', 'barbers', 'dealer', 'employee', 'bodyshop', 'houses', 'doctor', 'holiday', 'rentals', 'laundry', 'gym', 'simple-barbershop', 'tv-gallery', 'live-chat', 'clean-link', 'direct-upload', 'demo-live-chat', 'business-cart']
+  const BUSINESS_TABS = ['business-hub', 'restaurants', 'pos', 'barbers', 'dealer', 'employee', 'bodyshop', 'houses', 'doctor', 'holiday', 'rentals', 'laundry', 'gym', 'simple-barbershop', 'tv-gallery', 'live-chat', 'clean-link', 'direct-upload', 'demo-live-chat', 'business-cart', 'services']
   const KIDS_TABS = ['kids-hub', 'kids-math', 'kids-english', 'kids-arabic', 'kids-french', 'kids-spanish', 'kids-science', 'kids-geography', 'kids-coding', 'kids-reading', 'kids-books']
-  const inBusiness = BUSINESS_TABS.includes(tab) || tab === 'services'
+  const inBusiness = BUSINESS_TABS.includes(tab)
   const inCars = ['cars', 'sell', 'contact', 'car-seller', 'car-seller-soon', 'cars-hub'].includes(tab)
   const inFlights = ['flights', 'flights-hub', 'reserve', 'flight-pay', 'flight-contact'].includes(tab)
   // "More" holds Help Center (Guides, Pass Recovery) + Track Order +
-  // About Us. Services moved to the Systems submenu (BusinessMenu),
+  // About Us. Custom Coding moved to the Systems submenu (BusinessMenu),
   // between More Systems and Add-ons — the Systems button stays
-  // highlighted while on the Services page. Cars is a top-level
+  // highlighted while on the Custom Coding page. Cars is a top-level
   // button now, and Yently Kids moved to Systems.
-  const inMore = ['services-home', 'services-contact', 'about', 'guides', 'pass-recovery', 'track', 'clothes'].includes(tab)
+  const inMore = ['about', 'guides', 'pass-recovery', 'track', 'clothes'].includes(tab)
 
   return (
     <div className="app">
@@ -349,6 +347,7 @@ export default function App() {
             {tab === 'direct-upload' && <DirectUploadPage go={go} />}
             {tab === 'demo-live-chat' && <LiveChatDemo go={go} />}
             {tab === 'business-cart' && <BusinessCartPage go={go} />}
+            {tab === 'services' && <ServicesPage go={go} />}
           </BusinessCartProvider>
         )}
         {KIDS_TABS.includes(tab) && (
@@ -373,13 +372,6 @@ export default function App() {
           </BusinessCartProvider>
         )}
         {tab === 'clothes' && <ClothesPage />}
-        {tab === 'services' && <ServicesPage go={go} />}
-        {tab === 'services-home' && (
-          <ServicesSoonPage go={go} title="Home Services" emoji="🏠" topic="Home Services"
-            intro="Help around your home is coming to Yently — cleaning, repairs, and everyday household services, booked in the same place as everything else."
-            items={['Home cleaning & deep cleaning', 'Handyman & small repairs', 'Painting & decorating', 'Gardening & yard work', 'Moving & hauling help', 'Appliance installation & fixes']} />
-        )}
-        {tab === 'services-contact' && <ServicesContactPage go={go} />}
         {tab === 'about' && <AboutPage />}
         {tab === 'guides' && <GuidesPage go={go} />}
         {tab === 'admin' && <AdminPage />}
