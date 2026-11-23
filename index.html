@@ -9,8 +9,8 @@
       // is untouched.
       (function () {
         try {
-          if (window.location.hostname === 'autofly.us.com' && window.location.pathname !== '/dealer') {
-            window.location.replace('/dealer?d=autofly');
+          if (window.location.hostname === 'autofly.us.com' && window.location.pathname !== '/dealer' && window.location.pathname !== '/autofly') {
+            window.location.replace('/autofly');
           }
         } catch (e) {}
       })();
