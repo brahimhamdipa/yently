@@ -3,6 +3,8 @@ import { useBusinessCart, bundleFor, isKidsPlanKey, isKidsExtraPlanKey, KIDS_BAS
 import { placeBusinessOrder } from '../lib/businessData'
 import { storeTrackingCodes } from '../lib/orderTracking'
 import { BusinessTopBar } from './BusinessMenu'
+import AgreementText from './AgreementText'
+import { signCustomerAgreement } from '../lib/agreement'
 
 // My Cart for all Business Systems pages — mirrors PosCartPage's
 // shape (top bar, hero intro, empty state, cart lines, checkout block
@@ -47,6 +49,20 @@ export default function BusinessCartPage({ go }) {
   const [note, setNote] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [status, setStatus] = useState('')
+  // Customer Agreement: the box must be checked and the full name
+  // signed before Place order works. The signature is saved with the
+  // order (customer_agreements, source 'checkout'); if saving it
+  // fails, the order still stands and the confirmation says to sign
+  // at yently.com/agreement instead.
+  const [agreed, setAgreed] = useState(false)
+  const [signature, setSignature] = useState('')
+  const [signatureEdited, setSignatureEdited] = useState(false)
+  const [agreementMsg, setAgreementMsg] = useState('')
+
+  const onName = (v) => {
+    setName(v)
+    if (!signatureEdited) setSignature(v)
+  }
 
   const bundle = bundleFor(cart)
   const orderBundle = lastOrder ? bundleFor(lastOrder) : null
@@ -71,6 +87,10 @@ export default function BusinessCartPage({ go }) {
 
   const placeOrder = async (e) => {
     e.preventDefault()
+    if (!agreed || !signature.trim()) {
+      setStatus('Please read the Customer Agreement below, check the box, and sign your full name — then place your order.')
+      return
+    }
     setSubmitting(true); setStatus('')
     try {
       const items = await placeBusinessOrder({ name, email, phone, note, items: cart })
@@ -82,9 +102,23 @@ export default function BusinessCartPage({ go }) {
         setSubmitting(false)
         return
       }
+      // Save the agreement signature with the order: the plan names
+      // and the first tracking code ride along, so the signature is
+      // tied to this order. A failure here never blocks the order —
+      // the customer can sign at yently.com/agreement instead.
+      const planNames = items.map(i => i.name).join(' + ')
+      const firstCode = (items.find(i => i.tracking_code) || {}).tracking_code || null
+      try {
+        const res = await signCustomerAgreement({ email, customerName: name, signatureName: signature, agreed, plan: planNames, orderCode: firstCode, source: 'checkout' })
+        if (res && res.ok) setAgreementMsg('✓ You signed the Yently Customer Agreement — thank you.')
+        else setAgreementMsg('Your order is placed. The agreement signature could not be saved — please sign it at yently.com/agreement.')
+      } catch {
+        setAgreementMsg('Your order is placed. The agreement signature could not be saved — please sign it at yently.com/agreement.')
+      }
       setLastOrder(items.map(i => ({ ...i, customer_name: name })))
       clearCart()
       setName(''); setEmail(''); setPhone(''); setNote('')
+      setAgreed(false); setSignature(''); setSignatureEdited(false)
     } catch (err) {
       setStatus('Error: ' + err.message)
     }
@@ -141,6 +175,7 @@ export default function BusinessCartPage({ go }) {
             <p><b>Monthly total after bundle discount: ${orderBundle.total.toFixed(2)}/month</b> — you're saving ${orderBundle.savings.toFixed(2)}/month.</p>
           )}
           <p>Yently will be in touch to set up your pages.</p>
+          {agreementMsg && <p>{agreementMsg}</p>}
           <button onClick={() => go && go('restaurants')}>Back to Business Systems</button>
         </div>
       )}
@@ -202,7 +237,7 @@ export default function BusinessCartPage({ go }) {
           <form onSubmit={placeOrder} className="form-card">
             <h3>Checkout</h3>
             <label>Your name
-              <input required placeholder="Full name" value={name} onChange={e => setName(e.target.value)} />
+              <input required placeholder="Full name" value={name} onChange={e => onName(e.target.value)} />
             </label>
             <label>Email
               <input required placeholder="Email" type="email" value={email} onChange={e => setEmail(e.target.value)} />
@@ -231,7 +266,24 @@ export default function BusinessCartPage({ go }) {
             {hasDirectAddon && (
               <p className="hint">Direct Upload add-ons are added in full — they don't count toward the bundle discount.</p>
             )}
-            <button type="submit" disabled={submitting}>{submitting ? 'Placing…' : 'Place order'}</button>
+            <div style={{ border: '1px solid #e5e7eb', borderRadius: 8, padding: 12, marginTop: 12 }}>
+              <h4 style={{ marginTop: 0 }}>Customer Agreement</h4>
+              <div style={{ maxHeight: 220, overflowY: 'auto', border: '1px solid #e5e7eb', borderRadius: 6, padding: 10, background: '#fff' }}>
+                <AgreementText />
+              </div>
+              <label style={{ display: 'flex', gap: 8, alignItems: 'flex-start', marginTop: 10 }}>
+                <input type="checkbox" checked={agreed} onChange={e => setAgreed(e.target.checked)} style={{ marginTop: 4 }} />
+                <span>I have read and agree to the Yently Customer Agreement</span>
+              </label>
+              <label>Sign your full name
+                <input placeholder="Type your full name as your signature" value={signature} onChange={e => { setSignature(e.target.value); setSignatureEdited(true) }} />
+              </label>
+              <p className="hint">You can also read and sign it any time at yently.com/agreement.</p>
+            </div>
+            <button type="submit" disabled={submitting || !agreed || !signature.trim()}>{submitting ? 'Placing…' : 'Place order'}</button>
+            {!agreed || !signature.trim() ? (
+              <p className="hint">Read the agreement above, check the box and sign your name to place your order.</p>
+            ) : null}
             {status && <p className="status">{status}</p>}
           </form>
         </div>
