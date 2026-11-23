@@ -6,9 +6,6 @@ import { supabase } from './supabaseClient'
 // email all show exactly the same agreement. Bump the version (and
 // the date) whenever the text changes — old signatures stay on the
 // version they signed.
-//
-// This is a general template, not legal advice. Yently should have
-// a lawyer review it before relying on it.
 export const AGREEMENT_VERSION = 'v1'
 export const AGREEMENT_DATE = '2026-11-23'
 
