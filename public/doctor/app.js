@@ -363,11 +363,11 @@
   function setHeader() {
     $('site-name').textContent = clinic ? clinic.name : 'Doctor';
     renderHeaderIcon(clinic && clinic.icon ? clinic.icon : '');
-    $('site-about').textContent = clinic
-      ? [clinic.address, clinic.phone].filter(Boolean).join(' · ')
+    $('site-about').innerHTML = clinic
+      ? [esc(clinic.address), esc(clinic.phone)].filter(Boolean).join('<br>')
       : '';
     $('site-footer').innerHTML = clinic
-      ? esc([clinic.address, clinic.phone].filter(Boolean).join(' · ')) + '<br>Powered by Yently'
+      ? [esc(clinic.address), esc(clinic.phone)].filter(Boolean).join('<br>') + '<br>Powered by Yently'
       : 'Powered by Yently';
     document.title = (clinic ? clinic.name : 'Doctor') + ' — Doctor booking';
   }
