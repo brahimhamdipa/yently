@@ -354,7 +354,7 @@
     renderHeaderIcon(biz && biz.icon ? biz.icon : '');
     $('site-about').textContent = biz ? (biz.about || '') : '';
     $('site-footer').innerHTML = biz
-      ? esc([biz.address, biz.phone].filter(Boolean).join(' · ')) + '<br>Powered by Yently'
+      ? [esc(biz.address), esc(biz.phone)].filter(Boolean).join('<br>') + '<br>Powered by Yently'
       : 'Powered by Yently';
     document.title = (biz ? biz.name : 'Employee') + ' — Employee Time';
   }
