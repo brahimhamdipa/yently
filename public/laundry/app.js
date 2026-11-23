@@ -377,11 +377,11 @@
   function setHeader() {
     $('site-name').textContent = laundry ? laundry.name : 'Laundry';
     renderHeaderIcon(laundry && laundry.icon ? laundry.icon : '');
-    $('site-about').textContent = laundry
-      ? [laundry.address, laundry.phone].filter(Boolean).join(' · ')
+    $('site-about').innerHTML = laundry
+      ? [esc(laundry.address), esc(laundry.phone)].filter(Boolean).join('<br>')
       : '';
     $('site-footer').innerHTML = laundry
-      ? esc([laundry.address, laundry.phone].filter(Boolean).join(' · ')) + '<br>Powered by Yently'
+      ? [esc(laundry.address), esc(laundry.phone)].filter(Boolean).join('<br>') + '<br>Powered by Yently'
       : 'Powered by Yently';
     document.title = (laundry ? laundry.name : 'Laundry') + ' — Laundry';
   }
