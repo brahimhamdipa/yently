@@ -389,11 +389,11 @@
   function setHeader() {
     $('site-name').textContent = rental ? rental.name : 'Car Rental';
     renderHeaderIcon(rental && rental.icon ? rental.icon : '');
-    $('site-about').textContent = rental
-      ? [rental.address, rental.phone].filter(Boolean).join(' · ')
+    $('site-about').innerHTML = rental
+      ? [esc(rental.address), esc(rental.phone)].filter(Boolean).join('<br>')
       : '';
     $('site-footer').innerHTML = rental
-      ? esc([rental.address, rental.phone].filter(Boolean).join(' · ')) + '<br>Powered by Yently'
+      ? [esc(rental.address), esc(rental.phone)].filter(Boolean).join('<br>') + '<br>Powered by Yently'
       : 'Powered by Yently';
     document.title = (rental ? rental.name : 'Car Rental') + ' — Car Rental';
   }
