@@ -393,11 +393,11 @@
   function setHeader() {
     $('site-name').textContent = house ? house.name : 'Houses';
     renderHeaderIcon(house && house.icon ? house.icon : '');
-    $('site-about').textContent = house
-      ? [house.address, house.phone].filter(Boolean).join(' · ')
+    $('site-about').innerHTML = house
+      ? [esc(house.address), esc(house.phone)].filter(Boolean).join('<br>')
       : '';
     $('site-footer').innerHTML = house
-      ? esc([house.address, house.phone].filter(Boolean).join(' · ')) + '<br>Powered by Yently'
+      ? [esc(house.address), esc(house.phone)].filter(Boolean).join('<br>') + '<br>Powered by Yently'
       : 'Powered by Yently';
     document.title = (house ? house.name : 'Houses') + ' — Houses for sale';
   }
