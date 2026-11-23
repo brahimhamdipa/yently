@@ -351,11 +351,11 @@
   function setHeader() {
     $('site-name').textContent = dealer ? dealer.name : 'Dealer';
     renderHeaderIcon(dealer && dealer.icon ? dealer.icon : '');
-    $('site-about').textContent = dealer
-      ? [dealer.address, dealer.phone].filter(Boolean).join(' · ')
+    $('site-about').innerHTML = dealer
+      ? [esc(dealer.address), esc(dealer.phone)].filter(Boolean).join('<br>')
       : '';
     $('site-footer').innerHTML = dealer
-      ? esc([dealer.address, dealer.phone].filter(Boolean).join(' · ')) + '<br>Powered by Yently'
+      ? [esc(dealer.address), esc(dealer.phone)].filter(Boolean).join('<br>') + '<br>Powered by Yently'
       : 'Powered by Yently';
     document.title = (dealer ? dealer.name : 'Dealer') + ' — Car Dealership';
   }
