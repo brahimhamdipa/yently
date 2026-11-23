@@ -73,6 +73,56 @@ function cleanLinkUrl(row) {
   return `${SITE}/${row.slug}`
 }
 
+// A dropdown with a text field that filters while typing — the plain
+// <select> lists get unusable once there are many shops. Typing
+// filters the options; tapping one picks it; the picked value shows
+// as text; clearing the text (Shop only) clears the pick; Escape or
+// an outside tap closes the list and shows the picked value again.
+// The list reuses the .car-submenu dropdown style from the site menus.
+function SearchablePick({ label, value, options, onPick, placeholder, allowClear }) {
+  const [open, setOpen] = useState(false)
+  const [text, setText] = useState('')
+  const ref = useRef(null)
+  const selected = options.find(o => o.value === value) || null
+  const needle = text.trim().toLowerCase()
+  const shown = needle ? options.filter(o => String(o.label || '').toLowerCase().includes(needle)) : options
+  useEffect(() => {
+    if (!open) return
+    const onDown = (e) => { if (ref.current && !ref.current.contains(e.target)) { setOpen(false); setText('') } }
+    const onKey = (e) => { if (e.key === 'Escape') { setOpen(false); setText('') } }
+    window.addEventListener('pointerdown', onDown)
+    window.addEventListener('keydown', onKey)
+    return () => { window.removeEventListener('pointerdown', onDown); window.removeEventListener('keydown', onKey) }
+  }, [open])
+  return (
+    <label>{label}
+      <div className="car-submenu-wrap" ref={ref} style={{ marginBottom: 0 }}>
+        <input
+          placeholder={placeholder}
+          autoComplete="off"
+          style={{ fontSize: 16 }}
+          value={open ? text : (selected ? selected.label : '')}
+          onFocus={() => { setOpen(true); setText('') }}
+          onChange={e => {
+            const v = e.target.value
+            setText(v)
+            setOpen(true)
+            if (allowClear && v === '') onPick('')
+          }}
+        />
+        {open && (
+          <div className="car-submenu" style={{ width: '100%', maxHeight: 260, overflowY: 'auto' }}>
+            {shown.length === 0 && <p className="hint" style={{ padding: '12px 16px', margin: 0 }}>{options.length === 0 ? 'Nothing here yet' : 'No match — try another word'}</p>}
+            {shown.map(o => (
+              <button key={o.value} type="button" onClick={() => { onPick(o.value); setOpen(false); setText('') }}>{o.label}</button>
+            ))}
+          </div>
+        )}
+      </div>
+    </label>
+  )
+}
+
 export default function AdminCustomerWelcome() {
   const [tab, setTab] = useState('welcome') // welcome | agreements
   const [systemKey, setSystemKey] = useState('dealer')
@@ -293,17 +343,8 @@ export default function AdminCustomerWelcome() {
         <div>
           <div className="hero-card">
             <h3>1. Pick the shop</h3>
-            <label>System
-              <select value={systemKey} onChange={e => setSystemKey(e.target.value)}>
-                {SYSTEMS.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}
-              </select>
-            </label>
-            <label>Shop
-              <select value={shopSlug} onChange={e => setShopSlug(e.target.value)}>
-                <option value="">— pick a shop —</option>
-                {shops.map(s => <option key={s.slug} value={s.slug}>{s.name || s.slug} ({s.slug})</option>)}
-              </select>
-            </label>
+            <SearchablePick label="System" value={systemKey} options={SYSTEMS.map(s => ({ value: s.key, label: s.label }))} onPick={setSystemKey} placeholder="Type to filter systems…" allowClear={false} />
+            <SearchablePick label="Shop" value={shopSlug} options={shops.map(s => ({ value: s.slug, label: `${s.name || s.slug} (${s.slug})` }))} onPick={setShopSlug} placeholder="Type to filter shops…" allowClear />
             {loading && <p className="hint">{loading}</p>}
             {shop && (
               <div style={{ marginTop: 10, fontSize: 14 }}>
