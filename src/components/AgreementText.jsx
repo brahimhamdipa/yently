@@ -7,7 +7,6 @@ export default function AgreementText() {
   return (
     <div style={{ fontSize: 13, lineHeight: 1.6 }}>
       <p><b>Yently Customer Agreement</b> — version {AGREEMENT_VERSION} ({AGREEMENT_DATE})</p>
-      <p className="hint">This is a general template, not legal advice. Yently recommends having a lawyer review it before relying on it.</p>
       {AGREEMENT_SECTIONS.map(s => (
         <div key={s.title} style={{ marginTop: 10 }}>
           <p style={{ margin: '0 0 4px' }}><b>{s.title}</b></p>
