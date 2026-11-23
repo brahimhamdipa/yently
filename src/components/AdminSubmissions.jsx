@@ -17,6 +17,7 @@ const cellText = (v) => {
 function SubmissionTable({ table, title }) {
   const [rows, setRows] = useState(null)
   const [error, setError] = useState('')
+  const [query, setQuery] = useState('')
 
   const load = async () => {
     try { setRows(await fetchAll(table)) }
@@ -34,19 +35,25 @@ function SubmissionTable({ table, title }) {
   if (rows === null) return <div className="hero-card"><p>Loading {title}...</p></div>
   const columns = rows.length > 0 ? Object.keys(rows[0]) : []
 
+  // Search matches any cell in the row.
+  const needle = (query || '').trim().toLowerCase()
+  const filtered = rows.filter(r => !needle || Object.values(r).some(v => String(v ?? '').toLowerCase().includes(needle)))
+
   return (
     <div>
-      <h3 className="admin-h3">{title} — {rows.length}</h3>
+      <h3 className="admin-h3">{title} — {query.trim() ? `${filtered.length} of ${rows.length} rows` : `${rows.length} rows`}</h3>
+      <input placeholder="Search this table…" style={{ fontSize: 16 }} value={query} onChange={e => setQuery(e.target.value)} />
+      {rows.length === 500 && <p className="hint">Showing 500 rows — older ones may exist beyond this list.</p>}
       {error && <p className="status">Error: {error}</p>}
       {rows.length === 0 && !error && <p className="hint">Nothing here yet.</p>}
-      {rows.length > 0 && (
-        <div className="table-wrap">
+      {filtered.length > 0 && (
+        <div className="table-wrap" style={{ maxHeight: 520, overflowY: 'auto' }}>
           <table className="admin-table">
             <thead>
               <tr>{columns.map(c => <th key={c}>{c}</th>)}<th className="no-print"></th></tr>
             </thead>
             <tbody>
-              {rows.map(r => (
+              {filtered.map(r => (
                 <tr key={r.id}>
                   {columns.map(c => (
                     <td key={c} title={cellText(r[c])}>
