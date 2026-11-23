@@ -385,11 +385,11 @@
   function setHeader() {
     $('site-name').textContent = holiday ? holiday.name : 'Holiday';
     renderHeaderIcon(holiday && holiday.icon ? holiday.icon : '');
-    $('site-about').textContent = holiday
-      ? [holiday.address, holiday.phone].filter(Boolean).join(' · ')
+    $('site-about').innerHTML = holiday
+      ? [esc(holiday.address), esc(holiday.phone)].filter(Boolean).join('<br>')
       : '';
     $('site-footer').innerHTML = holiday
-      ? esc([holiday.address, holiday.phone].filter(Boolean).join(' · ')) + '<br>Powered by Yently'
+      ? [esc(holiday.address), esc(holiday.phone)].filter(Boolean).join('<br>') + '<br>Powered by Yently'
       : 'Powered by Yently';
     document.title = (holiday ? holiday.name : 'Holiday') + ' — Holiday Rentals';
   }
