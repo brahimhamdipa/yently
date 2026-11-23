@@ -419,11 +419,11 @@
   function setHeader() {
     $('site-name').textContent = store ? store.name : 'POS';
     renderHeaderIcon(store && store.icon ? store.icon : '');
-    $('site-about').textContent = store
-      ? [store.address, store.phone].filter(Boolean).join(' · ')
+    $('site-about').innerHTML = store
+      ? [esc(store.address), esc(store.phone)].filter(Boolean).join('<br>')
       : '';
     $('site-footer').innerHTML = store
-      ? esc([store.address, store.phone].filter(Boolean).join(' · ')) + '<br>Powered by Yently'
+      ? [esc(store.address), esc(store.phone)].filter(Boolean).join('<br>') + '<br>Powered by Yently'
       : 'Powered by Yently';
     document.title = (store ? store.name : 'POS') + ' — Point of Sale';
   }
@@ -433,7 +433,7 @@
     var el = $('view-shop');
     if (!store) { el.innerHTML = '<p class="info">Loading…</p>'; return; }
     var h = '<h2>' + esc(store.name) + '</h2>';
-    if (store.address || store.phone) h += '<p class="info">' + esc([store.address, store.phone].filter(Boolean).join(' · ')) + '</p>';
+    if (store.address || store.phone) h += '<p class="info">' + [esc(store.address), esc(store.phone)].filter(Boolean).join('<br>') + '</p>';
     /* The search box lives outside the results container, so typing
        never loses the cursor — only the list below is re-rendered. */
     h += '<input id="shop-search" type="text" placeholder="Search items…" value="' + esc(shopQuery) + '" autocomplete="off">';
