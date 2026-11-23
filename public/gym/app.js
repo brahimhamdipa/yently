@@ -456,11 +456,11 @@
   function setHeader() {
     $('site-name').textContent = gym ? gym.name : 'Gym';
     renderHeaderIcon(gym && gym.icon ? gym.icon : '');
-    $('site-about').textContent = gym
-      ? [gym.address, gym.phone].filter(Boolean).join(' · ')
+    $('site-about').innerHTML = gym
+      ? [esc(gym.address), esc(gym.phone)].filter(Boolean).join('<br>')
       : '';
     $('site-footer').innerHTML = gym
-      ? esc([gym.address, gym.phone].filter(Boolean).join(' · ')) + '<br>Powered by Yently'
+      ? [esc(gym.address), esc(gym.phone)].filter(Boolean).join('<br>') + '<br>Powered by Yently'
       : 'Powered by Yently';
     document.title = (gym ? gym.name : 'Gym') + ' — Gym';
   }
