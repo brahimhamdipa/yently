@@ -53,6 +53,7 @@ import ShopSellerSoonPage from './components/ShopSellerSoonPage'
 import LiveChatDemo from './components/LiveChatDemo'
 import TrackingPage from './components/TrackingPage'
 import PassRecoveryPage from './components/PassRecoveryPage'
+import AgreementPage from './components/AgreementPage'
 import BusinessCartPage from './components/BusinessCartPage'
 import BusinessSystemsPage from './components/BusinessSystemsPage'
 import KidsHubPage from './components/KidsHubPage'
@@ -166,6 +167,7 @@ export default function App() {
     if (path === '/direct-upload') return 'direct-upload'
     if (path === '/extra-students') return 'extra-students'
     if (path === '/pass-recovery') return 'pass-recovery'
+    if (path === '/agreement') return 'agreement'
     if (path !== '' && path !== '/') return 'provider-form'
     const system = new URLSearchParams(window.location.search).get('system')
     if (system && DEEP_LINK_SYSTEMS.has(system)) return system
@@ -173,7 +175,7 @@ export default function App() {
   })
   const [formSlug, setFormSlug] = useState(() => {
     const path = window.location.pathname.replace(/\/$/, '')
-    if (path !== '' && path !== '/' && path !== '/admin' && path !== '/track' && path !== '/demo-live-chat' && path !== '/demo-chat' && path !== '/direct-upload' && path !== '/extra-students' && path !== '/pass-recovery') return decodeURIComponent(path.slice(1))
+    if (path !== '' && path !== '/' && path !== '/admin' && path !== '/track' && path !== '/demo-live-chat' && path !== '/demo-chat' && path !== '/direct-upload' && path !== '/extra-students' && path !== '/pass-recovery' && path !== '/agreement') return decodeURIComponent(path.slice(1))
     return null
   })
   const [providerId, setProviderId] = useState(null)
@@ -219,15 +221,17 @@ export default function App() {
     const onDirect = path === '/direct-upload'
     const onExtra = path === '/extra-students'
     const onPass = path === '/pass-recovery'
-    const onForm = path !== '' && path !== '/' && !onAdmin && !onTrack && !onDemo && !onDirect && !onExtra && !onPass
+    const onAgreement = path === '/agreement'
+    const onForm = path !== '' && path !== '/' && !onAdmin && !onTrack && !onDemo && !onDirect && !onExtra && !onPass && !onAgreement
     if (t === 'admin' && !onAdmin) window.history.replaceState(null, '', '/admin')
     else if (t === 'track' && !onTrack) window.history.replaceState(null, '', '/track')
     else if (t === 'demo-live-chat' && !onDemo) window.history.replaceState(null, '', '/demo-live-chat')
     else if (t === 'direct-upload' && !onDirect) window.history.replaceState(null, '', '/direct-upload')
     else if (t === 'extra-students' && !onExtra) window.history.replaceState(null, '', '/extra-students')
     else if (t === 'pass-recovery' && !onPass) window.history.replaceState(null, '', '/pass-recovery')
+    else if (t === 'agreement' && !onAgreement) window.history.replaceState(null, '', '/agreement')
     else if (t === 'provider-form' && param && !onForm) window.history.replaceState(null, '', '/' + param)
-    else if (t !== 'admin' && t !== 'track' && t !== 'provider-form' && t !== 'demo-live-chat' && t !== 'direct-upload' && t !== 'extra-students' && t !== 'pass-recovery' && (onAdmin || onTrack || onForm || onDemo || onDirect || onExtra || onPass)) window.history.replaceState(null, '', '/')
+    else if (t !== 'admin' && t !== 'track' && t !== 'provider-form' && t !== 'demo-live-chat' && t !== 'direct-upload' && t !== 'extra-students' && t !== 'pass-recovery' && t !== 'agreement' && (onAdmin || onTrack || onForm || onDemo || onDirect || onExtra || onPass || onAgreement)) window.history.replaceState(null, '', '/')
   }
   // Back to the page the customer actually came from (or nowhere on a
   // fresh load, in which case pages hide their back link).
@@ -254,7 +258,7 @@ export default function App() {
   // between More Systems and Add-ons — the Systems button stays
   // highlighted while on the Custom Coding page. Cars is a top-level
   // button now, and Yently Kids moved to Systems.
-  const inMore = ['about', 'guides', 'pass-recovery', 'track', 'clothes'].includes(tab)
+  const inMore = ['about', 'guides', 'pass-recovery', 'agreement', 'track', 'clothes'].includes(tab)
 
   return (
     <div className="app">
@@ -279,6 +283,7 @@ export default function App() {
                     <>
                       <a style={{ paddingLeft: 28 }} onClick={() => go('guides')}>Guides</a>
                       <a style={{ paddingLeft: 28 }} onClick={() => go('pass-recovery')}>Pass Recovery</a>
+                      <a style={{ paddingLeft: 28 }} onClick={() => go('agreement')}>Customer Agreement</a>
                     </>
                   )}
                   <a onClick={() => go('track')}>Track Order</a>
@@ -392,6 +397,7 @@ export default function App() {
         {tab === 'admin' && <AdminPage />}
         {tab === 'track' && <TrackingPage go={go} />}
         {tab === 'pass-recovery' && <PassRecoveryPage go={go} />}
+        {tab === 'agreement' && <AgreementPage go={go} />}
         {tab === 'provider-form' && <ProviderFormPage slug={formSlug} goBack={goBack} onAuthedChange={setFormAuthed} go={go} />}
       </main>
       <footer className="footer">
