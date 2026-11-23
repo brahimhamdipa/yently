@@ -398,7 +398,7 @@
     renderHeaderIcon(shop && shop.icon ? shop.icon : '');
     $('site-about').textContent = shop ? (shop.about || '') : '';
     $('site-footer').innerHTML = shop
-      ? esc([shop.address, shop.phone].filter(Boolean).join(' · ')) + '<br>Powered by Yently'
+      ? [esc(shop.address), esc(shop.phone)].filter(Boolean).join('<br>') + '<br>Powered by Yently'
       : 'Powered by Yently';
     document.title = (shop ? shop.name : 'Bodyshop') + ' — Bodyshop';
   }
