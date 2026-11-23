@@ -1240,7 +1240,7 @@
       if (data.address) foot.push(esc(data.address));
       if (data.phone) foot.push(esc(data.phone));
       if (data.hours) foot.push(esc(data.hours));
-      var firstLine = foot.join(' · ');
+      var firstLine = foot.join('<br>');
       $('site-footer').innerHTML = (firstLine ? '<div>' + firstLine + '</div>' : '') +
         '<div>Powered by Yently</div>';
       updateBadges();
