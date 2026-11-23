@@ -9,6 +9,7 @@ import { supabase } from '../../lib/supabaseClient'
 export default function AdminChat() {
   const [enabled, setEnabled] = useState(null)
   const [conversations, setConversations] = useState(null)
+  const [search, setSearch] = useState('')
   const [allMessages, setAllMessages] = useState([])
   const [openId, setOpenId] = useState(null)
   const [reply, setReply] = useState('')
@@ -106,6 +107,10 @@ export default function AdminChat() {
   const openMessages = allMessages.filter(m => m.conversation_id === openId)
   const openConv = (conversations || []).find(c => c.id === openId)
 
+  // Search covers the loaded conversations (name, email, last message).
+  const needle = search.trim().toLowerCase()
+  const shownConversations = (conversations || []).filter(c => !needle || [c.customer_name, c.customer_email, (lastMessage(c.id) || {}).body].join(' ').toLowerCase().includes(needle))
+
   return (
     <div>
       <div className="hero-card">
@@ -122,9 +127,11 @@ export default function AdminChat() {
       <div className="hero-card">
         <h3>Conversations</h3>
         <button type="button" className="btn-mini" onClick={() => load()}>↻ Refresh</button>
+        <input placeholder="Search conversations — name or email…" style={{ fontSize: 16 }} value={search} onChange={e => setSearch(e.target.value)} />
+        <p className="hint">{search.trim() ? `${shownConversations.length} of ${(conversations || []).length} loaded conversations match` : `${(conversations || []).length} conversations loaded`}{conversations && conversations.length >= visible ? ' — search covers the loaded ones only; tap “Show older conversations” below to load more' : ''}</p>
         {conversations === null && <p>Loading...</p>}
         {conversations && conversations.length === 0 && <p>No chats yet.</p>}
-        {conversations && conversations.map(c => {
+        {shownConversations.length > 0 && (<div style={{ maxHeight: 520, overflowY: 'auto' }}>{shownConversations.map(c => {
           const last = lastMessage(c.id)
           const unread = unreadByConv[c.id] || 0
           return (
@@ -143,7 +150,7 @@ export default function AdminChat() {
               </span>
             </div>
           )
-        })}
+        })}</div>)}
         {conversations && conversations.length >= visible && (
           <button type="button" className="btn-soft" onClick={showOlder}>Show older conversations</button>
         )}

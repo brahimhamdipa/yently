@@ -69,6 +69,7 @@ export default function AdminDirectUpload() {
   const [confirmDeny, setConfirmDeny] = useState(null)
   const [busyId, setBusyId] = useState(null)
   const [switchForm, setSwitchForm] = useState({ owner_type: 'diner', owner_key: '', enabled: false })
+  const [search, setSearch] = useState('')
 
   const loadRequests = async () => {
     try { setRequests(await fetchAll('direct_upload_requests')) }
@@ -187,6 +188,16 @@ export default function AdminDirectUpload() {
   const pending = (requests || []).filter(r => r.status === 'pending')
   const decided = (requests || []).filter(r => r.status !== 'pending')
 
+  // One search box filters whichever tab is open (name, email,
+  // system, shop, message — whatever the row shows).
+  const needle = search.trim().toLowerCase()
+  const matches = (hay) => !needle || String(hay || '').toLowerCase().includes(needle)
+  const shownPending = pending.filter(r => matches([r.customer_name, r.business_name, r.customer_email, r.customer_phone, r.system, r.shop_slug, r.message].join(' ')))
+  const shownDecided = decided.filter(r => matches([r.customer_name, r.business_name, r.customer_email, r.system, r.shop_slug, r.status].join(' ')))
+  const shownSwitches = (switches || []).filter(s => matches([s.owner_type, s.owner_key].join(' ')))
+  const shownActivity = (activity || []).filter(a => matches([a.owner_type, a.owner_key, a.kind, a.detail].join(' ')))
+  const countLine = (shown, total, word) => search.trim() ? `${shown} of ${total} ${word} match` : `${total} ${word}`
+
   return (
     <div>
       <div className="hero-card">
@@ -203,18 +214,22 @@ export default function AdminDirectUpload() {
       {status && <p className="status">{status}</p>}
       {error && <p className="status">Error: {error}</p>}
 
+      <input placeholder={view === 'requests' ? 'Search requests — name, email, system, shop…' : view === 'switches' ? 'Search switches — system or shop…' : 'Search activity — system, shop, kind…'} style={{ fontSize: 16 }} value={search} onChange={e => setSearch(e.target.value)} />
+      <p className="hint">{view === 'requests' ? countLine(shownPending.length + shownDecided.length, (requests || []).length, 'requests') : view === 'switches' ? countLine(shownSwitches.length, (switches || []).length, 'switches') : countLine(shownActivity.length, (activity || []).length, 'activity rows')}</p>
+      {view === 'requests' && (requests || []).length === 500 && <p className="hint">Showing 500 requests — older ones may exist beyond this list.</p>}
+
       {view === 'requests' && (
         <div>
           {requests === null && <div className="hero-card"><p>Loading requests...</p></div>}
           {requests !== null && pending.length === 0 && <p className="hint">No requests waiting — everything has been decided.</p>}
-          {pending.length > 0 && (
-            <div className="table-wrap">
+          {shownPending.length > 0 && (
+            <div className="table-wrap" style={{ maxHeight: 520, overflowY: 'auto' }}>
               <table className="admin-table">
                 <thead>
                   <tr><th>Date</th><th>Customer</th><th>Business</th><th>Email</th><th>Phone</th><th>System</th><th>Shop</th><th>Message</th><th className="no-print"></th></tr>
                 </thead>
                 <tbody>
-                  {pending.map(r => (
+                  {shownPending.map(r => (
                     <tr key={r.id}>
                       <td>{fmtDate(r.created_at)}</td>
                       <td>{r.customer_name}</td>
@@ -246,16 +261,16 @@ export default function AdminDirectUpload() {
             </div>
           )}
 
-          {decided.length > 0 && (
+          {shownDecided.length > 0 && (
             <div style={{ marginTop: 24 }}>
               <h3>Decided</h3>
-              <div className="table-wrap">
+              <div className="table-wrap" style={{ maxHeight: 520, overflowY: 'auto' }}>
                 <table className="admin-table">
                   <thead>
                     <tr><th>Date</th><th>Customer</th><th>Business</th><th>Email</th><th>System</th><th>Shop</th><th>Status</th><th>Reviewed</th></tr>
                   </thead>
                   <tbody>
-                    {decided.map(r => (
+                    {shownDecided.map(r => (
                       <tr key={r.id}>
                         <td>{fmtDate(r.created_at)}</td>
                         <td>{r.customer_name}</td>
@@ -298,14 +313,14 @@ export default function AdminDirectUpload() {
 
           {switches === null && <div className="hero-card"><p>Loading switches...</p></div>}
           {switches !== null && switches.length === 0 && <p className="hint">No switches yet — every customer is OFF by default.</p>}
-          {switches !== null && switches.length > 0 && (
-            <div className="table-wrap">
+          {switches !== null && shownSwitches.length > 0 && (
+            <div className="table-wrap" style={{ maxHeight: 520, overflowY: 'auto' }}>
               <table className="admin-table">
                 <thead>
                   <tr><th>System</th><th>Shop</th><th>Switch</th><th>Updated</th></tr>
                 </thead>
                 <tbody>
-                  {switches.map(s => (
+                  {shownSwitches.map(s => (
                     <tr key={`${s.owner_type}:${s.owner_key}`}>
                       <td>{s.owner_type}</td>
                       <td>{s.owner_key}</td>
@@ -325,14 +340,14 @@ export default function AdminDirectUpload() {
           <p className="hint">Every upload that went live straight away, because the switch was on.</p>
           {activity === null && <div className="hero-card"><p>Loading activity...</p></div>}
           {activity !== null && activity.length === 0 && <p className="hint">Nothing has gone straight to live yet.</p>}
-          {activity !== null && activity.length > 0 && (
-            <div className="table-wrap">
+          {activity !== null && shownActivity.length > 0 && (
+            <div className="table-wrap" style={{ maxHeight: 520, overflowY: 'auto' }}>
               <table className="admin-table">
                 <thead>
                   <tr><th>Date</th><th>System</th><th>Shop</th><th>Kind</th><th>Detail</th></tr>
                 </thead>
                 <tbody>
-                  {activity.map(a => (
+                  {shownActivity.map(a => (
                     <tr key={a.id || `${a.created_at}:${a.owner_key}:${a.kind}`}>
                       <td>{fmtDate(a.created_at)}</td>
                       <td>{a.owner_type}</td>

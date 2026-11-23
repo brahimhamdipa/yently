@@ -1122,6 +1122,7 @@ export default function AdminStoreManage({ table: tableProp, onTableChange }) {
         <div className="filters">
           <input placeholder="Search this table..." value={query} onChange={e => setQuery(e.target.value)} />
         </div>
+        {rows !== null && <p className="hint">{query.trim() ? `${filtered.length} of ${rows.length} rows` : `${rows.length} rows`}</p>}
         {status && <p className="hint">{status}</p>}
       </div>
 
@@ -1518,6 +1519,7 @@ export default function AdminStoreManage({ table: tableProp, onTableChange }) {
       )}
 
       <div className="hero-card">
+        <div className="table-wrap" style={{ maxHeight: 520, overflowY: 'auto' }}>
         <table className="admin-table">
           <thead>
             <tr>
@@ -1715,6 +1717,7 @@ export default function AdminStoreManage({ table: tableProp, onTableChange }) {
             {rows && filtered.length === 0 && <tr><td colSpan="12">Nothing here yet.</td></tr>}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   )

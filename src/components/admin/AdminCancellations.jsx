@@ -296,7 +296,7 @@ export default function AdminCancellations() {
       <p><b>{filtered.length} request{filtered.length === 1 ? '' : 's'}</b></p>
       {filtered.length === 0 && <p className="hint">{summary.total === 0 ? 'No cancellation requests yet.' : 'No requests match these filters.'}</p>}
       {filtered.length > 0 && (
-        <div className="table-wrap">
+        <div className="table-wrap" style={{ maxHeight: 520, overflowY: 'auto' }}>
           <table className="admin-table">
             <thead>
               <tr><th>Order #</th><th>Date</th><th>Plan</th><th>Customer</th><th>Email</th><th>Reason</th><th>Request</th><th>Order status</th><th>Actions</th></tr>

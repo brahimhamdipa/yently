@@ -316,7 +316,7 @@ export default function AdminSystemsOrders() {
       <p><b>{filtered.length} order{filtered.length === 1 ? '' : 's'}</b></p>
       {filtered.length === 0 && <p className="hint">{summary.total === 0 ? 'No system orders yet.' : 'No orders match these filters.'}</p>}
       {filtered.length > 0 && (
-        <div className="table-wrap">
+        <div className="table-wrap" style={{ maxHeight: 520, overflowY: 'auto' }}>
           <table className="admin-table">
             <thead>
               <tr><th>Order #</th><th>Date</th><th>System / Plan</th><th>Customer</th><th>Email</th><th>Phone</th><th>Price</th><th>Status</th><th>Actions</th></tr>

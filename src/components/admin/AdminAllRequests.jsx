@@ -368,7 +368,7 @@ export default function AdminAllRequests() {
       <p><b>{filtered.length} request{filtered.length === 1 ? '' : 's'}</b> · {summary.total - summary.done} new · {summary.done} done</p>
       {filtered.length === 0 && <p className="hint">{summary.total === 0 ? 'No requests yet — nothing waiting for a reply.' : 'No requests match these filters.'}</p>}
       {filtered.length > 0 && (
-        <div className="table-wrap">
+        <div className="table-wrap" style={{ maxHeight: 520, overflowY: 'auto' }}>
           <table className="admin-table">
             <thead>
               <tr><th>Date</th><th>Source</th><th>Customer</th><th>Email</th><th>Phone</th><th>Summary</th><th>Status</th><th>Actions</th></tr>

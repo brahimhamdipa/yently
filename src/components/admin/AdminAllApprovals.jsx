@@ -240,7 +240,7 @@ export default function AdminAllApprovals() {
       <p><b>{filtered.length} draft{filtered.length === 1 ? '' : 's'} waiting</b></p>
       {filtered.length === 0 && <p className="hint">{summary.total === 0 ? 'Nothing waiting for approval — every draft is handled.' : 'No drafts match these filters.'}</p>}
       {filtered.length > 0 && (
-        <div className="table-wrap">
+        <div className="table-wrap" style={{ maxHeight: 520, overflowY: 'auto' }}>
           <table className="admin-table">
             <thead>
               <tr><th>System</th><th>Shop / School</th><th>Login</th><th>What changed</th><th>Shop created</th><th>Note</th><th>Actions</th></tr>

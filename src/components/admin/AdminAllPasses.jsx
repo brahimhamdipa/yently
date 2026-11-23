@@ -892,7 +892,7 @@ export default function AdminAllPasses() {
             {failed.includes(g.key) && <p className="hint">Could not load this group — tap Refresh to try again.</p>}
             {!isCollapsed && list.length === 0 && !failed.includes(g.key) && <p className="hint">Nothing here yet.</p>}
             {!isCollapsed && list.length > 0 && (
-              <div className="table-wrap" style={{ marginTop: 4 }}>
+              <div className="table-wrap" style={{ marginTop: 4, maxHeight: 520, overflowY: 'auto' }}>
                 <table className="allpasses-table">
                   <thead>
                     <tr><th>Link</th><th>Username</th><th>Password</th><th>Customer</th>{g.key === 'kids' && <th>Kids</th>}<th>Note</th><th>Actions</th></tr>

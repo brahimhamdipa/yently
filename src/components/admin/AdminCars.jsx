@@ -29,6 +29,7 @@ export default function AdminCars() {
   const [listings, setListings] = useState(null)
   const [sellers, setSellers] = useState(null)
   const [filter, setFilter] = useState('pending')
+  const [search, setSearch] = useState('')
   const [status, setStatus] = useState('')
   const [error, setError] = useState('')
   const [sellerForm, setSellerForm] = useState({ name: '', slug: '', username: '', password: '', email: '', phone: '' })
@@ -86,6 +87,12 @@ export default function AdminCars() {
   const shown = (listings || []).filter(r => filter === 'all' ? true : r.status === filter)
   const pendingCount = (listings || []).filter(r => r.status === 'pending').length
 
+  // Search filters the status-filtered listings, or the sellers list.
+  const needle = search.trim().toLowerCase()
+  const matches = (hay) => !needle || String(hay || '').toLowerCase().includes(needle)
+  const shownListings = shown.filter(r => matches([r.name, r.year, r.make, r.model, r.seller_name, r.status, r.country].join(' ')))
+  const shownSellers = (sellers || []).filter(s => matches([s.name, s.slug, s.username, s.email, s.phone].join(' ')))
+
   return (
     <div>
       <div className="hero-card">
@@ -101,6 +108,10 @@ export default function AdminCars() {
       {status && <p className="status">{status}</p>}
       {error && <p className="status">Error: {error}</p>}
 
+      <input placeholder={view === 'listings' ? 'Search listings — car, seller, status…' : 'Search sellers — name, username, email…'} style={{ fontSize: 16 }} value={search} onChange={e => setSearch(e.target.value)} />
+      <p className="hint">{view === 'listings' ? (search.trim() ? `${shownListings.length} of ${shown.length} listings match` : `${shown.length} listings`) : (search.trim() ? `${shownSellers.length} of ${(sellers || []).length} sellers match` : `${(sellers || []).length} sellers`)}</p>
+      {view === 'listings' && (listings || []).length === 500 && <p className="hint">Showing 500 listings — older ones may exist beyond this list.</p>}
+
       {view === 'listings' && (
         <div>
           <div className="trip-tabs" style={{ marginBottom: 12 }}>
@@ -110,14 +121,14 @@ export default function AdminCars() {
           </div>
           {listings === null && <div className="hero-card"><p>Loading listings...</p></div>}
           {listings !== null && shown.length === 0 && <p className="hint">Nothing here yet.</p>}
-          {shown.length > 0 && (
-            <div className="table-wrap">
+          {shownListings.length > 0 && (
+            <div className="table-wrap" style={{ maxHeight: 520, overflowY: 'auto' }}>
               <table className="admin-table">
                 <thead>
                   <tr><th>Car</th><th>Price</th><th>Mileage</th><th>Seller</th><th>Photos</th><th>Status</th><th>Added</th><th className="no-print"></th></tr>
                 </thead>
                 <tbody>
-                  {shown.map(r => (
+                  {shownListings.map(r => (
                     <tr key={r.id}>
                       <td title={r.description || ''}>{r.name}{r.year || r.make ? ` — ${[r.year, r.make, r.model].filter(Boolean).join(' ')}` : ''}</td>
                       <td>{r.price ? `$${fmtNum(r.price)}` : ''}</td>
@@ -164,13 +175,13 @@ export default function AdminCars() {
           {sellers === null && <div className="hero-card"><p>Loading sellers...</p></div>}
           {sellers !== null && sellers.length === 0 && <p className="hint">No sellers yet.</p>}
           {sellers !== null && sellers.length > 0 && (
-            <div className="table-wrap">
+            <div className="table-wrap" style={{ maxHeight: 520, overflowY: 'auto' }}>
               <table className="admin-table">
                 <thead>
                   <tr><th>Seller</th><th>Slug</th><th>Username</th><th>Password</th><th>Email</th><th>Phone</th><th className="no-print"></th></tr>
                 </thead>
                 <tbody>
-                  {sellers.map(s => (
+                  {shownSellers.map(s => (
                     <tr key={s.id}>
                       <td>{s.name}</td>
                       <td>{s.slug}</td>

@@ -83,6 +83,7 @@ function SearchablePick({ label, value, options, onPick, placeholder, allowClear
   const [open, setOpen] = useState(false)
   const [text, setText] = useState('')
   const ref = useRef(null)
+  const inputRef = useRef(null)
   const selected = options.find(o => o.value === value) || null
   const needle = text.trim().toLowerCase()
   const shown = needle ? options.filter(o => String(o.label || '').toLowerCase().includes(needle)) : options
@@ -94,32 +95,45 @@ function SearchablePick({ label, value, options, onPick, placeholder, allowClear
     window.addEventListener('keydown', onKey)
     return () => { window.removeEventListener('pointerdown', onDown); window.removeEventListener('keydown', onKey) }
   }, [open])
+  // The label text is a plain div, NOT a <label>: the option buttons
+  // sit inside this picker, and a <label> re-focuses the input on
+  // every tap, re-opening the list right after a pick. Blurring the
+  // input on pick dismisses the keyboard and leaves the picked
+  // value showing with the list closed.
+  const pick = (v) => { onPick(v); setOpen(false); setText(''); inputRef.current?.blur() }
   return (
-    <label>{label}
-      <div className="car-submenu-wrap" ref={ref} style={{ marginBottom: 0 }}>
-        <input
-          placeholder={placeholder}
-          autoComplete="off"
-          style={{ fontSize: 16 }}
-          value={open ? text : (selected ? selected.label : '')}
-          onFocus={() => { setOpen(true); setText('') }}
-          onChange={e => {
-            const v = e.target.value
-            setText(v)
-            setOpen(true)
-            if (allowClear && v === '') onPick('')
-          }}
-        />
+    <div>
+      <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 6 }}>{label}</div>
+      <div className="car-submenu-wrap" ref={ref} style={{ marginBottom: 10 }}>
+        <div style={{ position: 'relative' }}>
+          <input
+            ref={inputRef}
+            placeholder={placeholder}
+            autoComplete="off"
+            style={{ fontSize: 16, paddingRight: allowClear && selected && !open ? 30 : undefined }}
+            value={open ? text : (selected ? selected.label : '')}
+            onFocus={() => { setOpen(true); setText('') }}
+            onChange={e => {
+              const v = e.target.value
+              setText(v)
+              setOpen(true)
+              if (allowClear && v === '') onPick('')
+            }}
+          />
+          {allowClear && selected && !open && (
+            <button type="button" aria-label="Clear picked shop" onClick={() => { onPick(''); setText(''); setOpen(true); inputRef.current?.focus() }} style={{ position: 'absolute', right: 6, top: '50%', transform: 'translateY(-50%)', border: 'none', background: 'transparent', cursor: 'pointer', fontSize: 18, lineHeight: 1, padding: '2px 6px', color: '#6b7280' }}>×</button>
+          )}
+        </div>
         {open && (
           <div className="car-submenu" style={{ width: '100%', maxHeight: 260, overflowY: 'auto' }}>
             {shown.length === 0 && <p className="hint" style={{ padding: '12px 16px', margin: 0 }}>{options.length === 0 ? 'Nothing here yet' : 'No match — try another word'}</p>}
             {shown.map(o => (
-              <button key={o.value} type="button" onClick={() => { onPick(o.value); setOpen(false); setText('') }}>{o.label}</button>
+              <button key={o.value} type="button" onClick={() => pick(o.value)}>{o.label}</button>
             ))}
           </div>
         )}
       </div>
-    </label>
+    </div>
   )
 }
 

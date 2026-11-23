@@ -437,7 +437,7 @@ export default function AdminAllOrders() {
 
       <h3>Summary by plan</h3>
       <p className="hint">Tap a number to filter the orders below to that plan. Tap an “Orders this month” number to filter to that plan, this month only.</p>
-      <div className="table-wrap">
+      <div className="table-wrap" style={{ maxHeight: 520, overflowY: 'auto' }}>
         <table className="admin-table">
           <thead>
             <tr><th>Plan</th><th>Orders</th><th>Orders this month</th><th>Monthly value</th><th>Latest order</th></tr>
@@ -511,7 +511,7 @@ export default function AdminAllOrders() {
       <p><b>{filtered.length} order{filtered.length === 1 ? '' : 's'}</b> · <b>{money(filteredTotal)}</b> a month at list prices</p>
       {filtered.length === 0 && <p className="hint">{totalOrders === 0 ? 'No orders yet — nothing has been ordered through the Business cart.' : 'No orders match these filters.'}</p>}
       {filtered.length > 0 && (
-        <div className="table-wrap">
+        <div className="table-wrap" style={{ maxHeight: 520, overflowY: 'auto' }}>
           <table className="admin-table">
             <thead>
               <tr><th>Date</th><th>System / Plan</th><th>Customer</th><th>Email</th><th>Phone</th><th>Price</th><th>Extra kids</th><th>Status</th><th>Note</th><th>Actions</th></tr>

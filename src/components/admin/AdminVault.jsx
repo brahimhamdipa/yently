@@ -100,6 +100,7 @@ function sortReminders(rows) {
 
 export default function AdminVault() {
   const [view, setView] = useState('documents')
+  const [search, setSearch] = useState('')
   const [status, setStatus] = useState('')
   const [error, setError] = useState('')
 
@@ -126,6 +127,15 @@ export default function AdminVault() {
   const [calYear, setCalYear] = useState(() => new Date().getFullYear())
   const [calMonth, setCalMonth] = useState(() => new Date().getMonth())
   const [calDay, setCalDay] = useState(null)
+
+  // One search box filters whichever list is open (documents,
+  // reminders, providers). Calendar and Upcoming stay as they are —
+  // they are views over the reminders, not lists of their own.
+  const needle = search.trim().toLowerCase()
+  const matches = (hay) => !needle || String(hay || '').toLowerCase().includes(needle)
+  const shownDocs = (docs || []).filter(d => matches(d.name))
+  const shownReminders = (reminders || []).filter(r => matches([r.title, r.kind, r.notes, r.due_date].join(' ')))
+  const shownProviders = (providers || []).filter(p => matches([p.name, p.service, p.contact_name, p.email, p.phone, p.website, p.notes].join(' ')))
 
   const loadDocs = async () => {
     try {
@@ -372,7 +382,7 @@ export default function AdminVault() {
     const group = (title, items) => items.length === 0 ? null : (
       <div key={title}>
         <h4 style={{ margin: '14px 0 6px' }}>{title}</h4>
-        <div className="table-wrap">
+        <div className="table-wrap" style={{ maxHeight: 520, overflowY: 'auto' }}>
           <table className="admin-table">
             <thead>
               <tr><th></th><th>Title</th><th>Due</th><th>Amount</th><th className="no-print"></th></tr>
@@ -465,6 +475,8 @@ export default function AdminVault() {
       {view === 'documents' && (
         <div>
           <p className="hint">Files are stored in a private bucket — they are never on a public link. Downloads open through a signed link that works for one hour.</p>
+          <input placeholder="Search documents — file name…" style={{ fontSize: 16 }} value={search} onChange={e => setSearch(e.target.value)} />
+          <p className="hint">{search.trim() ? `${shownDocs.length} of ${(docs || []).length} documents match` : `${(docs || []).length} documents`}</p>
           <div className="form-card wide">
             <h3>Upload documents</h3>
             <input type="file" multiple disabled={uploading} onChange={uploadDocs} />
@@ -472,14 +484,14 @@ export default function AdminVault() {
           </div>
           {docs === null && <div className="hero-card"><p>Loading documents...</p></div>}
           {docs !== null && docs.length === 0 && <p className="hint">No documents in the Vault yet — upload your first one above.</p>}
-          {docs !== null && docs.length > 0 && (
-            <div className="table-wrap">
+          {docs !== null && shownDocs.length > 0 && (
+            <div className="table-wrap" style={{ maxHeight: 520, overflowY: 'auto' }}>
               <table className="admin-table">
                 <thead>
                   <tr><th>File</th><th>Size</th><th>Uploaded</th><th className="no-print"></th></tr>
                 </thead>
                 <tbody>
-                  {docs.map(d => (
+                  {shownDocs.map(d => (
                     <tr key={d.id || d.name}>
                       <td>{displayName(d.name)}</td>
                       <td>{fmtSize(d.metadata && d.metadata.size)}</td>
@@ -530,18 +542,20 @@ export default function AdminVault() {
             </div>
           </form>
 
+          <input placeholder="Search reminders — title, kind, notes…" style={{ fontSize: 16 }} value={search} onChange={e => setSearch(e.target.value)} />
+          <p className="hint">{search.trim() ? `${shownReminders.length} of ${(reminders || []).length} reminders match` : `${(reminders || []).length} reminders`}</p>
           {reminders !== null && renderUpcoming(editReminder)}
 
           {reminders === null && <div className="hero-card"><p>Loading reminders...</p></div>}
           {reminders !== null && reminders.length === 0 && <p className="hint">Nothing on your list yet — add your first reminder or bill above.</p>}
-          {reminders !== null && reminders.length > 0 && (
-            <div className="table-wrap">
+          {reminders !== null && shownReminders.length > 0 && (
+            <div className="table-wrap" style={{ maxHeight: 520, overflowY: 'auto' }}>
               <table className="admin-table">
                 <thead>
                   <tr><th></th><th>Title</th><th>Kind</th><th>Due</th><th>Amount</th><th>Notes</th><th className="no-print"></th></tr>
                 </thead>
                 <tbody>
-                  {reminders.map(r => {
+                  {shownReminders.map(r => {
                     const tag = dueTag(r)
                     return (
                       <tr key={r.id} style={tag ? { background: tag.text === 'Overdue' ? '#fef2f2' : '#fffbeb' } : undefined}>
@@ -602,16 +616,18 @@ export default function AdminVault() {
             </div>
           </form>
 
+          <input placeholder="Search providers — name, service, contact…" style={{ fontSize: 16 }} value={search} onChange={e => setSearch(e.target.value)} />
+          <p className="hint">{search.trim() ? `${shownProviders.length} of ${(providers || []).length} providers match` : `${(providers || []).length} providers`}</p>
           {providers === null && <div className="hero-card"><p>Loading providers...</p></div>}
           {providers !== null && providers.length === 0 && <p className="hint">No providers listed yet — add your first one above.</p>}
-          {providers !== null && providers.length > 0 && (
-            <div className="table-wrap">
+          {providers !== null && shownProviders.length > 0 && (
+            <div className="table-wrap" style={{ maxHeight: 520, overflowY: 'auto' }}>
               <table className="admin-table">
                 <thead>
                   <tr><th>Provider</th><th>Service</th><th>Contact</th><th>Email</th><th>Phone</th><th>Website</th><th>Notes</th><th className="no-print"></th></tr>
                 </thead>
                 <tbody>
-                  {providers.map(p => (
+                  {shownProviders.map(p => (
                     <tr key={p.id}>
                       <td>{p.name}</td>
                       <td>{p.service || ''}</td>
@@ -644,7 +660,7 @@ export default function AdminVault() {
               <button type="button" className="btn-mini" onClick={() => shiftMonth(1)}>Next ›</button>
               <button type="button" className="btn-mini" onClick={goToday}>Today</button>
             </div>
-            <div className="table-wrap" style={{ marginTop: 12 }}>
+            <div className="table-wrap" style={{ marginTop: 12, maxHeight: 520, overflowY: 'auto' }}>
               <table className="admin-table">
                 <thead>
                   <tr>{['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => <th key={d}>{d}</th>)}</tr>
@@ -713,7 +729,7 @@ export default function AdminVault() {
               {calDayItems.length === 0 ? (
                 <p className="hint">Nothing due on this day.</p>
               ) : (
-                <div className="table-wrap">
+                <div className="table-wrap" style={{ maxHeight: 520, overflowY: 'auto' }}>
                   <table className="admin-table">
                     <thead>
                       <tr><th></th><th>Title</th><th>Kind</th><th>Amount</th><th>Notes</th><th className="no-print"></th></tr>

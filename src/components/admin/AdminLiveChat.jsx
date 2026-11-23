@@ -67,6 +67,7 @@ export default function AdminLiveChat() {
   const [status, setStatus] = useState('')
   const [error, setError] = useState('')
   const [switchForm, setSwitchForm] = useState({ owner_type: 'diner', owner_key: '', notify_email: '', enabled: false })
+  const [search, setSearch] = useState('')
 
   const loadOrders = async () => {
     try { setOrders(await fetchAll('live_chat_order')) }
@@ -112,6 +113,12 @@ export default function AdminLiveChat() {
     loadSwitches()
   }
 
+  // One search box filters whichever tab is open.
+  const needle = search.trim().toLowerCase()
+  const matches = (hay) => !needle || String(hay || '').toLowerCase().includes(needle)
+  const shownOrders = (orders || []).filter(o => matches([o.customer_name, o.customer_email, o.customer_phone, o.plan, o.note].join(' ')))
+  const shownSwitches = (switches || []).filter(s => matches([s.owner_type, s.owner_key, s.notify_email].join(' ')))
+
   return (
     <div>
       <div className="hero-card">
@@ -127,19 +134,23 @@ export default function AdminLiveChat() {
       {status && <p className="status">{status}</p>}
       {error && <p className="status">Error: {error}</p>}
 
+      <input placeholder={view === 'orders' ? 'Search orders — name, email, plan…' : 'Search switches — system, shop, notify email…'} style={{ fontSize: 16 }} value={search} onChange={e => setSearch(e.target.value)} />
+      <p className="hint">{view === 'orders' ? (search.trim() ? `${shownOrders.length} of ${(orders || []).length} orders match` : `${(orders || []).length} orders`) : (search.trim() ? `${shownSwitches.length} of ${(switches || []).length} switches match` : `${(switches || []).length} switches`)}</p>
+      {view === 'orders' && (orders || []).length === 500 && <p className="hint">Showing 500 orders — older ones may exist beyond this list.</p>}
+
       {view === 'orders' && (
         <div>
           <p className="hint">An order row does not say which page the chat goes on — it only has the customer's name, email and phone. To switch a shop on, go to the Switches tab and add a switch for that shop's system and slug.</p>
           {orders === null && <div className="hero-card"><p>Loading orders...</p></div>}
           {orders !== null && orders.length === 0 && <p className="hint">No Live Chat orders yet.</p>}
           {orders !== null && orders.length > 0 && (
-            <div className="table-wrap">
+            <div className="table-wrap" style={{ maxHeight: 520, overflowY: 'auto' }}>
               <table className="admin-table">
                 <thead>
                   <tr><th>Date</th><th>Customer</th><th>Email</th><th>Phone</th><th>Plan</th><th>Price</th><th>Note</th></tr>
                 </thead>
                 <tbody>
-                  {orders.map(o => (
+                  {shownOrders.map(o => (
                     <tr key={o.id}>
                       <td>{fmtDate(o.created_at)}</td>
                       <td>{o.customer_name}</td>
@@ -184,13 +195,13 @@ export default function AdminLiveChat() {
           {switches === null && <div className="hero-card"><p>Loading switches...</p></div>}
           {switches !== null && switches.length === 0 && <p className="hint">No switches yet — every shop is OFF by default.</p>}
           {switches !== null && switches.length > 0 && (
-            <div className="table-wrap">
+            <div className="table-wrap" style={{ maxHeight: 520, overflowY: 'auto' }}>
               <table className="admin-table">
                 <thead>
                   <tr><th>System</th><th>Shop</th><th>Notify email</th><th>Switch</th><th>Updated</th></tr>
                 </thead>
                 <tbody>
-                  {switches.map(s => (
+                  {shownSwitches.map(s => (
                     <tr key={`${s.owner_type}:${s.owner_key}`}>
                       <td>{s.owner_type}</td>
                       <td>{s.owner_key}</td>

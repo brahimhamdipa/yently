@@ -38,6 +38,7 @@ export default function AdminBags() {
   const [fromdel, setFromdel] = useState([])
   const [error, setError] = useState('')
   const [status, setStatus] = useState('')
+  const [search, setSearch] = useState('')
   const [editingId, setEditingId] = useState(null) // null = list, 'new' = new bag, id = edit
   const [draft, setDraft] = useState(null)
   // slot_no -> { slot_label, category_slug, qty } for the open editor.
@@ -81,6 +82,10 @@ export default function AdminBags() {
       .filter(i => (i.categories || []).some(c => c.slug === BAG_CATEGORY_SLUG))
       .sort((a, b) => Number(a.price) - Number(b.price) || a.name.localeCompare(b.name))
   }, [items])
+
+  // Search filters the bag cards by name, description or barcode.
+  const needle = search.trim().toLowerCase()
+  const shownBags = (bags || []).filter(b => !needle || [b.name, b.description, b.barCode].join(' ').toLowerCase().includes(needle))
 
   const slotsByBag = useMemo(() => {
     const out = {}
@@ -573,8 +578,10 @@ export default function AdminBags() {
       {bags.length === 0 && (
         <div className="hero-card"><p>No bags yet — tap "＋ Add a bag" above.</p></div>
       )}
-      <div className="grid">
-        {bags.map(bag => {
+      <input placeholder="Search bags — name or barcode…" style={{ fontSize: 16 }} value={search} onChange={e => setSearch(e.target.value)} />
+      <p className="hint">{search.trim() ? `${shownBags.length} of ${(bags || []).length} bags match` : `${(bags || []).length} bags`}</p>
+      <div className="grid" style={{ maxHeight: 560, overflowY: 'auto' }}>
+        {shownBags.map(bag => {
           const bagSlots = slotsByBag[bag.id] || []
           const sep = separateTotal(bag)
           const sug = suggestedPrice(sep)

@@ -36,6 +36,7 @@ export default function AdminBarcodeGenerator() {
 
   // Generated-but-unassigned barcodes, newest first. Never stored.
   const [generated, setGenerated] = useState([])
+  const [search, setSearch] = useState('')
   const [batchCount, setBatchCount] = useState(10)
   const [generating, setGenerating] = useState(false)
   const [copiedCode, setCopiedCode] = useState('')
@@ -106,6 +107,12 @@ export default function AdminBarcodeGenerator() {
     () => itemList.filter(r => (r.barCode || '').trim() === ''),
     [itemList]
   )
+
+  // Search filters both item lists by name or barcode.
+  const needle = search.trim().toLowerCase()
+  const matches = (hay) => !needle || String(hay || '').toLowerCase().includes(needle)
+  const shownWith = withBarcodes.filter(r => matches([r.name, r.barCode].join(' ')))
+  const shownMissing = missingBarcodes.filter(r => matches([r.name].join(' ')))
 
   // Every barcode already in use: on items, plus the ones already
   // generated on this page (a code is spent the moment it is shown).
@@ -337,7 +344,7 @@ export default function AdminBarcodeGenerator() {
             <button type="button" className="btn-soft" onClick={() => { setGenerated([]); setAssignTarget({}); setConfirmOverwrite(null); setStatus('') }}>Clear list</button>
           </div>
           <p className="hint">Newest first. These are not saved — assign one to an item, or copy / download it, before clearing the list.</p>
-          <div className="table-wrap">
+          <div className="table-wrap" style={{ maxHeight: 520, overflowY: 'auto' }}>
             <table className="admin-table">
               <thead>
                 <tr><th>Barcode</th><th>Value</th><th>Assign to an item</th><th>Actions</th></tr>
@@ -376,17 +383,20 @@ export default function AdminBarcodeGenerator() {
         </div>
       )}
 
+      <input placeholder="Search items — name or barcode…" style={{ fontSize: 16 }} value={search} onChange={e => setSearch(e.target.value)} />
+      <p className="hint">{search.trim() ? `${shownWith.length + shownMissing.length} of ${itemList.length} items match` : `${itemList.length} items`}</p>
+      {itemList.length === 1000 && <p className="hint">Showing 1000 items — older ones may exist beyond this list.</p>}
       <h3>Items with barcodes ({withBarcodes.length})</h3>
       {itemList.length === 0 && <p className="hint">No items yet — add items in the Shop first, then come back here to give them barcodes.</p>}
       {itemList.length > 0 && withBarcodes.length === 0 && <p className="hint">No item has a barcode yet — generate one above and assign it.</p>}
-      {withBarcodes.length > 0 && (
-        <div className="table-wrap">
+      {shownWith.length > 0 && (
+        <div className="table-wrap" style={{ maxHeight: 520, overflowY: 'auto' }}>
           <table className="admin-table">
             <thead>
               <tr><th>Item</th><th>Store</th><th>Price</th><th>Barcode</th></tr>
             </thead>
             <tbody>
-              {withBarcodes.map(r => (
+              {shownWith.map(r => (
                 <tr key={r.id}>
                   <td>{r.name || ('Item #' + r.id)}</td>
                   <td>{providerName[r.provider_id] || '—'}</td>
@@ -402,14 +412,14 @@ export default function AdminBarcodeGenerator() {
       <h3>Items still missing a barcode ({missingBarcodes.length})</h3>
       {itemList.length === 0 && <p className="hint">No items yet.</p>}
       {itemList.length > 0 && missingBarcodes.length === 0 && <p className="hint">Every item has a barcode ✓</p>}
-      {missingBarcodes.length > 0 && (
-        <div className="table-wrap">
+      {shownMissing.length > 0 && (
+        <div className="table-wrap" style={{ maxHeight: 520, overflowY: 'auto' }}>
           <table className="admin-table">
             <thead>
               <tr><th>Item</th><th>Store</th><th>Price</th><th></th></tr>
             </thead>
             <tbody>
-              {missingBarcodes.map(r => (
+              {shownMissing.map(r => (
                 <tr key={r.id}>
                   <td>{r.name || ('Item #' + r.id)}</td>
                   <td>{providerName[r.provider_id] || '—'}</td>
