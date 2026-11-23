@@ -1,6 +1,20 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <script>
+      // Practice: autofly.us.com belongs to the "Auto Fly" dealer
+      // shop — send its visitors straight to the dealer page on the
+      // same domain. Only fires on autofly.us.com, and never when
+      // already on the dealer page (no redirect loop). yently.com
+      // is untouched.
+      (function () {
+        try {
+          if (window.location.hostname === 'autofly.us.com' && window.location.pathname !== '/dealer') {
+            window.location.replace('/dealer?d=autofly');
+          }
+        } catch (e) {}
+      })();
+    </script>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
