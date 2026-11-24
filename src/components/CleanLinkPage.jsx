@@ -111,7 +111,7 @@ function TypeAddButton({ type, ready, inCart, onAdd, go }) {
         <div>
           <button onClick={onAdd} disabled={!ready} style={!ready ? { background: '#9ca3af', borderColor: '#9ca3af', cursor: 'not-allowed', opacity: 0.7 } : undefined}>Add to cart — ${type.price}/month</button>
           {!type.available && <p className="hint">Available soon — this button is switched off until {type.name} launches.</p>}
-          {type.available && !ready && <p className="hint">Pick your system and type your page name and the names you want in the form below first.</p>}
+          {type.available && !ready && <p className="hint">Pick your system and type your page name and the names you want in the form above first.</p>}
         </div>
       )}
     </div>
@@ -185,59 +185,6 @@ export default function CleanLinkPage({ go }) {
         <p>Short enough to print on a menu, a card, or a shop window — and easy for your customers to remember and type.</p>
       </div>
 
-      <div className="hero-card">
-        <h3>🆓 Free Link — included with your system</h3>
-        <p><b>yently.com/pos?s=your-shop</b> — the link your page already comes with. Every system Yently builds for you has one, and it is free: it comes with the system you already bought, and it already works. Share it anywhere — it opens your page straight away.</p>
-        <p className="hint">A Free Link is the standard address for your page. The three links below are shorter, cleaner versions of it — easier to say, print and remember.</p>
-      </div>
-
-      <div className="hero-card">
-        <h3>🔗 Clean Link — ${CLEAN_PLAN_PRICE}/month</h3>
-        <p><b>yently.com/[name of your choice]</b> — your shop at a clean address, with nothing after the name. Easy to remember, easy to say on the phone, easy to print on a menu, a card or a shop window, and easy to type — no question mark, no code, nothing to mistype.</p>
-        <p>First come, first served: the name you pick is yours alone once it is yours, and nobody else can take it. Your old link keeps working — the clean link is an extra address for the same shop, and nothing you already shared stops working.</p>
-        <p className="hint">First month free, cancel anytime.</p>
-        <TypeAddButton type={LINK_TYPES[0]} ready={typeReady('clean')} inCart={hasPlan(CLEAN_PLAN_KEY)} onAdd={() => handleAddType('clean')} go={go} />
-      </div>
-
-      <div className="hero-card">
-        <h3>✨ Golden Link — ${CLEAN_GOLDEN_PLAN_PRICE}/month <span style={{ display: 'inline-block', background: '#fef3c7', color: '#92400e', border: '1px solid #fde68a', borderRadius: 999, padding: '2px 10px', fontSize: 13, fontWeight: 700 }}>Available soon</span></h3>
-        <p><b>[name of your choice].yently.com</b> — your name first, unmistakably yours. The premium one: your customers see your name before anything else, and there is no mistaking whose page it is. A golden address for a business that wants to stand out.</p>
-        <p>First come, first served, like Clean Link — the name you pick is yours alone once it is yours.</p>
-        <TypeAddButton type={LINK_TYPES[1]} ready={typeReady('golden')} inCart={hasPlan(CLEAN_GOLDEN_PLAN_KEY)} onAdd={() => handleAddType('golden')} go={go} />
-      </div>
-
-      <div className="hero-card">
-        <h3>🌐 Your Own Domain — ${CLEAN_DOMAIN_PLAN_PRICE}/month <span style={{ display: 'inline-block', background: '#fef3c7', color: '#92400e', border: '1px solid #fde68a', borderRadius: 999, padding: '2px 10px', fontSize: 13, fontWeight: 700 }}>Available soon</span></h3>
-        <p><b>[name of your choice].com</b> — or any other ending (.us, .fr, .app, .io, .us.com, …). Your own domain, fully yours: the address is your business name and nothing else, on the ending you choose.</p>
-        <p>First come, first served — the domain you pick is yours alone once it is yours.</p>
-        <TypeAddButton type={LINK_TYPES[2]} ready={typeReady('domain')} inCart={hasPlan(CLEAN_DOMAIN_PLAN_KEY)} onAdd={() => handleAddType('domain')} go={go} />
-      </div>
-
-      <div className="hero-card">
-        <h3>How it works — availability</h3>
-        <p>Every paid link needs its name to be free — that is how it works:</p>
-        <ol className="steps">
-          <li><b>Tell Yently the name — or names — you want</b>, in the order you prefer them. Send a list if you like: your first choice first, then the next ones.</li>
-          <li><b>Yently checks availability</b> and gets back to you with a list of the links that are free — starting with your choices, if they are free. If they are not, Yently tries to find the closest free ones to what you asked for.</li>
-          <li><b>You check the list and get back to Yently with your pick</b> — or another list of names, if nothing on it is right for you — and the process starts again, until you find one you are happy with.</li>
-          <li><b>Yently sets it up</b> — your link is switched on for your shop, and your old link still works too.</li>
-        </ol>
-        <p className="hint">Golden Link and Your Own Domain will work the same way when they launch.</p>
-      </div>
-
-      <div className="hero-card">
-        <h3>Simple, honest pricing</h3>
-        <p><b>Clean Link — $5/month.</b> That's it — your clean link, for one shop. No setup fee, no charge per click. First month free, cancel anytime.</p>
-        <p>Golden Link ($10/month) and Your Own Domain ($20/month) are coming soon — same first month free when they launch.</p>
-        <p className="hint">Send your request below and Yently will be in touch to set up your clean link.</p>
-      </div>
-
-      <div className="hero-card" style={{ textAlign: 'center' }}>
-        <h3>Try a clean link</h3>
-        <p>See one working — tap below to open the demo at its clean link.</p>
-        <a href="/demo-chat" target="_blank" rel="noreferrer" style={{ display: 'inline-block', background: '#2563eb', color: '#fff', padding: '12px 22px', borderRadius: 10, fontWeight: 700, textDecoration: 'none' }}>Open yently.com/demo-chat</a>
-      </div>
-
       <form className="form-card wide direct-help" onSubmit={handleSubmit}>
         <h3>Get your clean link</h3>
         <div className="row">
@@ -296,6 +243,60 @@ export default function CleanLinkPage({ go }) {
         <button type="submit" disabled={busy}>Send request</button>
         {status && <p className="status">{status}</p>}
       </form>
+
+      <div className="hero-card">
+        <h3>🆓 Free Link — included with your system</h3>
+        <p><b>yently.com/pos?s=your-shop</b> — the link your page already comes with. Every system Yently builds for you has one, and it is free: it comes with the system you already bought, and it already works. Share it anywhere — it opens your page straight away.</p>
+        <p className="hint">A Free Link is the standard address for your page. The three links below are shorter, cleaner versions of it — easier to say, print and remember.</p>
+      </div>
+
+      <div className="hero-card">
+        <h3>🔗 Clean Link — ${CLEAN_PLAN_PRICE}/month</h3>
+        <p><b>yently.com/[name of your choice]</b> — your shop at a clean address, with nothing after the name. Easy to remember, easy to say on the phone, easy to print on a menu, a card or a shop window, and easy to type — no question mark, no code, nothing to mistype.</p>
+        <p>First come, first served: the name you pick is yours alone once it is yours, and nobody else can take it. Your old link keeps working — the clean link is an extra address for the same shop, and nothing you already shared stops working.</p>
+        <p className="hint">First month free, cancel anytime.</p>
+        <TypeAddButton type={LINK_TYPES[0]} ready={typeReady('clean')} inCart={hasPlan(CLEAN_PLAN_KEY)} onAdd={() => handleAddType('clean')} go={go} />
+      </div>
+
+      <div className="hero-card">
+        <h3>✨ Golden Link — ${CLEAN_GOLDEN_PLAN_PRICE}/month <span style={{ display: 'inline-block', background: '#fef3c7', color: '#92400e', border: '1px solid #fde68a', borderRadius: 999, padding: '2px 10px', fontSize: 13, fontWeight: 700 }}>Available soon</span></h3>
+        <p><b>[name of your choice].yently.com</b> — your name first, unmistakably yours. The premium one: your customers see your name before anything else, and there is no mistaking whose page it is. A golden address for a business that wants to stand out.</p>
+        <p>First come, first served, like Clean Link — the name you pick is yours alone once it is yours.</p>
+        <TypeAddButton type={LINK_TYPES[1]} ready={typeReady('golden')} inCart={hasPlan(CLEAN_GOLDEN_PLAN_KEY)} onAdd={() => handleAddType('golden')} go={go} />
+      </div>
+
+      <div className="hero-card">
+        <h3>🌐 Your Own Domain — ${CLEAN_DOMAIN_PLAN_PRICE}/month <span style={{ display: 'inline-block', background: '#fef3c7', color: '#92400e', border: '1px solid #fde68a', borderRadius: 999, padding: '2px 10px', fontSize: 13, fontWeight: 700 }}>Available soon</span></h3>
+        <p><b>[name of your choice].com</b> — or any other ending (.us, .fr, .app, .io, .us.com, …). Your own domain, fully yours: the address is your business name and nothing else, on the ending you choose.</p>
+        <p>First come, first served — the domain you pick is yours alone once it is yours.</p>
+        <TypeAddButton type={LINK_TYPES[2]} ready={typeReady('domain')} inCart={hasPlan(CLEAN_DOMAIN_PLAN_KEY)} onAdd={() => handleAddType('domain')} go={go} />
+      </div>
+
+      <div className="hero-card">
+        <h3>How it works — availability</h3>
+        <p>Every paid link needs its name to be free — that is how it works:</p>
+        <ol className="steps">
+          <li><b>Tell Yently the name — or names — you want</b>, in the order you prefer them. Send a list if you like: your first choice first, then the next ones.</li>
+          <li><b>Yently checks availability</b> and gets back to you with a list of the links that are free — starting with your choices, if they are free. If they are not, Yently tries to find the closest free ones to what you asked for.</li>
+          <li><b>You check the list and get back to Yently with your pick</b> — or another list of names, if nothing on it is right for you — and the process starts again, until you find one you are happy with.</li>
+          <li><b>Yently sets it up</b> — your link is switched on for your shop, and your old link still works too.</li>
+        </ol>
+        <p className="hint">Golden Link and Your Own Domain will work the same way when they launch.</p>
+      </div>
+
+      <div className="hero-card">
+        <h3>Simple, honest pricing</h3>
+        <p><b>Clean Link — $5/month.</b> That's it — your clean link, for one shop. No setup fee, no charge per click. First month free, cancel anytime.</p>
+        <p>Golden Link ($10/month) and Your Own Domain ($20/month) are coming soon — same first month free when they launch.</p>
+        <p className="hint">Send your request above and Yently will be in touch to set up your clean link.</p>
+      </div>
+
+      <div className="hero-card" style={{ textAlign: 'center' }}>
+        <h3>Try a clean link</h3>
+        <p>See one working — tap below to open the demo at its clean link.</p>
+        <a href="/demo-chat" target="_blank" rel="noreferrer" style={{ display: 'inline-block', background: '#2563eb', color: '#fff', padding: '12px 22px', borderRadius: 10, fontWeight: 700, textDecoration: 'none' }}>Open yently.com/demo-chat</a>
+      </div>
+
 
       <FloatingAddToCart planKey={selectedType.key} name={selectedType.name} price={selectedType.price} go={go} ready={shopReady} notReadyHint="Pick your system and type your page name and the names you want in the form above first." onAdd={handleAddToCart} />
     </div>

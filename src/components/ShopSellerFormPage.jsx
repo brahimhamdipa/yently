@@ -519,6 +519,10 @@ export default function ShopSellerFormPage({ go }) {
     )
   }
 
+  // Lists longer than this scroll inside a fixed-height panel
+  // instead of growing the whole page (see the lists below).
+  const LIST_LIMIT = 10
+
   return (
     <div>
       <GroceryTopBar go={go} />
@@ -532,32 +536,35 @@ export default function ShopSellerFormPage({ go }) {
       {items === null && <div className="hero-card"><p>Loading your items...</p></div>}
       {items !== null && items.length === 0 && <p className="hint">No items yet — add your first one below.</p>}
       {items !== null && items.length > 0 && (
-        <div className="table-wrap">
-          <table className="admin-table">
-            <thead>
-              <tr><th>Item</th><th>Price</th><th>Status</th><th className="no-print"></th></tr>
-            </thead>
-            <tbody>
-              {items.map(item => (
-                <tr key={item.id}>
-                  <td>{item.name}</td>
-                  <td>{item.price !== null && item.price !== undefined && item.price !== '' ? `$${fmtNum(item.price)}` : ''}</td>
-                  <td>{item.is_active ? 'Live' : 'Waiting for approval'}</td>
-                  <td className="no-print" style={{ whiteSpace: 'nowrap' }}>
-                    <button type="button" className="btn-mini" onClick={() => startEdit(item)}>Edit</button>{' '}
-                    <button
-                      type="button"
-                      className="btn-mini btn-danger"
-                      onClick={() => deleteItem(item)}
-                    >
-                      {confirmDelete === item.id ? 'Tap again to confirm' : 'Delete'}
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <>
+          {items.length > LIST_LIMIT && <p className="hint">{items.length} items</p>}
+          <div className="table-wrap" style={items.length > LIST_LIMIT ? { maxHeight: 520, overflowY: 'auto' } : undefined}>
+            <table className="admin-table">
+              <thead>
+                <tr><th>Item</th><th>Price</th><th>Status</th><th className="no-print"></th></tr>
+              </thead>
+              <tbody>
+                {items.map(item => (
+                  <tr key={item.id}>
+                    <td>{item.name}</td>
+                    <td>{item.price !== null && item.price !== undefined && item.price !== '' ? `$${fmtNum(item.price)}` : ''}</td>
+                    <td>{item.is_active ? 'Live' : 'Waiting for approval'}</td>
+                    <td className="no-print" style={{ whiteSpace: 'nowrap' }}>
+                      <button type="button" className="btn-mini" onClick={() => startEdit(item)}>Edit</button>{' '}
+                      <button
+                        type="button"
+                        className="btn-mini btn-danger"
+                        onClick={() => deleteItem(item)}
+                      >
+                        {confirmDelete === item.id ? 'Tap again to confirm' : 'Delete'}
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
 
       {editing ? (
@@ -584,9 +591,11 @@ export default function ShopSellerFormPage({ go }) {
           {batch.length > 0 && (
             <div>
               <p><b>Items in this list ({batch.length}):</b> <Help text={HELP.batchList} /></p>
-              {batch.map((it, i) => (
-                <p key={i}>{it.name} — ${fmtNum(it.price)} <button type="button" className="btn-mini" onClick={() => setBatch(batch.filter((_, j) => j !== i))}>Remove</button></p>
-              ))}
+              <div style={batch.length > LIST_LIMIT ? { maxHeight: 520, overflowY: 'auto' } : undefined}>
+                {batch.map((it, i) => (
+                  <p key={i}>{it.name} — ${fmtNum(it.price)} <button type="button" className="btn-mini" onClick={() => setBatch(batch.filter((_, j) => j !== i))}>Remove</button></p>
+                ))}
+              </div>
             </div>
           )}
           <div style={{ border: '1px solid #e5e7eb', borderRadius: 12, padding: 12, background: '#f9fafb', marginTop: 10 }}>

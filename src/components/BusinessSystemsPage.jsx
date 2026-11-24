@@ -37,6 +37,7 @@ const ADDONS = [
   { name: 'Live Chat', price: 3, blurb: 'A chat bubble on your website — every message to your email.', tab: 'live-chat' },
   { name: 'Extra Students', price: 1, blurb: '$1/month per extra student — the first 3 are included in the $5/month Kids price.', href: '/extra-students' },
   { name: 'Direct Upload', price: 5, blurb: 'Your uploads go live straight away — no waiting for approval.', tab: 'direct-upload' },
+  { name: 'Reports', price: 5, blurb: 'Your orders and bookings, counted and totalled — with dates, filters, print and PDF.', tab: 'reports' },
 ]
 
 // "Learning Systems" expander — the Kids submenu rows except My

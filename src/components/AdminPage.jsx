@@ -25,6 +25,7 @@ import AdminBarcodeGenerator from './admin/AdminBarcodeGenerator'
 import AdminBags from './admin/AdminBags'
 import AdminCars from './admin/AdminCars'
 import AdminDirectUpload from './admin/AdminDirectUpload'
+import AdminReports from './admin/AdminReports'
 import AdminLiveChat from './admin/AdminLiveChat'
 import AdminVault from './admin/AdminVault'
 import AdminAdvancedSearch from './admin/AdminAdvancedSearch'
@@ -65,6 +66,7 @@ const MENUS = [
       { label: 'Diner Passes', table: 'diner_restaurants' },
       { label: 'Diner Approvals', table: 'diner_approvals' },
       { label: 'Diner Kitchen', table: 'diner_orders' },
+      { label: 'Dinner Orders', table: 'dinner_orders' },
     ] },
     { label: 'POS', children: [
       { label: 'POS Passes', table: 'pos_stores' },
@@ -176,6 +178,7 @@ const MENUS = [
       { label: 'Clean Link Orders', table: 'clean_link_orders' },
       { label: 'Direct Upload Orders', table: 'direct_upload_orders' },
       { label: 'Direct Upload', section: 'direct-upload' },
+      { label: 'Reports', section: 'reports' },
     ] },
     { label: 'Barbers', children: [
       { label: 'Barber Passes', table: 'barbershop_shops' },
@@ -405,6 +408,7 @@ export default function AdminPage() {
       </div>
       {section === 'cars' && <AdminCars />}
       {section === 'direct-upload' && <AdminDirectUpload />}
+      {section === 'reports' && <AdminReports />}
       {section === 'live-chat' && <AdminLiveChat />}
       {section === 'submissions' && <AdminSubmissions />}
       {section === 'store-add' && <AdminStoreAdd />}

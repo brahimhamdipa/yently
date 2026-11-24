@@ -302,6 +302,10 @@ export default function CarSellerFormPage({ go }) {
     )
   }
 
+  // Lists longer than this scroll inside a fixed-height panel
+  // instead of growing the whole page (see the lists below).
+  const LIST_LIMIT = 10
+
   return (
     <div>
       <CarsMenu go={go} />
@@ -315,33 +319,36 @@ export default function CarSellerFormPage({ go }) {
       {cars === null && <div className="hero-card"><p>Loading your cars...</p></div>}
       {cars !== null && cars.length === 0 && <p className="hint">No cars yet — add your first one below.</p>}
       {cars !== null && cars.length > 0 && (
-        <div className="table-wrap">
-          <table className="admin-table">
-            <thead>
-              <tr><th>Car</th><th>Price</th><th>Country</th><th>Status</th><th className="no-print"></th></tr>
-            </thead>
-            <tbody>
-              {cars.map(car => (
-                <tr key={car.id}>
-                  <td>{car.name}</td>
-                  <td>{car.price ? `$${fmtNum(car.price)}` : ''}</td>
-                  <td>{car.country || ''}</td>
-                  <td>{car.status}</td>
-                  <td className="no-print" style={{ whiteSpace: 'nowrap' }}>
-                    <button type="button" className="btn-mini" onClick={() => { setEditing(car); setShowAdd(false) }}>Edit</button>{' '}
-                    <button
-                      type="button"
-                      className="btn-mini btn-danger"
-                      onClick={() => deleteCar(car)}
-                    >
-                      {confirmDelete === car.id ? 'Tap again to confirm' : 'Delete'}
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <>
+          {cars.length > LIST_LIMIT && <p className="hint">{cars.length} cars</p>}
+          <div className="table-wrap" style={cars.length > LIST_LIMIT ? { maxHeight: 520, overflowY: 'auto' } : undefined}>
+            <table className="admin-table">
+              <thead>
+                <tr><th>Car</th><th>Price</th><th>Country</th><th>Status</th><th className="no-print"></th></tr>
+              </thead>
+              <tbody>
+                {cars.map(car => (
+                  <tr key={car.id}>
+                    <td>{car.name}</td>
+                    <td>{car.price ? `$${fmtNum(car.price)}` : ''}</td>
+                    <td>{car.country || ''}</td>
+                    <td>{car.status}</td>
+                    <td className="no-print" style={{ whiteSpace: 'nowrap' }}>
+                      <button type="button" className="btn-mini" onClick={() => { setEditing(car); setShowAdd(false) }}>Edit</button>{' '}
+                      <button
+                        type="button"
+                        className="btn-mini btn-danger"
+                        onClick={() => deleteCar(car)}
+                      >
+                        {confirmDelete === car.id ? 'Tap again to confirm' : 'Delete'}
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
 
       {editing ? (
@@ -370,11 +377,14 @@ export default function CarSellerFormPage({ go }) {
         </div>
         {batch.length > 0 && (
           <div>
-            <ul>
-              {batch.map((c, i) => (
-                <li key={i}>{c.name}{c.price ? ` — $${fmtNum(c.price)}` : ''}</li>
-              ))}
-            </ul>
+            {batch.length > LIST_LIMIT && <p className="hint">{batch.length} cars in this list</p>}
+            <div style={batch.length > LIST_LIMIT ? { maxHeight: 520, overflowY: 'auto' } : undefined}>
+              <ul>
+                {batch.map((c, i) => (
+                  <li key={i}>{c.name}{c.price ? ` — $${fmtNum(c.price)}` : ''}</li>
+                ))}
+              </ul>
+            </div>
             <button type="button" onClick={uploadBatch} disabled={uploadingBatch}>{uploadingBatch ? 'Sending...' : `Upload ${batch.length} car(s) for approval`}</button>
           </div>
         )}
