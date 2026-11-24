@@ -6,9 +6,9 @@ import { BRANDING_SYSTEM_OPTIONS } from '../../lib/addonSystems'
 // Admin → menu 4 (Systems) → Add-ons → Remove Branding.
 //
 // Remove Branding is a $5/month add-on, first month free: once it
-// is on for a customer, the small "Powered by Yently" banner at the
-// bottom of their page disappears. It is OFF by default for
-// everyone — the banner shows on every system page unless the
+// is on for a customer, the small "Powered by Yently" banners at the
+// top and bottom of their page disappear. They are OFF by default for
+// everyone — the banners show on every system page unless the
 // customer orders this add-on (ad page or the "Remove Branding"
 // line in their Setup page) and the admin flips the switch ON here
 // once they have paid.
@@ -17,14 +17,14 @@ import { BRANDING_SYSTEM_OPTIONS } from '../../lib/addonSystems'
 // here: the system + page the order is for travel in the order
 // note (see brandingData.js), so the admin reads them off the row
 // and flips the switch below. There is no request/approve step for
-// Remove Branding and no activity log: the banner itself is the
-// only thing that changes.
+// Remove Branding and no activity log: the banners themselves are
+// the only thing that changes.
 // SWITCHES — one row per shop with the switch on or off. The admin
 // can flip a switch by hand or add one. OFF means the shop's page
-// shows the "Powered by Yently" banner; ON means the banner is
+// shows the "Powered by Yently" banners; ON means the banners are
 // gone. The 21 folder-app systems are listed here — the 12 Business
 // Systems plus the 9 Yently Kids subjects. Store sellers and Car
-// sellers never get Remove Branding: their pages carry no banner.
+// sellers never get Remove Branding: their pages carry no banners.
 
 const PAY_LINK = 'https://yently.com/?system=branding'
 
@@ -87,7 +87,7 @@ export default function AdminBranding() {
       .eq('owner_type', row.owner_type)
       .eq('owner_key', row.owner_key)
     if (err) { setError(err.message); return }
-    setStatus(`✓ Switch for ${row.owner_key} (${row.owner_type}) is now ${enabled ? 'ON — the Yently banner is off for that page.' : 'OFF — the Yently banner shows on that page again.'}`)
+    setStatus(`✓ Switch for ${row.owner_key} (${row.owner_type}) is now ${enabled ? 'ON — the Yently banners are off for that page.' : 'OFF — the Yently banners show on that page again.'}`)
     loadSwitches()
   }
 
@@ -118,7 +118,7 @@ export default function AdminBranding() {
     <div>
       <div className="hero-card">
         <h2>🏷️ Remove Branding</h2>
-        <p>Remove Branding is a $5/month add-on, first month free. A customer orders it, you flip the switch on here once they have paid, and from then on their page shows no "Powered by Yently" banner. It is OFF by default for everyone — the banner shows unless this switch is ON. The 21 folder-app systems can have it — the 12 Business Systems plus the 9 Yently Kids subjects — never Store sellers or Car sellers.</p>
+        <p>Remove Branding is a $5/month add-on, first month free. A customer orders it, you flip the switch on here once they have paid, and from then on their page shows no "Powered by Yently" banners. They are OFF by default for everyone — the banners show unless this switch is ON. The 21 folder-app systems can have it — the 12 Business Systems plus the 9 Yently Kids subjects — never Store sellers or Car sellers.</p>
       </div>
 
       <div className="trip-tabs" style={{ marginBottom: 16 }}>
@@ -165,7 +165,7 @@ export default function AdminBranding() {
 
       {view === 'switches' && (
         <div>
-          <p className="hint">OFF means the shop&apos;s page shows the &quot;Powered by Yently&quot; banner. ON means the banner is gone from that page. The 21 folder-app systems are listed below.</p>
+          <p className="hint">OFF means the shop&apos;s page shows the &quot;Powered by Yently&quot; banners. ON means the banners are gone from that page. The 21 folder-app systems are listed below.</p>
 
           <form className="form-card wide" onSubmit={addSwitch}>
             <h3>Add a switch</h3>
@@ -178,14 +178,14 @@ export default function AdminBranding() {
             <div className="row">
               <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <input type="checkbox" checked={switchForm.enabled} onChange={e => setSwitchForm({ ...switchForm, enabled: e.target.checked })} />
-                Switch on (banner off for that page)
+                Switch on (banners off for that page)
               </label>
             </div>
             <button type="submit">Save switch</button>
           </form>
 
           {switches === null && <div className="hero-card"><p>Loading switches...</p></div>}
-          {switches !== null && switches.length === 0 && <p className="hint">No switches yet — every page shows the banner by default.</p>}
+          {switches !== null && switches.length === 0 && <p className="hint">No switches yet — every page shows the banners by default.</p>}
           {switches !== null && shownSwitches.length > 0 && (
             <div className="table-wrap" style={{ maxHeight: 520, overflowY: 'auto' }}>
               <table className="admin-table">
