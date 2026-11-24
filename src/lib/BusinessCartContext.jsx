@@ -25,7 +25,8 @@ import { ADDON_SYSTEM_OPTIONS, ADDON_SYSTEM_KEYS, REPORTS_SYSTEM_KEYS } from './
 //
 // The cart is an array of {key, name, price, extraKids, schoolSlug,
 // isAddon, cleanSystem, cleanShopSlug, cleanSlug,
-// directSystem, directShopSlug, reportsSystem, reportsShopSlug} —
+// directSystem, directShopSlug, reportsSystem, reportsShopSlug,
+// tvSystem, tvShopSlug, chatSystem, chatShopSlug} —
 // one of each plan max. A website plan is one line, quantity 1:
 // buying it twice is two separate orders, not quantity 2 of one site.
 // extraKids is only ever non-zero on Kids lines (students beyond the
@@ -37,12 +38,15 @@ import { ADDON_SYSTEM_OPTIONS, ADDON_SYSTEM_KEYS, REPORTS_SYSTEM_KEYS } from './
 // only ever set on Extra Students lines: the school the places are
 // for (from the ?slug= deep link or the /extra-students page).
 // isAddon is only ever true on a Clean Link, Golden Link, Your Own
-// Domain, Direct Upload or Reports line added from a shop's Setup page
+// Domain, Direct Upload, Reports, TV Gallery or Live Chat line added
+// from a shop's Setup page
 // (?add=<plan>&shop=<system-key>&slug=<SLUG>&addon=1): it is an
 // add-on to the payment the customer already has — free for the rest
 // of this month, $5/month (Clean Link), $10/month (Golden Link),
-// $20/month (Your Own Domain), $5/month (Direct Upload) or $5/month
-// (Reports, first month free) from the next payment — so it never
+// $20/month (Your Own Domain), $5/month (Direct Upload), $5/month
+// (Reports, first month free), $2/month (TV Gallery, first month
+// free) or $3/month (Live Chat, first month free) from the next
+// payment — so it never
 // counts toward the bundle tiers and is never discounted, like an
 // Extra Students line. cleanSystem is the
 // system key (diner, kids-arabic, …), cleanShopSlug the shop's slug,
@@ -57,7 +61,11 @@ import { ADDON_SYSTEM_OPTIONS, ADDON_SYSTEM_KEYS, REPORTS_SYSTEM_KEYS } from './
 // system + slug). A Reports line carries reportsSystem +
 // reportsShopSlug the same way (the switch is keyed by system +
 // slug, and Reports covers the 12 Business Systems only — see
-// REPORTS_SYSTEM_KEYS in addonSystems.js).
+// REPORTS_SYSTEM_KEYS in addonSystems.js). A TV Gallery line
+// carries tvSystem + tvShopSlug the same way (12 Business Systems
+// only, like Reports). A Live Chat line carries chatSystem +
+// chatShopSlug the same way (any of the 23 add-on systems, like
+// Direct Upload).
 const BusinessCartCtx = createContext(null)
 
 const STORAGE_KEY = 'autofly-business-cart'
@@ -369,10 +377,12 @@ export const BUSINESS_PLANS = {
 // NOT count toward the tiers and are NOT discounted — they only add
 // places to a school that already pays its $5/month, so discounting
 // them would discount the same school twice. Clean Link, Direct
-// Upload and Reports add-on lines (isAddon, from a shop's Setup page) behave
+// Upload, Reports, TV Gallery and Live Chat add-on lines (isAddon,
+// from a shop's Setup page) behave
 // the same way: they only add to a payment the customer already
 // has (Clean Link $5/month, Golden Link $10/month, Your Own Domain
-// $20/month, Direct Upload $5/month, Reports $5/month). Their amounts
+// $20/month, Direct Upload $5/month, Reports $5/month, TV Gallery
+// $2/month, Live Chat $3/month). Their amounts
 // ARE still in the totals the customer sees: listTotal is the
 // billable list plus the extra lines, savings is the discount on the
 // billable list only, and total is billable-after-discount plus the
@@ -423,7 +433,13 @@ export function BusinessCartProvider({ children }) {
       // a Reports line — and only when the system is one of the 12
       // Business Systems (REPORTS_SYSTEMS): a stored line naming a
       // Kids school, Store or Cars loses its add-on fields here and
-      // is refused again at checkout (see reportsData.js). The line price is rebuilt from
+      // is refused again at checkout (see reportsData.js). A stored
+      // TV Gallery add-on (isAddon + tvSystem + tvShopSlug)
+      // survives the same way on a TV Gallery line — 12 Business
+      // Systems only, like Reports. A stored Live Chat add-on
+      // (isAddon + chatSystem + chatShopSlug) survives the same way
+      // on a Live Chat line — any of the 23 add-on systems, like
+      // Direct Upload. The line price is rebuilt from
       // BUSINESS_PLANS, so an old $2 Clean Link add-on line
       // reprices to $5 on the next load — that is the new price,
       // not a stored mistake.
@@ -438,6 +454,8 @@ export function BusinessCartProvider({ children }) {
         const isCleanAddon = CLEAN_PLAN_KEYS.has(plan.key) && i.isAddon === true && typeof i.cleanSystem === 'string' && ADDON_SYSTEMS.has(i.cleanSystem)
         const isDirectAddon = plan.key === DIRECT_PLAN_KEY && i.isAddon === true && typeof i.directSystem === 'string' && ADDON_SYSTEMS.has(i.directSystem)
         const isReportsAddon = plan.key === REPORTS_PLAN_KEY && i.isAddon === true && typeof i.reportsSystem === 'string' && REPORTS_SYSTEMS.has(i.reportsSystem)
+        const isTvAddon = plan.key === TV_PLAN_KEY && i.isAddon === true && typeof i.tvSystem === 'string' && REPORTS_SYSTEMS.has(i.tvSystem)
+        const isChatAddon = plan.key === CHAT_PLAN_KEY && i.isAddon === true && typeof i.chatSystem === 'string' && ADDON_SYSTEMS.has(i.chatSystem)
         items.push({
           key: plan.key,
           name: plan.name,
@@ -447,6 +465,8 @@ export function BusinessCartProvider({ children }) {
           ...(isCleanAddon ? { isAddon: true, cleanSystem: i.cleanSystem, cleanShopSlug: String(i.cleanShopSlug || ''), cleanSlug: String(i.cleanSlug || i.cleanShopSlug || '') } : {}),
           ...(isDirectAddon ? { isAddon: true, directSystem: i.directSystem, directShopSlug: String(i.directShopSlug || '') } : {}),
           ...(isReportsAddon ? { isAddon: true, reportsSystem: i.reportsSystem, reportsShopSlug: String(i.reportsShopSlug || '') } : {}),
+          ...(isTvAddon ? { isAddon: true, tvSystem: i.tvSystem, tvShopSlug: String(i.tvShopSlug || '') } : {}),
+          ...(isChatAddon ? { isAddon: true, chatSystem: i.chatSystem, chatShopSlug: String(i.chatShopSlug || '') } : {}),
         })
       }
       return items
@@ -463,7 +483,8 @@ export function BusinessCartProvider({ children }) {
 
   // Adding a plan already in the cart is a no-op — one of each max —
   // EXCEPT Extra Students lines (see below) and Clean Link /
-  // Golden Link / Your Own Domain / Direct Upload / Reports add-on lines (also
+  // Golden Link / Your Own Domain / Direct Upload / Reports / TV
+  // Gallery / Live Chat add-on lines (also
   // below). extraKids only applies
   // to Kids plans: the number of students beyond the first 3, folded
   // into the line price (+$1 each). schoolSlug only applies to Extra
@@ -472,7 +493,9 @@ export function BusinessCartProvider({ children }) {
   // cleanSlug } for a Clean Link, Golden Link or Your Own Domain
   // line, { isAddon, directSystem, directShopSlug } for a Direct
   // Upload line, { isAddon, reportsSystem, reportsShopSlug } for a
-  // Reports line — all from a shop's Setup page.
+  // Reports line, { isAddon, tvSystem, tvShopSlug } for a TV
+  // Gallery line, { isAddon, chatSystem, chatShopSlug } for a Live
+  // Chat line — all from a shop's Setup page.
   const addPlan = (key, extraKids = 0, schoolSlug = '', opts = {}) => {
     const plan = BUSINESS_PLANS[key]
     if (!plan) return
@@ -567,6 +590,53 @@ export function BusinessCartProvider({ children }) {
       })
       return
     }
+    if (key === TV_PLAN_KEY && opts.isAddon === true && REPORTS_SYSTEMS.has(opts.tvSystem)) {
+      // A TV Gallery add-on from a shop's Setup page: exactly like
+      // Reports — the line carries the system + slug so checkout
+      // can write the order row's note and email
+      // (tv_gallery_order has no system / shop_slug columns — see
+      // businessData.js). The system must be one of the 12
+      // Business Systems (REPORTS_SYSTEMS, not ADDON_SYSTEMS): a
+      // Kids school, Store or Cars never reaches this branch, so a
+      // hand-built Setup link for one falls through to a plain line
+      // — and the checkout insert refuses that line outright (see
+      // tvGalleryData.js). A billable (ad-page) TV Gallery line
+      // already in the cart is left alone — an add-on never
+      // overwrites it — and an add-on line already in the cart just
+      // refreshes its fields, so re-tapping the Setup link never
+      // duplicates the line.
+      const shopSlug = String(opts.tvShopSlug || '').trim()
+      if (!shopSlug) return
+      setLastOrder(null)
+      setCartState(c => {
+        const existing = c.find(i => i.key === key)
+        if (!existing) return [...c, { key: plan.key, name: plan.name, price: plan.price, extraKids: 0, isAddon: true, tvSystem: opts.tvSystem, tvShopSlug: shopSlug }]
+        if (!existing.isAddon) return c
+        return c.map(i => (i.key === key ? { ...i, isAddon: true, tvSystem: opts.tvSystem, tvShopSlug: shopSlug } : i))
+      })
+      return
+    }
+    if (key === CHAT_PLAN_KEY && opts.isAddon === true && ADDON_SYSTEMS.has(opts.chatSystem)) {
+      // A Live Chat add-on from a shop's Setup page: exactly like
+      // Direct Upload — the line carries the system + slug so
+      // checkout can write the order row's note and email
+      // (live_chat_order has no system / shop_slug columns — see
+      // businessData.js). A billable (ad-page) Live Chat line
+      // already in the cart is left alone — an add-on never
+      // overwrites it — and an add-on line already in the cart just
+      // refreshes its fields, so re-tapping the Setup link never
+      // duplicates the line.
+      const shopSlug = String(opts.chatShopSlug || '').trim()
+      if (!shopSlug) return
+      setLastOrder(null)
+      setCartState(c => {
+        const existing = c.find(i => i.key === key)
+        if (!existing) return [...c, { key: plan.key, name: plan.name, price: plan.price, extraKids: 0, isAddon: true, chatSystem: opts.chatSystem, chatShopSlug: shopSlug }]
+        if (!existing.isAddon) return c
+        return c.map(i => (i.key === key ? { ...i, isAddon: true, chatSystem: opts.chatSystem, chatShopSlug: shopSlug } : i))
+      })
+      return
+    }
     const kids = isKidsPlanKey(key) ? Math.max(0, Number(extraKids) || 0) : 0
     setLastOrder(null)
     setCartState(c => (c.some(i => i.key === key) ? c : [...c, { key: plan.key, name: plan.name, price: kids > 0 ? kidsLinePrice(kids) : plan.price, extraKids: kids }]))
@@ -578,7 +648,8 @@ export function BusinessCartProvider({ children }) {
   // itself). The line price is recomputed; the plan still counts
   // once for the bundle tiers — and an Extra Students line never
   // counts toward them at all. A Clean Link, Golden Link, Your Own
-  // Domain, Direct Upload or Reports add-on line (isAddon, from a shop's
+  // Domain, Direct Upload, Reports, TV Gallery or Live Chat add-on
+  // line (isAddon, from a shop's
   // Setup page) behaves the same way: it never counts toward the
   // tiers and is never discounted — it only adds to a payment the
   // customer already has. An Extra Students count may go down

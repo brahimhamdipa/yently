@@ -11,9 +11,11 @@ import { addonSystemLabel } from './addonSystems'
 // order. The ad page's Add to cart button saves it to localStorage
 // (meta) — the button is disabled until the system and page name
 // are filled in above it — and this insert reads it back from
-// there. A line whose system is STILL unknown after merging is
-// refused outright: Yently must know which page the chat is for
-// before the order is placed, so the customer is told to pick their
+// there; a Setup add-on line carries it on the cart line itself
+// (see businessData.js, isChatAddon). A line whose system is
+// STILL unknown after merging all three sources is refused
+// outright: Yently must know which page the chat is for before
+// the order is placed, so the customer is told to pick their
 // system on the Live Chat page first.
 //
 // The system + slug go in the NOTE and in emailExtras, not on the
@@ -36,28 +38,44 @@ export function clearLiveChatMeta() {
 
 export async function insertLiveChatOrder(data, emailExtras) {
   const meta = readLiveChatMeta()
-  const system = data.system || meta.system || null
-  const shopSlug = data.shop_slug || meta.shop_slug || null
+  const fromAddon = emailExtras && emailExtras.isChatAddon
+  const system = (fromAddon && emailExtras.system) || data.system || meta.system || null
+  const shopSlug = (fromAddon && emailExtras.shop_slug) || data.shop_slug || meta.shop_slug || null
   if (!system) {
     throw new Error('Yently needs to know which page live chat is for — pick your system on the Live Chat page first, then add it to your cart again.')
   }
-  const label = addonSystemLabel(system)
-  const noteLine = `Live Chat for ${label} "${shopSlug}" — free for the rest of this month; new monthly amount $3/month starts with the next payment.`
+  const label = (fromAddon && emailExtras.systemLabel) || addonSystemLabel(system)
+  // The Setup add-on path already wrote this line into the note in
+  // businessData.js — only the ad-page (meta) path needs it here.
+  const noteLine = fromAddon
+    ? null
+    : `Live Chat for ${label} "${shopSlug}" — free for the rest of this month; new monthly amount $3/month starts with the next payment.`
   const row = {
     ...data,
-    note: data.note ? `${data.note}\n${noteLine}` : noteLine,
+    note: noteLine ? (data.note ? `${data.note}\n${noteLine}` : noteLine) : data.note,
   }
   const extras = {
     ...(emailExtras || {}),
-    system,
-    systemLabel: label,
-    shop_slug: shopSlug,
-    new_monthly_total: 'New monthly amount: $3/month — starts with the next payment; free for the rest of this month.',
+    // The ad-page path carries no system in emailExtras yet — add
+    // it so the owner email names the page, like the add-on path.
+    ...(!fromAddon ? {
+      system,
+      systemLabel: label,
+      shop_slug: shopSlug,
+      new_monthly_total: 'New monthly amount: $3/month — starts with the next payment; free for the rest of this month.',
+    } : {}),
   }
+  // A Live Chat add-on (from a shop's Setup page) gets its own
+  // owner-email subject naming the system, so the owner sees at a
+  // glance which page the chat is for. The ad-page flow is
+  // unchanged: no isChatAddon flag, same subject as before.
+  const subject = fromAddon
+    ? `Live Chat — ${emailExtras.systemLabel || label} — ${data.customer_name}`
+    : `New Live Chat order — ${data.customer_name}`
   const placed = await submitAndNotify({
     table: 'live_chat_order',
     data: row,
-    subject: `New Live Chat order — ${data.customer_name}`,
+    subject,
     emailExtras: extras,
   })
   clearLiveChatMeta()

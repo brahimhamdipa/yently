@@ -265,7 +265,41 @@ export async function placeBusinessOrder({ name, email, phone, note, items }) {
     const reportsNoteLine = isReportsAddon
       ? `Reports for ${reportsLabel} "${reportsShopSlug}" — free for the rest of this month; new monthly amount $5/month starts with the next payment. First month free.`
       : null
-    const noteLine = extraNoteLine || cleanNoteLine || directNoteLine || reportsNoteLine
+    // A TV Gallery add-on line (isAddon, from a shop's Setup page):
+    // exactly like Reports — free for the rest of this month,
+    // $2/month from the next payment, first month free — so its
+    // note names the system + slug and its owner email gets its
+    // own subject (see tvGalleryData.js). The system + slug go in
+    // the NOTE, not on the order row: tv_gallery_order has only
+    // the 8 standard columns, so writing them would fail the
+    // insert. They also travel in emailExtras, so the owner email
+    // shows them. The ad-page TV Gallery flow is untouched: a
+    // plain (non-add-on) line inserts exactly as before.
+    const isTvAddon = item.key === TV_PLAN_KEY && item.isAddon === true
+    const tvSystem = isTvAddon ? String(item.tvSystem || '') : ''
+    const tvShopSlug = isTvAddon ? String(item.tvShopSlug || '') : ''
+    const tvLabel = isTvAddon ? (SYSTEM_LABELS[tvSystem] || tvSystem || 'TV Gallery') : ''
+    const tvNoteLine = isTvAddon
+      ? `TV Gallery for ${tvLabel} "${tvShopSlug}" — free for the rest of this month; new monthly amount $2/month starts with the next payment. First month free.`
+      : null
+    // A Live Chat add-on line (isAddon, from a shop's Setup page):
+    // exactly like Direct Upload — free for the rest of this
+    // month, $3/month from the next payment — so its note names
+    // the system + slug and its owner email gets its own subject
+    // (see liveChatData.js). The system + slug go in the NOTE,
+    // not on the order row: live_chat_order has no system /
+    // shop_slug columns, so writing them would fail the insert.
+    // They also travel in emailExtras, so the owner email shows
+    // them. The ad-page Live Chat flow is untouched: a plain
+    // (non-add-on) line inserts exactly as before.
+    const isChatAddon = item.key === CHAT_PLAN_KEY && item.isAddon === true
+    const chatSystem = isChatAddon ? String(item.chatSystem || '') : ''
+    const chatShopSlug = isChatAddon ? String(item.chatShopSlug || '') : ''
+    const chatLabel = isChatAddon ? (SYSTEM_LABELS[chatSystem] || chatSystem || 'Live Chat') : ''
+    const chatNoteLine = isChatAddon
+      ? `Live Chat for ${chatLabel} "${chatShopSlug}" — free for the rest of this month; new monthly amount $3/month starts with the next payment.`
+      : null
+    const noteLine = extraNoteLine || cleanNoteLine || directNoteLine || reportsNoteLine || tvNoteLine || chatNoteLine
     const itemNote = noteLine ? (note ? `${note}\n${noteLine}` : noteLine) : note
     await insert({
       customer_name: name,
@@ -313,9 +347,24 @@ export async function placeBusinessOrder({ name, email, phone, note, items }) {
         shop_slug: reportsShopSlug,
         new_monthly_total: 'New monthly amount: $5/month — starts with the next payment; free for the rest of this month. First month free.',
       } : {}),
+      ...(isTvAddon ? {
+        isTvAddon: true,
+        system: tvSystem,
+        systemLabel: tvLabel,
+        shop_slug: tvShopSlug,
+        new_monthly_total: 'New monthly amount: $2/month — starts with the next payment; free for the rest of this month. First month free.',
+      } : {}),
+      ...(isChatAddon ? {
+        isChatAddon: true,
+        system: chatSystem,
+        systemLabel: chatLabel,
+        shop_slug: chatShopSlug,
+        new_monthly_total: 'New monthly amount: $3/month — starts with the next payment; free for the rest of this month.',
+      } : {}),
     })
     // Tracking row for this plan — EXCEPT Extra Students lines and
-    // Clean Link / Direct Upload / Reports add-on lines, which get no tracking
+    // Clean Link / Direct Upload / Reports / TV Gallery / Live Chat
+    // add-on lines, which get no tracking
     // code at all (no warning either). The
     // insert above returns no id (submitAndNotify inserts with no
     // .select()), so the RPC finds the just-placed row server-side
@@ -323,7 +372,7 @@ export async function placeBusinessOrder({ name, email, phone, note, items }) {
     // null on failure — the order is already placed at this point
     // and stays placed either way.
     let tracking_code = null
-    if (!isExtra && !isCleanAddon && !isDirectAddon && !isReportsAddon) {
+    if (!isExtra && !isCleanAddon && !isDirectAddon && !isReportsAddon && !isTvAddon && !isChatAddon) {
       const orderTable = TABLE_BY_KEY[item.key]
       if (!orderTable) {
         console.warn('No tracking order table for plan key ' + item.key + ' — order placed without tracking')

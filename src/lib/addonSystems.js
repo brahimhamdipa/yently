@@ -52,6 +52,11 @@ export const REPORTS_SYSTEM_OPTIONS = ADDON_SYSTEM_OPTIONS.filter((o) =>
   ['diner', 'pos', 'barbers', 'dealer', 'employee', 'bodyshop', 'houses', 'doctor', 'holiday', 'rentals', 'laundry', 'gym'].includes(o.value)
 )
 
+// TV Gallery covers exactly the same 12 Business Systems as
+// Reports — same list, same keys (see tvGalleryData.js and
+// AdminTvGallery.jsx).
+export const TV_SYSTEM_OPTIONS = REPORTS_SYSTEM_OPTIONS
+
 // The same 12 keys as a Set, for the cart's deep-link check
 // (BusinessCartContext REPORTS_SYSTEMS) and the checkout guard
 // (reportsData.js refuses any other system outright).
