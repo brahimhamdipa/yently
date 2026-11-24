@@ -59,11 +59,12 @@ const PLANS = [
   { table: 'laundry_order', label: 'Laundry', group: 'systems', price: 20 },
   { table: 'gym_order', label: 'Gym', group: 'systems', price: 20 },
   { table: 'barber_order', label: 'Simple Website', group: 'systems', price: 10 },
-  // Add-ons (4)
+  // Add-ons (5)
   { table: 'tv_gallery_order', label: 'TV Gallery', group: 'addons', price: 2 },
   { table: 'live_chat_order', label: 'Live Chat', group: 'addons', price: 3 },
   { table: 'clean_link_order', label: 'Clean Link', group: 'addons', price: 5 },
   { table: 'direct_upload_order', label: 'Direct Upload', group: 'addons', price: 5 },
+  { table: 'reports_order', label: 'Reports', group: 'addons', price: 5 },
   // Yently Kids (9)
   { table: 'kids_math_order', label: 'Kids Math', group: 'kids', price: 5 },
   { table: 'kids_english_order', label: 'Kids English', group: 'kids', price: 5 },
