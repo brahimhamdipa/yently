@@ -28,7 +28,7 @@ import ProviderFormPage from './components/ProviderFormPage'
 import ChatWidget from './components/ChatWidget'
 import AdminPage from './components/AdminPage'
 import { CartProvider } from './lib/CartContext'
-import { BusinessCartProvider, BUSINESS_PLANS, useBusinessCart, isKidsExtraPlanKey, CLEAN_PLAN_KEY, CLEAN_GOLDEN_PLAN_KEY, CLEAN_DOMAIN_PLAN_KEY, DIRECT_PLAN_KEY, REPORTS_PLAN_KEY, ADDON_SYSTEMS, REPORTS_SYSTEMS } from './lib/BusinessCartContext'
+import { BusinessCartProvider, BUSINESS_PLANS, useBusinessCart, isKidsExtraPlanKey, CLEAN_PLAN_KEY, CLEAN_GOLDEN_PLAN_KEY, CLEAN_DOMAIN_PLAN_KEY, DIRECT_PLAN_KEY, REPORTS_PLAN_KEY, TV_PLAN_KEY, CHAT_PLAN_KEY, ADDON_SYSTEMS, REPORTS_SYSTEMS } from './lib/BusinessCartContext'
 import BarbersPage from './components/BarbersPage'
 import SimpleBarbershopPage from './components/SimpleBarbershopPage'
 import RestaurantsPage from './components/RestaurantsPage'
@@ -118,6 +118,12 @@ const DEEP_LINK_SYSTEMS = new Set([
 // the 12 Business Systems (REPORTS_SYSTEMS): a link naming a Kids
 // school, Store or Cars falls back to a plain line, and the
 // checkout insert refuses that line outright (see reportsData.js).
+// A TV Gallery add-on (?add=tv:website&shop=<system-key>
+// &slug=<SLUG>&addon=1) works the same way at $2/month, first
+// month free — 12 Business Systems only, like Reports. A Live
+// Chat add-on (?add=chat:website&shop=<system-key>&slug=<SLUG>
+// &addon=1) works the same way at $3/month, first month free —
+// any of the 23 add-on systems, like Direct Upload.
 // ?shop= is a fresh param on
 // purpose: ?system= already opens a tab. A malformed add-on link
 // falls back to a plain line, like the ad page's Add to cart.
@@ -159,6 +165,18 @@ function DeepLinkCartAdder({ go }) {
       const shop = params.get('shop') || ''
       const slug = params.get('slug') || ''
       if (REPORTS_SYSTEMS.has(shop) && slug) addPlan(key, 0, '', { isAddon: true, reportsSystem: shop, reportsShopSlug: slug })
+      else addPlan(key)
+    }
+    else if (key === TV_PLAN_KEY && params.get('addon') === '1') {
+      const shop = params.get('shop') || ''
+      const slug = params.get('slug') || ''
+      if (REPORTS_SYSTEMS.has(shop) && slug) addPlan(key, 0, '', { isAddon: true, tvSystem: shop, tvShopSlug: slug })
+      else addPlan(key)
+    }
+    else if (key === CHAT_PLAN_KEY && params.get('addon') === '1') {
+      const shop = params.get('shop') || ''
+      const slug = params.get('slug') || ''
+      if (ADDON_SYSTEMS.has(shop) && slug) addPlan(key, 0, '', { isAddon: true, chatSystem: shop, chatShopSlug: slug })
       else addPlan(key)
     }
     else addPlan(key)
