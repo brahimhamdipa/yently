@@ -299,8 +299,12 @@ export default function TrackingPage({ go }) {
 
   return (
     <div style={{ maxWidth: 560, margin: '0 auto' }}>
-      {/* Green header bar: menu (home) — title — CANCEL (only while
-          an order is loaded and can still be cancelled). */}
+      {/* Green header bar: title — CANCEL (only while
+          an order is loaded and can still be cancelled). The left
+          spacer matches the right-side width, so the title stays
+          centred. (The ☰ menu button that used to sit here was
+          removed — it went home, and nobody needs a way home from
+          the Track Order page's own banner.) */}
       <div
         style={{
           background: GREEN,
@@ -312,22 +316,7 @@ export default function TrackingPage({ go }) {
           gap: 12,
         }}
       >
-        <button
-          type="button"
-          onClick={() => go('business-hub')}
-          aria-label="Back to home"
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: '#fff',
-            fontSize: 22,
-            padding: '4px 8px',
-            cursor: 'pointer',
-            lineHeight: 1,
-          }}
-        >
-          ☰
-        </button>
+        <span style={{ width: 76 }} aria-hidden="true" />
         <h2 style={{ margin: 0, flex: 1, fontSize: 19, textAlign: 'center' }}>Track Order</h2>
         {canCancel ? (
           <button

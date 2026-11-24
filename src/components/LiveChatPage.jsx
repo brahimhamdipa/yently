@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
-import { submitAndNotify } from '../lib/notify'
 import { useBusinessCart, CHAT_PLAN_KEY, CHAT_PLAN_PRICE } from '../lib/BusinessCartContext'
-import { ADDON_SYSTEM_OPTIONS, addonSystemLabel } from '../lib/addonSystems'
+import { ADDON_SYSTEM_OPTIONS } from '../lib/addonSystems'
 import { saveLiveChatMeta } from '../lib/liveChatData'
 import { BusinessTopBar } from './BusinessMenu'
 import FloatingAddToCart from './FloatingAddToCart'
@@ -12,21 +11,23 @@ import FloatingAddToCart from './FloatingAddToCart'
 // the customer's own website, so their visitors can tap it and
 // message them — no account needed for the visitor, and every
 // message reaches the owner by email. $3/month, first month free,
-// no setup fee. No card payment is taken here — the request form
-// emails the owner, who switches chat on for the customer's page
-// in Admin, and the Add to cart
-// card puts a live_chat_order row in front of the owner the same
-// way (shared Business cart, BusinessCartContext +
-// live_chat_order table, same pattern as the other Business Systems
-// pages and the TV Gallery add-on). Once ordered, Yently switches
-// chat on for the customer's page in Admin — then the customer
-// answers their visitors from the Chats tab in their Setup page.
-// Nothing on this page promises instant signup. Connecting carts
-// to the bank comes later.
+// no setup fee. No card payment is taken here — the customer picks
+// the system and page name in the form below, adds the plan to the
+// cart (plan key 'chat:website'), and Yently switches chat on for
+// the customer's page in Admin once they have ordered. Once
+// ordered, Yently switches chat on for the customer's page in
+// Admin — then the customer answers their visitors from the Chats
+// tab in their Setup page. There is no request form on this page
+// and no contact fields: the order is placed through the cart, and
+// checkout collects the customer's name, email and phone there.
+// That is why the form below has only the two pickers — and why
+// submitting it adds the plan straight to the cart.
 // The Add to cart button is disabled until the system and page name
 // above it are filled in: Yently must know which page the chat is
 // for before the order is placed. The system + page name travel
-// with the order (see liveChatData.js) and with the request form.
+// with the order (see liveChatData.js).
+// Nothing on this page promises instant signup. Connecting carts
+// to the bank comes later.
 function normSlug(v) {
   return String(v || '').toLowerCase().replace(/[^a-z0-9-]+/g, '').replace(/^-+|-+$/g, '')
 }
@@ -35,13 +36,8 @@ function normSlug(v) {
 // Clean Link and Direct Upload pages: tap to open a short
 // explanation under the field, tap again or anywhere else to close.
 const HELP = {
-  name: 'Your own name — the person asking for live chat. Yently uses it to know who the request is from.',
-  business: 'The name of your store, restaurant, school or business — the name customers know you by.',
-  email: 'Your email address — the one you actually read. Yently sends the answer here.',
-  phone: 'Your phone number, so Yently can reach you quickly if something about your request needs a word.',
   system: 'Pick the kind of page the chat is for. Restaurant is your restaurant page, POS is your till page, Barbershop your barber page, Dealer, Employee, Bodyshop, Houses, Doctor, Holiday, Car Rental, Laundry and Gym the same idea — Store is your own store page, Cars is selling cars, and Kids is one of the nine school subjects, pick the subject.',
   shopSlug: 'The word Yently gave you for your page — it is in the email with your page link. For Cars, type your seller username instead. Small letters only, no spaces — capitals and spaces are removed for you.',
-  message: 'Anything else that helps — you can leave it empty.',
 }
 
 function Help({ text }) {
@@ -64,9 +60,7 @@ function Help({ text }) {
 export default function LiveChatPage({ go }) {
   const { hasPlan, addPlan } = useBusinessCart()
   const inCart = hasPlan(CHAT_PLAN_KEY)
-  const [form, setForm] = useState({ name: '', business: '', email: '', phone: '', system: '', shop_slug: '', message: '' })
-  const [status, setStatus] = useState('')
-  const [busy, setBusy] = useState(false)
+  const [form, setForm] = useState({ system: '', shop_slug: '' })
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value })
   const shopReady = Boolean(form.system && normSlug(form.shop_slug))
 
@@ -76,28 +70,13 @@ export default function LiveChatPage({ go }) {
     addPlan(CHAT_PLAN_KEY)
   }
 
-  const handleSubmit = async (e) => {
+  // The form IS the order form: picking the system and page name
+  // and submitting adds Live Chat to the cart (same handler as the
+  // Add button below). There is nothing else to send — checkout
+  // collects the contact details and writes the order row.
+  const handleSubmit = (e) => {
     e.preventDefault()
-    setBusy(true)
-    setStatus('Sending your request...')
-    try {
-      // The request carries the system + page name up front, so
-      // Yently knows which page the chat is for without asking back.
-      const where = `System: ${addonSystemLabel(form.system)}, Page: ${normSlug(form.shop_slug)}. `
-      await submitAndNotify({
-        table: 'car_inquiries',
-        data: { car_id: null, car_name: 'Live Chat Request', name: form.name, email: form.email, phone: form.phone, message: where + (form.message || '') },
-        subject: `Live Chat request — ${form.name}`,
-        emailExtras: { business_name: form.business.trim() },
-      })
-      setStatus('✓ Sent! Thanks — Yently will be in touch to set up live chat for your website.')
-      // Keep the system and page name filled, so the Add to cart
-      // button stays usable — only the contact fields reset.
-      setForm((f) => ({ ...f, name: '', business: '', email: '', phone: '', message: '' }))
-    } catch (err) {
-      setStatus('Error: ' + err.message)
-    }
-    setBusy(false)
+    handleAddToCart()
   }
 
   return (
@@ -109,75 +88,9 @@ export default function LiveChatPage({ go }) {
         <p>A chat bubble on your website — visitors tap it and message you, no account needed for them.</p>
       </div>
 
-      <div className="hero-card">
-        <h3>What you get</h3>
-        <ul>
-          <li><b>A chat bubble on your own website</b> — visitors tap it and message you, without creating an account.</li>
-          <li><b>Every message reaches you by email</b> — nothing to install, nothing to watch all day.</li>
-          <li><b>Your business name on it</b> — the chat opens with your name and greeting, so visitors know they're talking to you.</li>
-          <li><b>Works on any website Yently builds for you</b> — restaurant, shop, barber, dealer, clinic, any of the Business Systems pages.</li>
-          <li><b>One chat per business</b> — the chat on your page talks only to you, never to another business.</li>
-        </ul>
-      </div>
-
-      <div className="hero-card">
-        <h3>How it works</h3>
-        <ol className="steps">
-          <li><b>Tell Yently you want it</b> — fill in the form below, or simply Add to cart.</li>
-          <li><b>Yently switches chat on for your page</b> in Admin once you've ordered — then you answer your visitors from the Chats tab in your Setup page.</li>
-          <li><b>Visitors tap the bubble and message you</b> — every message reaches you by email.</li>
-        </ol>
-      </div>
-
-      <div className="hero-card">
-        <h3>Simple, honest pricing</h3>
-        <p><b>$3/month.</b> That's it — the chat bubble on your website, your business name on it, and every message to your email. No setup fee. First month free, cancel anytime.</p>
-        <p className="hint">Send your request below and Yently will be in touch to set up live chat for your website.</p>
-      </div>
-
-      <div className="hero-card" style={{ textAlign: 'center' }}>
-        <h3>Live chat page — ${CHAT_PLAN_PRICE}/month</h3>
-        {inCart ? (
-          <div>
-            <p>✓ In your cart.</p>
-            <button onClick={() => go && go('business-cart')}>Go to My Cart</button>
-          </div>
-        ) : (
-          <div>
-            <button onClick={handleAddToCart} disabled={!shopReady}>Add to cart — ${CHAT_PLAN_PRICE}/month</button>
-            {!shopReady && <p className="hint">Pick your system and type your page name in the form below first.</p>}
-          </div>
-        )}
-      </div>
-
-      <div className="hero-card" style={{ textAlign: 'center' }}>
-        <h3>Try the live demo</h3>
-        <p>See the chat working before you ask for one — a demo café page with the chat bubble, ready to tap.</p>
-        <button type="button" onClick={() => go && go('demo-live-chat')}>Open the live demo</button>
-      </div>
-
-      <form className="form-card wide direct-help" onSubmit={handleSubmit}>
-        <h3>Get live chat</h3>
-        <div className="row">
-          <div className="field">
-            <span className="field-label">Your name <Help text={HELP.name} /></span>
-            <input required placeholder="Your name" value={form.name} onChange={set('name')} />
-          </div>
-          <div className="field">
-            <span className="field-label">Business name (optional) <Help text={HELP.business} /></span>
-            <input placeholder="Business name (optional)" value={form.business} onChange={set('business')} />
-          </div>
-        </div>
-        <div className="row">
-          <div className="field">
-            <span className="field-label">Email <Help text={HELP.email} /></span>
-            <input required placeholder="Email" type="email" value={form.email} onChange={set('email')} />
-          </div>
-          <div className="field">
-            <span className="field-label">Phone <Help text={HELP.phone} /></span>
-            <input required placeholder="Phone" value={form.phone} onChange={set('phone')} />
-          </div>
-        </div>
+      <form className="form-card wide direct-help" onSubmit={handleSubmit} style={{ border: '2px solid #f5c542' }}>
+        <h3>Get live chat for your page</h3>
+        <p>Pick your system and type your page name — then add Live Chat to your cart below. Yently switches it on for your page once you have ordered.</p>
         <div className="row">
           <div className="field">
             <span className="field-label">Which system is your page on? <Help text={HELP.system} /></span>
@@ -191,13 +104,58 @@ export default function LiveChatPage({ go }) {
             <input required placeholder="Your page name on Yently (e.g. your-shop)" value={form.shop_slug} onChange={set('shop_slug')} />
           </div>
         </div>
-        <div className="field">
-          <span className="field-label">Message (optional) <Help text={HELP.message} /></span>
-          <textarea className="big-message" placeholder="Tell us about your website (optional) — anything that helps" value={form.message} onChange={set('message')} />
-        </div>
-        <button type="submit" disabled={busy}>Send request</button>
-        {status && <p className="status">{status}</p>}
+        <button type="submit" disabled={!shopReady}>Add to cart — ${CHAT_PLAN_PRICE}/month</button>
+        {!shopReady && <p className="hint">Pick your system and type your page name above first.</p>}
+        <p className="hint">Free for the rest of this month — the $3/month starts with your next payment. First month free.</p>
       </form>
+
+      <div className="hero-card" style={{ marginTop: 20 }}>
+        <h3>What you get</h3>
+        <ul>
+          <li><b>A chat bubble on your own website</b> — visitors tap it and message you, without creating an account.</li>
+          <li><b>Every message reaches you by email</b> — nothing to install, nothing to watch all day.</li>
+          <li><b>Your business name on it</b> — the chat opens with your name and greeting, so visitors know they're talking to you.</li>
+          <li><b>Works on any website Yently builds for you</b> — restaurant, shop, barber, dealer, clinic, any of the Business Systems pages.</li>
+          <li><b>One chat per business</b> — the chat on your page talks only to you, never to another business.</li>
+        </ul>
+      </div>
+
+      <div className="hero-card">
+        <h3>How it works</h3>
+        <ol className="steps">
+          <li><b>Add it above</b> — tell Yently which page it is for.</li>
+          <li><b>Yently switches chat on for your page</b> in Admin once you've ordered — then you answer your visitors from the Chats tab in your Setup page.</li>
+          <li><b>Visitors tap the bubble and message you</b> — every message reaches you by email.</li>
+        </ol>
+      </div>
+
+      <div className="hero-card">
+        <h3>Simple, honest pricing</h3>
+        <p><b>$3/month.</b> That's it — the chat bubble on your website, your business name on it, and every message to your email. No setup fee. First month free, cancel anytime.</p>
+        <p className="hint">Free for the rest of this month — the $3/month starts with your next payment.</p>
+      </div>
+
+      <div className="hero-card" style={{ textAlign: 'center' }}>
+        <h3>Live chat page — ${CHAT_PLAN_PRICE}/month</h3>
+        {inCart ? (
+          <div>
+            <p>✓ In your cart.</p>
+            <button onClick={() => go && go('business-cart')}>Go to My Cart</button>
+          </div>
+        ) : (
+          <div>
+            <button onClick={handleAddToCart} disabled={!shopReady}>Add to cart — ${CHAT_PLAN_PRICE}/month</button>
+            {!shopReady && <p className="hint">Pick your system and type your page name in the form above first.</p>}
+            <p className="hint">First month free — then $3/month, cancel anytime.</p>
+          </div>
+        )}
+      </div>
+
+      <div className="hero-card" style={{ textAlign: 'center' }}>
+        <h3>Try the live demo</h3>
+        <p>See the chat working before you ask for one — a demo café page with the chat bubble, ready to tap.</p>
+        <button type="button" onClick={() => go && go('demo-live-chat')}>Open the live demo</button>
+      </div>
 
       <FloatingAddToCart planKey={CHAT_PLAN_KEY} name="Live chat page" price={CHAT_PLAN_PRICE} go={go} ready={shopReady} notReadyHint="Pick your system and type your page name in the form above first." onAdd={handleAddToCart} />
     </div>

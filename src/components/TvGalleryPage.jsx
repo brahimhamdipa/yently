@@ -1,50 +1,92 @@
-import { useState } from 'react'
-import { submitAndNotify } from '../lib/notify'
+import { useEffect, useRef, useState } from 'react'
 import { useBusinessCart, TV_PLAN_KEY, TV_PLAN_PRICE } from '../lib/BusinessCartContext'
+import { REPORTS_SYSTEM_OPTIONS } from '../lib/addonSystems'
+import { saveTvGalleryMeta } from '../lib/tvGalleryData'
 import { BusinessTopBar } from './BusinessMenu'
 import FloatingAddToCart from './FloatingAddToCart'
 
 // Sales page for the TV gallery (reached from More ▾ → Business
-// Systems → Add-ons → TV Gallery). One product only: a fullscreen
-// page for a TV that shows the customer's own pictures, with a
-// rolling message at the bottom. Two display types, one price
-// ($2/month for both): Slideshow plays the pictures one after the
-// other; One picture holds a single picture on a TV — the customer
-// opens the same link on each TV and picks which picture it shows,
-// and each TV remembers its picture. Up to 7 pictures — one picture
-// per TV, so seven TVs can each show a different picture. No card
-// payment is taken here — the request form emails the owner, who then
-// creates the customer's upload form and TV link by hand, and the Add
-// to cart card puts a tv_gallery_order row in front of the owner the
-// same way (shared Business cart, BusinessCartContext +
-// tv_gallery_order table, same pattern as the other Business Systems
-// pages). Nothing on this page promises instant signup. Connecting
-// carts to the bank comes later.
+// Systems → Add-ons → TV Gallery, and from the hub). One product
+// only: a fullscreen page for a TV that shows the customer's own
+// pictures, with a rolling message at the bottom. Two display
+// types, one price ($2/month for both): Slideshow plays the
+// pictures one after the other; One picture holds a single picture
+// on a TV — the customer opens the same link on each TV and picks
+// which picture it shows, and each TV remembers its picture. Up
+// to 7 pictures — one picture per TV, so seven TVs can each show
+// a different picture. No card payment is taken here — the
+// customer picks the system and page name in the form below, adds
+// the plan to the cart (plan key 'tv:website'), and the admin
+// creates the customer's upload form and TV link by hand and
+// flips the switch on in Admin → TV Gallery → Switches once they
+// have paid (same pattern as Reports). TV Gallery is for the 12
+// Business Systems ONLY — never Yently Kids schools, Store
+// sellers or Car sellers: the dropdown below lists only those 12,
+// and the checkout insert refuses any other system outright (see
+// tvGalleryData.js). There is no request form on this page and no
+// contact fields: the order is placed through the cart, and
+// checkout collects the customer's name, email and phone there.
+// That is why the form below has only the two pickers — and why
+// submitting it adds the plan straight to the cart.
+// The Add to cart button is disabled until the system and page name
+// above it are filled in: Yently must know which page the gallery
+// is for before the order is placed. The system + page name travel
+// with the order (see tvGalleryData.js).
+// Nothing on this page promises instant signup. Connecting carts
+// to the bank comes later.
+function normSlug(v) {
+  return String(v || '').toLowerCase().replace(/[^a-z0-9-]+/g, '').replace(/^-+|-+$/g, '')
+}
+
+// Plain, detailed explanations for every field — shown when the
+// customer taps the "?" next to a label, so nobody has to guess how
+// to fill the form in. Same pattern as the Store Setup page.
+const HELP = {
+  system: 'Pick the kind of page the TV gallery is for. Restaurant is your restaurant page, POS is your till page, Barbershop your barber page, Dealer, Employee, Bodyshop, Houses, Doctor, Holiday, Car Rental, Laundry and Gym the same idea. TV Gallery is only for these 12 Business Systems — Yently Kids schools, Store sellers and Car sellers are not listed here.',
+  shopSlug: 'The word Yently gave you for your page — it is in the email with your page link. Small letters only, no spaces — capitals and spaces are removed for you.',
+}
+
+// The "?" button next to a field label. Tap once to open the
+// explanation under it, tap again — or tap anywhere else on the
+// page — to close it. Only one help is open at a time: tapping
+// another "?" closes this one first.
+function Help({ text }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef(null)
+  useEffect(() => {
+    if (!open) return
+    const onDown = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false) }
+    document.addEventListener('mousedown', onDown)
+    return () => document.removeEventListener('mousedown', onDown)
+  }, [open])
+  return (
+    <span className="help" ref={ref}>
+      <button type="button" className="help-btn" aria-label="Help" onClick={() => setOpen((o) => !o)}>?</button>
+      {open && <span className="help-pop">{text}</span>}
+    </span>
+  )
+}
+
 export default function TvGalleryPage({ go }) {
   const { hasPlan, addPlan } = useBusinessCart()
   const inCart = hasPlan(TV_PLAN_KEY)
-  const [form, setForm] = useState({ name: '', business: '', email: '', phone: '', message: '' })
-  const [status, setStatus] = useState('')
-  const [busy, setBusy] = useState(false)
+  const [form, setForm] = useState({ system: '', shop_slug: '' })
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value })
+  const shopReady = Boolean(form.system && normSlug(form.shop_slug))
 
-  const handleSubmit = async (e) => {
+  const handleAddToCart = () => {
+    if (!shopReady) return
+    saveTvGalleryMeta({ system: form.system, shop_slug: normSlug(form.shop_slug) })
+    addPlan(TV_PLAN_KEY)
+  }
+
+  // The form IS the order form: picking the system and page name
+  // and submitting adds TV Gallery to the cart (same handler as the
+  // Add button below). There is nothing else to send — checkout
+  // collects the contact details and writes the order row.
+  const handleSubmit = (e) => {
     e.preventDefault()
-    setBusy(true)
-    setStatus('Sending your request...')
-    try {
-      await submitAndNotify({
-        table: 'car_inquiries',
-        data: { car_id: null, car_name: 'TV Gallery Request', name: form.name, email: form.email, phone: form.phone, message: form.message },
-        subject: `TV Gallery request — ${form.name}`,
-        emailExtras: { business_name: form.business.trim() },
-      })
-      setStatus('✓ Sent! Thanks — Yently will be in touch to set up your TV gallery.')
-      setForm({ name: '', business: '', email: '', phone: '', message: '' })
-    } catch (err) {
-      setStatus('Error: ' + err.message)
-    }
-    setBusy(false)
+    handleAddToCart()
   }
 
   return (
@@ -56,7 +98,28 @@ export default function TvGalleryPage({ go }) {
         <p>Turn any TV into your display — your pictures fullscreen, with your message rolling across the bottom.</p>
       </div>
 
-      <div className="hero-card">
+      <form className="form-card wide direct-help" onSubmit={handleSubmit} style={{ border: '2px solid #f5c542' }}>
+        <h3>Get your TV gallery</h3>
+        <p>Pick your system and type your page name — then add TV Gallery to your cart below. Yently sets up your gallery and switches it on for your page once you have ordered.</p>
+        <div className="row">
+          <div className="field">
+            <span className="field-label">Which page is this for? <Help text={HELP.system} /></span>
+            <select required value={form.system} onChange={set('system')}>
+              <option value="">Which page is this for?</option>
+              {REPORTS_SYSTEM_OPTIONS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+            </select>
+          </div>
+          <div className="field">
+            <span className="field-label">Your page name on Yently <Help text={HELP.shopSlug} /></span>
+            <input required placeholder="The word Yently gave you for your page" value={form.shop_slug} onChange={set('shop_slug')} />
+          </div>
+        </div>
+        <button type="submit" disabled={!shopReady}>Add to cart — ${TV_PLAN_PRICE}/month</button>
+        {!shopReady && <p className="hint">Pick your system and type your page name above first.</p>}
+        <p className="hint">Free for the rest of this month — the $2/month starts with your next payment. First month free.</p>
+      </form>
+
+      <div className="hero-card" style={{ marginTop: 20 }}>
         <h3>What you get</h3>
         <ul>
           <li><b>A fullscreen page for your TV</b> — your pictures fill the whole screen, with your message rolling across the bottom like the urgent messages on TV.</li>
@@ -71,7 +134,7 @@ export default function TvGalleryPage({ go }) {
       <div className="hero-card">
         <h3>How it works</h3>
         <ol className="steps">
-          <li><b>Tell Yently you want it</b> — fill in the form below, or simply Add to cart.</li>
+          <li><b>Add it above</b> — tell Yently which page it is for.</li>
           <li><b>You get your link and login</b> — your own upload page, plus the TV link for your screens.</li>
           <li><b>Upload up to 7 pictures, open the TV link on each TV, and pick slideshow or one picture per TV.</b></li>
         </ol>
@@ -80,7 +143,7 @@ export default function TvGalleryPage({ go }) {
       <div className="hero-card">
         <h3>Simple, honest pricing</h3>
         <p><b>$2/month.</b> That's it — your TV gallery, your pictures, and your message, with the slideshow and the one-picture display both included. No setup fee, no extra charge per TV or per display type. First month free, cancel anytime.</p>
-        <p className="hint">Send your request below and Yently will be in touch to set up your TV gallery.</p>
+        <p className="hint">Free for the rest of this month — the $2/month starts with your next payment.</p>
       </div>
 
       <div className="hero-card" style={{ textAlign: 'center' }}>
@@ -91,7 +154,11 @@ export default function TvGalleryPage({ go }) {
             <button onClick={() => go && go('business-cart')}>Go to My Cart</button>
           </div>
         ) : (
-          <button onClick={() => addPlan(TV_PLAN_KEY)}>Add to cart — ${TV_PLAN_PRICE}/month</button>
+          <div>
+            <button onClick={handleAddToCart} disabled={!shopReady}>Add to cart — ${TV_PLAN_PRICE}/month</button>
+            {!shopReady && <p className="hint">Pick your system and type your page name in the form above first.</p>}
+            <p className="hint">First month free — then $2/month, cancel anytime.</p>
+          </div>
         )}
       </div>
 
@@ -101,22 +168,7 @@ export default function TvGalleryPage({ go }) {
         <button type="button" onClick={() => go && go('provider-form', 'demo-tv-gallery')}>View the Gallery</button>
       </div>
 
-      <form className="form-card wide" onSubmit={handleSubmit}>
-        <h3>Get your TV gallery</h3>
-        <div className="row">
-          <input required placeholder="Your name" value={form.name} onChange={set('name')} />
-          <input placeholder="Business name (optional)" value={form.business} onChange={set('business')} />
-        </div>
-        <div className="row">
-          <input required placeholder="Email" type="email" value={form.email} onChange={set('email')} />
-          <input required placeholder="Phone" value={form.phone} onChange={set('phone')} />
-        </div>
-        <textarea className="big-message" placeholder="Tell us about your screens (optional) — how many TVs, what you want to show, anything that helps" value={form.message} onChange={set('message')} />
-        <button type="submit" disabled={busy}>Send request</button>
-        {status && <p className="status">{status}</p>}
-      </form>
-
-      <FloatingAddToCart planKey={TV_PLAN_KEY} name="TV Gallery page" price={TV_PLAN_PRICE} go={go} />
+      <FloatingAddToCart planKey={TV_PLAN_KEY} name="TV Gallery page" price={TV_PLAN_PRICE} go={go} ready={shopReady} notReadyHint="Pick your system and type your page name above first." onAdd={handleAddToCart} />
     </div>
   )
 }

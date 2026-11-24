@@ -26,6 +26,7 @@ import AdminBags from './admin/AdminBags'
 import AdminCars from './admin/AdminCars'
 import AdminDirectUpload from './admin/AdminDirectUpload'
 import AdminReports from './admin/AdminReports'
+import AdminTvGallery from './admin/AdminTvGallery'
 import AdminLiveChat from './admin/AdminLiveChat'
 import AdminVault from './admin/AdminVault'
 import AdminAdvancedSearch from './admin/AdminAdvancedSearch'
@@ -172,7 +173,7 @@ const MENUS = [
       ] },
     ] },
     { label: 'Add-ons', children: [
-      { label: 'TV Gallery Orders', table: 'tv_gallery_orders' },
+      { label: 'TV Gallery', section: 'tv-gallery' },
       { label: 'TV uploads', table: 'upload_forms' },
       { label: 'Live Chat Orders', section: 'live-chat' },
       { label: 'Clean Link Orders', table: 'clean_link_orders' },
@@ -409,6 +410,7 @@ export default function AdminPage() {
       {section === 'cars' && <AdminCars />}
       {section === 'direct-upload' && <AdminDirectUpload />}
       {section === 'reports' && <AdminReports />}
+      {section === 'tv-gallery' && <AdminTvGallery />}
       {section === 'live-chat' && <AdminLiveChat />}
       {section === 'submissions' && <AdminSubmissions />}
       {section === 'store-add' && <AdminStoreAdd />}

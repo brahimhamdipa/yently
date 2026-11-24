@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useBusinessCart, CLEAN_PLAN_KEY, CLEAN_PLAN_PRICE, CLEAN_GOLDEN_PLAN_KEY, CLEAN_GOLDEN_PLAN_PRICE, CLEAN_DOMAIN_PLAN_KEY, CLEAN_DOMAIN_PLAN_PRICE } from '../lib/BusinessCartContext'
 import { ADDON_SYSTEM_OPTIONS } from '../lib/addonSystems'
-import { insertCleanLinkOrder, saveCleanLinkMeta } from '../lib/cleanLinkData'
+import { saveCleanLinkMeta } from '../lib/cleanLinkData'
 import { BusinessTopBar } from './BusinessMenu'
 import FloatingAddToCart from './FloatingAddToCart'
 
@@ -22,11 +22,15 @@ import FloatingAddToCart from './FloatingAddToCart'
 // to true (one word): its section button, its form option and its
 // badge all follow. Nothing else needs changing for that type.
 // All paid types need the name to be available, first come first
-// served. No card payment is taken here — the request form inserts
-// a clean_link_order row (with the shop and the names they want)
-// and emails the owner, who then activates it with one click in
-// Admin (Clean Link Orders); the Add to cart card puts the same
-// order row in front of the owner through the shared Business cart.
+// served. No card payment is taken here — the customer picks the
+// system, page name and wanted names in the form below, adds the
+// plan to the cart, and Yently checks the names and activates the
+// link in Admin (Clean Link Orders) once they have ordered. There
+// is no request form on this page and no contact fields: the order
+// is placed through the cart, and checkout collects the customer's
+// name, email and phone there. That is why the form below has only
+// the system, page name, link type and wanted names — and why
+// submitting it adds the selected type straight to the cart.
 // The shop details travel with the order (see cleanLinkData.js)
 // because the shared cart has no per-item slot for them. Nothing
 // on this page promises instant setup. Golden Link and Your Own
@@ -66,15 +70,10 @@ function parseNames(text, typeId) {
 // tap again or anywhere else to close. The popups never show link
 // patterns or code names — they say "the word Yently gave you".
 const HELP = {
-  name: 'Your own name — the person asking for a clean link. Yently uses it to know who the request is from.',
-  business: 'The name of your store, restaurant, school or business — the name customers know you by.',
-  email: 'Your email address — the one you actually read. Yently sends the answer here: whether your clean link is ready, or what to fix if the name you want is taken.',
-  phone: 'Your phone number, so Yently can reach you quickly if something about your request needs a word.',
   system: 'Pick the kind of page your clean link is for. Restaurant is your restaurant page, POS is your till page, Barbershop your barber page, Dealer, Employee, Bodyshop, Houses, Doctor, Holiday, Car Rental, Laundry and Gym the same idea — Store is your own store page, Cars is selling cars, and Kids is one of the nine school subjects, pick the subject.',
   shopSlug: 'The word Yently gave you for your page — it is in the email with your page link. For Cars, type your seller username instead. Small letters only, no spaces — capitals and spaces are removed for you.',
   linkType: 'Which kind of link you want. Clean Link is yently.com/your-name, $5/month. Golden Link and Your Own Domain are coming soon — they cannot be picked yet.',
   names: 'The names you want, one per line, in the order you prefer them — your first choice first. Yently checks them in that order and comes back with the ones that are free. Small letters only, no spaces, and a name must not be one somebody else already has.',
-  message: 'Anything else that helps — you can leave it empty. For example your shop’s current link, or anything about the name you want.',
 }
 
 function Help({ text }) {
@@ -120,11 +119,8 @@ function TypeAddButton({ type, ready, inCart, onAdd, go }) {
 
 export default function CleanLinkPage({ go }) {
   const { hasPlan, addPlan } = useBusinessCart()
-  const [form, setForm] = useState({ name: '', business: '', email: '', phone: '', system: '', shop_slug: '', names: '', linkType: 'clean', message: '' })
-  const [status, setStatus] = useState('')
-  const [busy, setBusy] = useState(false)
+  const [form, setForm] = useState({ system: '', shop_slug: '', names: '', linkType: 'clean' })
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value })
-  const namesList = parseNames(form.names, form.linkType)
   const selectedType = LINK_TYPES.find((t) => t.id === form.linkType) || LINK_TYPES[0]
 
   // One type is ready to add when it is launched (available), the
@@ -146,34 +142,14 @@ export default function CleanLinkPage({ go }) {
   }
   const handleAddToCart = () => handleAddType(form.linkType)
 
-  const handleSubmit = async (e) => {
+  // The form IS the order form: picking the system, page name and
+  // wanted names and submitting adds the selected link type to the
+  // cart (same handler as the Add button below). There is nothing
+  // else to send — checkout collects the contact details and
+  // writes the order row.
+  const handleSubmit = (e) => {
     e.preventDefault()
-    setBusy(true)
-    setStatus('Sending your request...')
-    try {
-      const namesNote = namesList.length > 1
-        ? `Names wanted, in order: ${namesList.join(', ')}.`
-        : `Name wanted: ${namesList[0]}.`
-      await insertCleanLinkOrder({
-        customer_name: form.name,
-        customer_email: form.email,
-        customer_phone: form.phone,
-        business_name: form.business.trim() || null,
-        plan: selectedType.name,
-        price: selectedType.price,
-        note: form.message ? `${namesNote}\n${form.message}` : namesNote,
-        system: form.system,
-        shop_slug: normSlug(form.shop_slug),
-        clean_slug: namesList[0],
-      }, { plan: selectedType.name, price: selectedType.price })
-      setStatus('✓ Sent! Thanks — Yently will check your names and be in touch with the ones that are free.')
-      // Keep the system, page name and names filled, so the Add to
-      // cart button stays usable — only the contact fields reset.
-      setForm((f) => ({ ...f, name: '', business: '', email: '', phone: '', message: '' }))
-    } catch (err) {
-      setStatus('Error: ' + err.message)
-    }
-    setBusy(false)
+    handleAddToCart()
   }
 
   return (
@@ -185,28 +161,9 @@ export default function CleanLinkPage({ go }) {
         <p>Short enough to print on a menu, a card, or a shop window — and easy for your customers to remember and type.</p>
       </div>
 
-      <form className="form-card wide direct-help" onSubmit={handleSubmit}>
+      <form className="form-card wide direct-help" onSubmit={handleSubmit} style={{ border: '2px solid #f5c542' }}>
         <h3>Get your clean link</h3>
-        <div className="row">
-          <div className="field">
-            <span className="field-label">Your name <Help text={HELP.name} /></span>
-            <input required placeholder="Your name" value={form.name} onChange={set('name')} />
-          </div>
-          <div className="field">
-            <span className="field-label">Business name (optional) <Help text={HELP.business} /></span>
-            <input placeholder="Business name (optional)" value={form.business} onChange={set('business')} />
-          </div>
-        </div>
-        <div className="row">
-          <div className="field">
-            <span className="field-label">Email <Help text={HELP.email} /></span>
-            <input required placeholder="Email" type="email" value={form.email} onChange={set('email')} />
-          </div>
-          <div className="field">
-            <span className="field-label">Phone <Help text={HELP.phone} /></span>
-            <input required placeholder="Phone" value={form.phone} onChange={set('phone')} />
-          </div>
-        </div>
+        <p>Pick your system and type your page name and the names you want — then add your link to your cart below. Yently checks the names and sets up the ones that are free once you have ordered.</p>
         <div className="row">
           <div className="field">
             <span className="field-label">Which system is your page on? <Help text={HELP.system} /></span>
@@ -236,15 +193,12 @@ export default function CleanLinkPage({ go }) {
           <span className="field-label">The names you want, in order <Help text={HELP.names} /></span>
           <textarea className="big-message" placeholder={'One name per line, your first choice first — for example:\nmyrestaurant\nmy-restaurant\nmyrestaurantfood'} value={form.names} onChange={set('names')} />
         </div>
-        <div className="field">
-          <span className="field-label">Message (optional) <Help text={HELP.message} /></span>
-          <textarea className="big-message" placeholder="Anything else that helps (optional) — your shop's current link, anything about the name you want" value={form.message} onChange={set('message')} />
-        </div>
-        <button type="submit" disabled={busy}>Send request</button>
-        {status && <p className="status">{status}</p>}
+        <button type="submit" disabled={!shopReady}>Add to cart — ${selectedType.price}/month</button>
+        {!shopReady && <p className="hint">Pick your system and type your page name and the names you want in the form above first.</p>}
+        <p className="hint">Free for the rest of this month — the ${selectedType.price}/month starts with your next payment. First month free.</p>
       </form>
 
-      <div className="hero-card">
+      <div className="hero-card" style={{ marginTop: 20 }}>
         <h3>🆓 Free Link — included with your system</h3>
         <p><b>yently.com/pos?s=your-shop</b> — the link your page already comes with. Every system Yently builds for you has one, and it is free: it comes with the system you already bought, and it already works. Share it anywhere — it opens your page straight away.</p>
         <p className="hint">A Free Link is the standard address for your page. The three links below are shorter, cleaner versions of it — easier to say, print and remember.</p>
@@ -288,7 +242,7 @@ export default function CleanLinkPage({ go }) {
         <h3>Simple, honest pricing</h3>
         <p><b>Clean Link — $5/month.</b> That's it — your clean link, for one shop. No setup fee, no charge per click. First month free, cancel anytime.</p>
         <p>Golden Link ($10/month) and Your Own Domain ($20/month) are coming soon — same first month free when they launch.</p>
-        <p className="hint">Send your request above and Yently will be in touch to set up your clean link.</p>
+        <p className="hint">Free for the rest of this month — the $5/month starts with your next payment.</p>
       </div>
 
       <div className="hero-card" style={{ textAlign: 'center' }}>

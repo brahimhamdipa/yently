@@ -112,7 +112,7 @@ export default function ReportsPage({ go }) {
         <p className="hint">Free for the rest of this month — the $5/month starts with your next payment. First month free.</p>
       </form>
 
-      <div className="hero-card">
+      <div className="hero-card" style={{ marginTop: 20 }}>
         <h3>What you get</h3>
         <ul>
           <li><b>One clear view of your page</b> — totals, counts by status, and the full list of orders and bookings, in a popup on your Setup page.</li>
