@@ -135,10 +135,11 @@
      the Live Chat details panel when chat is ON (mounted from
      ShopChat) — there is no separate Chats section in Setup any
      more, and when chat is OFF there is no chat UI in Setup at all.
-     TV Gallery has no shop→gallery-link mapping in the data (the
-     admin names the upload form by hand), so its ON state names no
-     link — the gallery link was sent to the customer by email when
-     Yently set it up. */
+     TV Gallery's link is yently.com/tv-<system>-<slug> — built from
+     the system and the shop slug, so its ON state always shows the
+     real gallery link, and the customer uploads their own pictures
+     from the TV Gallery details panel (stored in the tv_gallery
+     table, one row per shop). */
   var ADDONS_SYSTEM = 'rentals';
   /* "Powered by YENTLY.com" banners: a thin navy strip under the main menu and a small navy strip at the bottom
      of the page, with the Yently logo, linking to yently.com. It is
@@ -196,7 +197,7 @@
     }
     if (name === 'Reports') return ' · <a href="#" data-addon-link="reports-view">View Reports</a>';
     if (name === 'Live Chat') return ' · <a href="#" data-addon-link="chat">Open Chats</a>';
-    if (name === 'TV Gallery') return ' · <a href="#" data-addon-link="tv">Details</a>';
+    if (name === 'TV Gallery') return ' · <a href="/tv-' + ADDONS_SYSTEM + '-' + encodeURIComponent(SLUG) + '" target="_blank" rel="noopener">yently.com/tv-' + ADDONS_SYSTEM + '-' + esc(SLUG) + '</a>';
     if (name === 'Direct Upload') return ' · <a href="#" data-addon-link="direct">Details</a>';
     if (name === 'Remove Branding') return ' · <a href="#" data-addon-link="branding">Details</a>';
     return '';
@@ -243,7 +244,8 @@
       html = '<h4 style="margin:0 0 6px;">TV Gallery — $2/month</h4>' +
         '<p class="info">Your pictures on the big screen — slideshow and one-picture display, up to 7 pictures, with your message rolling across the bottom.</p>';
       if (tvGalleryOn) {
-        html += '<p class="info"><b>TV Gallery is on for this page.</b> Your gallery link was sent to you by email when Yently set it up.</p>';
+        html += '<p class="info"><b>TV Gallery is on for this page.</b> Your gallery: <a href="/tv-' + ADDONS_SYSTEM + '-' + encodeURIComponent(SLUG) + '" target="_blank" rel="noopener">yently.com/tv-' + ADDONS_SYSTEM + '-' + esc(SLUG) + '</a> — open it on each TV.</p>' +
+          '<div id="setup-addons-tv-manage"><p class="hint">Loading your pictures…</p></div>';
       } else {
         html += '<p class="info">' + add('tv:website', 'TV Gallery') + ' — $2/month, first month free, free for the rest of this month.</p>';
       }
@@ -292,6 +294,9 @@
       var roBtn = $('setup-addons-reports-open');
       if (roBtn) roBtn.onclick = function () { openReportsModal(); };
     }
+    if (key === 'tv' && tvGalleryOn) {
+      mountTvGalleryManage();
+    }
     if (key === 'chat' && chatOn) {
       var inbox = $('setup-addons-chat-inbox');
       if (inbox) {
@@ -302,6 +307,194 @@
         }
       }
     }
+  }
+  /* ---------- TV Gallery pictures (Setup) ---------- */
+  /* The customer uploads their own pictures from this panel —
+     no hand-made upload form, no Storage folder to create by
+     hand. Pictures are shrunk to 1600px (TV fullscreen needs
+     them big), stored in the product-images bucket under
+     store/tv-gallery/, and listed on the shop's tv_gallery row
+     (one row per shop: system + slug, pictures + message). The
+     gallery page (yently.com/tv-<system>-<slug>) reads that row.
+     Saving is owner-gated server-side: tv_gallery_save checks
+     the shop login, like get_system_report. At most 7 pictures. */
+  var tvGalleryPics = [];
+  var tvGalleryMsg = '';
+  var tvDeleteArm = -1;
+  var tvReplaceIndex = -1;
+  function tvGalleryLink() {
+    return '/tv-' + ADDONS_SYSTEM + '-' + encodeURIComponent(SLUG);
+  }
+  function shrinkTvImage(file) {
+    try {
+      return new Promise(function (resolve) {
+        var url = URL.createObjectURL(file);
+        var img = new Image();
+        img.onload = function () {
+          URL.revokeObjectURL(url);
+          var w0 = img.naturalWidth, h0 = img.naturalHeight;
+          if (!w0 || !h0 || Math.max(w0, h0) <= 1600) { resolve(file); return; }
+          var scale = 1600 / Math.max(w0, h0);
+          var canvas = document.createElement('canvas');
+          canvas.width = Math.round(w0 * scale);
+          canvas.height = Math.round(h0 * scale);
+          canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+          var outType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+          canvas.toBlob(function (blob) {
+            if (!blob) { resolve(file); return; }
+            var name = outType === 'image/jpeg' ? file.name.replace(/\.[^.]+$/, '') + '.jpg' : file.name;
+            resolve(new File([blob], name, { type: outType }));
+          }, outType, 0.85);
+        };
+        img.onerror = function () { URL.revokeObjectURL(url); resolve(file); };
+        img.src = url;
+      });
+    } catch (e) {
+      return Promise.resolve(file);
+    }
+  }
+  function uploadTvGalleryPicture(file) {
+    return shrinkTvImage(file).then(function (up) {
+      var safe = up.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+      var path = 'store/tv-gallery/' + SLUG + '-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '-' + safe;
+      return fetch(SUPABASE_URL + '/storage/v1/object/product-images/' + path, {
+        method: 'POST',
+        headers: { 'Content-Type': up.type || 'application/octet-stream', 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+        body: up
+      }).then(function (res) {
+        if (!res.ok) throw new Error('upload failed (HTTP ' + res.status + ')');
+        return { name: path.split('/').pop(), url: SUPABASE_URL + '/storage/v1/object/public/product-images/' + path };
+      });
+    });
+  }
+  function tvGallerySave(pics, message) {
+    return rpc('tv_gallery_save', { p_system: ADDONS_SYSTEM, p_slug: SLUG, p_u: ownerCreds.u, p_p: ownerCreds.p, p_message: message, p_pics: pics });
+  }
+  function tvGalleryStatus(text) {
+    var el = $('setup-addons-tv-status');
+    if (el) el.textContent = text;
+  }
+  function mountTvGalleryManage() {
+    var box = $('setup-addons-tv-manage');
+    if (!box) return;
+    box.innerHTML = '<p class="hint">Loading your pictures…</p>';
+    rpc('tv_gallery_get', { p_owner_type: ADDONS_SYSTEM, p_owner_key: SLUG }).then(function (g) {
+      tvGalleryPics = (g && Array.isArray(g.pics)) ? g.pics : [];
+      tvGalleryMsg = (g && g.message) || '';
+      tvDeleteArm = -1;
+      renderTvGalleryManage();
+    }).catch(function () {
+      box.innerHTML = '<p class="error">Could not load your gallery. Please close this panel and try again.</p>';
+    });
+  }
+  function renderTvGalleryManage() {
+    var box = $('setup-addons-tv-manage');
+    if (!box) return;
+    var h = '';
+    if (tvGalleryPics.length === 0) {
+      h += '<p class="hint">No pictures in your gallery yet — tap Upload to add some (up to 7).</p>';
+    } else {
+      h += '<p class="hint">' + tvGalleryPics.length + ' of 7 pictures in your gallery.</p>';
+    }
+    h += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;">';
+    tvGalleryPics.forEach(function (p, i) {
+      h += '<div><img src="' + esc(p.url) + '" alt="" style="width:100%;height:110px;object-fit:cover;border-radius:10px;" />' +
+        '<div style="display:flex;gap:4px;margin-top:4px;">' +
+        '<button type="button" class="secondary" style="flex:1;padding:6px 4px;font-size:13px;" data-tv-replace="' + i + '">Replace</button>' +
+        '<button type="button" class="secondary" style="flex:1;padding:6px 4px;font-size:13px;" data-tv-delete="' + i + '">' + (tvDeleteArm === i ? 'Tap again' : 'Delete') + '</button>' +
+        '</div></div>';
+    });
+    h += '</div>';
+    h += '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">' +
+      '<button type="button" id="setup-addons-tv-upload"' + (tvGalleryPics.length >= 7 ? ' disabled' : '') + '>Upload</button>' +
+      '<button type="button" class="secondary" id="setup-addons-tv-view">View gallery</button></div>' +
+      '<input type="file" id="setup-addons-tv-file" accept="image/*" multiple style="display:none;" />' +
+      '<input type="file" id="setup-addons-tv-replace-file" accept="image/*" style="display:none;" />' +
+      '<p class="hint" id="setup-addons-tv-status"></p>' +
+      '<div style="margin-top:12px;"><label>Message on the fullscreen (optional)</label>' +
+      '<input id="setup-addons-tv-message" placeholder="e.g. SALE — 20% off everything today!" value="' + esc(tvGalleryMsg) + '" maxlength="200" style="font-size:16px;" />' +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;"><button type="button" class="secondary" id="setup-addons-tv-save-msg">Save message</button></div>' +
+      '<p class="hint">This rolls across the bottom of the fullscreen, like the urgent messages on TV. Leave it empty and nothing shows — just the pictures.</p></div>';
+    box.innerHTML = h;
+    var upBtn = $('setup-addons-tv-upload');
+    if (upBtn) upBtn.onclick = function () { var f = $('setup-addons-tv-file'); if (f) f.click(); };
+    var viewBtn = $('setup-addons-tv-view');
+    if (viewBtn) viewBtn.onclick = function () { window.open(tvGalleryLink(), '_blank'); };
+    var fileInput = $('setup-addons-tv-file');
+    if (fileInput) fileInput.onchange = function (e) { tvGalleryUploadPicked(e.target.files, -1); e.target.value = ''; };
+    var repInput = $('setup-addons-tv-replace-file');
+    if (repInput) repInput.onchange = function (e) { tvGalleryUploadPicked(e.target.files, tvReplaceIndex); e.target.value = ''; };
+    var saveBtn = $('setup-addons-tv-save-msg');
+    if (saveBtn) saveBtn.onclick = function () {
+      var inp = $('setup-addons-tv-message');
+      var value = inp ? inp.value : tvGalleryMsg;
+      tvGalleryStatus('Saving…');
+      tvGallerySave(tvGalleryPics, value).then(function () {
+        tvGalleryMsg = value;
+        tvGalleryStatus(value ? '✓ Message saved — it rolls across the bottom of the fullscreen.' : '✓ Message cleared — the fullscreen shows just the pictures.');
+      }).catch(function (err) { tvGalleryStatus('Could not save the message: ' + (err && err.message ? err.message : 'try again')); });
+    };
+    box.querySelectorAll('[data-tv-delete]').forEach(function (b) {
+      b.onclick = function () {
+        var i = Number(b.getAttribute('data-tv-delete'));
+        if (tvDeleteArm !== i) { tvDeleteArm = i; renderTvGalleryManage(); tvGalleryStatus('Tap Delete again to remove this picture.'); return; }
+        tvDeleteArm = -1;
+        var next = tvGalleryPics.slice();
+        next.splice(i, 1);
+        tvGalleryStatus('Deleting…');
+        tvGallerySave(next, tvGalleryMsg).then(function () {
+          tvGalleryPics = next;
+          renderTvGalleryManage();
+          tvGalleryStatus('✓ Picture deleted — its place is free now.');
+        }).catch(function (err) { renderTvGalleryManage(); tvGalleryStatus('Could not delete: ' + (err && err.message ? err.message : 'try again')); });
+      };
+    });
+    box.querySelectorAll('[data-tv-replace]').forEach(function (b) {
+      b.onclick = function () {
+        tvReplaceIndex = Number(b.getAttribute('data-tv-replace'));
+        var f = $('setup-addons-tv-replace-file');
+        if (f) f.click();
+      };
+    });
+  }
+  function tvGalleryUploadPicked(files, replaceIndex) {
+    var list = Array.prototype.slice.call(files || []);
+    if (!list.length) return;
+    if (replaceIndex < 0 && tvGalleryPics.length + list.length > 7) {
+      tvGalleryStatus('You can have up to 7 pictures — you have ' + tvGalleryPics.length + ', and you picked ' + list.length + '. Delete some first, or pick fewer.');
+      return;
+    }
+    tvGalleryStatus('Uploading 0 of ' + list.length + '…');
+    var done = 0;
+    var uploaded = [];
+    var chain = Promise.resolve();
+    list.forEach(function (file) {
+      chain = chain.then(function () {
+        return uploadTvGalleryPicture(file).then(function (pic) {
+          uploaded.push(pic);
+          done += 1;
+          tvGalleryStatus('Uploading ' + done + ' of ' + list.length + '…');
+        });
+      });
+    });
+    chain.then(function () {
+      var next = tvGalleryPics.slice();
+      if (replaceIndex >= 0) {
+        next[replaceIndex] = uploaded[0];
+      } else {
+        next = next.concat(uploaded);
+      }
+      return tvGallerySave(next, tvGalleryMsg).then(function () {
+        tvGalleryPics = next;
+        tvReplaceIndex = -1;
+        renderTvGalleryManage();
+        tvGalleryStatus('✓ Uploaded ' + uploaded.length + ' picture' + (uploaded.length === 1 ? '' : 's') + '.');
+      });
+    }).catch(function (err) {
+      tvReplaceIndex = -1;
+      renderTvGalleryManage();
+      tvGalleryStatus('Upload stopped at ' + done + ' of ' + list.length + ': ' + (err && err.message ? err.message : 'try again'));
+    });
   }
   function renderAddonsSection() {
     addonsSelected = ''; // a fresh Setup render starts with no panel open
