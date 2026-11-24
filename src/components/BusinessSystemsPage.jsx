@@ -38,7 +38,7 @@ const ADDONS = [
   { name: 'Extra Students', price: 1, blurb: '$1/month per extra student — the first 3 are included in the $5/month Kids price.', href: '/extra-students' },
   { name: 'Direct Upload', price: 5, blurb: 'Your uploads go live straight away — no waiting for approval.', tab: 'direct-upload' },
   { name: 'Reports', price: 5, blurb: 'Your orders and bookings, counted and totalled — with dates, filters, print and PDF.', tab: 'reports' },
-  { name: 'Remove Branding', price: 5, blurb: 'Take the "Powered by Yently" banner off the bottom of your page — your page, nothing about Yently.', tab: 'branding' },
+  { name: 'Remove Branding', price: 5, blurb: 'Take the "Powered by Yently" banners off the top and bottom of your page — your page, nothing about Yently.', tab: 'branding' },
 ]
 
 // "Learning Systems" expander — the Kids submenu rows except My
