@@ -27,6 +27,7 @@ import AdminCars from './admin/AdminCars'
 import AdminDirectUpload from './admin/AdminDirectUpload'
 import AdminReports from './admin/AdminReports'
 import AdminTvGallery from './admin/AdminTvGallery'
+import AdminBranding from './admin/AdminBranding'
 import AdminLiveChat from './admin/AdminLiveChat'
 import AdminVault from './admin/AdminVault'
 import AdminAdvancedSearch from './admin/AdminAdvancedSearch'
@@ -180,6 +181,7 @@ const MENUS = [
       { label: 'Direct Upload Orders', table: 'direct_upload_orders' },
       { label: 'Direct Upload', section: 'direct-upload' },
       { label: 'Reports', section: 'reports' },
+      { label: 'Remove Branding', section: 'branding' },
     ] },
     { label: 'Barbers', children: [
       { label: 'Barber Passes', table: 'barbershop_shops' },
@@ -410,6 +412,7 @@ export default function AdminPage() {
       {section === 'cars' && <AdminCars />}
       {section === 'direct-upload' && <AdminDirectUpload />}
       {section === 'reports' && <AdminReports />}
+      {section === 'branding' && <AdminBranding />}
       {section === 'tv-gallery' && <AdminTvGallery />}
       {section === 'live-chat' && <AdminLiveChat />}
       {section === 'submissions' && <AdminSubmissions />}

@@ -10,7 +10,7 @@ import { useBusinessCart } from '../lib/BusinessCartContext'
 // Car Rental, Laundry, Gym, Simple Website), Custom Coding (moved here
 // from the main menu's More list, where it was labelled "Services"),
 // "Add-ons" (Clean Link, TV Gallery, Live Chat, Direct
-// Upload, Reports), and "Learning Systems" (the Kids submenu minus My Cart:
+// Upload, Reports, Remove Branding), and "Learning Systems" (the Kids submenu minus My Cart:
 // Yently Kids, Math, English, Arabic, More Subjects, Books for Kids).
 // Each branch button shows a right arrow when closed and a
 // down arrow when open, and its links are indented like sub-items,
@@ -94,6 +94,9 @@ export default function BusinessMenu({ go }) {
           )}
           {addonsOpen && (
             <button onClick={() => pick('reports')} style={{ display: 'block', width: '100%', background: 'white', color: '#111827', textAlign: 'left', padding: '12px 16px 12px 32px', fontSize: '14.5px', fontWeight: '400', borderTop: '1px solid #f1f2f5' }}>Reports</button>
+          )}
+          {addonsOpen && (
+            <button onClick={() => pick('branding')} style={{ display: 'block', width: '100%', background: 'white', color: '#111827', textAlign: 'left', padding: '12px 16px 12px 32px', fontSize: '14.5px', fontWeight: '400', borderTop: '1px solid #f1f2f5' }}>Remove Branding</button>
           )}
           <button onClick={() => setLearningOpen(o => !o)}>Learning Systems {learningOpen ? '▾' : '▸'}</button>
           {learningOpen && (
