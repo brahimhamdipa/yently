@@ -16,6 +16,7 @@ import { insertLiveChatOrder } from './liveChatData'
 import { insertCleanLinkOrder } from './cleanLinkData'
 import { insertDirectUploadOrder } from './directUploadData'
 import { insertReportsOrder } from './reportsData'
+import { insertBrandingOrder } from './brandingData'
 import { insertKidsMathOrder } from './kidsMathData'
 import { insertKidsEnglishOrder } from './kidsEnglishData'
 import { insertKidsArabicOrder } from './kidsArabicData'
@@ -49,6 +50,7 @@ import {
   CLEAN_DOMAIN_PLAN_KEY,
   DIRECT_PLAN_KEY,
   REPORTS_PLAN_KEY,
+  BRANDING_PLAN_KEY,
   isKidsPlanKey,
   isKidsExtraPlanKey,
   KIDS_BASE_PRICE,
@@ -81,7 +83,7 @@ import {
 // dealer_order, employee_order, bodyshop_order, houses_order,
 // doctor_order, holiday_order, rentals_order, laundry_order, gym_order, barber_order,
 // tv_gallery_order, live_chat_order, clean_link_order, direct_upload_order,
-// reports_order,
+// reports_order, branding_order,
 // kids_math_order,
 // kids_english_order, kids_arabic_order, kids_french_order,
 // kids_spanish_order, kids_science_order, kids_geography_order,
@@ -125,6 +127,7 @@ const INSERT_BY_KEY = {
   [CLEAN_DOMAIN_PLAN_KEY]: insertCleanLinkOrder,
   [DIRECT_PLAN_KEY]: insertDirectUploadOrder,
   [REPORTS_PLAN_KEY]: insertReportsOrder,
+  [BRANDING_PLAN_KEY]: insertBrandingOrder,
   [KIDS_MATH_PLAN_KEY]: insertKidsMathOrder,
   [KIDS_ENGLISH_PLAN_KEY]: insertKidsEnglishOrder,
   [KIDS_ARABIC_PLAN_KEY]: insertKidsArabicOrder,
@@ -299,7 +302,24 @@ export async function placeBusinessOrder({ name, email, phone, note, items }) {
     const chatNoteLine = isChatAddon
       ? `Live Chat for ${chatLabel} "${chatShopSlug}" — free for the rest of this month; new monthly amount $3/month starts with the next payment.`
       : null
-    const noteLine = extraNoteLine || cleanNoteLine || directNoteLine || reportsNoteLine || tvNoteLine || chatNoteLine
+    // A Remove Branding add-on line (isAddon, from a shop's Setup
+    // page): exactly like Reports — free for the rest of this
+    // month, $5/month from the next payment, first month free — so
+    // its note names the system + slug and its owner email gets its
+    // own subject (see brandingData.js). The system + slug go in
+    // the NOTE, not on the order row: branding_order has only the
+    // 8 standard columns, so writing them would fail the insert.
+    // They also travel in emailExtras, so the owner email shows
+    // them. The ad-page Remove Branding flow is untouched: a plain
+    // (non-add-on) line inserts exactly as before.
+    const isBrandingAddon = item.key === BRANDING_PLAN_KEY && item.isAddon === true
+    const brandingSystem = isBrandingAddon ? String(item.brandingSystem || '') : ''
+    const brandingShopSlug = isBrandingAddon ? String(item.brandingShopSlug || '') : ''
+    const brandingLabel = isBrandingAddon ? (SYSTEM_LABELS[brandingSystem] || brandingSystem || 'Remove Branding') : ''
+    const brandingNoteLine = isBrandingAddon
+      ? `Remove Branding for ${brandingLabel} "${brandingShopSlug}" — free for the rest of this month; new monthly amount $5/month starts with the next payment. First month free.`
+      : null
+    const noteLine = extraNoteLine || cleanNoteLine || directNoteLine || reportsNoteLine || tvNoteLine || chatNoteLine || brandingNoteLine
     const itemNote = noteLine ? (note ? `${note}\n${noteLine}` : noteLine) : note
     await insert({
       customer_name: name,
@@ -361,10 +381,17 @@ export async function placeBusinessOrder({ name, email, phone, note, items }) {
         shop_slug: chatShopSlug,
         new_monthly_total: 'New monthly amount: $3/month — starts with the next payment; free for the rest of this month.',
       } : {}),
+      ...(isBrandingAddon ? {
+        isBrandingAddon: true,
+        system: brandingSystem,
+        systemLabel: brandingLabel,
+        shop_slug: brandingShopSlug,
+        new_monthly_total: 'New monthly amount: $5/month — starts with the next payment; free for the rest of this month. First month free.',
+      } : {}),
     })
     // Tracking row for this plan — EXCEPT Extra Students lines and
     // Clean Link / Direct Upload / Reports / TV Gallery / Live Chat
-    // add-on lines, which get no tracking
+    // / Remove Branding add-on lines, which get no tracking
     // code at all (no warning either). The
     // insert above returns no id (submitAndNotify inserts with no
     // .select()), so the RPC finds the just-placed row server-side
@@ -372,7 +399,7 @@ export async function placeBusinessOrder({ name, email, phone, note, items }) {
     // null on failure — the order is already placed at this point
     // and stays placed either way.
     let tracking_code = null
-    if (!isExtra && !isCleanAddon && !isDirectAddon && !isReportsAddon && !isTvAddon && !isChatAddon) {
+    if (!isExtra && !isCleanAddon && !isDirectAddon && !isReportsAddon && !isTvAddon && !isChatAddon && !isBrandingAddon) {
       const orderTable = TABLE_BY_KEY[item.key]
       if (!orderTable) {
         console.warn('No tracking order table for plan key ' + item.key + ' — order placed without tracking')

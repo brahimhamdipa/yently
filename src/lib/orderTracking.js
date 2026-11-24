@@ -18,7 +18,7 @@ import { supabase } from './supabaseClient'
 // returns null, and the caller still places/shows the order with no
 // code. The order itself always succeeds even if tracking fails.
 
-// Plan key -> order table, for all 29 Business Systems plans.
+// Plan key -> order table, for all 30 Business Systems plans.
 // (Simple Website 'b:website' orders land in barber_order, same as
 // the insert map in businessData.js. Golden Link and Your Own Domain
 // land in clean_link_order, same as Clean Link.)
@@ -43,6 +43,7 @@ export const TABLE_BY_KEY = {
   'clean:domain': 'clean_link_order',
   'direct:website': 'direct_upload_order',
   'reports:website': 'reports_order',
+  'branding:website': 'branding_order',
   'kids-math': 'kids_math_order',
   'kids-english': 'kids_english_order',
   'kids-arabic': 'kids_arabic_order',

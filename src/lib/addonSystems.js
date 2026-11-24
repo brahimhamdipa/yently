@@ -1,8 +1,8 @@
 // One source of truth for every system an add-on can belong to.
 //
-// The Clean Link, Direct Upload and Live Chat pages, the cart
-// (BusinessCartContext) and the checkout notes (businessData) all
-// read this list — nobody keeps a second copy. Adding a new system
+// The Clean Link, Direct Upload, Live Chat and Remove Branding
+// pages, the cart (BusinessCartContext) and the checkout notes
+// (businessData) all read this list — nobody keeps a second copy. Adding a new system
 // means adding ONE row here: it then appears in every add-on
 // dropdown, in the deep-link check and in the owner-email labels
 // automatically, with no other file to touch.
@@ -57,10 +57,28 @@ export const REPORTS_SYSTEM_OPTIONS = ADDON_SYSTEM_OPTIONS.filter((o) =>
 // AdminTvGallery.jsx).
 export const TV_SYSTEM_OPTIONS = REPORTS_SYSTEM_OPTIONS
 
+// Remove Branding covers the 21 folder-app systems — the 12
+// Business Systems above PLUS the 9 Yently Kids subjects. Store
+// and Car sellers are NOT here on purpose: they have no folder-app
+// Setup page and no "Powered by Yently" banner to remove.
+// Filtered FROM the shared list, so a label change above flows
+// through here — but never add a Store/Cars row to this list. The
+// Remove Branding ad page, the cart deep-link check and the Admin
+// Remove Branding switches all read this list, never the full one.
+// The shared ADDON_SYSTEM_OPTIONS above is untouched.
+export const BRANDING_SYSTEM_OPTIONS = ADDON_SYSTEM_OPTIONS.filter((o) =>
+  ['diner', 'pos', 'barbers', 'dealer', 'employee', 'bodyshop', 'houses', 'doctor', 'holiday', 'rentals', 'laundry', 'gym', 'kids-math', 'kids-english', 'kids-arabic', 'kids-french', 'kids-spanish', 'kids-science', 'kids-geography', 'kids-coding', 'kids-reading'].includes(o.value)
+)
+
 // The same 12 keys as a Set, for the cart's deep-link check
 // (BusinessCartContext REPORTS_SYSTEMS) and the checkout guard
 // (reportsData.js refuses any other system outright).
 export const REPORTS_SYSTEM_KEYS = new Set(REPORTS_SYSTEM_OPTIONS.map((o) => o.value))
+
+// The same 21 keys as a Set, for the cart's deep-link check
+// (BusinessCartContext BRANDING_SYSTEMS) and the checkout guard
+// (brandingData.js refuses any other system outright).
+export const BRANDING_SYSTEM_KEYS = new Set(BRANDING_SYSTEM_OPTIONS.map((o) => o.value))
 
 // The same keys as a Set, for the cart's deep-link check
 // (BusinessCartContext ADDON_SYSTEMS).

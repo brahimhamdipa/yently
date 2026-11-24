@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { ADDON_SYSTEM_OPTIONS, ADDON_SYSTEM_KEYS, REPORTS_SYSTEM_KEYS } from './addonSystems'
+import { ADDON_SYSTEM_OPTIONS, ADDON_SYSTEM_KEYS, REPORTS_SYSTEM_KEYS, BRANDING_SYSTEM_KEYS } from './addonSystems'
 
 // The ONE cart for all Business Systems website plans — this REPLACES
 // the seven separate website carts:
@@ -26,7 +26,8 @@ import { ADDON_SYSTEM_OPTIONS, ADDON_SYSTEM_KEYS, REPORTS_SYSTEM_KEYS } from './
 // The cart is an array of {key, name, price, extraKids, schoolSlug,
 // isAddon, cleanSystem, cleanShopSlug, cleanSlug,
 // directSystem, directShopSlug, reportsSystem, reportsShopSlug,
-// tvSystem, tvShopSlug, chatSystem, chatShopSlug} —
+// tvSystem, tvShopSlug, chatSystem, chatShopSlug,
+// brandingSystem, brandingShopSlug} —
 // one of each plan max. A website plan is one line, quantity 1:
 // buying it twice is two separate orders, not quantity 2 of one site.
 // extraKids is only ever non-zero on Kids lines (students beyond the
@@ -38,14 +39,16 @@ import { ADDON_SYSTEM_OPTIONS, ADDON_SYSTEM_KEYS, REPORTS_SYSTEM_KEYS } from './
 // only ever set on Extra Students lines: the school the places are
 // for (from the ?slug= deep link or the /extra-students page).
 // isAddon is only ever true on a Clean Link, Golden Link, Your Own
-// Domain, Direct Upload, Reports, TV Gallery or Live Chat line added
+// Domain, Direct Upload, Reports, TV Gallery, Live Chat or Remove
+// Branding line added
 // from a shop's Setup page
 // (?add=<plan>&shop=<system-key>&slug=<SLUG>&addon=1): it is an
 // add-on to the payment the customer already has — free for the rest
 // of this month, $5/month (Clean Link), $10/month (Golden Link),
 // $20/month (Your Own Domain), $5/month (Direct Upload), $5/month
 // (Reports, first month free), $2/month (TV Gallery, first month
-// free) or $3/month (Live Chat, first month free) from the next
+// free), $3/month (Live Chat, first month free) or $5/month
+// (Remove Branding, first month free) from the next
 // payment — so it never
 // counts toward the bundle tiers and is never discounted, like an
 // Extra Students line. cleanSystem is the
@@ -65,7 +68,10 @@ import { ADDON_SYSTEM_OPTIONS, ADDON_SYSTEM_KEYS, REPORTS_SYSTEM_KEYS } from './
 // carries tvSystem + tvShopSlug the same way (12 Business Systems
 // only, like Reports). A Live Chat line carries chatSystem +
 // chatShopSlug the same way (any of the 23 add-on systems, like
-// Direct Upload).
+// Direct Upload). A Remove Branding line carries brandingSystem +
+// brandingShopSlug the same way (any of the 21 folder-app systems
+// — the 12 Business Systems + the 9 Kids subjects, like the
+// banner itself).
 const BusinessCartCtx = createContext(null)
 
 const STORAGE_KEY = 'autofly-business-cart'
@@ -175,6 +181,17 @@ export const DIRECT_PLAN_PRICE = 5
 export const REPORTS_PLAN_KEY = 'reports:website'
 export const REPORTS_PLAN_NAME = 'Reports'
 export const REPORTS_PLAN_PRICE = 5
+
+// Remove Branding — take the "Powered by Yently" banner off the
+// bottom of a shop's page. $5/month, first month free. Same add-on
+// rules as Direct Upload: free for the rest of this month from a
+// shop's Setup page, $5/month from the next payment, never in the
+// bundle tiers. The 21 folder-app systems only (the 12 Business
+// Systems + the 9 Kids subjects): Store and Car sellers have no
+// folder-app page and no banner to remove, so they are not here.
+export const BRANDING_PLAN_KEY = 'branding:website'
+export const BRANDING_PLAN_NAME = 'Remove Branding'
+export const BRANDING_PLAN_PRICE = 5
 
 export const KIDS_BASE_PRICE = 5
 export const KIDS_INCLUDED_STUDENTS = 3
@@ -312,6 +329,13 @@ export const ADDON_SYSTEMS = ADDON_SYSTEM_KEYS
 // refuses that line outright (see reportsData.js).
 export const REPORTS_SYSTEMS = REPORTS_SYSTEM_KEYS
 
+// System keys a Remove Branding deep link may name (?shop=): the
+// 21 folder-app systems ONLY (src/lib/addonSystems.js
+// BRANDING_SYSTEM_KEYS). A Remove Branding link naming Store or
+// Cars falls back to a plain line — and the checkout insert
+// refuses that line outright (see brandingData.js).
+export const BRANDING_SYSTEMS = BRANDING_SYSTEM_KEYS
+
 // The same list in dropdown shape, for the add-on pages.
 export { ADDON_SYSTEM_OPTIONS }
 
@@ -329,7 +353,7 @@ export function kidsLinePrice(extraKids) {
   return KIDS_BASE_PRICE + n * KIDS_EXTRA_KID_PRICE
 }
 
-// Single source of truth for the thirty-eight plans, keyed by plan key.
+// Single source of truth for the thirty-nine plans, keyed by plan key.
 export const BUSINESS_PLANS = {
   [RESTAURANT_PLAN_KEY]: { key: RESTAURANT_PLAN_KEY, name: RESTAURANT_PLAN_NAME, price: RESTAURANT_PLAN_PRICE },
   [POS_PLAN_KEY]: { key: POS_PLAN_KEY, name: POS_PLAN_NAME, price: POS_PLAN_PRICE },
@@ -351,6 +375,7 @@ export const BUSINESS_PLANS = {
   [CLEAN_DOMAIN_PLAN_KEY]: { key: CLEAN_DOMAIN_PLAN_KEY, name: CLEAN_DOMAIN_PLAN_NAME, price: CLEAN_DOMAIN_PLAN_PRICE },
   [DIRECT_PLAN_KEY]: { key: DIRECT_PLAN_KEY, name: DIRECT_PLAN_NAME, price: DIRECT_PLAN_PRICE },
   [REPORTS_PLAN_KEY]: { key: REPORTS_PLAN_KEY, name: REPORTS_PLAN_NAME, price: REPORTS_PLAN_PRICE },
+  [BRANDING_PLAN_KEY]: { key: BRANDING_PLAN_KEY, name: BRANDING_PLAN_NAME, price: BRANDING_PLAN_PRICE },
   [KIDS_MATH_PLAN_KEY]: { key: KIDS_MATH_PLAN_KEY, name: KIDS_MATH_PLAN_NAME, price: KIDS_MATH_PLAN_PRICE },
   [KIDS_ENGLISH_PLAN_KEY]: { key: KIDS_ENGLISH_PLAN_KEY, name: KIDS_ENGLISH_PLAN_NAME, price: KIDS_ENGLISH_PLAN_PRICE },
   [KIDS_ARABIC_PLAN_KEY]: { key: KIDS_ARABIC_PLAN_KEY, name: KIDS_ARABIC_PLAN_NAME, price: KIDS_ARABIC_PLAN_PRICE },
@@ -371,18 +396,20 @@ export const BUSINESS_PLANS = {
   [KIDS_EXTRA_READING_PLAN_KEY]: { key: KIDS_EXTRA_READING_PLAN_KEY, name: KIDS_EXTRA_READING_PLAN_NAME, price: KIDS_EXTRA_READING_PLAN_PRICE },
 }
 
-// Bundle discount — pure math, no new state. The twenty-six
+// Bundle discount — pure math, no new state. The thirty
 // billable plans count: 2 plans in the cart = 10% off the monthly
 // total, 3 plans = 15%, 4 or more = 20%. Extra Students lines do
 // NOT count toward the tiers and are NOT discounted — they only add
 // places to a school that already pays its $5/month, so discounting
 // them would discount the same school twice. Clean Link, Direct
-// Upload, Reports, TV Gallery and Live Chat add-on lines (isAddon,
+// Upload, Reports, TV Gallery, Live Chat and Remove Branding
+// add-on lines (isAddon,
 // from a shop's Setup page) behave
 // the same way: they only add to a payment the customer already
 // has (Clean Link $5/month, Golden Link $10/month, Your Own Domain
 // $20/month, Direct Upload $5/month, Reports $5/month, TV Gallery
-// $2/month, Live Chat $3/month). Their amounts
+// $2/month, Live Chat $3/month, Remove Branding $5/month, first
+// month free). Their amounts
 // ARE still in the totals the customer sees: listTotal is the
 // billable list plus the extra lines, savings is the discount on the
 // billable list only, and total is billable-after-discount plus the
@@ -439,7 +466,10 @@ export function BusinessCartProvider({ children }) {
       // Systems only, like Reports. A stored Live Chat add-on
       // (isAddon + chatSystem + chatShopSlug) survives the same way
       // on a Live Chat line — any of the 23 add-on systems, like
-      // Direct Upload. The line price is rebuilt from
+      // Direct Upload. A stored Remove Branding add-on (isAddon +
+      // brandingSystem + brandingShopSlug) survives the same way on
+      // a Remove Branding line — any of the 21 folder-app systems,
+      // like the banner itself. The line price is rebuilt from
       // BUSINESS_PLANS, so an old $2 Clean Link add-on line
       // reprices to $5 on the next load — that is the new price,
       // not a stored mistake.
@@ -456,6 +486,7 @@ export function BusinessCartProvider({ children }) {
         const isReportsAddon = plan.key === REPORTS_PLAN_KEY && i.isAddon === true && typeof i.reportsSystem === 'string' && REPORTS_SYSTEMS.has(i.reportsSystem)
         const isTvAddon = plan.key === TV_PLAN_KEY && i.isAddon === true && typeof i.tvSystem === 'string' && REPORTS_SYSTEMS.has(i.tvSystem)
         const isChatAddon = plan.key === CHAT_PLAN_KEY && i.isAddon === true && typeof i.chatSystem === 'string' && ADDON_SYSTEMS.has(i.chatSystem)
+        const isBrandingAddon = plan.key === BRANDING_PLAN_KEY && i.isAddon === true && typeof i.brandingSystem === 'string' && BRANDING_SYSTEMS.has(i.brandingSystem)
         items.push({
           key: plan.key,
           name: plan.name,
@@ -467,6 +498,7 @@ export function BusinessCartProvider({ children }) {
           ...(isReportsAddon ? { isAddon: true, reportsSystem: i.reportsSystem, reportsShopSlug: String(i.reportsShopSlug || '') } : {}),
           ...(isTvAddon ? { isAddon: true, tvSystem: i.tvSystem, tvShopSlug: String(i.tvShopSlug || '') } : {}),
           ...(isChatAddon ? { isAddon: true, chatSystem: i.chatSystem, chatShopSlug: String(i.chatShopSlug || '') } : {}),
+          ...(isBrandingAddon ? { isAddon: true, brandingSystem: i.brandingSystem, brandingShopSlug: String(i.brandingShopSlug || '') } : {}),
         })
       }
       return items
@@ -484,7 +516,7 @@ export function BusinessCartProvider({ children }) {
   // Adding a plan already in the cart is a no-op — one of each max —
   // EXCEPT Extra Students lines (see below) and Clean Link /
   // Golden Link / Your Own Domain / Direct Upload / Reports / TV
-  // Gallery / Live Chat add-on lines (also
+  // Gallery / Live Chat / Remove Branding add-on lines (also
   // below). extraKids only applies
   // to Kids plans: the number of students beyond the first 3, folded
   // into the line price (+$1 each). schoolSlug only applies to Extra
@@ -495,7 +527,8 @@ export function BusinessCartProvider({ children }) {
   // Upload line, { isAddon, reportsSystem, reportsShopSlug } for a
   // Reports line, { isAddon, tvSystem, tvShopSlug } for a TV
   // Gallery line, { isAddon, chatSystem, chatShopSlug } for a Live
-  // Chat line — all from a shop's Setup page.
+  // Chat line, { isAddon, brandingSystem, brandingShopSlug } for a
+  // Remove Branding line — all from a shop's Setup page.
   const addPlan = (key, extraKids = 0, schoolSlug = '', opts = {}) => {
     const plan = BUSINESS_PLANS[key]
     if (!plan) return
@@ -637,6 +670,32 @@ export function BusinessCartProvider({ children }) {
       })
       return
     }
+    if (key === BRANDING_PLAN_KEY && opts.isAddon === true && BRANDING_SYSTEMS.has(opts.brandingSystem)) {
+      // A Remove Branding add-on from a shop's Setup page: exactly
+      // like Reports — the line carries the system + slug so
+      // checkout can write the order row's note and email
+      // (branding_order has no system / shop_slug columns — see
+      // businessData.js). The system must be one of the 21
+      // folder-app systems (BRANDING_SYSTEMS, not ADDON_SYSTEMS):
+      // Store or Cars never reaches this branch, so a hand-built
+      // Setup link for one falls through to a plain line — and the
+      // checkout insert refuses that line outright (see
+      // brandingData.js). A billable (ad-page) Remove Branding line
+      // already in the cart is left alone — an add-on never
+      // overwrites it — and an add-on line already in the cart just
+      // refreshes its fields, so re-tapping the Setup link never
+      // duplicates the line.
+      const shopSlug = String(opts.brandingShopSlug || '').trim()
+      if (!shopSlug) return
+      setLastOrder(null)
+      setCartState(c => {
+        const existing = c.find(i => i.key === key)
+        if (!existing) return [...c, { key: plan.key, name: plan.name, price: plan.price, extraKids: 0, isAddon: true, brandingSystem: opts.brandingSystem, brandingShopSlug: shopSlug }]
+        if (!existing.isAddon) return c
+        return c.map(i => (i.key === key ? { ...i, isAddon: true, brandingSystem: opts.brandingSystem, brandingShopSlug: shopSlug } : i))
+      })
+      return
+    }
     const kids = isKidsPlanKey(key) ? Math.max(0, Number(extraKids) || 0) : 0
     setLastOrder(null)
     setCartState(c => (c.some(i => i.key === key) ? c : [...c, { key: plan.key, name: plan.name, price: kids > 0 ? kidsLinePrice(kids) : plan.price, extraKids: kids }]))
@@ -648,7 +707,8 @@ export function BusinessCartProvider({ children }) {
   // itself). The line price is recomputed; the plan still counts
   // once for the bundle tiers — and an Extra Students line never
   // counts toward them at all. A Clean Link, Golden Link, Your Own
-  // Domain, Direct Upload, Reports, TV Gallery or Live Chat add-on
+  // Domain, Direct Upload, Reports, TV Gallery, Live Chat or Remove
+  // Branding add-on
   // line (isAddon, from a shop's
   // Setup page) behaves the same way: it never counts toward the
   // tiers and is never discounted — it only adds to a payment the
