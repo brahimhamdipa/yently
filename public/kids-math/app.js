@@ -79,6 +79,7 @@
   var chatOn = false; // live chat switched on for this school — for the Add-ons section (shop_chat_enabled, fetched in openSetup)
   var cleanLinkSlug = ''; // the school's live clean-link word, fetched on demand for the "Your live link" line
   var addonsSelected = ''; // the add-on whose details panel is open ('' = none)
+  var brandingRemoved = false; // the "Powered by Yently" banner is off for this school — for the Add-ons section (branding_removed, fetched in openSetup)
   var studentLimit = 3; // students included in the plan (3) + paid extra kids; fetched in openSetup, falls back to 3
   var staffCreds = null; // {u, p} in memory only, never stored
   var teacherPass = null; // teacher password in memory only, never stored
@@ -609,6 +610,20 @@
      in Setup at all. Extra Students counts as active when the
      school has paid extra places (studentLimit above 3). */
   var ADDONS_SYSTEM = 'kids-math';
+  /* "Powered by Yently" banner: a small navy strip at the bottom
+     of the page, with the Yently logo, linking to yently.com. It is
+     on by default. It hides only when the customer ordered the
+     Remove Branding add-on ($5/month, first month free) and Yently
+     switched it on for this school (branding_removed). The banner is
+     the default: if the check errors or answers nothing, the
+     banner stays — a failed check never takes the branding off. */
+  var YENTLY_BADGE_HTML = '<div id="yently-badge" style="margin-top:10px;background:#161d44;border-radius:8px;padding:8px 12px;text-align:center;"><a href="https://yently.com" target="_blank" rel="noopener" style="color:#fff;text-decoration:none;display:inline-flex;align-items:center;gap:8px;font-size:13px;"><img src="/logo.webp" alt="Yently" style="height:20px;width:auto;border-radius:4px;">Powered by Yently</a></div>';
+  function hideYentlyBadgeIfRemoved() {
+    if (!SLUG) return;
+    rpc('branding_removed', { p_owner_type: ADDONS_SYSTEM, p_owner_key: SLUG }).then(function (removed) {
+      if (removed) { var b = $('yently-badge'); if (b) b.style.display = 'none'; }
+    }).catch(function () { /* banner stays */ });
+  }
   function addonsExtraCount() { return Math.max(0, studentLimit - 3); }
   function addonsExtraText() {
     var extra = addonsExtraCount();
@@ -619,7 +634,8 @@
     return '<li>Clean Link — <b>' + (hasCleanLink ? 'Active' : 'Not added') + '</b></li>' +
       '<li>Live Chat — <b>' + (chatOn ? 'Active' : 'Not added') + '</b></li>' +
       '<li>Direct Upload — <b>' + (directUploadOn ? 'Active' : 'Not added') + '</b></li>' +
-      '<li id="setup-addons-active-extra">Extra Students — <b>' + (extra > 0 ? 'Active (' + extra + ' extra place' + (extra > 1 ? 's' : '') + ')' : 'Not added') + '</b></li>';
+      '<li id="setup-addons-active-extra">Extra Students — <b>' + (extra > 0 ? 'Active (' + extra + ' extra place' + (extra > 1 ? 's' : '') + ')' : 'Not added') + '</b></li>' +
+      '<li>Remove Branding — <b>' + (brandingRemoved ? 'Active' : 'Not added') + '</b></li>';
   }
   function updateAddonsExtra() {
     var row = $('setup-addons-active-extra');
@@ -671,6 +687,14 @@
       html = '<h4 style="margin:0 0 6px;">Extra Students — $1/month each</h4>' +
         '<p class="info" id="setup-addons-detail-extra">' + esc(addonsExtraText()) + '</p>' +
         '<p class="info"><a href="/?add=kids-extra-math&slug=' + encodeURIComponent(SLUG) + '">Add extra students</a> for $1/month each — free for the rest of this month.</p>';
+    } else if (key === 'branding') {
+      html = '<h4 style="margin:0 0 6px;">Remove Branding — $5/month</h4>' +
+        '<p class="info">Take the "Powered by Yently" banner off the bottom of your school page — visitors see only your school page, nothing about Yently.</p>';
+      if (brandingRemoved) {
+        html += '<p class="info"><b>The Yently banner is off for this school page.</b></p>';
+      } else {
+        html += '<p class="info">' + add('branding:website', 'Remove Branding') + ' — $5/month, first month free, free for the rest of this month.</p>';
+      }
     }
     box.innerHTML = html;
     /* Wire the buttons inside the panel just rendered. */
@@ -784,6 +808,14 @@
         chatOn = (on === true);
       }).catch(function () { chatOn = false; });
     }).then(function () {
+      /* Remove Branding switch: whether Yently switched the
+         "Powered by Yently" banner off for this school
+         (branding_removed, public RPC) — for the Add-ons
+         section's Remove Branding panel and active list. */
+      return rpc('branding_removed', { p_owner_type: 'kids-math', p_owner_key: SLUG }).then(function (on) {
+        brandingRemoved = (on === true);
+      }).catch(function () { brandingRemoved = false; });
+    }).then(function () {
       renderSetup();
     }).catch(function () {
       el.innerHTML = '<h2>Setup</h2><div class="card"><p class="error">Could not load your draft. Please try again in a moment.</p></div>';
@@ -842,13 +874,14 @@
       '<div id="setup-student-out" style="margin-top:8px"></div></div>' +
       '<div class="card" id="setup-addons">' +
       '<h3>Add-ons</h3>' +
-      '<p class="info">Add-ons add more to your school page — a short link, live chat, uploads that go live right away, or places for more students. Pick one below to see what it does and what it costs. Add-ons join the payment you already have — free for the rest of this month, charged from your next payment.</p>' +
+      '<p class="info">Add-ons add more to your school page — a short link, live chat, uploads that go live right away, or places for more students, or a school page without the Yently banner. Pick one below to see what it does and what it costs. Add-ons join the payment you already have — free for the rest of this month, charged from your next payment.</p>' +
       '<div class="row"><button type="button" id="setup-addons-menu-btn" class="secondary" aria-label="Add-ons menu">☰ Add-ons</button></div>' +
       '<div id="setup-addons-menu" style="display:none;margin-top:8px;">' +
       '<button type="button" class="secondary" data-addon-pick="clean" style="display:block;width:100%;text-align:left;margin-bottom:6px;">Clean Link — $5/month</button>' +
       '<button type="button" class="secondary" data-addon-pick="chat" style="display:block;width:100%;text-align:left;margin-bottom:6px;">Live Chat — $3/month</button>' +
       '<button type="button" class="secondary" data-addon-pick="direct" style="display:block;width:100%;text-align:left;margin-bottom:6px;">Direct Upload — $5/month</button>' +
-      '<button type="button" class="secondary" data-addon-pick="extra" style="display:block;width:100%;text-align:left;">Extra Students — $1/month each</button>' +
+      '<button type="button" class="secondary" data-addon-pick="extra" style="display:block;width:100%;text-align:left;margin-bottom:6px;">Extra Students — $1/month each</button>' +
+      '<button type="button" class="secondary" data-addon-pick="branding" style="display:block;width:100%;text-align:left;">Remove Branding — $5/month</button>' +
       '</div>' +
       '<div id="setup-addons-details" style="margin-top:12px;"></div>' +
       '<div style="margin-top:12px;"><h4 style="margin:0 0 6px;">Your add-ons</h4><ul id="setup-addons-active-list" style="margin:0;padding-left:18px;"></ul></div>' +
@@ -1140,7 +1173,8 @@
       if (data.about) foot.push(esc(data.about));
       var firstLine = foot.join(' · ');
       $('site-footer').innerHTML = (firstLine ? '<div>' + firstLine + '</div>' : '') +
-        '<div>Powered by Yently</div>';
+        YENTLY_BADGE_HTML;
+      hideYentlyBadgeIfRemoved();
       rpc('kids_math_pass_status', { p_slug: SLUG }).then(function (s) {
         teacherUnlocked = !(s && s.has_pass === true);
         renderPlay();
