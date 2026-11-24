@@ -1,12 +1,15 @@
 import { submitAndNotify } from './notify'
-import { addonSystemLabel } from './addonSystems'
+import { addonSystemLabel, TV_SYSTEM_OPTIONS } from './addonSystems'
+import { supabase } from './supabaseClient'
 
 // Data layer for TV Gallery orders. Mirrors insertReportsOrder /
 // insertDirectUploadOrder: the order row is insert-only for
 // visitors (customer PII), and placing it emails the owner, who
-// then creates the customer's upload form and TV link by hand and
-// flips the switch on in Admin → TV Gallery → Switches. No
-// payment is taken here.
+// flips the switch on in Admin → TV Gallery → Switches once they
+// have paid. No payment is taken here. The customer then uploads
+// their own pictures from their Setup page — no upload form is
+// created by hand: the gallery lives in the tv_gallery table,
+// one row per shop (see getTvGallery / tv_gallery_save).
 //
 // TV Gallery is no longer sold on its own: it is exactly like
 // Reports — the customer picks the system and page name in the
@@ -49,6 +52,27 @@ export function readTvGalleryMeta() {
 
 export function clearTvGalleryMeta() {
   try { localStorage.removeItem(META_KEY) } catch (e) {}
+}
+
+// The 12 Business Systems TV Gallery covers, as keys — for the
+// gallery link ('tv-<system>-<slug>') and the display page.
+export const TV_GALLERY_SYSTEMS = TV_SYSTEM_OPTIONS.map((o) => o.value)
+
+// The gallery link for a shop — built from the system and the
+// shop slug, no form name to remember: yently.com/tv-<system>-<slug>.
+// Shown in the shop's Setup page once the switch is on.
+export function tvGalleryLink(system, shopSlug) {
+  return `/tv-${system}-${shopSlug}`
+}
+
+// Read one shop's gallery (pictures + message + whether the
+// switch is on). Public — the gallery page is public, the link is
+// the privacy, same as the old upload-form link. The shop's own
+// Setup page reads it too, to manage the pictures.
+export async function getTvGallery(ownerType, ownerKey) {
+  const { data, error } = await supabase.rpc('tv_gallery_get', { p_owner_type: ownerType, p_owner_key: ownerKey })
+  if (error) throw error
+  return data || { pics: [], message: '', enabled: false, exists: false }
 }
 
 // Systems TV Gallery never covers: the 9 Yently Kids subjects
