@@ -102,7 +102,7 @@
   var hasCleanLink = false;
   var cleanLinkSlug = '';
   var addonsSelected = '';
-  var brandingRemoved = false; // the "Powered by Yently" banner is off for this shop — for the Add-ons section (branding_removed, fetched in openSetup)
+  var brandingRemoved = false; // the "Powered by YENTLY.com" banners are off for this shop — for the Add-ons section (branding_removed, fetched in openSetup)
   var ownerCreds = null; // {u, p} in memory only, never stored
   /* ---------- Shop live chat (per-shop add-on) ---------- */
   /* The visitor bubble mounts once, after the shop's live data loads;
@@ -143,19 +143,32 @@
      link — the gallery link was sent to the customer by email when
      Yently set it up. */
   var ADDONS_SYSTEM = 'dealer';
-  /* "Powered by Yently" banner: a small navy strip at the bottom
+  /* "Powered by YENTLY.com" banners: a thin navy strip under the main menu and a small navy strip at the bottom
      of the page, with the Yently logo, linking to yently.com. It is
      on by default. It hides only when the customer ordered the
      Remove Branding add-on ($5/month, first month free) and Yently
-     switched it on for this shop (branding_removed). The banner is
+     switched it on for this shop (branding_removed). The banners are
      the default: if the check errors or answers nothing, the
-     banner stays — a failed check never takes the branding off. */
-  var YENTLY_BADGE_HTML = '<div id="yently-badge" style="margin-top:10px;background:#161d44;border-radius:8px;padding:8px 12px;text-align:center;"><a href="https://yently.com" target="_blank" rel="noopener" style="color:#fff;text-decoration:none;display:inline-flex;align-items:center;gap:8px;font-size:13px;"><img src="/logo.webp" alt="Yently" style="height:20px;width:auto;border-radius:4px;">Powered by Yently</a></div>';
+     banners stay — a failed check never takes the branding off. */
+  var YENTLY_BADGE_HTML = '<div id="yently-badge" style="margin-top:10px;background:#161d44;border-radius:8px;padding:8px 12px;text-align:center;"><a href="https://yently.com" target="_blank" rel="noopener" style="color:#fff;text-decoration:none;display:inline-flex;align-items:center;gap:8px;font-size:13px;"><img src="/logo.webp" alt="Yently" style="height:20px;width:auto;border-radius:4px;">Powered by YENTLY.com</a></div>';
+  var YENTLY_BADGE_TOP_HTML = '<div id="yently-badge-top" style="background:#161d44;padding:4px 12px;text-align:center;margin-bottom:10px;"><a href="https://yently.com" target="_blank" rel="noopener" style="color:#fff;text-decoration:none;display:inline-flex;align-items:center;gap:6px;font-size:12px;"><img src="/logo.webp" alt="Yently" style="height:16px;width:auto;border-radius:3px;">Powered by YENTLY.com</a></div>';
   function hideYentlyBadgeIfRemoved() {
     if (!SLUG) return;
     rpc('branding_removed', { p_owner_type: ADDONS_SYSTEM, p_owner_key: SLUG }).then(function (removed) {
-      if (removed) { var b = $('yently-badge'); if (b) b.style.display = 'none'; }
+      if (removed) { var b = $('yently-badge'); if (b) b.style.display = 'none'; var t = $('yently-badge-top'); if (t) t.style.display = 'none'; }
     }).catch(function () { /* banner stays */ });
+  }
+
+  /* Thin "Powered by YENTLY.com" banner under the main menu (#tabs):
+     same navy strip as the bottom badge, thinner. It sits outside
+     <main>, so view switches never wipe it, and it is inserted once
+     (the guard) even when setHeader runs again. It hides with the
+     bottom badge when Remove Branding is on (hideYentlyBadgeIfRemoved). */
+  function showYentlyBadgeTop() {
+    if ($('yently-badge-top')) return;
+    var tabs = $('tabs');
+    if (!tabs) return;
+    tabs.insertAdjacentHTML('afterend', YENTLY_BADGE_TOP_HTML);
   }
   function addonsActiveRows() {
     var rows = [
@@ -263,9 +276,9 @@
       }
     } else if (key === 'branding') {
       html = '<h4 style="margin:0 0 6px;">Remove Branding — $5/month</h4>' +
-        '<p class="info">Take the "Powered by Yently" banner off the bottom of your page — visitors see only your page, nothing about Yently.</p>';
+        '<p class="info">Take the "Powered by YENTLY.com" banners off your page — the one under your menu and the one at the bottom — visitors see only your page, nothing about Yently.</p>';
       if (brandingRemoved) {
-        html += '<p class="info"><b>The Yently banner is off for this page.</b></p>';
+        html += '<p class="info"><b>The Yently banners are off for this page.</b></p>';
       } else {
         html += '<p class="info">' + add('branding:website', 'Remove Branding') + ' — $5/month, first month free, free for the rest of this month.</p>';
       }
@@ -582,6 +595,7 @@
     $('site-footer').innerHTML = dealer
       ? [esc(dealer.address), esc(dealer.phone)].filter(Boolean).join('<br>') + '<br>' + YENTLY_BADGE_HTML
       : YENTLY_BADGE_HTML;
+    showYentlyBadgeTop();
     hideYentlyBadgeIfRemoved();
     document.title = (dealer ? dealer.name : 'Dealer') + ' — Car Dealership';
   }
@@ -1554,7 +1568,7 @@
           }).catch(function () { hasCleanLink = false; });
         }).then(function () {
           /* Remove Branding switch: whether Yently switched the
-             "Powered by Yently" banner off for this shop
+             "Powered by YENTLY.com" banners off for this shop
              (branding_removed, public RPC) — for the Add-ons
              section's Remove Branding panel and active list. */
           return rpc('branding_removed', { p_owner_type: 'dealer', p_owner_key: SLUG }).then(function (on) {
