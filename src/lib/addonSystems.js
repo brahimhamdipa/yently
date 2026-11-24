@@ -38,6 +38,25 @@ export const ADDON_SYSTEM_OPTIONS = [
   { label: 'Kids Reading', value: 'kids-reading' },
 ]
 
+// Reports covers the 12 Business Systems ONLY — the same first 12
+// rows above, in the same order. Yently Kids schools (the 9
+// kids-* subjects), Store sellers and Car sellers are NOT here on
+// purpose: Reports reads those systems' order/booking tables, and
+// Kids/Store/Cars have no folder-app Setup page for the Reports
+// view to live on. Filtered FROM the shared list, so a label change
+// above flows through here — but never add a Kids/Store/Cars row
+// to this list. The Reports ad page, the cart deep-link check and
+// the Admin Reports switches all read this list, never the full
+// one. The shared ADDON_SYSTEM_OPTIONS above is untouched.
+export const REPORTS_SYSTEM_OPTIONS = ADDON_SYSTEM_OPTIONS.filter((o) =>
+  ['diner', 'pos', 'barbers', 'dealer', 'employee', 'bodyshop', 'houses', 'doctor', 'holiday', 'rentals', 'laundry', 'gym'].includes(o.value)
+)
+
+// The same 12 keys as a Set, for the cart's deep-link check
+// (BusinessCartContext REPORTS_SYSTEMS) and the checkout guard
+// (reportsData.js refuses any other system outright).
+export const REPORTS_SYSTEM_KEYS = new Set(REPORTS_SYSTEM_OPTIONS.map((o) => o.value))
+
 // The same keys as a Set, for the cart's deep-link check
 // (BusinessCartContext ADDON_SYSTEMS).
 export const ADDON_SYSTEM_KEYS = new Set(ADDON_SYSTEM_OPTIONS.map((o) => o.value))

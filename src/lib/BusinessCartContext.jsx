@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { ADDON_SYSTEM_OPTIONS, ADDON_SYSTEM_KEYS } from './addonSystems'
+import { ADDON_SYSTEM_OPTIONS, ADDON_SYSTEM_KEYS, REPORTS_SYSTEM_KEYS } from './addonSystems'
 
 // The ONE cart for all Business Systems website plans — this REPLACES
 // the seven separate website carts:
@@ -25,7 +25,7 @@ import { ADDON_SYSTEM_OPTIONS, ADDON_SYSTEM_KEYS } from './addonSystems'
 //
 // The cart is an array of {key, name, price, extraKids, schoolSlug,
 // isAddon, cleanSystem, cleanShopSlug, cleanSlug,
-// directSystem, directShopSlug} —
+// directSystem, directShopSlug, reportsSystem, reportsShopSlug} —
 // one of each plan max. A website plan is one line, quantity 1:
 // buying it twice is two separate orders, not quantity 2 of one site.
 // extraKids is only ever non-zero on Kids lines (students beyond the
@@ -37,13 +37,14 @@ import { ADDON_SYSTEM_OPTIONS, ADDON_SYSTEM_KEYS } from './addonSystems'
 // only ever set on Extra Students lines: the school the places are
 // for (from the ?slug= deep link or the /extra-students page).
 // isAddon is only ever true on a Clean Link, Golden Link, Your Own
-// Domain or Direct Upload line added from a shop's Setup page
+// Domain, Direct Upload or Reports line added from a shop's Setup page
 // (?add=<plan>&shop=<system-key>&slug=<SLUG>&addon=1): it is an
 // add-on to the payment the customer already has — free for the rest
 // of this month, $5/month (Clean Link), $10/month (Golden Link),
-// $20/month (Your Own Domain) or $5/month (Direct Upload) from the
-// next payment — so it never counts toward the bundle tiers and is
-// never discounted, like an Extra Students line. cleanSystem is the
+// $20/month (Your Own Domain), $5/month (Direct Upload) or $5/month
+// (Reports, first month free) from the next payment — so it never
+// counts toward the bundle tiers and is never discounted, like an
+// Extra Students line. cleanSystem is the
 // system key (diner, kids-arabic, …), cleanShopSlug the shop's slug,
 // and cleanSlug the short link word (the shop's slug by default) —
 // all three travel on a Clean Link line so checkout can write the
@@ -53,7 +54,10 @@ import { ADDON_SYSTEM_OPTIONS, ADDON_SYSTEM_KEYS } from './addonSystems'
 // (cleanSlug is the domain name itself).
 // A Direct Upload line carries directSystem + directShopSlug
 // instead (no cleanSlug analog — the switch is keyed by
-// system + slug).
+// system + slug). A Reports line carries reportsSystem +
+// reportsShopSlug the same way (the switch is keyed by system +
+// slug, and Reports covers the 12 Business Systems only — see
+// REPORTS_SYSTEM_KEYS in addonSystems.js).
 const BusinessCartCtx = createContext(null)
 
 const STORAGE_KEY = 'autofly-business-cart'
@@ -154,6 +158,15 @@ export function isCleanPlanKey(key) {
 export const DIRECT_PLAN_KEY = 'direct:website'
 export const DIRECT_PLAN_NAME = 'Direct Upload'
 export const DIRECT_PLAN_PRICE = 5
+
+// Reports — a clear view of a shop's own orders and bookings, in a
+// popup on the shop's Setup page. $5/month, first month free.
+// Same add-on rules as Direct Upload: free for the rest of this
+// month from a shop's Setup page, $5/month from the next payment,
+// never in the bundle tiers. The 12 Business Systems only.
+export const REPORTS_PLAN_KEY = 'reports:website'
+export const REPORTS_PLAN_NAME = 'Reports'
+export const REPORTS_PLAN_PRICE = 5
 
 export const KIDS_BASE_PRICE = 5
 export const KIDS_INCLUDED_STUDENTS = 3
@@ -284,6 +297,13 @@ export function isKidsExtraPlanKey(key) {
 // DeepLinkCartAdder in App.jsx).
 export const ADDON_SYSTEMS = ADDON_SYSTEM_KEYS
 
+// System keys a Reports deep link may name (?shop=): the 12
+// Business Systems ONLY (src/lib/addonSystems.js
+// REPORTS_SYSTEM_KEYS). A Reports link naming a Kids school, Store
+// or Cars falls back to a plain line — and the checkout insert
+// refuses that line outright (see reportsData.js).
+export const REPORTS_SYSTEMS = REPORTS_SYSTEM_KEYS
+
 // The same list in dropdown shape, for the add-on pages.
 export { ADDON_SYSTEM_OPTIONS }
 
@@ -301,7 +321,7 @@ export function kidsLinePrice(extraKids) {
   return KIDS_BASE_PRICE + n * KIDS_EXTRA_KID_PRICE
 }
 
-// Single source of truth for the thirty-seven plans, keyed by plan key.
+// Single source of truth for the thirty-eight plans, keyed by plan key.
 export const BUSINESS_PLANS = {
   [RESTAURANT_PLAN_KEY]: { key: RESTAURANT_PLAN_KEY, name: RESTAURANT_PLAN_NAME, price: RESTAURANT_PLAN_PRICE },
   [POS_PLAN_KEY]: { key: POS_PLAN_KEY, name: POS_PLAN_NAME, price: POS_PLAN_PRICE },
@@ -322,6 +342,7 @@ export const BUSINESS_PLANS = {
   [CLEAN_GOLDEN_PLAN_KEY]: { key: CLEAN_GOLDEN_PLAN_KEY, name: CLEAN_GOLDEN_PLAN_NAME, price: CLEAN_GOLDEN_PLAN_PRICE },
   [CLEAN_DOMAIN_PLAN_KEY]: { key: CLEAN_DOMAIN_PLAN_KEY, name: CLEAN_DOMAIN_PLAN_NAME, price: CLEAN_DOMAIN_PLAN_PRICE },
   [DIRECT_PLAN_KEY]: { key: DIRECT_PLAN_KEY, name: DIRECT_PLAN_NAME, price: DIRECT_PLAN_PRICE },
+  [REPORTS_PLAN_KEY]: { key: REPORTS_PLAN_KEY, name: REPORTS_PLAN_NAME, price: REPORTS_PLAN_PRICE },
   [KIDS_MATH_PLAN_KEY]: { key: KIDS_MATH_PLAN_KEY, name: KIDS_MATH_PLAN_NAME, price: KIDS_MATH_PLAN_PRICE },
   [KIDS_ENGLISH_PLAN_KEY]: { key: KIDS_ENGLISH_PLAN_KEY, name: KIDS_ENGLISH_PLAN_NAME, price: KIDS_ENGLISH_PLAN_PRICE },
   [KIDS_ARABIC_PLAN_KEY]: { key: KIDS_ARABIC_PLAN_KEY, name: KIDS_ARABIC_PLAN_NAME, price: KIDS_ARABIC_PLAN_PRICE },
@@ -347,11 +368,11 @@ export const BUSINESS_PLANS = {
 // total, 3 plans = 15%, 4 or more = 20%. Extra Students lines do
 // NOT count toward the tiers and are NOT discounted — they only add
 // places to a school that already pays its $5/month, so discounting
-// them would discount the same school twice. Clean Link and Direct
-// Upload add-on lines (isAddon, from a shop's Setup page) behave
+// them would discount the same school twice. Clean Link, Direct
+// Upload and Reports add-on lines (isAddon, from a shop's Setup page) behave
 // the same way: they only add to a payment the customer already
 // has (Clean Link $5/month, Golden Link $10/month, Your Own Domain
-// $20/month, Direct Upload $5/month). Their amounts
+// $20/month, Direct Upload $5/month, Reports $5/month). Their amounts
 // ARE still in the totals the customer sees: listTotal is the
 // billable list plus the extra lines, savings is the discount on the
 // billable list only, and total is billable-after-discount plus the
@@ -397,7 +418,12 @@ export function BusinessCartProvider({ children }) {
       // Golden Link or Your Own Domain line whose system is in the
       // shared list. A stored Direct Upload add-on (isAddon +
       // directSystem + directShopSlug) survives the same way on a
-      // Direct Upload line. The line price is rebuilt from
+      // Direct Upload line. A stored Reports add-on (isAddon +
+      // reportsSystem + reportsShopSlug) survives the same way on
+      // a Reports line — and only when the system is one of the 12
+      // Business Systems (REPORTS_SYSTEMS): a stored line naming a
+      // Kids school, Store or Cars loses its add-on fields here and
+      // is refused again at checkout (see reportsData.js). The line price is rebuilt from
       // BUSINESS_PLANS, so an old $2 Clean Link add-on line
       // reprices to $5 on the next load — that is the new price,
       // not a stored mistake.
@@ -411,6 +437,7 @@ export function BusinessCartProvider({ children }) {
         const extraKids = (isKidsPlanKey(plan.key) || isExtra) ? Math.max(0, Number(i.extraKids) || 0) : 0
         const isCleanAddon = CLEAN_PLAN_KEYS.has(plan.key) && i.isAddon === true && typeof i.cleanSystem === 'string' && ADDON_SYSTEMS.has(i.cleanSystem)
         const isDirectAddon = plan.key === DIRECT_PLAN_KEY && i.isAddon === true && typeof i.directSystem === 'string' && ADDON_SYSTEMS.has(i.directSystem)
+        const isReportsAddon = plan.key === REPORTS_PLAN_KEY && i.isAddon === true && typeof i.reportsSystem === 'string' && REPORTS_SYSTEMS.has(i.reportsSystem)
         items.push({
           key: plan.key,
           name: plan.name,
@@ -419,6 +446,7 @@ export function BusinessCartProvider({ children }) {
           ...(isExtra ? { schoolSlug: String(i.schoolSlug || '') } : {}),
           ...(isCleanAddon ? { isAddon: true, cleanSystem: i.cleanSystem, cleanShopSlug: String(i.cleanShopSlug || ''), cleanSlug: String(i.cleanSlug || i.cleanShopSlug || '') } : {}),
           ...(isDirectAddon ? { isAddon: true, directSystem: i.directSystem, directShopSlug: String(i.directShopSlug || '') } : {}),
+          ...(isReportsAddon ? { isAddon: true, reportsSystem: i.reportsSystem, reportsShopSlug: String(i.reportsShopSlug || '') } : {}),
         })
       }
       return items
@@ -435,7 +463,7 @@ export function BusinessCartProvider({ children }) {
 
   // Adding a plan already in the cart is a no-op — one of each max —
   // EXCEPT Extra Students lines (see below) and Clean Link /
-  // Golden Link / Your Own Domain / Direct Upload add-on lines (also
+  // Golden Link / Your Own Domain / Direct Upload / Reports add-on lines (also
   // below). extraKids only applies
   // to Kids plans: the number of students beyond the first 3, folded
   // into the line price (+$1 each). schoolSlug only applies to Extra
@@ -443,7 +471,8 @@ export function BusinessCartProvider({ children }) {
   // to add-on lines: { isAddon, cleanSystem, cleanShopSlug,
   // cleanSlug } for a Clean Link, Golden Link or Your Own Domain
   // line, { isAddon, directSystem, directShopSlug } for a Direct
-  // Upload line — both from a shop's Setup page.
+  // Upload line, { isAddon, reportsSystem, reportsShopSlug } for a
+  // Reports line — all from a shop's Setup page.
   const addPlan = (key, extraKids = 0, schoolSlug = '', opts = {}) => {
     const plan = BUSINESS_PLANS[key]
     if (!plan) return
@@ -513,6 +542,31 @@ export function BusinessCartProvider({ children }) {
       })
       return
     }
+    if (key === REPORTS_PLAN_KEY && opts.isAddon === true && REPORTS_SYSTEMS.has(opts.reportsSystem)) {
+      // A Reports add-on from a shop's Setup page: the line carries
+      // the system + slug so checkout can write the order row's
+      // note and email (reports_order has no system / shop_slug
+      // columns — see businessData.js). The system must be one of
+      // the 12 Business Systems (REPORTS_SYSTEMS, not
+      // ADDON_SYSTEMS): a Kids school, Store or Cars never reaches
+      // this branch, so a hand-built Setup link for one falls
+      // through to a plain line — and the checkout insert refuses
+      // that line outright (see reportsData.js). A billable
+      // (ad-page) Reports line already in the cart is left alone —
+      // an add-on never overwrites it — and an add-on line already
+      // in the cart just refreshes its fields, so re-tapping the
+      // Setup link never duplicates the line.
+      const shopSlug = String(opts.reportsShopSlug || '').trim()
+      if (!shopSlug) return
+      setLastOrder(null)
+      setCartState(c => {
+        const existing = c.find(i => i.key === key)
+        if (!existing) return [...c, { key: plan.key, name: plan.name, price: plan.price, extraKids: 0, isAddon: true, reportsSystem: opts.reportsSystem, reportsShopSlug: shopSlug }]
+        if (!existing.isAddon) return c
+        return c.map(i => (i.key === key ? { ...i, isAddon: true, reportsSystem: opts.reportsSystem, reportsShopSlug: shopSlug } : i))
+      })
+      return
+    }
     const kids = isKidsPlanKey(key) ? Math.max(0, Number(extraKids) || 0) : 0
     setLastOrder(null)
     setCartState(c => (c.some(i => i.key === key) ? c : [...c, { key: plan.key, name: plan.name, price: kids > 0 ? kidsLinePrice(kids) : plan.price, extraKids: kids }]))
@@ -524,7 +578,7 @@ export function BusinessCartProvider({ children }) {
   // itself). The line price is recomputed; the plan still counts
   // once for the bundle tiers — and an Extra Students line never
   // counts toward them at all. A Clean Link, Golden Link, Your Own
-  // Domain or Direct Upload add-on line (isAddon, from a shop's
+  // Domain, Direct Upload or Reports add-on line (isAddon, from a shop's
   // Setup page) behaves the same way: it never counts toward the
   // tiers and is never discounted — it only adds to a payment the
   // customer already has. An Extra Students count may go down
