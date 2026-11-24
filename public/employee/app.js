@@ -85,6 +85,7 @@
      approval. Checked once when Setup opens and cached for the
      session; any failure leaves it off, so the old wording stays. */
   var directUploadOn = false;
+    var reportsOn = false;
   var ownerCreds = null; // {u, p} in memory only, never stored
   /* ---------- Shop live chat (per-shop add-on) ---------- */
   /* The visitor bubble mounts once, after the shop's live data loads;
@@ -598,6 +599,121 @@
   }
 
   /* ---------- Setup (owner) ---------- */
+  /* Reports add-on: this shop's orders and bookings, from the
+     generic get_system_report RPC (SECURITY DEFINER — anon REST
+     reads nothing on these tables). Summary cards (totals, counts
+     by status), one table per row set, FROM/TO date filters, and
+     Print / Download as PDF. There is no vendored PDF library in
+     the folder apps, so "Download as PDF" uses the same print path
+     as the receipts: the report is copied into #print-area and
+     window.print() is called — the browser's print window offers
+     "Save as PDF". */
+  var REPORTS_SYSTEM = 'employee';
+  var lastReports = null;
+  var REPORTS_COL_FIELD = { '#': 'id', 'Customer': 'name', 'Details': 'detail', 'Amount': 'amount', 'Status': 'status', 'Date': 'date', 'Phone': 'phone', 'Vehicle': 'vehicle', 'Member': 'name', 'Plan': 'plan', 'Joined': 'date', 'Checked in': 'date' };
+  function reportsISO(d) { var m = d.getMonth() + 1, day = d.getDate(); return d.getFullYear() + '-' + (m < 10 ? '0' : '') + m + '-' + (day < 10 ? '0' : '') + day; }
+  function reportsCell(row, col, hasMoney) {
+    var f = REPORTS_COL_FIELD[col] || 'detail';
+    var v = row[f];
+    if (v === null || v === undefined || v === '') return '';
+    if (f === 'amount') {
+      var n = Number(v);
+      if (isNaN(n)) return esc(String(v));
+      return hasMoney ? '$' + n.toFixed(2) : String(Math.round(n * 100) / 100);
+    }
+    return esc(String(v));
+  }
+  function openReportsModal() {
+    var overlay = $('reports-overlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'reports-overlay';
+      overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;overflow:auto;padding:16px;box-sizing:border-box;';
+      overlay.innerHTML = '<div id="reports-modal" style="background:#fff;max-width:900px;margin:0 auto;border-radius:14px;padding:20px;box-sizing:border-box;">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;"><h2 style="margin:0;">Reports</h2>' +
+        '<button type="button" id="reports-close" class="secondary">Close</button></div>' +
+        '<p class="info" id="reports-shop"></p>' +
+        '<div class="row" style="margin:12px 0;"><span>From <input type="date" id="reports-from"></span> <span>To <input type="date" id="reports-to"></span> ' +
+        '<button type="button" id="reports-filter" class="secondary">Filter</button></div>' +
+        '<div id="reports-body"><p class="info">Loading…</p></div>' +
+        '<div class="row" style="margin-top:16px;"><button type="button" id="reports-print" class="secondary">Print</button> ' +
+        '<button type="button" id="reports-pdf" class="secondary">Download as PDF</button></div>' +
+        '<p class="info">Download as PDF opens the print window — choose “Save as PDF” there. The printout shows only the report, not the rest of the page.</p>' +
+        '</div>';
+      document.body.appendChild(overlay);
+      $('reports-close').onclick = function () { overlay.style.display = 'none'; };
+      overlay.onclick = function (e) { if (e.target === overlay) overlay.style.display = 'none'; };
+      $('reports-filter').onclick = function () { loadReports(); };
+      $('reports-print').onclick = function () { printReports(); };
+      $('reports-pdf').onclick = function () { printReports(); };
+      if (!$('reports-print-style')) {
+        var st = document.createElement('style');
+        st.id = 'reports-print-style';
+        st.textContent = '@media print { body * { visibility: hidden; } #print-area, #print-area * { visibility: visible; } #print-area { position: absolute; left: 0; top: 0; width: 100%; } }';
+        document.head.appendChild(st);
+      }
+    }
+    overlay.style.display = 'block';
+    var now = new Date();
+    $('reports-from').value = reportsISO(new Date(now.getFullYear(), now.getMonth(), 1));
+    $('reports-to').value = reportsISO(now);
+    loadReports();
+  }
+  function loadReports() {
+    var body = $('reports-body');
+    if (body) body.innerHTML = '<p class="info">Loading…</p>';
+    var from = $('reports-from') ? ($('reports-from').value || null) : null;
+    var to = $('reports-to') ? ($('reports-to').value || null) : null;
+    rpc('get_system_report', { p_system: REPORTS_SYSTEM, p_slug: SLUG, p_from: from, p_to: to, p_u: ownerCreds.u, p_p: ownerCreds.p }).then(function (rep) {
+      lastReports = rep;
+      renderReports(rep);
+    }).catch(function (err) {
+      if (body) body.innerHTML = '<p class="error">Could not load the report: ' + esc(err && err.message ? err.message : 'please try again in a moment.') + '</p>';
+    });
+  }
+  function renderReports(rep) {
+    var body = $('reports-body');
+    if (!body) return;
+    var shopEl = $('reports-shop');
+    if (shopEl) shopEl.textContent = (rep.shop_name || SLUG) + ((rep.from || rep.to) ? ' — ' + (rep.from || '…') + ' to ' + (rep.to || '…') : '');
+    var html = '';
+    (rep.tables || []).forEach(function (t) {
+      html += '<div class="card"><h3 style="margin-top:0;">' + esc(t.title) + ' — ' + t.count + '</h3>';
+      if (t.has_money) html += '<p><b>' + esc(t.amount_label || 'Total sold') + ': $' + Number(t.revenue || 0).toFixed(2) + '</b></p>';
+      else if (t.amount_label) html += '<p><b>' + esc(t.amount_label) + ': ' + String(Math.round(Number(t.revenue || 0) * 100) / 100) + '</b></p>';
+      var counts = [];
+      Object.keys(t.status_counts || {}).forEach(function (k) { counts.push(esc(k) + ': ' + t.status_counts[k]); });
+      if (counts.length) html += '<p class="info">' + counts.join(' · ') + '</p>';
+      html += '</div>';
+      html += '<h3>' + esc(t.title) + ' (' + t.count + ')</h3>';
+      if (!t.rows || !t.rows.length) { html += '<p class="info">No ' + esc(String(t.title).toLowerCase()) + ' in this period.</p>'; return; }
+      html += '<div style="overflow:auto;max-height:520px;"><table style="width:100%;border-collapse:collapse;font-size:14px;"><thead><tr>';
+      (t.columns || []).forEach(function (c) { html += '<th style="text-align:left;border-bottom:2px solid #e5e7eb;padding:8px 6px;">' + esc(c) + '</th>'; });
+      html += '</tr></thead><tbody>';
+      t.rows.forEach(function (row) {
+        html += '<tr>';
+        (t.columns || []).forEach(function (c) { html += '<td style="border-bottom:1px solid #f1f2f5;padding:8px 6px;vertical-align:top;">' + reportsCell(row, c, t.has_money) + '</td>'; });
+        html += '</tr>';
+      });
+      html += '</tbody></table></div>';
+      if (t.count > t.rows.length) html += '<p class="info">Showing ' + t.rows.length + ' of ' + t.count + ' rows — narrow the dates to see the rest.</p>';
+    });
+    body.innerHTML = html;
+  }
+  function printReports() {
+    var body = $('reports-body');
+    if (!body) return;
+    var title = 'Reports' + (lastReports && lastReports.shop_name ? ' — ' + lastReports.shop_name : '');
+    var range = (lastReports && (lastReports.from || lastReports.to)) ? ' (' + (lastReports.from || '…') + ' to ' + (lastReports.to || '…') + ')' : '';
+    var area = $('print-area');
+    if (area) {
+      area.innerHTML = '<div style="font-family:sans-serif;"><h2>' + esc(title) + '</h2><p>' + esc(range) + '</p>' + body.innerHTML + '</div>';
+      window.print();
+    } else {
+      window.print();
+    }
+  }
+
   function renderSetup() {
     stopShopChat(); // re-render destroys the inbox container; stop its poll first
     var el = $('view-setup');
@@ -657,7 +773,9 @@
       '<button id="d-upload" class="secondary">' + (directUploadOn ? 'Upload — goes live right away' : 'Upload for approval') + '</button></div>' +
       '<p class="info" id="d-status">' + esc(draftStatusText()) + '</p>' +
       '<p class="error" id="d-err" hidden></p>' +
-      '<p class="info" id="setup-clean-link">Want a short link for this page? <select id="setup-clean-link-type"><option value="clean:website">Clean Link — $5/month</option><option value="clean:golden" disabled>Golden Link — $10/month (Available soon)</option><option value="clean:domain" disabled>Your Own Domain — $20/month (Available soon)</option></select> <button type="button" id="setup-clean-link-add" class="secondary">Add</button> — free for the rest of this month.</p></div>' +
+      '<p class="info" id="setup-clean-link">Want a short link for this page? <select id="setup-clean-link-type"><option value="clean:website">Clean Link — $5/month</option><option value="clean:golden" disabled>Golden Link — $10/month (Available soon)</option><option value="clean:domain" disabled>Your Own Domain — $20/month (Available soon)</option></select> <button type="button" id="setup-clean-link-add" class="secondary">Add</button> — free for the rest of this month. <a href="#" id="setup-clean-link-help" style="color:#2563eb">What is a clean link?</a></p></div>' +
+      '<p class="info" id="setup-reports">See how this page is doing — <button type="button" id="setup-reports-open" class="secondary">View Reports</button></p>' +
+      '<p class="info" id="setup-reports-add">Want a clear view of your orders and bookings? <a href="/?add=reports:website&shopemployee&slug=' + encodeURIComponent(SLUG) + '&addon=1">Add Reports</a> — $5/month, free for the rest of this month.</p>' +
       '<div class="card"><h3>Staff</h3>' +
       '<p class="info">Staff go live right away — no approval needed.</p>' +
       '<div id="staff-list"></div>' +
@@ -686,6 +804,36 @@
        sell one, remove `disabled` from its option above. */
     var cleanLinkAdd = $('setup-clean-link-add');
     if (cleanLinkAdd) cleanLinkAdd.onclick = function () { var t = $('setup-clean-link-type'); window.location.href = '/?add=' + encodeURIComponent(t ? t.value : 'clean:website') + '&shop=employee&slug=' + encodeURIComponent(SLUG) + '&addon=1'; };
+    /* Reports add-on: show the Reports link only when the switch is
+       ON (reportsOn, fetched in openSetup); otherwise show the
+       Add Reports line. */
+    if (reportsOn) { var raEl = $('setup-reports-add'); if (raEl) raEl.style.display = 'none'; var roEl = $('setup-reports-open'); if (roEl) roEl.onclick = function () { openReportsModal(); }; }
+    else { var rlEl = $('setup-reports'); if (rlEl) rlEl.style.display = 'none'; }
+    /* Clean Link help: "What is a clean link?" opens a small popup
+       explaining the four link types. Built with inline styles so it
+       works in every folder app without a stylesheet change. */
+    var cleanLinkHelp = $('setup-clean-link-help');
+    if (cleanLinkHelp) cleanLinkHelp.onclick = function (e) {
+      if (e) e.preventDefault();
+      if ($('clean-link-help-pop')) return;
+      var pop = document.createElement('div');
+      pop.id = 'clean-link-help-pop';
+      pop.setAttribute('style', 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;');
+      pop.innerHTML =
+        '<div style="background:#fff;color:#111827;border-radius:12px;max-width:420px;width:100%;padding:20px;box-shadow:0 8px 30px rgba(0,0,0,0.25);">' +
+        '<h3 style="margin:0 0 8px;font-size:18px;">What is a clean link?</h3>' +
+        '<p style="margin:0 0 10px;">A clean link is a short, easy address for this page, instead of the long system link. Your link stays live while the plan is active. You can cancel anytime.</p>' +
+        '<p style="margin:0 0 6px;"><b>Free Link — $0:</b> the standard system link, included with your system.</p>' +
+        '<p style="margin:0 0 6px;"><b>Clean Link — $5/month:</b> yently.com/[name] — your own short address.</p>' +
+        '<p style="margin:0 0 6px;"><b>Golden Link — $10/month:</b> [name].yently.com — coming soon.</p>' +
+        '<p style="margin:0 0 12px;"><b>Your Own Domain — $20/month:</b> use your own domain name — coming soon.</p>' +
+        '<button type="button" id="clean-link-help-close" class="secondary">Close</button>' +
+        '</div>';
+      pop.onclick = function (ev) { if (ev.target === pop) document.body.removeChild(pop); };
+      document.body.appendChild(pop);
+      var closeBtn = $('clean-link-help-close');
+      if (closeBtn) closeBtn.onclick = function () { document.body.removeChild(pop); };
+    };
     wireShopChatInbox();
     renderJobsList();
     renderStaffList();
@@ -873,7 +1021,12 @@
         /* Direct Upload switch: see the note by directUploadOn. */
         return rpc('direct_upload_enabled', { p_owner_type: 'employee', p_owner_key: SLUG }).then(function (on) {
           directUploadOn = (on === true);
-        }).catch(function () { directUploadOn = false; });
+        }).catch(function () { directUploadOn = false; }).then(function () {
+          /* Reports switch: see the note by reportsOn. */
+          return rpc('reports_enabled', { p_owner_type: 'employee', p_owner_key: SLUG }).then(function (on) {
+            reportsOn = (on === true);
+          }).catch(function () { reportsOn = false; });
+        });
       })
       .then(function () { renderSetup(); })
       .catch(function (e) {
