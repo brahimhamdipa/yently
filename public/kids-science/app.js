@@ -734,13 +734,38 @@
          a clean link. */
       var cleanEl = $('setup-clean-link');
       if (cleanEl) {
-        cleanEl.innerHTML = hasCleanLink ? '' : 'Want a short link for this page? <select id="setup-clean-link-type"><option value="clean:website">Clean Link — $5/month</option><option value="clean:golden" disabled>Golden Link — $10/month (Available soon)</option><option value="clean:domain" disabled>Your Own Domain — $20/month (Available soon)</option></select> <button type="button" id="setup-clean-link-add" class="secondary">Add</button> — free for the rest of this month.';
+        cleanEl.innerHTML = hasCleanLink ? '' : 'Want a short link for this page? <select id="setup-clean-link-type"><option value="clean:website">Clean Link — $5/month</option><option value="clean:golden" disabled>Golden Link — $10/month (Available soon)</option><option value="clean:domain" disabled>Your Own Domain — $20/month (Available soon)</option></select> <button type="button" id="setup-clean-link-add" class="secondary">Add</button> — free for the rest of this month. <a href="#" id="setup-clean-link-help" style="color:#2563eb">What is a clean link?</a>';
         /* Clean Link add-on: pick the type, then Add opens the cart
            with the add-on link for this shop. Golden Link and Your Own
            Domain are disabled in the dropdown until they launch — to
            sell one, remove `disabled` from its option above. */
         var cleanLinkAdd = $('setup-clean-link-add');
         if (cleanLinkAdd) cleanLinkAdd.onclick = function () { var t = $('setup-clean-link-type'); window.location.href = '/?add=' + encodeURIComponent(t ? t.value : 'clean:website') + '&shop=kids-science&slug=' + encodeURIComponent(SLUG) + '&addon=1'; };
+        /* Clean Link help: "What is a clean link?" opens a small popup
+           explaining the four link types. Built with inline styles so it
+           works in every folder app without a stylesheet change. */
+        var cleanLinkHelp = $('setup-clean-link-help');
+        if (cleanLinkHelp) cleanLinkHelp.onclick = function (e) {
+          if (e) e.preventDefault();
+          if ($('clean-link-help-pop')) return;
+          var pop = document.createElement('div');
+          pop.id = 'clean-link-help-pop';
+          pop.setAttribute('style', 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;');
+          pop.innerHTML =
+            '<div style="background:#fff;color:#111827;border-radius:12px;max-width:420px;width:100%;padding:20px;box-shadow:0 8px 30px rgba(0,0,0,0.25);">' +
+            '<h3 style="margin:0 0 8px;font-size:18px;">What is a clean link?</h3>' +
+            '<p style="margin:0 0 10px;">A clean link is a short, easy address for this page, instead of the long system link. Your link stays live while the plan is active. You can cancel anytime.</p>' +
+            '<p style="margin:0 0 6px;"><b>Free Link — $0:</b> the standard system link, included with your system.</p>' +
+            '<p style="margin:0 0 6px;"><b>Clean Link — $5/month:</b> yently.com/[name] — your own short address.</p>' +
+            '<p style="margin:0 0 6px;"><b>Golden Link — $10/month:</b> [name].yently.com — coming soon.</p>' +
+            '<p style="margin:0 0 12px;"><b>Your Own Domain — $20/month:</b> use your own domain name — coming soon.</p>' +
+            '<button type="button" id="clean-link-help-close" class="secondary">Close</button>' +
+            '</div>';
+          pop.onclick = function (ev) { if (ev.target === pop) document.body.removeChild(pop); };
+          document.body.appendChild(pop);
+          var closeBtn = $('clean-link-help-close');
+          if (closeBtn) closeBtn.onclick = function () { document.body.removeChild(pop); };
+        };
       }
       /* Direct Upload add-on: $5/month from the next payment —
          free for the rest of this month. Hidden when the switch
