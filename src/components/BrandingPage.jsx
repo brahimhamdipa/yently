@@ -7,9 +7,10 @@ import FloatingAddToCart from './FloatingAddToCart'
 
 // Sales page for the Remove Branding add-on (reached from More ▾ →
 // Business Systems → Add-ons → Remove Branding, and from the hub).
-// $5/month, first month free. Every system page carries a small
-// "Powered by Yently" banner at the bottom — this add-on takes it
-// off one page. The customer picks the system and page name in the
+// $5/month, first month free. Every system page carries two
+// "Powered by YENTLY.com" banners — a thin one under the menu and a
+// small one at the bottom — this add-on takes them off one page.
+// The customer picks the system and page name in the
 // form below, adds the plan to the cart (plan key
 // 'branding:website'), and the admin flips the switch on by hand
 // in Admin → Remove Branding → Switches once they pay. Works for
@@ -19,17 +20,17 @@ import FloatingAddToCart from './FloatingAddToCart'
 // the dropdown, and the checkout insert refuses any other system
 // outright (see brandingData.js). No payment is taken here.
 // The Add to cart button is disabled until the system and page name
-// above it are filled in: Yently must know which page the banner
-// comes off before the order is placed. The system + page name
+// above it are filled in: Yently must know which page the banners
+// come off before the order is placed. The system + page name
 // travel with the order (see brandingData.js).
 // There is no request/approve step for Remove Branding, and no
 // contact fields on this page: the order is placed through the
 // cart, and checkout collects the customer's name, email and phone
 // there. That is why the form below has only the two pickers — and
 // why submitting it adds the plan straight to the cart.
-// There is no demo section: the banner is already live on every
-// demo page (open any demo shop and look at the bottom), so there
-// is nothing extra to show.
+// There is no demo section: the banners are already live on every
+// demo page (open any demo shop and look under the menu and at the
+// bottom), so there is nothing extra to show.
 function normSlug(v) {
   return String(v || '').toLowerCase().replace(/[^a-z0-9-]+/g, '').replace(/^-+|-+$/g, '')
 }
@@ -90,7 +91,7 @@ export default function BrandingPage({ go }) {
       <BusinessTopBar go={go} />
       <div className="hero-card" style={{ background: '#161d44', color: '#fff', textAlign: 'center' }}>
         <h2 style={{ color: '#fff' }}>🏷️ Your page, nothing about Yently</h2>
-        <p style={{ fontSize: 18, color: '#f5c542' }}>Remove Branding — take the "Powered by Yently" banner off the bottom of your page, so visitors see only you.</p>
+        <p style={{ fontSize: 18, color: '#f5c542' }}>Remove Branding — take the "Powered by YENTLY.com" banners off your page, the one under your menu and the one at the bottom, so visitors see only you.</p>
         <p>$5/month. First month free, cancel anytime.</p>
       </div>
 
@@ -118,10 +119,10 @@ export default function BrandingPage({ go }) {
       <div className="hero-card" style={{ marginTop: 20 }}>
         <h3>What you get</h3>
         <ul>
-          <li><b>A page that is only yours</b> — no "Powered by Yently" banner at the bottom, no Yently logo, no link away from your page.</li>
-          <li><b>Nothing else changes</b> — your page, your menu, your bookings and your orders all stay exactly as they are. Only the banner goes.</li>
+          <li><b>A page that is only yours</b> — no "Powered by YENTLY.com" banners, under your menu or at the bottom, no Yently logo, no link away from your page.</li>
+          <li><b>Nothing else changes</b> — your page, your menu, your bookings and your orders all stay exactly as they are. Only the banners go.</li>
           <li><b>One add-on covers your whole page</b> — one Remove Branding, for everything on that page. A second page needs its own.</li>
-          <li><b>See it before you buy it</b> — open any demo page, for example the Demo Restaurant, and look at the bottom: the banner there is the one this add-on removes.</li>
+          <li><b>See it before you buy it</b> — open any demo page, for example the Demo Restaurant, and look under the menu and at the bottom: the banners there are the ones this add-on removes.</li>
         </ul>
       </div>
 
@@ -130,7 +131,7 @@ export default function BrandingPage({ go }) {
         <ol className="steps">
           <li><b>Add it above</b> — tell Yently which page the banner comes off.</li>
           <li><b>Check out</b> — $5/month, first month free — and Yently switches the banner off for your page.</li>
-          <li><b>That is it</b> — the next time anyone opens your page, the banner is gone. Cancel anytime and it comes back.</li>
+          <li><b>That is it</b> — the next time anyone opens your page, the banners are gone. Cancel anytime and it comes back.</li>
         </ol>
       </div>
 
