@@ -574,17 +574,54 @@
   }
   function addonsActiveRows() {
     var extra = addonsExtraCount();
-    return '<li>Clean Link — <b>' + (hasCleanLink ? 'Active' : 'Not added') + '</b></li>' +
-      '<li>Live Chat — <b>' + (chatOn ? 'Active' : 'Not added') + '</b></li>' +
-      '<li>Direct Upload — <b>' + (directUploadOn ? 'Active' : 'Not added') + '</b></li>' +
-      '<li id="setup-addons-active-extra">Extra Students — <b>' + (extra > 0 ? 'Active (' + extra + ' extra place' + (extra > 1 ? 's' : '') + ')' : 'Not added') + '</b></li>' +
-      '<li>Remove Branding — <b>' + (brandingRemoved ? 'Active' : 'Not added') + '</b></li>';
+    return '<li>Clean Link — <b>' + (hasCleanLink ? 'Active' : 'Not added') + '</b>' + addonRowLink('clean', hasCleanLink) + '</li>' +
+      '<li>Live Chat — <b>' + (chatOn ? 'Active' : 'Not added') + '</b>' + addonRowLink('chat', chatOn) + '</li>' +
+      '<li>Direct Upload — <b>' + (directUploadOn ? 'Active' : 'Not added') + '</b>' + addonRowLink('direct', directUploadOn) + '</li>' +
+      '<li id="setup-addons-active-extra">Extra Students — <b>' + (extra > 0 ? 'Active (' + extra + ' extra place' + (extra > 1 ? 's' : '') + ')' : 'Not added') + '</b>' + addonRowLink('extra', extra > 0) + '</li>' +
+      '<li>Remove Branding — <b>' + (brandingRemoved ? 'Active' : 'Not added') + '</b>' + addonRowLink('branding', brandingRemoved) + '</li>';
+  }
+  /* Action link for an ACTIVE add-on in the "Your add-ons" list:
+     the customer should reach what they paid for from the list
+     itself, not only from the details panel. Clean Link is the
+     live URL itself; Live Chat opens the inbox panel; the rest
+     open their details panel (they have no destination page).
+     Not-added rows get no link. */
+  function addonRowLink(key, active) {
+    if (!active) return '';
+    if (key === 'clean') {
+      return cleanLinkSlug
+        ? ' · <a href="/' + esc(cleanLinkSlug) + '">yently.com/' + esc(cleanLinkSlug) + '</a>'
+        : ' · <a href="#" data-addon-link="clean">Details</a>';
+    }
+    if (key === 'chat') return ' · <a href="#" data-addon-link="chat">Open Chats</a>';
+    if (key === 'direct') return ' · <a href="#" data-addon-link="direct">Details</a>';
+    if (key === 'extra') return ' · <a href="#" data-addon-link="extra">Details</a>';
+    if (key === 'branding') return ' · <a href="#" data-addon-link="branding">Details</a>';
+    return '';
+  }
+  /* Wire the "Your add-ons" row links after every list render
+     (the list is innerHTML, so the handlers must be re-attached
+     each time). Row links also hide the dropdown menu, like the
+     dropdown picks do. */
+  function wireAddonRowLinks() {
+    var list = $('setup-addons-active-list');
+    if (!list) return;
+    var links = list.querySelectorAll('[data-addon-link]');
+    links.forEach(function (a) {
+      a.onclick = function (e) {
+        if (e) e.preventDefault();
+        var menu = $('setup-addons-menu');
+        if (menu) menu.style.display = 'none';
+        renderAddonDetails(a.getAttribute('data-addon-link'));
+      };
+    });
   }
   function updateAddonsExtra() {
     var row = $('setup-addons-active-extra');
     if (row) {
       var extra = addonsExtraCount();
-      row.innerHTML = 'Extra Students — <b>' + (extra > 0 ? 'Active (' + extra + ' extra place' + (extra > 1 ? 's' : '') + ')' : 'Not added') + '</b>';
+      row.innerHTML = 'Extra Students — <b>' + (extra > 0 ? 'Active (' + extra + ' extra place' + (extra > 1 ? 's' : '') + ')' : 'Not added') + '</b>' + addonRowLink('extra', extra > 0);
+      wireAddonRowLinks();
     }
     if (addonsSelected === 'extra') {
       var line = $('setup-addons-detail-extra');
@@ -662,6 +699,7 @@
     addonsSelected = ''; // a fresh Setup render starts with no panel open
     var list = $('setup-addons-active-list');
     if (list) list.innerHTML = addonsActiveRows();
+    wireAddonRowLinks();
     var btn = $('setup-addons-menu-btn');
     var menu = $('setup-addons-menu');
     if (btn && menu) {
@@ -686,6 +724,11 @@
       }).then(function (res) { return res.ok ? res.json() : []; }).then(function (rows) {
         if (rows && rows[0] && rows[0].slug) {
           cleanLinkSlug = String(rows[0].slug);
+          /* The slug just landed: re-render the "Your add-ons"
+             list so the Clean Link row shows the live URL, then
+             re-wire its links. */
+          var l2 = $('setup-addons-active-list');
+          if (l2) { l2.innerHTML = addonsActiveRows(); wireAddonRowLinks(); }
           if (addonsSelected === 'clean') renderAddonDetails('clean');
         }
       }).catch(function () {});
