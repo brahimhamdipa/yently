@@ -10,6 +10,7 @@ import BarberTemplatePage from './BarberTemplatePage'
 import { PicField } from './admin/StoreFormBits'
 import EmployeeChatView from './EmployeeChatView'
 import UploadFormPage from './UploadFormPage'
+import { TV_GALLERY_SYSTEMS } from '../lib/tvGalleryData'
 
 // Public provider form page, reached at yently.com/<form name>.
 // The store owner logs in with the username and password the admin
@@ -371,6 +372,15 @@ export default function ProviderFormPage({ slug, goBack, onAuthedChange, go }) {
         </div>
       </div>
     )
+  }
+  // DB-backed TV gallery: 'tv-<system>-<slug>' has no upload-form
+  // row by design - the gallery lives in the tv_gallery table, so
+  // route it straight to the gallery viewer instead of the
+  // not-found page below. 'demo-tv-gallery' already works through
+  // its seeded form row; routing it here too opens the same page.
+  const isTvGallery = slug === 'demo-tv-gallery' || TV_GALLERY_SYSTEMS.some(sys => slug.startsWith('tv-' + sys + '-'))
+  if (isTvGallery) {
+    return <UploadFormPage slug={slug} goBack={goBack} go={go} />
   }
   if (barberDomain) {
     return <BarberTemplatePage domain={barberDomain} goBack={goBack} />
