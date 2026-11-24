@@ -41,6 +41,9 @@ export default function KidsHubPage({ go }) {
   return (
     <div>
       <KidsTopBar go={go} />
+      <div style={{ margin: '0 0 12px' }}>
+        <button type="button" className="link-btn" onClick={() => go && go('business-hub')}>← Back to Systems</button>
+      </div>
       <div className="hero-card" style={{ background: '#161d44', color: '#fff', textAlign: 'center' }}>
         <h2 style={{ color: '#fff' }}>🧒 Yently Kids</h2>
         <p style={{ fontSize: 18, color: '#fff' }}>Learning that feels like play.</p>
