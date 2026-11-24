@@ -86,7 +86,10 @@
      approval. Checked once when Setup opens and cached for the
      session; any failure leaves it off, so the old wording stays. */
   var directUploadOn = false;
-  var hasCleanLink = false; // the school already has a clean link — hides the Setup add-on line (clean_link_exists, fetched in openSetup)
+  var hasCleanLink = false; // the school already has a clean link — for the Add-ons section (clean_link_exists, fetched in openSetup)
+  var chatOn = false; // live chat switched on for this school — for the Add-ons section (shop_chat_enabled, fetched in openSetup)
+  var cleanLinkSlug = ''; // the school's live clean-link word, fetched on demand for the "Your live link" line
+  var addonsSelected = ''; // the add-on whose details panel is open ('' = none)
   var studentLimit = 3; // students included in the plan (3) + paid extra kids; fetched in openSetup, falls back to 3
   var staffCreds = null; // {u, p} in memory only, never stored
   var teacherPass = null; // teacher password in memory only, never stored
@@ -524,11 +527,168 @@
 
   /* ---------- Setup (owner login only: draft + Upload for approval) ---------- */
   /* Per-shop live chat: stop the owner inbox poll when Setup is
-     left or the Chats section is closed. No-op when chats were
-     never opened. */
+     left or another add-on's panel is picked. No-op when chats were
+     never opened. The inbox lives inside the Add-ons section's Live
+     Chat details panel — there is no separate Chats section in
+     Setup any more. */
   function stopSetupChats() {
-    var box = $('setup-chats');
-    if (box && box._shopChatStop) { try { box._shopChatStop(); } catch (e) {} }
+    var box = $('setup-addons-chat-inbox');
+    if (box && box._shopChatStop) { try { box._shopChatStop(); box._shopChatStop = null; } catch (e) {} }
+  }
+
+  /* ---------- Setup Add-ons section ---------- */
+  /* One section for every add-on this school can take — Clean
+     Link, Live Chat, Direct Upload, Extra Students — replacing the
+     old one-line-per-add-on Setup lines and the standalone Chats
+     card. The ☰ button opens the add-on list; picking one shows
+     its details (what it does, what it costs, its action) below.
+     The "Your add-ons" list shows each add-on's state. Add actions
+     open the cart with the add-on line for this school — free for
+     the rest of this month, charged from the next payment. No draft
+     fields: the section only reads switches and writes cart lines.
+     Live Chat is in the list because the chat inbox lives here now:
+     the conversations + reply box mount inside the Live Chat
+     details panel when chat is ON — when OFF there is no chat UI
+     in Setup at all. Extra Students counts as active when the
+     school has paid extra places (studentLimit above 3). */
+  var ADDONS_SYSTEM = 'kids-reading';
+  function addonsExtraCount() { return Math.max(0, studentLimit - 3); }
+  function addonsExtraText() {
+    var extra = addonsExtraCount();
+    return 'You have ' + draft.students.length + ' of ' + studentLimit + ' student places' + (extra > 0 ? ' — ' + extra + ' extra place' + (extra > 1 ? 's' : '') + ' paid' : ' — 3 included in your plan');
+  }
+  function addonsActiveRows() {
+    var extra = addonsExtraCount();
+    return '<li>Clean Link — <b>' + (hasCleanLink ? 'Active' : 'Not added') + '</b></li>' +
+      '<li>Live Chat — <b>' + (chatOn ? 'Active' : 'Not added') + '</b></li>' +
+      '<li>Direct Upload — <b>' + (directUploadOn ? 'Active' : 'Not added') + '</b></li>' +
+      '<li id="setup-addons-active-extra">Extra Students — <b>' + (extra > 0 ? 'Active (' + extra + ' extra place' + (extra > 1 ? 's' : '') + ')' : 'Not added') + '</b></li>';
+  }
+  function updateAddonsExtra() {
+    var row = $('setup-addons-active-extra');
+    if (row) {
+      var extra = addonsExtraCount();
+      row.innerHTML = 'Extra Students — <b>' + (extra > 0 ? 'Active (' + extra + ' extra place' + (extra > 1 ? 's' : '') + ')' : 'Not added') + '</b>';
+    }
+    if (addonsSelected === 'extra') {
+      var line = $('setup-addons-detail-extra');
+      if (line) line.textContent = addonsExtraText();
+    }
+  }
+  function renderAddonDetails(key) {
+    stopSetupChats(); // a chat inbox from another pick must stop polling first
+    var box = $('setup-addons-details');
+    if (!box) return;
+    addonsSelected = key;
+    var add = function (plan, label) {
+      return '<a href="/?add=' + plan + '&shop=' + ADDONS_SYSTEM + '&slug=' + encodeURIComponent(SLUG) + '&addon=1">Add ' + label + '</a>';
+    };
+    var html = '';
+    if (key === 'clean') {
+      html = '<h4 style="margin:0 0 6px;">Clean Link — $5/month</h4>' +
+        '<p class="info">A short, easy address for this page — yently.com/[name] — instead of the long system link.</p>';
+      if (hasCleanLink) {
+        html += cleanLinkSlug
+          ? '<p class="info">Your live link: <a href="/' + esc(cleanLinkSlug) + '">yently.com/' + esc(cleanLinkSlug) + '</a> — it stays live while the plan is active.</p>'
+          : '<p class="info">You already have a clean link for this page — it stays live while the plan is active.</p>';
+      } else {
+        html += '<p class="info"><select id="setup-addons-clean-type"><option value="clean:website">Clean Link — $5/month</option><option value="clean:golden" disabled>Golden Link — $10/month (Available soon)</option><option value="clean:domain" disabled>Your Own Domain — $20/month (Available soon)</option></select> <button type="button" id="setup-addons-clean-add" class="secondary">Add</button> — free for the rest of this month. <a href="#" id="setup-addons-clean-help" style="color:#2563eb">What is a clean link?</a></p>';
+      }
+    } else if (key === 'chat') {
+      html = '<h4 style="margin:0 0 6px;">Live Chat — $3/month</h4>' +
+        '<p class="info">A chat bubble on your school page — visitors tap it and message you, and every message reaches you by email.</p>';
+      if (chatOn) {
+        html += '<p class="info"><b>Live chat is on for this school</b> — visitors see the chat bubble. Answer them here:</p><div id="setup-addons-chat-inbox"></div>';
+      } else {
+        html += '<p class="info">' + add('chat:website', 'Live Chat') + ' — $3/month, first month free, free for the rest of this month.</p>';
+      }
+    } else if (key === 'direct') {
+      html = '<h4 style="margin:0 0 6px;">Direct Upload — $5/month</h4>' +
+        '<p class="info">Your uploads go live the moment you send them — no waiting for approval.</p>';
+      if (directUploadOn) {
+        html += '<p class="info"><b>Direct Upload is on for this school</b> — your uploads go live right away.</p>';
+      } else {
+        html += '<p class="info">' + add('direct:website', 'Direct Upload') + ' — $5/month, first month free, free for the rest of this month.</p>';
+      }
+    } else if (key === 'extra') {
+      html = '<h4 style="margin:0 0 6px;">Extra Students — $1/month each</h4>' +
+        '<p class="info" id="setup-addons-detail-extra">' + esc(addonsExtraText()) + '</p>' +
+        '<p class="info"><a href="/?add=kids-extra-reading&slug=' + encodeURIComponent(SLUG) + '">Add extra students</a> for $1/month each — free for the rest of this month.</p>';
+    }
+    box.innerHTML = html;
+    /* Wire the buttons inside the panel just rendered. */
+    if (key === 'clean' && !hasCleanLink) {
+      var cleanAdd = $('setup-addons-clean-add');
+      if (cleanAdd) cleanAdd.onclick = function () { var t = $('setup-addons-clean-type'); window.location.href = '/?add=' + encodeURIComponent(t ? t.value : 'clean:website') + '&shop=kids-reading&slug=' + encodeURIComponent(SLUG) + '&addon=1'; };
+      var cleanHelp = $('setup-addons-clean-help');
+      if (cleanHelp) cleanHelp.onclick = function (e) { if (e) e.preventDefault(); openCleanLinkHelp(); };
+    }
+    if (key === 'chat' && chatOn) {
+      var inbox = $('setup-addons-chat-inbox');
+      if (inbox) {
+        if (window.ShopChat) {
+          window.ShopChat.mountInbox(inbox, { ownerType: 'kids-reading', ownerKey: SLUG, creds: { u: staffCreds.u, p: staffCreds.p } });
+        } else {
+          inbox.innerHTML = '<p class="error">Chat is not available right now. Please reload the page and try again.</p>';
+        }
+      }
+    }
+  }
+  function renderAddonsSection() {
+    addonsSelected = ''; // a fresh Setup render starts with no panel open
+    var list = $('setup-addons-active-list');
+    if (list) list.innerHTML = addonsActiveRows();
+    var btn = $('setup-addons-menu-btn');
+    var menu = $('setup-addons-menu');
+    if (btn && menu) {
+      btn.onclick = function () {
+        menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+      };
+    }
+    var picks = document.querySelectorAll('[data-addon-pick]');
+    picks.forEach(function (b) {
+      b.onclick = function () {
+        if (menu) menu.style.display = 'none';
+        renderAddonDetails(b.getAttribute('data-addon-pick'));
+      };
+    });
+    /* Fetch the clean-link word for the "Your live link" line.
+       Only when the school already has one — and only once per
+       Setup visit. If the Clean Link panel is open when the answer
+       lands, it re-renders so the link appears. */
+    if (hasCleanLink && !cleanLinkSlug) {
+      fetch(SUPABASE_URL + '/rest/v1/clean_links?system=eq.kids-reading&shop_slug=eq.' + encodeURIComponent(SLUG) + '&select=slug', {
+        headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY }
+      }).then(function (res) { return res.ok ? res.json() : []; }).then(function (rows) {
+        if (rows && rows[0] && rows[0].slug) {
+          cleanLinkSlug = String(rows[0].slug);
+          if (addonsSelected === 'clean') renderAddonDetails('clean');
+        }
+      }).catch(function () {});
+    }
+  }
+  /* Clean Link help: "What is a clean link?" opens a small popup
+     explaining the four link types. Built with inline styles so it
+     works in every folder app without a stylesheet change. */
+  function openCleanLinkHelp() {
+    if ($('clean-link-help-pop')) return;
+    var pop = document.createElement('div');
+    pop.id = 'clean-link-help-pop';
+    pop.setAttribute('style', 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;');
+    pop.innerHTML =
+      '<div style="background:#fff;color:#111827;border-radius:12px;max-width:420px;width:100%;padding:20px;box-shadow:0 8px 30px rgba(0,0,0,0.25);">' +
+      '<h3 style="margin:0 0 8px;font-size:18px;">What is a clean link?</h3>' +
+      '<p style="margin:0 0 10px;">A clean link is a short, easy address for this page, instead of the long system link. Your link stays live while the plan is active. You can cancel anytime.</p>' +
+      '<p style="margin:0 0 6px;"><b>Free Link — $0:</b> the standard system link, included with your system.</p>' +
+      '<p style="margin:0 0 6px;"><b>Clean Link — $5/month:</b> yently.com/[name] — your own short address.</p>' +
+      '<p style="margin:0 0 6px;"><b>Golden Link — $10/month:</b> [name].yently.com — coming soon.</p>' +
+      '<p style="margin:0 0 12px;"><b>Your Own Domain — $20/month:</b> use your own domain name — coming soon.</p>' +
+      '<button type="button" id="clean-link-help-close" class="secondary">Close</button>' +
+      '</div>';
+    pop.onclick = function (ev) { if (ev.target === pop) document.body.removeChild(pop); };
+    document.body.appendChild(pop);
+    var closeBtn = $('clean-link-help-close');
+    if (closeBtn) closeBtn.onclick = function () { document.body.removeChild(pop); };
   }
 
   function openSetup() {
@@ -555,11 +715,16 @@
         directUploadOn = (on === true);
       }).catch(function () { directUploadOn = false; });
     }).then(function () {
-      /* Clean Link: hide the Setup add-on line when the school
-         already has one (clean_link_exists, public RPC). */
+      /* Clean Link: whether the school already has one
+         (clean_link_exists, public RPC). */
       return rpc('clean_link_exists', { p_system: 'kids-reading', p_slug: SLUG }).then(function (has) {
         hasCleanLink = (has === true);
       }).catch(function () { hasCleanLink = false; });
+    }).then(function () {
+      /* Live Chat switch: see the note by chatOn. */
+      return rpc('shop_chat_enabled', { p_owner_type: 'kids-reading', p_owner_key: SLUG }).then(function (on) {
+        chatOn = (on === true);
+      }).catch(function () { chatOn = false; });
     }).then(function () {
       renderSetup();
     }).catch(function () {
@@ -608,17 +773,24 @@
       '<p class="info">To change a student\'s name, click Remove next to that student, then add a new student with the right name.</p>' +
       '<div class="row"><input id="setup-student-new" type="text" placeholder="Add a student name" style="flex:1;margin:0">' +
       '<button id="setup-student-add" class="secondary">+ Add student</button></div><div id="setup-student-out" style="margin-top:8px"></div></div>' +
-      '<p class="info" id="setup-extra-students"></p>' +
-      '<p class="info" id="setup-clean-link"></p>' +
-      '<p class="info" id="setup-direct-upload"></p>' +
+      '<div class="card" id="setup-addons">' +
+      '<h3>Add-ons</h3>' +
+      '<p class="info">Add-ons add more to your school page — a short link, live chat, uploads that go live right away, or places for more students. Pick one below to see what it does and what it costs. Add-ons join the payment you already have — free for the rest of this month, charged from your next payment.</p>' +
+      '<div class="row"><button type="button" id="setup-addons-menu-btn" class="secondary" aria-label="Add-ons menu">☰ Add-ons</button></div>' +
+      '<div id="setup-addons-menu" style="display:none;margin-top:8px;">' +
+      '<button type="button" class="secondary" data-addon-pick="clean" style="display:block;width:100%;text-align:left;margin-bottom:6px;">Clean Link — $5/month</button>' +
+      '<button type="button" class="secondary" data-addon-pick="chat" style="display:block;width:100%;text-align:left;margin-bottom:6px;">Live Chat — $3/month</button>' +
+      '<button type="button" class="secondary" data-addon-pick="direct" style="display:block;width:100%;text-align:left;margin-bottom:6px;">Direct Upload — $5/month</button>' +
+      '<button type="button" class="secondary" data-addon-pick="extra" style="display:block;width:100%;text-align:left;">Extra Students — $1/month each</button>' +
+      '</div>' +
+      '<div id="setup-addons-details" style="margin-top:12px;"></div>' +
+      '<div style="margin-top:12px;"><h4 style="margin:0 0 6px;">Your add-ons</h4><ul id="setup-addons-active-list" style="margin:0;padding-left:18px;"></ul></div>' +
+      '</div>' +
       '<h2>Books</h2><div id="setup-books"></div>' +
       '<button id="setup-book-add" class="secondary">+ Add book</button>' +
       '<div class="row" style="margin-top:16px"><button id="setup-save" class="secondary">Save draft</button>' +
       '<button id="setup-upload">' + (directUploadOn ? 'Upload — goes live right away' : 'Upload for approval') + '</button></div>' +
-      '<div id="setup-out" style="margin-top:12px"></div>' +
-      '<h2>Chats — المحادثات</h2>' +
-      '<div class="row"><button id="setup-chats-toggle" class="secondary">💬 Chats — المحادثات</button></div>' +
-      '<div id="setup-chats"></div>';
+      '<div id="setup-out" style="margin-top:12px"></div>';
     el.innerHTML = html;
     /* Yently content library: ready-to-use levels for this subject.
        Mounts only here in Setup, never in public play. The library
@@ -631,22 +803,11 @@
       else el.appendChild(libBox);
       window.KidsLibrary.mount({ subject: 'reading', slug: SLUG, creds: staffCreds, container: libBox, onAdded: function () { openSetup(); } });
     }
-    /* Per-shop live chat: owner inbox, behind the owner login.
-       Opens on tap; tapping again (or leaving Setup) stops its poll. */
-    $('setup-chats-toggle').addEventListener('click', function () {
-      var box = $('setup-chats');
-      if (!box) return;
-      if (box.innerHTML) {
-        stopSetupChats();
-        box.innerHTML = '';
-        return;
-      }
-      if (window.ShopChat) {
-        window.ShopChat.mountInbox(box, { ownerType: 'kids-reading', ownerKey: SLUG, creds: { u: staffCreds.u, p: staffCreds.p } });
-      } else {
-        box.innerHTML = '<p class="error">Chat is not available right now. Please reload the page and try again.</p>';
-      }
-    });
+    /* Add-ons section: the ☰ menu, the details panel and the
+       active list (see renderAddonsSection). Replaces the old
+       one-line-per-add-on Setup lines and the Chats card — the
+       chat inbox now lives inside the Live Chat details panel. */
+    renderAddonsSection();
 
     /* Students: names live on draft.students; add/remove re-renders
        Setup. Nothing is saved until Save draft or Upload. */
@@ -702,63 +863,10 @@
           ? 'Students: ' + draft.students.length + ' of ' + studentLimit + ' — at your limit.'
           : 'Students: ' + draft.students.length + ' of ' + studentLimit + ' — changes go live right away, no approval needed.';
       }
-      /* Need more students? Quiet line under the Students section,
-         linking to the Extra Students page. Count and limit are
-         already client-side (studentLimit, fetched in openSetup). */
-      var extraEl = $('setup-extra-students');
-      if (extraEl) {
-        extraEl.innerHTML = draft.students.length >= studentLimit
-          ? 'Need more students? You have ' + draft.students.length + ' of ' + studentLimit + ' places — <a href="/?add=kids-extra-reading&slug=' + encodeURIComponent(SLUG) + '">add extra students</a> for $1/month each — free for the rest of this month.'
-          : 'Need more students? <a href="/?add=kids-extra-reading&slug=' + encodeURIComponent(SLUG) + '">Extra students</a> are $1/month each — free for the rest of this month.';
-      }
-      /* Clean Link add-on: pick the type (Clean Link $5/month;
-         Golden Link $10/month and Your Own Domain $20/month are
-         disabled in the dropdown until they launch), then Add opens
-         the cart with the add-on link for this school — free for
-         the rest of this month. Hidden when the school already has
-         a clean link. */
-      var cleanEl = $('setup-clean-link');
-      if (cleanEl) {
-        cleanEl.innerHTML = hasCleanLink ? '' : 'Want a short link for this page? <select id="setup-clean-link-type"><option value="clean:website">Clean Link — $5/month</option><option value="clean:golden" disabled>Golden Link — $10/month (Available soon)</option><option value="clean:domain" disabled>Your Own Domain — $20/month (Available soon)</option></select> <button type="button" id="setup-clean-link-add" class="secondary">Add</button> — free for the rest of this month. <a href="#" id="setup-clean-link-help" style="color:#2563eb">What is a clean link?</a>';
-        /* Clean Link add-on: pick the type, then Add opens the cart
-           with the add-on link for this shop. Golden Link and Your Own
-           Domain are disabled in the dropdown until they launch — to
-           sell one, remove `disabled` from its option above. */
-        var cleanLinkAdd = $('setup-clean-link-add');
-        if (cleanLinkAdd) cleanLinkAdd.onclick = function () { var t = $('setup-clean-link-type'); window.location.href = '/?add=' + encodeURIComponent(t ? t.value : 'clean:website') + '&shop=kids-reading&slug=' + encodeURIComponent(SLUG) + '&addon=1'; };
-        /* Clean Link help: "What is a clean link?" opens a small popup
-           explaining the four link types. Built with inline styles so it
-           works in every folder app without a stylesheet change. */
-        var cleanLinkHelp = $('setup-clean-link-help');
-        if (cleanLinkHelp) cleanLinkHelp.onclick = function (e) {
-          if (e) e.preventDefault();
-          if ($('clean-link-help-pop')) return;
-          var pop = document.createElement('div');
-          pop.id = 'clean-link-help-pop';
-          pop.setAttribute('style', 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;');
-          pop.innerHTML =
-            '<div style="background:#fff;color:#111827;border-radius:12px;max-width:420px;width:100%;padding:20px;box-shadow:0 8px 30px rgba(0,0,0,0.25);">' +
-            '<h3 style="margin:0 0 8px;font-size:18px;">What is a clean link?</h3>' +
-            '<p style="margin:0 0 10px;">A clean link is a short, easy address for this page, instead of the long system link. Your link stays live while the plan is active. You can cancel anytime.</p>' +
-            '<p style="margin:0 0 6px;"><b>Free Link — $0:</b> the standard system link, included with your system.</p>' +
-            '<p style="margin:0 0 6px;"><b>Clean Link — $5/month:</b> yently.com/[name] — your own short address.</p>' +
-            '<p style="margin:0 0 6px;"><b>Golden Link — $10/month:</b> [name].yently.com — coming soon.</p>' +
-            '<p style="margin:0 0 12px;"><b>Your Own Domain — $20/month:</b> use your own domain name — coming soon.</p>' +
-            '<button type="button" id="clean-link-help-close" class="secondary">Close</button>' +
-            '</div>';
-          pop.onclick = function (ev) { if (ev.target === pop) document.body.removeChild(pop); };
-          document.body.appendChild(pop);
-          var closeBtn = $('clean-link-help-close');
-          if (closeBtn) closeBtn.onclick = function () { document.body.removeChild(pop); };
-        };
-      }
-      /* Direct Upload add-on: $5/month from the next payment —
-         free for the rest of this month. Hidden when the switch
-         is already ON (directUploadOn, fetched in openSetup). */
-      var duEl = $('setup-direct-upload');
-      if (duEl) {
-        duEl.innerHTML = directUploadOn ? '' : 'Want your uploads to go live right away? <a href="/?add=direct:website&shop=kids-reading&slug=' + encodeURIComponent(SLUG) + '&addon=1">Add Direct Upload</a> — $5/month, free for the rest of this month.';
-      }
+      /* Extra Students count: the Add-ons section shows it — refresh
+         its active-list row and its details panel (when open) so the
+         numbers stay right as students are added or removed. */
+      updateAddonsExtra();
       var addBtn = $('setup-add-student');
       if (addBtn) addBtn.disabled = draft.students.length >= studentLimit;
       var newStudentInput = $('setup-student-new');
