@@ -15,7 +15,9 @@ import { TV_SYSTEM_OPTIONS } from '../../lib/addonSystems'
 // once they have paid. The customer uploads their own pictures from
 // their Setup page — the gallery lives in the tv_gallery table,
 // one row per shop; the Galleries tab below shows each shop's
-// pictures and message, and lets the admin manage them.
+// pictures and message, and lets the admin manage them —
+// including deleting a gallery outright (its row and its
+// switch), through tv_gallery_admin_delete.
 //
 // ORDERS — every TV Gallery order, newest first. Read-only here:
 // the system + page the order is for travel in the order note (see
@@ -70,6 +72,7 @@ export default function AdminTvGallery() {
   const [gMsg, setGMsg] = useState('')
   const [gBusy, setGBusy] = useState(false)
   const [confirmDeletePic, setConfirmDeletePic] = useState(null)
+  const [confirmDeleteGallery, setConfirmDeleteGallery] = useState(null)
   const [galleryForm, setGalleryForm] = useState({ owner_type: 'diner', owner_key: '' })
   const [search, setSearch] = useState('')
 
@@ -198,6 +201,28 @@ export default function AdminTvGallery() {
     }
   }
 
+  // Delete the whole gallery: its tv_gallery row (pictures +
+  // message) and its switch row, so nothing is left pointing at
+  // a gallery that is gone. Two taps, like deleting a picture —
+  // the first tap arms it, the second deletes. The Storage
+  // pictures stay where they are (harmless orphans).
+  const deleteGallery = async (row) => {
+    const key = `${row.owner_type}:${row.owner_key}`
+    if (confirmDeleteGallery !== key) { setConfirmDeleteGallery(key); return }
+    setConfirmDeleteGallery(null)
+    setGBusy(true); setError('')
+    const { error: err } = await supabase.rpc('tv_gallery_admin_delete', {
+      p_owner_type: row.owner_type,
+      p_owner_key: row.owner_key,
+    })
+    setGBusy(false)
+    if (err) { setError(err.message); return }
+    if (selectedGallery && selectedGallery.owner_type === row.owner_type && selectedGallery.owner_key === row.owner_key) setSelectedGallery(null)
+    setStatus(`✓ Gallery deleted for ${row.owner_key} (${row.owner_type}) — the gallery and its switch are gone.`)
+    loadGalleries()
+    loadSwitches()
+  }
+
   const addGallery = async (e) => {
     e.preventDefault()
     setError('')
@@ -320,7 +345,7 @@ export default function AdminTvGallery() {
 
       {view === 'galleries' && (
         <div>
-          <p className="hint">Every shop with a gallery row. Pick one to see its pictures and message — delete a picture or change the message here, or upload pictures for the customer. Adding a gallery to a customer is just flipping the switch ON under Switches; the customer then uploads their own pictures from their Setup page.</p>
+          <p className="hint">Every shop with a gallery row. Pick one to see its pictures and message — delete a picture or change the message here, or upload pictures for the customer. Delete the whole gallery from its row, or from the panel below once it is open. Adding a gallery to a customer is just flipping the switch ON under Switches; the customer then uploads their own pictures from their Setup page.</p>
 
           <form className="form-card wide" onSubmit={addGallery}>
             <h3>Start a gallery</h3>
@@ -349,7 +374,12 @@ export default function AdminTvGallery() {
                       <td>{(g.pics || []).length}</td>
                       <td>{g.message || ''}</td>
                       <td>{fmtDate(g.updated_at)}</td>
-                      <td><button type="button" className="btn-mini" onClick={() => openGalleryManage(g)}>Manage</button></td>
+                      <td>
+                        <div style={{ display: 'flex', gap: 6 }}>
+                          <button type="button" className="btn-mini" onClick={() => openGalleryManage(g)}>Manage</button>
+                          <button type="button" className="btn-mini btn-danger" disabled={gBusy} onClick={() => deleteGallery(g)}>{confirmDeleteGallery === `${g.owner_type}:${g.owner_key}` ? 'Tap again to confirm' : 'Delete'}</button>
+                        </div>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -382,6 +412,10 @@ export default function AdminTvGallery() {
                 </div>
               </div>
               <p className="hint">Changes here save straight to the gallery — the TVs follow.</p>
+              <div style={{ marginTop: 16, borderTop: '1px solid #e5e7eb', paddingTop: 12 }}>
+                <button type="button" className="btn-mini btn-danger" disabled={gBusy} onClick={() => deleteGallery(selectedGallery)}>{confirmDeleteGallery === `${selectedGallery.owner_type}:${selectedGallery.owner_key}` ? 'Tap again to confirm — delete this gallery' : 'Delete this gallery'}</button>
+                <p className="hint">Deletes the whole gallery — pictures, message and switch. The TVs stop showing it.</p>
+              </div>
             </div>
           )}
         </div>
