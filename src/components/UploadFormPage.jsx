@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import { supabase } from '../lib/supabaseClient'
 import { shrinkImage } from '../lib/storeUpload'
+import { TV_GALLERY_SYSTEMS } from '../lib/tvGalleryData'
 
 // Public picture-upload page, reached at yently.com/<form name>.
 // The customer logs in with the username and password the admin gave
@@ -53,8 +54,24 @@ const MAX_PICS = 7
 // pages. The demo form row (f =
 // 'demo-tv-gallery', u/p 'demo') is seeded in the database — this
 // page only opens it, it never creates it.
+//
+// Customer gallery: the slug 'tv-<system>-<slug>' opens the
+// gallery for that shop straight from its tv_gallery row — no
+// login, no upload form. The customer uploads their own pictures
+// from their Setup page (see the TV Gallery panel there); this
+// page only shows them. The switch is the gate: OFF means the
+// gallery is not switched on for this shop yet. 'demo-tv-gallery'
+// does not match the 'tv-' prefix, so the demo keeps its own
+// path above.
 export default function UploadFormPage({ slug, goBack, go }) {
   const demoMode = slug === 'demo-tv-gallery'
+  // DB-backed customer gallery: 'tv-<system>-<slug>' opens the
+  // gallery for that shop — no login, no upload form. The system
+  // is matched against the known list, so a slug with dashes in
+  // it (like 'demo-restaurant') still splits right.
+  const tvSystem = !demoMode && slug && slug.startsWith('tv-') ? TV_GALLERY_SYSTEMS.find(s => slug.startsWith('tv-' + s + '-')) : null
+  const tvMode = !!tvSystem
+  const tvShop = tvMode ? slug.slice(3 + tvSystem.length + 1) : null
   // ?pic=N from the address bar (1-based), read once. A TV shows one
   // picture: the owner opens the same link on each TV with a
   // different ?pic= number.
@@ -116,6 +133,25 @@ export default function UploadFormPage({ slug, goBack, go }) {
     })()
     return () => { cancelled = true }
   }, [demoMode, slug])
+
+  // Customer gallery: load the shop's pictures + message from its
+  // tv_gallery row. The switch is the gate — OFF means the gallery
+  // is not switched on for this shop yet, so nothing plays.
+  useEffect(() => {
+    if (!tvMode) return
+    let cancelled = false
+    ;(async () => {
+      const { data, error } = await supabase.rpc('tv_gallery_get', { p_owner_type: tvSystem, p_owner_key: tvShop })
+      if (cancelled) return
+      if (error || !data) { setStatus('This gallery is not available yet — please check back soon.'); return }
+      if (!data.enabled) { setStatus('This gallery is not switched on yet.'); return }
+      const pics = Array.isArray(data.pics) ? data.pics : []
+      setPics(pics)
+      setMessage(data.message || '')
+      if (pics.length === 0) setStatus('No pictures in this gallery yet.')
+    })()
+    return () => { cancelled = true }
+  }, [tvMode, tvSystem, tvShop])
 
   // The gallery controls hide on their own after a few seconds so the
   // picture is clean; any tap on the picture brings them back.
@@ -378,28 +414,29 @@ export default function UploadFormPage({ slug, goBack, go }) {
   // while the submenu is open.
   useEffect(() => { menuOpenRef.current = menuOpen }, [menuOpen])
 
-  // Demo mode: open the gallery by itself as soon as the pictures
-  // load — ?pic=N picks that picture, otherwise the first one, or
-  // (in single mode) the picture this TV held last time.
-  // Only once per visit: closing the gallery stays closed until the
-  // visitor taps "View the gallery" again.
+  // Demo mode (and the customer gallery): open the gallery by
+  // itself as soon as the pictures load — ?pic=N picks that
+  // picture, otherwise the first one, or (in single mode) the
+  // picture this TV held last time. Only once per visit: closing
+  // the gallery stays closed until the visitor taps "View the
+  // gallery" again.
   useEffect(() => {
-    if (!demoMode || pics.length === 0 || viewIndex !== null || demoOpened.current) return
+    if ((!demoMode && !tvMode) || pics.length === 0 || viewIndex !== null || demoOpened.current) return
     demoOpened.current = true
     openGallery(openingPic())
-  }, [demoMode, pics.length, viewIndex, urlPic, galleryMode])
+  }, [demoMode, tvMode, pics.length, viewIndex, urlPic, galleryMode])
 
-  // Demo mode, slideshow only: advance one picture every 10 seconds.
+  // Demo mode and the customer gallery, slideshow only: advance one picture every 10 seconds.
   // Single mode holds its picture and never advances. The advance
   // never shows the controls — they stay hidden until the visitor
   // taps or presses a key, so the picture stays clean.
   useEffect(() => {
-    if (!demoMode || galleryMode !== 'slideshow' || viewIndex === null || pics.length < 2) return
+    if ((!demoMode && !tvMode) || galleryMode !== 'slideshow' || viewIndex === null || pics.length < 2) return
     const t = setInterval(() => {
       setViewIndex(v => (v === null ? v : (v + 1) % pics.length))
     }, 10000)
     return () => clearInterval(t)
-  }, [demoMode, galleryMode, viewIndex, pics.length])
+  }, [demoMode, tvMode, galleryMode, viewIndex, pics.length])
 
   return (
     <div className="upload-form-page">
@@ -409,12 +446,14 @@ export default function UploadFormPage({ slug, goBack, go }) {
         <h2>📷 Picture upload</h2>
         {demoMode
           ? <p>This is the demo TV gallery — pictures play fullscreen, one after the other, or hold one picture per TV. Same link, both ways.</p>
-          : folder
+          : tvMode
+            ? <p>This is the TV gallery — pictures play fullscreen, one after the other, or hold one picture per TV. Same link, both ways.</p>
+            : folder
             ? <p>Upload pictures to your folder, or view them fullscreen.</p>
             : <p>Log in with the username and password Yently gave you for this form.</p>}
       </div>
 
-      {!folder && !demoMode && (
+      {!folder && !demoMode && !tvMode && (
         <form onSubmit={login} className="form-card">
           <input required placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} />
           <input required placeholder="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} />
@@ -477,6 +516,24 @@ export default function UploadFormPage({ slug, goBack, go }) {
         </div>
       )}
 
+      {tvMode && viewIndex === null && (
+        <div className="form-card" style={{ textAlign: 'center' }}>
+          {pics.length > 0 ? (
+            <>
+              <p>The gallery is playing fullscreen — close it any time with Esc, or tap below to open it again.</p>
+              <button type="button" onClick={() => openGallery(openingPic())} disabled={pics.length === 0}>View the gallery</button>
+              <div style={{ marginTop: 10 }}>
+                <button type="button" onClick={() => go && go('tv-gallery')}>Want this for your business?</button>
+              </div>
+            </>
+          ) : status ? (
+            <p className="status">{status}</p>
+          ) : (
+            <p className="hint">Opening the gallery...</p>
+          )}
+        </div>
+      )}
+
       {viewIndex !== null && pics.length > 0 && (
         <div ref={galleryRef} tabIndex={-1} className="gallery-remote" style={{ position: 'fixed', inset: 0, background: '#000', zIndex: 80, display: 'flex', alignItems: 'center', justifyContent: 'center', outline: 'none' }} onClick={closeGallery}>
           <style>{`@keyframes pos-ticker-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } } .pos-ticker { animation: pos-ticker-scroll 30s linear infinite; } .gallery-remote button:focus { outline: 3px solid #f5a623; outline-offset: 3px; }`}</style>
@@ -499,7 +556,7 @@ export default function UploadFormPage({ slug, goBack, go }) {
               <span>{viewIndex + 1}/{pics.length}</span>
               <button type="button" aria-label="Next picture" onClick={e => { e.stopPropagation(); setViewIndex((viewIndex + 1) % pics.length); pokeControls() }} style={{ padding: '6px 12px', fontSize: 18 }}>›</button>
               <button type="button" aria-label={galleryMode === 'slideshow' ? 'Hold one picture' : 'Play the slideshow'} onClick={e => { e.stopPropagation(); setMode(galleryMode === 'slideshow' ? 'single' : 'slideshow') }} style={{ padding: '6px 12px', fontSize: 18 }}>{galleryMode === 'slideshow' ? '❚❚' : '▶'}</button>
-              {demoMode && <button type="button" onClick={e => { e.stopPropagation(); if (go) go('tv-gallery') }}>Want this for your business?</button>}
+              {(demoMode || tvMode) && <button type="button" onClick={e => { e.stopPropagation(); if (go) go('tv-gallery') }}>Want this for your business?</button>}
             </div>
           </div>
         </div>

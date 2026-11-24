@@ -16,8 +16,8 @@ import FloatingAddToCart from './FloatingAddToCart'
 // to 7 pictures — one picture per TV, so seven TVs can each show
 // a different picture. No card payment is taken here — the
 // customer picks the system and page name in the form below, adds
-// the plan to the cart (plan key 'tv:website'), and the admin
-// creates the customer's upload form and TV link by hand and
+// the plan to the cart (plan key 'tv:website'), and the customer
+// uploads their own pictures from their Setup page, and the admin
 // flips the switch on in Admin → TV Gallery → Switches once they
 // have paid (same pattern as Reports). TV Gallery is for the 12
 // Business Systems ONLY — never Yently Kids schools, Store
@@ -100,7 +100,7 @@ export default function TvGalleryPage({ go }) {
 
       <form className="form-card wide direct-help" onSubmit={handleSubmit} style={{ border: '2px solid #f5c542' }}>
         <h3>Get your TV gallery</h3>
-        <p>Pick your system and type your page name — then add TV Gallery to your cart below. Yently sets up your gallery and switches it on for your page once you have ordered.</p>
+        <p>Pick your system and type your page name — then add TV Gallery to your cart below. Once you have ordered, upload your own pictures from your Setup page — Yently switches the gallery on for your page.</p>
         <div className="row">
           <div className="field">
             <span className="field-label">Which page is this for? <Help text={HELP.system} /></span>
@@ -125,9 +125,9 @@ export default function TvGalleryPage({ go }) {
           <li><b>A fullscreen page for your TV</b> — your pictures fill the whole screen, with your message rolling across the bottom like the urgent messages on TV.</li>
           <li><b>Two ways to show them, both included</b> — Slideshow plays your pictures one after the other. One picture holds a single picture on a TV — open the same link on each TV and pick which picture it shows, and each TV remembers its picture.</li>
           <li><b>Up to 7 pictures</b> — one picture per TV, so seven TVs can each show a different picture.</li>
-          <li><b>Change it anytime</b> — upload, replace, or delete pictures from your own upload page, and the TVs follow. No one has to touch the TV.</li>
+          <li><b>Change it anytime</b> — upload, replace, or delete pictures from your Setup page, and the TVs follow. No one has to touch the TV.</li>
           <li><b>Works in any TV browser</b> — no app to install, no stick to plug in. If the TV opens a website, it shows your gallery. Arrow keys on the remote move between pictures.</li>
-          <li><b>Your own private link</b> — you'll get your own private link by email. Only people you share it with can open your gallery.</li>
+          <li><b>Your own gallery link</b> — yently.com/tv-[your system]-[your page], shown on your Setup page once it is switched on. Only people you share it with can open your gallery.</li>
         </ul>
       </div>
 
@@ -135,8 +135,8 @@ export default function TvGalleryPage({ go }) {
         <h3>How it works</h3>
         <ol className="steps">
           <li><b>Add it above</b> — tell Yently which page it is for.</li>
-          <li><b>You get your link and login</b> — your own upload page, plus the TV link for your screens.</li>
-          <li><b>Upload up to 7 pictures, open the TV link on each TV, and pick slideshow or one picture per TV.</b></li>
+          <li><b>You get your gallery link</b> — shown on your Setup page, with the TV link for your screens.</li>
+          <li><b>Upload up to 7 pictures from your Setup page, open the TV link on each TV, and pick slideshow or one picture per TV.</b></li>
         </ol>
       </div>
 
