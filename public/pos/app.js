@@ -165,8 +165,48 @@
       ['Remove Branding', brandingRemoved],
     ];
     return rows.map(function (r) {
-      return '<li>' + esc(r[0]) + ' — <b>' + (r[1] ? 'Active' : 'Not added') + '</b></li>';
+      return '<li>' + esc(r[0]) + ' — <b>' + (r[1] ? 'Active' : 'Not added') + '</b>' + addonRowLink(r[0], r[1]) + '</li>';
     }).join('');
+  }
+  /* Action link for an ACTIVE add-on in the "Your add-ons" list:
+     the customer should reach what they paid for from the list
+     itself, not only from the details panel. Reports opens its
+     popup directly; Clean Link is the live URL itself; Live Chat
+     opens the inbox panel; the rest open their details panel
+     (they have no destination page — TV Gallery gets its real
+     link with the database rework). Not-added rows get no link. */
+  function addonRowLink(name, active) {
+    if (!active) return '';
+    if (name === 'Clean Link') {
+      return cleanLinkSlug
+        ? ' · <a href="/' + esc(cleanLinkSlug) + '">yently.com/' + esc(cleanLinkSlug) + '</a>'
+        : ' · <a href="#" data-addon-link="clean">Details</a>';
+    }
+    if (name === 'Reports') return ' · <a href="#" data-addon-link="reports-view">View Reports</a>';
+    if (name === 'Live Chat') return ' · <a href="#" data-addon-link="chat">Open Chats</a>';
+    if (name === 'TV Gallery') return ' · <a href="#" data-addon-link="tv">Details</a>';
+    if (name === 'Direct Upload') return ' · <a href="#" data-addon-link="direct">Details</a>';
+    if (name === 'Remove Branding') return ' · <a href="#" data-addon-link="branding">Details</a>';
+    return '';
+  }
+  /* Wire the "Your add-ons" row links after every list render
+     (the list is innerHTML, so the handlers must be re-attached
+     each time). Row links also hide the dropdown menu, like the
+     dropdown picks do. */
+  function wireAddonRowLinks() {
+    var list = $('setup-addons-active-list');
+    if (!list) return;
+    var links = list.querySelectorAll('[data-addon-link]');
+    links.forEach(function (a) {
+      a.onclick = function (e) {
+        if (e) e.preventDefault();
+        var menu = $('setup-addons-menu');
+        if (menu) menu.style.display = 'none';
+        var k = a.getAttribute('data-addon-link');
+        if (k === 'reports-view') { openReportsModal(); }
+        else { renderAddonDetails(k); }
+      };
+    });
   }
   function renderAddonDetails(key) {
     stopShopChat(); // a chat inbox from another pick must stop polling first
@@ -255,6 +295,7 @@
     addonsSelected = ''; // a fresh Setup render starts with no panel open
     var list = $('setup-addons-active-list');
     if (list) list.innerHTML = addonsActiveRows();
+    wireAddonRowLinks();
     var btn = $('setup-addons-menu-btn');
     var menu = $('setup-addons-menu');
     if (btn && menu) {
@@ -279,6 +320,11 @@
       }).then(function (res) { return res.ok ? res.json() : []; }).then(function (rows) {
         if (rows && rows[0] && rows[0].slug) {
           cleanLinkSlug = String(rows[0].slug);
+          /* The slug just landed: re-render the "Your add-ons"
+             list so the Clean Link row shows the live URL, then
+             re-wire its links. */
+          var l2 = $('setup-addons-active-list');
+          if (l2) { l2.innerHTML = addonsActiveRows(); wireAddonRowLinks(); }
           if (addonsSelected === 'clean') renderAddonDetails('clean');
         }
       }).catch(function () {});
