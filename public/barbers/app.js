@@ -96,6 +96,7 @@
   var hasCleanLink = false;
   var cleanLinkSlug = '';
   var addonsSelected = '';
+  var brandingRemoved = false; // the "Powered by Yently" banner is off for this shop — for the Add-ons section (branding_removed, fetched in openSetup)
   var staffCreds = null; // {u, p} in memory only, never stored
   /* ---------- Shop live chat (per-shop add-on) ---------- */
   /* The visitor bubble mounts once, after the shop's live data loads;
@@ -136,6 +137,20 @@
      link — the gallery link was sent to the customer by email when
      Yently set it up. */
   var ADDONS_SYSTEM = 'barbers';
+  /* "Powered by Yently" banner: a small navy strip at the bottom
+     of the page, with the Yently logo, linking to yently.com. It is
+     on by default. It hides only when the customer ordered the
+     Remove Branding add-on ($5/month, first month free) and Yently
+     switched it on for this shop (branding_removed). The banner is
+     the default: if the check errors or answers nothing, the
+     banner stays — a failed check never takes the branding off. */
+  var YENTLY_BADGE_HTML = '<div id="yently-badge" style="margin-top:10px;background:#161d44;border-radius:8px;padding:8px 12px;text-align:center;"><a href="https://yently.com" target="_blank" rel="noopener" style="color:#fff;text-decoration:none;display:inline-flex;align-items:center;gap:8px;font-size:13px;"><img src="/logo.webp" alt="Yently" style="height:20px;width:auto;border-radius:4px;">Powered by Yently</a></div>';
+  function hideYentlyBadgeIfRemoved() {
+    if (!SLUG) return;
+    rpc('branding_removed', { p_owner_type: ADDONS_SYSTEM, p_owner_key: SLUG }).then(function (removed) {
+      if (removed) { var b = $('yently-badge'); if (b) b.style.display = 'none'; }
+    }).catch(function () { /* banner stays */ });
+  }
   function addonsActiveRows() {
     var rows = [
       ['Clean Link', hasCleanLink],
@@ -143,6 +158,7 @@
       ['Live Chat', chatOn],
       ['Direct Upload', directUploadOn],
       ['Reports', reportsOn],
+      ['Remove Branding', brandingRemoved],
     ];
     return rows.map(function (r) {
       return '<li>' + esc(r[0]) + ' — <b>' + (r[1] ? 'Active' : 'Not added') + '</b></li>';
@@ -198,6 +214,14 @@
         html += '<p class="info"><b>Reports is on for this page.</b> <button type="button" id="setup-addons-reports-open" class="secondary">View Reports</button></p>';
       } else {
         html += '<p class="info">' + add('reports:website', 'Reports') + ' — $5/month, first month free, free for the rest of this month.</p>';
+      }
+    } else if (key === 'branding') {
+      html = '<h4 style="margin:0 0 6px;">Remove Branding — $5/month</h4>' +
+        '<p class="info">Take the "Powered by Yently" banner off the bottom of your page — visitors see only your page, nothing about Yently.</p>';
+      if (brandingRemoved) {
+        html += '<p class="info"><b>The Yently banner is off for this page.</b></p>';
+      } else {
+        html += '<p class="info">' + add('branding:website', 'Remove Branding') + ' — $5/month, first month free, free for the rest of this month.</p>';
       }
     }
     box.innerHTML = html;
@@ -874,6 +898,14 @@
         return rpc('clean_link_exists', { p_system: 'barbers', p_slug: SLUG }).then(function (has) {
           hasCleanLink = (has === true);
         }).catch(function () { hasCleanLink = false; });
+      }).then(function () {
+        /* Remove Branding switch: whether Yently switched the
+           "Powered by Yently" banner off for this shop
+           (branding_removed, public RPC) — for the Add-ons
+           section's Remove Branding panel and active list. */
+        return rpc('branding_removed', { p_owner_type: 'barbers', p_owner_key: SLUG }).then(function (on) {
+          brandingRemoved = (on === true);
+        }).catch(function () { brandingRemoved = false; });
       });
     }).then(function () {
       renderSetup();
@@ -1012,14 +1044,15 @@
       '<div class="note">' + esc(statusLine()) + '</div>' +
       '<div class="card" id="setup-addons">' +
       '<h3>Add-ons</h3>' +
-      '<p class="info">Add-ons add more to your page — a short link, a TV gallery, live chat, uploads that go live right away, or a clear view of your orders. Pick one below to see what it does and what it costs. Add-ons join the payment you already have — free for the rest of this month, charged from your next payment.</p>' +
+      '<p class="info">Add-ons add more to your page — a short link, a TV gallery, live chat, uploads that go live right away, or a clear view of your orders, or a page without the Yently banner. Pick one below to see what it does and what it costs. Add-ons join the payment you already have — free for the rest of this month, charged from your next payment.</p>' +
       '<div class="row"><button type="button" id="setup-addons-menu-btn" class="secondary" aria-label="Add-ons menu">☰ Add-ons</button></div>' +
       '<div id="setup-addons-menu" style="display:none;margin-top:8px;">' +
       '<button type="button" class="secondary" data-addon-pick="clean" style="display:block;width:100%;text-align:left;margin-bottom:6px;">Clean Link — $5/month</button>' +
       '<button type="button" class="secondary" data-addon-pick="tv" style="display:block;width:100%;text-align:left;margin-bottom:6px;">TV Gallery — $2/month</button>' +
       '<button type="button" class="secondary" data-addon-pick="chat" style="display:block;width:100%;text-align:left;margin-bottom:6px;">Live Chat — $3/month</button>' +
       '<button type="button" class="secondary" data-addon-pick="direct" style="display:block;width:100%;text-align:left;margin-bottom:6px;">Direct Upload — $5/month</button>' +
-      '<button type="button" class="secondary" data-addon-pick="reports" style="display:block;width:100%;text-align:left;">Reports — $5/month</button>' +
+      '<button type="button" class="secondary" data-addon-pick="reports" style="display:block;width:100%;text-align:left;margin-bottom:6px;">Reports — $5/month</button>' +
+      '<button type="button" class="secondary" data-addon-pick="branding" style="display:block;width:100%;text-align:left;">Remove Branding — $5/month</button>' +
       '</div>' +
       '<div id="setup-addons-details" style="margin-top:12px;"></div>' +
       '<div style="margin-top:12px;"><h4 style="margin:0 0 6px;">Your add-ons</h4><ul id="setup-addons-active-list" style="margin:0;padding-left:18px;"></ul></div>' +
@@ -1178,7 +1211,8 @@
       if (data.hours) foot.push(esc(data.hours));
       var firstLine = foot.join('<br>');
       $('site-footer').innerHTML = (firstLine ? '<div>' + firstLine + '</div>' : '') +
-        '<div>Powered by Yently</div>';
+        YENTLY_BADGE_HTML;
+      hideYentlyBadgeIfRemoved();
       updateBadges();
       mountShopChatBubble(data.name, data.email);
       rpc('barbershop_pass_status', { p_slug: SLUG }).then(function (s) {
