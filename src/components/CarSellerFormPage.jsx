@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { shrinkImage } from '../lib/storeUpload'
 import { COUNTRIES, useCountryFilter, normalizeCountry } from '../lib/countryFilter'
-import { fmtNum } from './CarSection'
+import { fmtNum, isExpired, fmtDate } from './CarSection'
 import { CarsTopBar } from './CarsMenu'
 
 // ---------------------------------------------------------------------------
@@ -318,6 +318,12 @@ export default function CarSellerFormPage({ go }) {
         {seller.seller_type && (
           <p>{seller.seller_type === 'monthly' ? 'Your plan: YENTLY Car Seller — $20/month, first month free, unlimited listings.' : 'Your plan: one-time seller — $5 per car, no monthly commitment.'}</p>
         )}
+        {seller.seller_type === 'onetime' && (
+          <p>One-time listings stay live for 60 days from approval. If a car hasn&apos;t sold by then, renew it with another $5 order — expired listings stay here until then.</p>
+        )}
+        {seller.seller_type === 'monthly' && (
+          <p>Your listings stay live for 1 year. Expired listings stay here until you renew them while subscribed.</p>
+        )}
         {seller.email && (
           <p>Buyer inquiries about your cars go to {seller.email}.</p>
         )}
@@ -334,7 +340,7 @@ export default function CarSellerFormPage({ go }) {
           <div className="table-wrap" style={cars.length > LIST_LIMIT ? { maxHeight: 520, overflowY: 'auto' } : undefined}>
             <table className="admin-table">
               <thead>
-                <tr><th>Car</th><th>Price</th><th>Country</th><th>Status</th><th className="no-print"></th></tr>
+                <tr><th>Car</th><th>Price</th><th>Country</th><th>Status</th><th>Expires</th><th className="no-print"></th></tr>
               </thead>
               <tbody>
                 {cars.map(car => (
@@ -342,7 +348,8 @@ export default function CarSellerFormPage({ go }) {
                     <td>{car.name}</td>
                     <td>{car.price ? `$${fmtNum(car.price)}` : ''}</td>
                     <td>{car.country || ''}</td>
-                    <td>{car.status}</td>
+                    <td>{isExpired(car) ? 'Expired' : car.status}</td>
+                    <td>{isExpired(car) ? (seller.seller_type === 'monthly' ? 'Expired — renews while subscribed' : 'Expired — renew with another $5 order') : (car.expires_at ? fmtDate(car.expires_at) : '—')}</td>
                     <td className="no-print" style={{ whiteSpace: 'nowrap' }}>
                       <button type="button" className="btn-mini" onClick={() => { setEditing(car); setShowAdd(false) }}>Edit</button>{' '}
                       <button

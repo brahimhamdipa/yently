@@ -111,7 +111,7 @@ const FAQ_SECTIONS = [
       },
       {
         q: 'Can I sell my car on Yently?',
-        a: 'Yes. You can sell one car for $5, one time, or become a YENTLY seller for $20 a month with unlimited listings and the first month free. Tap Become a Yently Car Seller on the Cars seller login page to get started.',
+        a: 'Yes. You can sell one car for $5, one time, or become a YENTLY seller for $20 a month with unlimited listings and the first month free. A one-time listing stays live for 60 days — if your car hasn\u2019t sold by then, you can renew it with another $5 order. Listings from a YENTLY seller stay live for 1 year and renew while the subscription is active. Tap Become a Yently Car Seller on the Cars seller login page to get started.',
       },
     ],
   },

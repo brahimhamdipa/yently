@@ -14,6 +14,8 @@ import { CarsTopBar } from './CarsMenu'
 // ---------------------------------------------------------------------------
 
 // One car row, shaped for the listing: `images` is the photos array.
+// `expires_at` is carried through so the seller dashboard and admin
+// can show it (public expiry is enforced in loadCars, below).
 function shapeCar(row) {
   return {
     id: row.id,
@@ -28,12 +30,22 @@ function shapeCar(row) {
     phone: row.phone,
     email: row.email,
     country: row.country,
+    expires_at: row.expires_at || null,
     images: Array.isArray(row.photos) ? row.photos : [],
   }
 }
 
 // Approved listings, newest first. Used by the Cars page and by the
 // test-drive form's car-name autocomplete.
+//
+// LAZY EXPIRY (2026-11-26): one-time listings live 60 days from
+// approval — `expires_at` is set when the admin approves (NULL for
+// monthly/dealer listings, which never expire while subscribed).
+// There is no server cron on this stack, so the page itself enforces
+// it: rows past their expiry are filtered out here and never reach
+// the public list. Expired rows stay in the table (visible in Admin
+// and on the seller dashboard as "Expired") until the admin renews
+// or deletes them.
 export async function loadCars() {
   const { data, error } = await supabase
     .from('car_listings')
@@ -41,7 +53,21 @@ export async function loadCars() {
     .eq('status', 'approved')
     .order('created_at', { ascending: false })
   if (error) throw error
-  return (data || []).map(shapeCar)
+  const now = new Date()
+  return (data || [])
+    .filter(r => !r.expires_at || new Date(r.expires_at) > now)
+    .map(shapeCar)
+}
+
+// True when a listing's expiry has passed (approved rows only reach
+// the public list while unexpired — see loadCars). Used by the seller
+// dashboard and Admin to show the effective state.
+export const isExpired = (car) => !!car?.expires_at && new Date(car.expires_at) < new Date()
+
+export const fmtDate = (v) => {
+  if (!v) return ''
+  const d = new Date(v)
+  return Number.isNaN(d.getTime()) ? '' : d.toLocaleDateString()
 }
 
 export const fmtNum = (v) => {
@@ -259,6 +285,7 @@ function InterestModal({ car, sellerName, onClose }) {
             <h3>✓ Sent!</h3>
             <p>Thanks {form.name.split(' ')[0] || 'there'} — your interest in the <b>{car.name}</b> was sent. We'll be in touch shortly.</p>
             <button onClick={onClose}>Close</button>
+            <button type="button" onClick={() => { setSent(false); setForm({ name: '', email: '', phone: '', message: `I'm interested in the ${car.name}.` }) }} style={{ background: '#e5e7eb', color: '#111827' }}>Send another message</button>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="modal-form">

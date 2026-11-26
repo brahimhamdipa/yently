@@ -61,7 +61,7 @@ export default function CarHubPage({ go }) {
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center', marginTop: 16 }}>
           <div className="form-card" style={{ flex: '1 1 260px', maxWidth: 340, textAlign: 'left' }}>
             <h3 style={{ marginTop: 0 }}>Sell one car — $5, one time</h3>
-            <p>Got one car to sell? List it for $5 — no monthly commitment, no subscription. Your listing stays live until it sells.</p>
+            <p>Got one car to sell? List it for $5 — no monthly commitment, no subscription. Your listing stays live for 60 days. If it hasn&apos;t sold by then, you can renew it with another $5 order.</p>
             <p className="hint">One $5 order pays for one car listing. Another car needs another $5 order.</p>
             {onetimeInCart ? (
               <button type="button" onClick={() => go && go('business-cart')}>✓ In your cart — Go to My Cart</button>
@@ -71,7 +71,7 @@ export default function CarHubPage({ go }) {
           </div>
           <div className="form-card" style={{ flex: '1 1 260px', maxWidth: 340, textAlign: 'left' }}>
             <h3 style={{ marginTop: 0 }}>Become a YENTLY Car Seller — $20/month</h3>
-            <p>Selling cars often, or running a dealership? Your own seller login, unlimited listings, and your cars shown to buyers in every country you sell in. First month free.</p>
+            <p>Selling cars often, or running a dealership? Your own seller login, unlimited listings, and your cars shown to buyers in every country you sell in. First month free. Your listings stay live for 1 year — renew them while you&apos;re subscribed.</p>
             <p className="hint">Cancel anytime — your subscription ends and no further month is charged.</p>
             {monthlyInCart ? (
               <button type="button" onClick={() => go && go('business-cart')}>✓ In your cart — Go to My Cart</button>
