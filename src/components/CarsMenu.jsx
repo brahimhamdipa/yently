@@ -26,7 +26,6 @@ export default function CarsMenu({ go }) {
           <button onClick={() => pick('cars')}>Buy a Car</button>
           <button onClick={() => pick('sell')}>Sell a Car</button>
           <button onClick={() => pick('contact')}>Contact Us</button>
-          <button onClick={() => pick('car-seller')}>Seller login</button>
         </div>
       )}
     </div>

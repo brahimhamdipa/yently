@@ -11,7 +11,7 @@ import { useBusinessCart } from '../lib/BusinessCartContext'
 // from the main menu's More list, where it was labelled "Services"),
 // "Add-ons" (Clean Link, TV Gallery, Live Chat, Direct
 // Upload, Reports, Remove Branding), and "Learning Systems" (the Kids submenu minus My Cart:
-// Yently Kids, Math, English, Arabic, More Subjects, Books for Kids).
+// Yently Kids, Math, English, Arabic, More Subjects).
 // Each branch button shows a right arrow when closed and a
 // down arrow when open, and its links are indented like sub-items,
 // same size, same plain weight — none of them bold. One cart and one
@@ -131,9 +131,6 @@ export default function BusinessMenu({ go }) {
           )}
           {learningOpen && subjectsOpen && (
             <button onClick={() => pick('kids-reading')} style={{ display: 'block', width: '100%', background: 'white', color: '#111827', textAlign: 'left', padding: '12px 16px 12px 32px', fontSize: '14.5px', fontWeight: '400', borderTop: '1px solid #f1f2f5' }}>Reading</button>
-          )}
-          {learningOpen && (
-            <button onClick={() => pick('kids-books')} style={{ display: 'block', width: '100%', background: 'white', color: '#111827', textAlign: 'left', padding: '12px 16px 12px 32px', fontSize: '14.5px', fontWeight: '400', borderTop: '1px solid #f1f2f5' }}>Books for Kids</button>
           )}
         </div>
       )}

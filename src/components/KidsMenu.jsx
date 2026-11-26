@@ -3,11 +3,11 @@ import { useBusinessCart } from '../lib/BusinessCartContext'
 
 // Shared submenu for ALL Yently Kids pages — same look and behavior
 // as the Business Systems menu (white circular button, plain list).
-// Seven top rows: My Cart (with the live business-cart count),
+// Six top rows: My Cart (with the live business-cart count),
 // Yently Kids (the hub page), Math, English, Arabic, then a "More
 // Subjects" branch that opens in place (like the Business Systems
 // menu's "More Systems" branch) with French, Spanish, Science,
-// Geography, Coding and Reading, and Books for Kids (coming soon).
+// Geography, Coding and Reading.
 // The branch button shows a right arrow when closed and a down arrow
 // when open, and its links are indented like sub-items, same size,
 // same plain weight — none of them bold. One cart serves the whole
@@ -59,7 +59,6 @@ export default function KidsMenu({ go }) {
           {moreOpen && (
             <button onClick={() => pick('kids-reading')} style={{ display: 'block', width: '100%', background: 'white', color: '#111827', textAlign: 'left', padding: '12px 16px 12px 32px', fontSize: '14.5px', fontWeight: '400', borderTop: '1px solid #f1f2f5' }}>Reading</button>
           )}
-          <button onClick={() => pick('kids-books')}>Books for Kids</button>
         </div>
       )}
     </div>

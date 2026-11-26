@@ -44,7 +44,7 @@ const ADDONS = [
 // "Learning Systems" expander — the Kids submenu rows except My
 // Cart, as a dropdown on the Systems page. Destinations match the
 // Kids ☰ submenu exactly (KidsMenu.jsx): Yently Kids opens the hub,
-// each subject opens its ad page, Books for Kids opens its page.
+// each subject opens its ad page.
 const LEARNING_ROWS = [
   { label: 'Yently Kids', tab: 'kids-hub' },
   { label: 'Math', tab: 'kids-math' },
@@ -85,7 +85,6 @@ function LearningSystems({ go }) {
           {moreOpen && MORE_SUBJECTS.map(r => (
             <button key={r.tab} type="button" onClick={() => go && go(r.tab)} style={subRowStyle}>{r.label}</button>
           ))}
-          <button type="button" onClick={() => go && go('kids-books')} style={rowStyle}>Books for Kids</button>
         </div>
       )}
     </div>

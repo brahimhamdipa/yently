@@ -2,8 +2,8 @@ import { GroceryTopBar } from './GroceryMenu'
 
 // Shop hub page — the landing page for the Shop nav button, in the
 // same role as the Flights hub. It explains what Shop is, how
-// ordering works, and links to Products, Stores, My Cart, Seller
-// login, Contact Us and Track Order. The country picker in the top
+// ordering works, and links to Products, Stores, My Cart,
+// Contact Us and Track Order. The country picker in the top
 // bar only sets the country (shared hook / localStorage) — Products
 // and Stores are already filtered by it when the customer goes there.
 export default function ShopHubPage({ go }) {
@@ -50,7 +50,6 @@ export default function ShopHubPage({ go }) {
           <button type="button" onClick={() => go && go('products')}>Products →</button>
           <button type="button" onClick={() => go && go('stores')}>Stores →</button>
           <button type="button" onClick={() => go && go('grocery-cart')}>My Cart →</button>
-          <button type="button" onClick={() => go && go('shop-seller')}>Seller login →</button>
           <button type="button" onClick={() => go && go('grocery-contact')}>Contact Us →</button>
           <button type="button" onClick={() => go && go('track')}>Track Order →</button>
         </div>

@@ -57,17 +57,6 @@ export default function KidsHubPage({ go }) {
         ))}
       </div>
 
-      <div className="hero-card">
-        <h3>Books for Kids</h3>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, padding: '12px 0' }}>
-          <div>
-            <b>Books for Kids — Coming Soon</b>
-            <p style={{ margin: '4px 0 0' }}>Real books delivered to your door — starting in the US first.</p>
-          </div>
-          <button type="button" onClick={() => go && go('kids-books')} style={{ flexShrink: 0 }}>See it →</button>
-        </div>
-      </div>
-
       <div className="hero-card" style={{ textAlign: 'center' }}>
         <h3>Bundle &amp; save</h3>
         <p>2 subjects 10% off, 3 subjects 15% off, 4+ subjects 20% off — your saving is applied automatically, no code needed. Kids subjects count together with Business Systems plans. All 9 subjects together: $45/month list, $36/month with 20% off.</p>

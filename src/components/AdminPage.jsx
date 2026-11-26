@@ -15,6 +15,7 @@ import AdminStoreManage from './admin/AdminStoreManage'
 import AdminChat from './admin/AdminChat'
 
 import AdminAllPasses from './admin/AdminAllPasses'
+import AdminDemoPasswords from './admin/AdminDemoPasswords'
 import AdminAllApprovals from './admin/AdminAllApprovals'
 import AdminAllOrders from './admin/AdminAllOrders'
 import AdminSystemsOrders from './admin/AdminSystemsOrders'
@@ -209,6 +210,7 @@ const MENUS = [
   ] },
   { n: 5, name: 'Chat', items: [
     { label: 'All Passes', section: 'all-passes' },
+    { label: 'Demo Passwords', section: 'demo-passwords' },
     { label: 'All Approvals', section: 'all-approvals' },
     { label: 'Systems Orders', section: 'systems-orders' },
     { label: 'Shop Orders', section: 'shop-orders' },
@@ -419,6 +421,7 @@ export default function AdminPage() {
       {section === 'store-manage' && <AdminStoreManage table={manageTable} onTableChange={setManageTable} />}
       {section === 'chat' && <AdminChat />}
       {section === 'all-passes' && <AdminAllPasses />}
+      {section === 'demo-passwords' && <AdminDemoPasswords />}
       {section === 'all-approvals' && <AdminAllApprovals />}
       {section === 'systems-orders' && <AdminSystemsOrders />}
       {section === 'shop-orders' && <AdminShopOrders />}

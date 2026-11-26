@@ -3,7 +3,7 @@ import { CarsTopBar } from './CarsMenu'
 // Cars hub page — the landing page for the Cars nav button, in the
 // same role as the Flights hub. It explains what the Cars platform
 // is, how buying (and selling) works, and links to Buy a Car, Sell a
-// Car, Seller login and Contact Us. The country picker in the top bar
+// Car and Contact Us. The country picker in the top bar
 // only sets the country (shared hook / localStorage) — the listings
 // are already filtered by it when the customer goes there.
 export default function CarHubPage({ go }) {
@@ -35,7 +35,7 @@ export default function CarHubPage({ go }) {
             <b>Contact the seller.</b> Found the one? Tap “I&apos;m interested” and send the seller a message — we&apos;ll put you in touch.
           </li>
           <li>
-            <b>Selling a car?</b> Tap Sell a Car to list yours, or become a Yently Car Seller — the sign-up is on the Seller login page.
+            <b>Selling a car?</b> Tap Sell a Car to list yours.
           </li>
         </ol>
       </div>
@@ -48,7 +48,6 @@ export default function CarHubPage({ go }) {
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
           <button type="button" onClick={() => go && go('cars')}>Buy a Car →</button>
           <button type="button" onClick={() => go && go('sell')}>Sell a Car →</button>
-          <button type="button" onClick={() => go && go('car-seller')}>Seller login →</button>
           <button type="button" onClick={() => go && go('contact')}>Contact Us →</button>
         </div>
       </div>
