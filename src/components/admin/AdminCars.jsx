@@ -2,14 +2,24 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabaseClient'
 import { fetchAll, fmtDate } from '../../lib/admin'
 import { COUNTRIES } from '../../lib/countryFilter'
-import { fmtNum } from '../CarSection'
+import { fmtNum, isExpired } from '../CarSection'
 
 // Admin → menu 2 (Cars): the two halves of the database-driven Cars system.
 //
 // LISTINGS — every car row, newest first. Pending rows (sent by a seller
 // through the seller form) get an Approve button, which makes the car show
 // on the public Cars page; Delete removes a row forever. Approved rows can
-// also be deleted here.
+// also be deleted here. Edit (new 2026-11-26) lets the admin fix ANY
+// field on ANY seller's car — wording, price, contact email — the ethics
+// tool for listings that break Yently's rules.
+//
+// EXPIRY (2026-11-26): a one-time listing lives 60 days from approval,
+// a dealer's listing 1 year from approval (`expires_at`, set by Approve;
+// NULL = no expiry yet, e.g. still pending). There is no server cron, so
+// the public page hides expired rows itself (lazy expiry in loadCars) —
+// an expired car simply stops showing on Buy a Car. Expired rows stay
+// here under the Expired filter until the admin renews them (one-time:
+// another $5 order; dealer: while subscribed) or deletes them.
 // SELLERS — the people allowed to list cars. Each seller has a username
 // and password handed out by the admin, stored READABLE here BY DESIGN
 // (throwaway only, like the store provider passes). The admin creates the
@@ -44,6 +54,11 @@ export default function AdminCars() {
   const [error, setError] = useState('')
   const [sellerForm, setSellerForm] = useState({ name: '', slug: '', username: '', password: '', email: '', phone: '', country: '', seller_type: 'onetime' })
   const [editingSeller, setEditingSeller] = useState(null)
+  // Listing edit (ethics tool): every field on any seller's car.
+  const emptyListingForm = { name: '', year: '', make: '', model: '', mileage: '', price: '', description: '', phone: '', email: '', country: '', status: 'pending', expires_at: '' }
+  const [listingForm, setListingForm] = useState(emptyListingForm)
+  const [editingListing, setEditingListing] = useState(null)
+  const [savingListing, setSavingListing] = useState(false)
   // Delete asks in-page first (never window.confirm — the test browser
   // auto-dismisses window.confirm, so the buttons did nothing there).
   // confirmDelete is { kind: 'listing' | 'seller', row }.
@@ -59,11 +74,84 @@ export default function AdminCars() {
   }
   useEffect(() => { load() }, [])
 
+  // 60 days from today, as an ISO timestamp (the one-time listing life).
+  const sixtyDaysOut = () => new Date(Date.now() + 60 * 24 * 3600 * 1000).toISOString()
+  // 1 year from today, as an ISO timestamp (the dealer listing life).
+  const oneYearOut = () => new Date(Date.now() + 365 * 24 * 3600 * 1000).toISOString()
+  const sellerIsMonthly = (sellerId) => (sellers || []).find(x => x.id === sellerId)?.seller_type === 'monthly'
+
   const approve = async (row) => {
     setStatus('Approving...')
     const { error: err } = await supabase.rpc('approve_car_listing', { p_id: row.id })
     if (err) { setStatus(''); setError(err.message); return }
-    setStatus(`✓ Approved — ${row.name} now shows on the Cars page.`)
+    // One-time listings live 60 days from approval; dealers 1 year.
+    const expires = sellerIsMonthly(row.seller_id) ? oneYearOut() : sixtyDaysOut()
+    const { error: expErr } = await supabase.from('car_listings').update({ expires_at: expires }).eq('id', row.id)
+    if (expErr) { setStatus(''); setError('Approved, but the expiry could not be set: ' + expErr.message); load(); return }
+    setStatus(`✓ Approved — ${row.name} now shows on the Cars page${expires ? ` until ${fmtDate(expires)}` : ''}.`)
+    load()
+  }
+
+  // Renew an expired listing: one-time for another 60 days (only with a
+  // matching $5 order — the admin checks that before tapping Renew),
+  // a dealer for another year (while subscribed).
+  const renewListing = async (row) => {
+    setStatus('Renewing...')
+    const expires = sellerIsMonthly(row.seller_id) ? oneYearOut() : sixtyDaysOut()
+    const { error: err } = await supabase.from('car_listings').update({ expires_at: expires }).eq('id', row.id)
+    if (err) { setStatus(''); setError(err.message); return }
+    setStatus(`✓ Renewed — ${row.name} shows again until ${fmtDate(expires)}.`)
+    load()
+  }
+
+  const editListing = (r) => {
+    setListingForm({
+      name: r.name || '',
+      year: r.year || '',
+      make: r.make || '',
+      model: r.model || '',
+      mileage: r.mileage || '',
+      price: r.price || '',
+      description: r.description || '',
+      phone: r.phone || '',
+      email: r.email || '',
+      country: r.country || '',
+      status: r.status || 'pending',
+      expires_at: r.expires_at ? String(r.expires_at).slice(0, 10) : '',
+    })
+    setEditingListing(r.id)
+    setStatus('')
+    setError('')
+  }
+
+  const saveListing = async (e) => {
+    e.preventDefault()
+    setSavingListing(true)
+    setStatus('Saving listing...')
+    // An approved listing with no expiry gets its path's rule on save.
+    const editedRow = (listings || []).find(x => x.id === editingListing)
+    let expires = listingForm.expires_at ? new Date(listingForm.expires_at + 'T23:59:59').toISOString() : null
+    if (listingForm.status === 'approved' && !expires && editedRow) expires = sellerIsMonthly(editedRow.seller_id) ? oneYearOut() : sixtyDaysOut()
+    const row = {
+      name: listingForm.name.trim(),
+      year: listingForm.year ? String(listingForm.year).trim() : null,
+      make: listingForm.make.trim() || null,
+      model: listingForm.model.trim() || null,
+      mileage: listingForm.mileage ? String(listingForm.mileage).replace(/[^0-9.]/g, '') : null,
+      price: listingForm.price ? String(listingForm.price).replace(/[^0-9.]/g, '') : null,
+      description: listingForm.description.trim() || null,
+      phone: listingForm.phone.trim() || null,
+      email: listingForm.email.trim() || null,
+      country: listingForm.country,
+      status: listingForm.status,
+      expires_at: expires,
+    }
+    const { error: err } = await supabase.from('car_listings').update(row).eq('id', editingListing)
+    setSavingListing(false)
+    if (err) { setStatus(''); setError(err.message); return }
+    setStatus(`✓ Listing ${listingForm.name} updated.`)
+    setListingForm(emptyListingForm)
+    setEditingListing(null)
     load()
   }
 
@@ -129,8 +217,9 @@ export default function AdminCars() {
     setError('')
   }
 
-  const shown = (listings || []).filter(r => filter === 'all' ? true : r.status === filter)
+  const shown = (listings || []).filter(r => filter === 'all' ? true : filter === 'expired' ? isExpired(r) : r.status === filter)
   const pendingCount = (listings || []).filter(r => r.status === 'pending').length
+  const expiredCount = (listings || []).filter(r => isExpired(r)).length
 
   // Search filters the status-filtered listings, or the sellers list.
   const needle = search.trim().toLowerCase()
@@ -180,15 +269,67 @@ export default function AdminCars() {
           <div className="trip-tabs" style={{ marginBottom: 12 }}>
             <button type="button" className={filter === 'pending' ? 'active' : ''} onClick={() => setFilter('pending')}>Pending</button>
             <button type="button" className={filter === 'approved' ? 'active' : ''} onClick={() => setFilter('approved')}>Approved</button>
+            <button type="button" className={filter === 'expired' ? 'active' : ''} onClick={() => setFilter('expired')}>Expired {expiredCount > 0 && `(${expiredCount})`}</button>
             <button type="button" className={filter === 'all' ? 'active' : ''} onClick={() => setFilter('all')}>All</button>
           </div>
+          {filter === 'expired' && <p className="hint">Expired listings are hidden from Buy a Car. Renew a one-time listing only with a matching $5 order — one $5 order pays for one listing, live 60 days. A dealer&apos;s listings live 1 year and renew while subscribed.</p>}
+          {editingListing && (
+            <form className="form-card wide" onSubmit={saveListing}>
+              <h3>Edit listing — {listingForm.name || ''}</h3>
+              <p className="hint">Fix wording, price or contact details on any seller&apos;s car — this is how you correct a listing that breaks Yently&apos;s rules. The expiry date controls when the car drops off the Cars page; leave it blank and an approved listing gets its path&apos;s rule on save — 60 days for a one-time seller, 1 year for a dealer.</p>
+              <div className="row">
+                <input required placeholder="Car name (e.g. 2018 Honda Accord)" value={listingForm.name} onChange={e => setListingForm({ ...listingForm, name: e.target.value })} />
+                <input placeholder="Year" value={listingForm.year} onChange={e => setListingForm({ ...listingForm, year: e.target.value })} />
+              </div>
+              <div className="row">
+                <input placeholder="Make" value={listingForm.make} onChange={e => setListingForm({ ...listingForm, make: e.target.value })} />
+                <input placeholder="Model" value={listingForm.model} onChange={e => setListingForm({ ...listingForm, model: e.target.value })} />
+              </div>
+              <div className="row">
+                <input placeholder="Mileage" value={listingForm.mileage} onChange={e => setListingForm({ ...listingForm, mileage: e.target.value })} />
+                <input placeholder="Price ($)" value={listingForm.price} onChange={e => setListingForm({ ...listingForm, price: e.target.value })} />
+              </div>
+              <div className="row">
+                <input placeholder="Phone (shown to buyers)" type="tel" value={listingForm.phone} onChange={e => setListingForm({ ...listingForm, phone: e.target.value })} />
+                <input placeholder="Email (shown to buyers)" type="email" value={listingForm.email} onChange={e => setListingForm({ ...listingForm, email: e.target.value })} />
+              </div>
+              <div className="row">
+                <label style={{ flex: 1 }}>
+                  <span className="field-label">Country</span>
+                  <select required value={listingForm.country} onChange={e => setListingForm({ ...listingForm, country: e.target.value })} style={{ width: '100%' }}>
+                    <option value="">Select country</option>
+                    {COUNTRIES.map(c => (
+                      <option key={c.code} value={c.code}>{c.name}</option>
+                    ))}
+                  </select>
+                </label>
+                <label style={{ flex: 1 }}>
+                  <span className="field-label">Status</span>
+                  <select value={listingForm.status} onChange={e => setListingForm({ ...listingForm, status: e.target.value })} style={{ width: '100%' }}>
+                    <option value="pending">Pending</option>
+                    <option value="approved">Approved</option>
+                  </select>
+                </label>
+                <label style={{ flex: 1 }}>
+                  <span className="field-label">Expires on (blank = path rule on approval)</span>
+                  <input type="date" value={listingForm.expires_at} onChange={e => setListingForm({ ...listingForm, expires_at: e.target.value })} style={{ width: '100%' }} />
+                </label>
+              </div>
+              <textarea placeholder="Description" value={listingForm.description} onChange={e => setListingForm({ ...listingForm, description: e.target.value })} rows={3} />
+              <p className="hint">Renewal: a one-time listing needs a matching $5 order; a dealer&apos;s listings renew while subscribed.</p>
+              <div className="row">
+                <button type="submit" disabled={savingListing}>{savingListing ? 'Saving...' : 'Save changes'}</button>
+                <button type="button" onClick={() => { setEditingListing(null); setListingForm(emptyListingForm) }}>Cancel</button>
+              </div>
+            </form>
+          )}
           {listings === null && <div className="hero-card"><p>Loading listings...</p></div>}
           {listings !== null && shown.length === 0 && <p className="hint">Nothing here yet.</p>}
           {shownListings.length > 0 && (
             <div className="table-wrap" style={{ maxHeight: 520, overflowY: 'auto' }}>
               <table className="admin-table">
                 <thead>
-                  <tr><th>Car</th><th>Price</th><th>Mileage</th><th>Seller</th><th>Photos</th><th>Status</th><th>Added</th><th className="no-print"></th></tr>
+                  <tr><th>Car</th><th>Price</th><th>Mileage</th><th>Seller</th><th>Photos</th><th>Status</th><th>Expires</th><th>Added</th><th className="no-print"></th></tr>
                 </thead>
                 <tbody>
                   {shownListings.map(r => (
@@ -198,12 +339,17 @@ export default function AdminCars() {
                       <td>{r.mileage ? fmtNum(r.mileage) : ''}</td>
                       <td><SellerName sellerId={r.seller_id} sellers={sellers || []} /></td>
                       <td>{Array.isArray(r.photos) ? r.photos.length : 0}</td>
-                      <td>{r.status}</td>
+                      <td>{isExpired(r) ? 'Expired' : r.status}</td>
+                      <td>{isExpired(r) ? 'Expired' : (r.expires_at ? fmtDate(r.expires_at) : '—')}</td>
                       <td>{fmtDate(r.created_at)}</td>
                       <td className="no-print" style={{ whiteSpace: 'nowrap' }}>
                         {r.status === 'pending' && (
                           <button type="button" className="btn-mini" onClick={() => approve(r)}>Approve</button>
                         )}{' '}
+                        {isExpired(r) && (
+                          <button type="button" className="btn-mini" onClick={() => renewListing(r)}>{sellerIsMonthly(r.seller_id) ? 'Renew 1 year' : 'Renew 60 days'}</button>
+                        )}{' '}
+                        <button type="button" className="btn-mini" onClick={() => editListing(r)}>Edit</button>{' '}
                         <button type="button" className="btn-mini btn-danger" onClick={() => setConfirmDelete({ kind: 'listing', row: r })}>Delete</button>
                       </td>
                     </tr>
