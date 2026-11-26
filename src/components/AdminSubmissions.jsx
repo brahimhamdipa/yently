@@ -3,7 +3,6 @@ import { supabase } from '../lib/supabaseClient'
 import { fetchAll, fmtDate } from '../lib/admin'
 
 const TABLES = [
-  ['car_sell_requests', '🚗 Sell a Car requests'],
   ['car_inquiries', '✉️ Car inquiries, Contact Us & Notify signups'],
   ['flight_bookings', '✈️ Flight bookings & estimations'],
 ]
