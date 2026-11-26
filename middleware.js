@@ -45,6 +45,8 @@ const KNOWN = new Set([
   'track', // public order tracking — never a clean link (see /track route)
   'extra-students', // extra-student places — never a clean link
   'pass-recovery', // pass recovery — never a clean link (see /pass-recovery route)
+  'shop', // shop seller login — never a clean link (see /shop route)
+  'cars', // cars seller login — never a clean link (see /cars route)
   'pos',
   'diner',
   'barbers',
