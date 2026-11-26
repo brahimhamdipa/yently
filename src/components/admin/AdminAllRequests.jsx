@@ -18,9 +18,6 @@ import ReplyEmailModal, { PLANS } from './ReplyEmailModal'
 //     Pay Flight form ('Pay Flight'), and plain car inquiries
 //     (car_name = the car name). Columns: id, car_name, name, email,
 //     phone, message, created_at.
-//   - car_sell_requests — the Sell your car form. Columns: make,
-//     model, year, mileage, condition, vin, name, email, phone,
-//     message, created_at.
 //   - flight_bookings — flight estimations and reservations from the
 //     Flights form. Columns: trip_type, from_city, to_city,
 //     depart_date, return_date, travelers, adults, children,
@@ -57,7 +54,7 @@ import ReplyEmailModal, { PLANS } from './ReplyEmailModal'
 //     (menu 5, Live Chat), grocery_orders (Shop Orders), vault_*
 //     (My Vault, personal, not customer requests).
 //
-// STATUS: none of the three tables has a status column, and no new
+// STATUS: none of the two tables has a status column, and no new
 // SQL may be created here, so Done / New lives in this browser only
 // (localStorage 'yently-requests-done-v1', keyed by table:id). It is
 // a reminder for the owner, not a shared state.
@@ -182,9 +179,8 @@ export default function AdminAllRequests() {
     const grab = async (table) => {
       try { return await fetchAll(table) } catch { failedTables.push(table); return [] }
     }
-    const [inquiries, sells, flights] = await Promise.all([
+    const [inquiries, flights] = await Promise.all([
       grab('car_inquiries'),
-      grab('car_sell_requests'),
       grab('flight_bookings'),
     ])
     const out = []
@@ -198,23 +194,6 @@ export default function AdminAllRequests() {
         summary: truncate(r.message) || '—',
         message: r.message || '',
         details: [['Message', r.message || '—'], ['Form tag', r.car_name || '—']],
-        created_at: r.created_at,
-      })
-    }
-    for (const r of sells) {
-      const summary = [r.year, r.make, r.model].filter(Boolean).join(' ') +
-        (r.mileage ? ` · ${Number(r.mileage).toLocaleString()} miles` : '') +
-        (r.condition ? ` · ${r.condition}` : '')
-      out.push({
-        key: 'car_sell_requests:' + r.id, table: 'car_sell_requests', id: r.id,
-        source: 'Sell your car', template: 'sell-car',
-        name: r.name, email: r.email, phone: r.phone,
-        summary: summary || '—',
-        message: r.message || '',
-        details: [
-          ['Car', summary || '—'], ['VIN', r.vin || '—'],
-          ['Condition', r.condition || '—'], ['Message', r.message || '—'],
-        ],
         created_at: r.created_at,
       })
     }
@@ -313,7 +292,7 @@ export default function AdminAllRequests() {
     <div>
       <div className="hero-card">
         <h2>✉️ All Requests {summary.total > 0 && `(${summary.total})`}</h2>
-        <p>Every unpaid request, submission and question from a visitor — system request forms, demo requests, contact forms, notify-me signups, sell-your-car requests, and flight bookings / estimations — in one place. Orders are not here: they live under Systems Orders, Shop Orders and All Orders. View shows the full details, Reply opens an editable email draft (nothing is sent from this page — you send it from your own email), and Delete removes the request forever. “Done” is a reminder on this device only.</p>
+        <p>Every unpaid request, submission and question from a visitor — system request forms, demo requests, contact forms, notify-me signups, and flight bookings / estimations — in one place. Orders are not here: they live under Systems Orders, Shop Orders and All Orders. View shows the full details, Reply opens an editable email draft (nothing is sent from this page — you send it from your own email), and Delete removes the request forever. “Done” is a reminder on this device only.</p>
       </div>
 
       {status && <p>{status}</p>}

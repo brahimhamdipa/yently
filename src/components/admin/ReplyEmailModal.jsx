@@ -74,7 +74,7 @@ const PLANS = {
 const payLinkFor = (key) => {
   if (key === 'direct:website') return `${SITE}/direct-upload`
   if (key === 'flights') return `${SITE}/?system=flight-pay`
-  if (key === 'generic' || key === 'sell-car') return SITE + '/'
+  if (key === 'generic') return SITE + '/'
   const plan = PLANS[key]
   if (!plan) return SITE + '/'
   return `${SITE}/?system=${plan.tab}&add=${key}`
@@ -247,21 +247,6 @@ Any questions, just reply to this email.
 — Yently`,
   }),
 }
-TEMPLATES['sell-car'] = {
-  label: 'Sell your car — no pay link',
-  build: (row) => ({
-    subject: 'Selling your car — Yently',
-    body:
-`Hi ${firstName(row.name)},
-
-Thanks for telling us about your car${row.summary ? ` — ${row.summary}` : ''}. We'll look at the details you sent and be in touch shortly about the next step.
-
-Any questions, just reply to this email.
-
-— Yently`,
-  }),
-}
-
 export { PLANS, TEMPLATES, payLinkFor, firstName, planInfo, serviceName }
 
 export default function ReplyEmailModal({ row, defaultTemplate, doneHint, onClose }) {
