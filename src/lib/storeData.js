@@ -15,15 +15,27 @@ import { jsPDF } from 'jspdf'
 // (store_item_subcategories) if it picked any, otherwise ALL subCategory
 // rows of that category.
 
-export async function loadProviders() {
+// Visibility (2026-11-26): effective visibility is computed at READ
+// time, never materialised. A store's Off never rewrites its products'
+// flags, so switching it back on restores each product's own state.
+// The public loaders filter by default (visibleOnly, true); Admin and
+// the seller dashboard pass visibleOnly: false so they see every row.
+// A store with no visible value yet (paste 7 not landed) counts as
+// shown — fail-open.
+export async function loadProviders({ visibleOnly = true } = {}) {
   const { data, error } = await supabase.from('store_providers').select('*').order('name')
   if (error) throw error
-  return data || []
+  let providers = data || []
+  if (visibleOnly) providers = providers.filter(p => p.visible !== false)
+  return providers
 }
 
+// A hidden store throws, exactly like a missing one — the callers'
+// "not found" cards cover both.
 export async function loadProvider(id) {
   const { data, error } = await supabase.from('store_providers').select('*').eq('id', id).single()
   if (error) throw error
+  if (data && data.visible === false) throw new Error('Store not found')
   return data
 }
 
@@ -56,17 +68,23 @@ async function attachItemCategories(items) {
 }
 
 // Items with their provider joined + categories attached. Filters:
-// providerId, activeOnly (default true). No category or online filtering
-// here — the Products page filters client-side from item.categories.
-export async function loadItems({ providerId, activeOnly = true } = {}) {
+// providerId, activeOnly (default true), visibleOnly (default true).
+// visibleOnly hides products whose store is Off — a product shows iff
+// its own is_active flag is on AND its store's visible flag is on (an
+// orphan item, store row missing, is governed by its own flag only).
+// No category or online filtering here — the Products page filters
+// client-side from item.categories.
+export async function loadItems({ providerId, activeOnly = true, visibleOnly = true } = {}) {
   let q = supabase.from('store_items')
-    .select('*, provider:store_providers(id, name, country, city)')
+    .select('*, provider:store_providers(id, name, country, city, visible)')
     .order('name')
   if (providerId) q = q.eq('provider_id', providerId)
   if (activeOnly) q = q.eq('is_active', true)
   const { data, error } = await q
   if (error) throw error
-  return attachItemCategories(data || [])
+  let items = data || []
+  if (visibleOnly) items = items.filter(it => it.provider?.visible !== false)
+  return attachItemCategories(items)
 }
 
 // A Yently Bag's recipe: one row per slot in store_bag_slots
@@ -94,9 +112,11 @@ export async function loadBagSlotItems(bagIds) {
 }
 
 // One item with provider + categories attached (the item detail page).
+// The store's visible flag rides along so the page can show its
+// "not available" card when the store is Off.
 export async function loadItem(id) {
   const { data, error } = await supabase.from('store_items')
-    .select('*, provider:store_providers(id, name, country, city, phone, address)')
+    .select('*, provider:store_providers(id, name, country, city, phone, address, visible)')
     .eq('id', id)
     .single()
   if (error) throw error
@@ -104,14 +124,18 @@ export async function loadItem(id) {
 }
 
 // Store items by id (used by the unified cart to resolve its lines),
-// with categories attached.
-export async function loadItemsByIds(ids) {
+// with categories attached. Hidden stores' items are dropped by
+// default (visibleOnly, true) — a store switched Off after the
+// customer added to the cart can no longer be checked out.
+export async function loadItemsByIds(ids, { visibleOnly = true } = {}) {
   if (!ids || ids.length === 0) return []
   const { data, error } = await supabase.from('store_items')
-    .select('*, provider:store_providers(id, name, country, city)')
+    .select('*, provider:store_providers(id, name, country, city, visible)')
     .in('id', ids)
   if (error) throw error
-  return attachItemCategories(data || [])
+  let items = data || []
+  if (visibleOnly) items = items.filter(it => it.provider?.visible !== false)
+  return attachItemCategories(items)
 }
 
 // An item's variants, grouped per item id: { itemId: [subCategory rows] }.
