@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
+import { useBusinessCart, CAR_ONETIME_PLAN_KEY, CAR_ONETIME_PLAN_PRICE } from '../lib/BusinessCartContext'
 import { shrinkImage } from '../lib/storeUpload'
 import { COUNTRIES, useCountryFilter, normalizeCountry } from '../lib/countryFilter'
 import { fmtNum, isExpired, fmtDate } from './CarSection'
@@ -179,6 +180,57 @@ export default function CarSellerFormPage({ go }) {
   const [batch, setBatch] = useState([])
   const [batchMsg, setBatchMsg] = useState('')
   const [uploadingBatch, setUploadingBatch] = useState(false)
+  // Listing slots (one-time sellers): { seller_type, paid_slots,
+  // used_slots } from car_slot_count, or null when unknown (RPC
+  // failed / paste not landed yet) — null means NO gating, the page
+  // works exactly as before. slotsMsg is the "added to cart" note
+  // after buying another $5 listing.
+  const [slots, setSlots] = useState(null)
+  const [slotsMsg, setSlotsMsg] = useState('')
+  // The Cars tabs render inside a BusinessCartProvider (App.jsx),
+  // so the cart hooks work here. Called at the top, before the
+  // logged-out early return below — never after a conditional.
+  const { hasPlan, addPlan } = useBusinessCart()
+  const onetimeInCart = hasPlan(CAR_ONETIME_PLAN_KEY)
+
+  // Listing slots, one-time sellers only. A slot is consumed by a
+  // listing while it exists (pending, approved or expired — the RPC
+  // counts all of them); deleting a listing frees it. Monthly
+  // sellers are unlimited and see no line; slots null (RPC failed /
+  // not landed) also shows nothing and gates nothing.
+  //   slotsLeft — free slots, or null when unknown / unlimited.
+  //   slotsFull — out of slots: "+ Add a car" becomes "Buy another
+  //     listing — $5" and the batch upload is refused.
+  // The demo case (0 paid, 1 car) reads "1 used, no slots left",
+  // never "1 of 0".
+  let slotsLine = null
+  let slotsLeft = null
+  let slotsFull = false
+  if (seller && seller.seller_type === 'onetime' && slots && typeof slots.paid_slots === 'number') {
+    const paid = slots.paid_slots
+    const used = Number(slots.used_slots) || 0
+    slotsLeft = Math.max(0, paid - used)
+    slotsFull = used >= paid
+    if (paid === 0) {
+      slotsLine = used === 0
+        ? 'Listings: no slots yet — buy your first $5 listing below to add a car.'
+        : `Listings: ${used} used, no slots left — buy another $5 listing below to add more.`
+    } else {
+      slotsLine = `Listings: ${used} of ${paid} used.` + (slotsFull
+        ? ' No slots left — buy another $5 listing below to add more.'
+        : ` ${slotsLeft} slot${slotsLeft === 1 ? '' : 's'} left.`)
+    }
+  }
+
+  // Out of slots: the $5 line goes in the cart exactly the way the
+  // Cars hub adds it (same plan key, same $5, no "/month"). One line
+  // per cart — a seller needing two more slots checks out, then buys
+  // again. If it is already in the cart, the button goes to My Cart.
+  const buyAnotherSlot = () => {
+    if (onetimeInCart) { go('business-cart'); return }
+    addPlan(CAR_ONETIME_PLAN_KEY)
+    setSlotsMsg('Added to your cart — check out, then log in again here and your new slot will be ready.')
+  }
 
   // The username is never saved on the device: no restore, and any
   // name an older version saved is cleared the first time this page
@@ -196,6 +248,16 @@ export default function CarSellerFormPage({ go }) {
       setCarsMsg('Error: ' + err.message)
       setCars([])
     }
+    // Listing slots (one-time sellers): paid $5 orders vs cars on
+    // file, counted server-side by car_slot_count with the same
+    // username/password as the login. Kept in its own try/catch so a
+    // slots failure never touches the cars list — slots just stays
+    // null and nothing is gated.
+    try {
+      const { data: slotData, error: slotError } = await supabase.rpc('car_slot_count', { p_username: c.username, p_password: c.password })
+      if (slotError) throw slotError
+      setSlots(slotData && slotData.length > 0 ? slotData[0] : null)
+    } catch { setSlots(null) }
   }
 
   const handleLogin = async (e) => {
@@ -225,6 +287,8 @@ export default function CarSellerFormPage({ go }) {
     setSeller(null)
     setCreds({ username: '', password: '' })
     setCars(null)
+    setSlots(null)
+    setSlotsMsg('')
     setEditing(null)
     setShowAdd(false)
     setBatch([])
@@ -254,6 +318,15 @@ export default function CarSellerFormPage({ go }) {
   }
 
   const uploadBatch = async () => {
+    // One-time sellers: a file bigger than the slots left is refused
+    // outright — the server RPC would insert them all, so the check
+    // has to happen here (Admin approval is the backstop). Monthly
+    // sellers are unlimited; slotsLeft is null when slots are
+    // unknown, and then nothing is gated either.
+    if (slotsLeft !== null && batch.length > slotsLeft) {
+      setBatchMsg(`You have ${slotsLeft} listing slot${slotsLeft === 1 ? '' : 's'} left, but this file has ${batch.length} cars. Buy more listings first, or split the file.`)
+      return
+    }
     setUploadingBatch(true)
     setBatchMsg('Sending...')
     try {
@@ -324,6 +397,9 @@ export default function CarSellerFormPage({ go }) {
         {seller.seller_type === 'monthly' && (
           <p>Your listings stay live for 1 year. Expired listings stay here until you renew them while subscribed.</p>
         )}
+        {slotsLine && (
+          <p>{slotsLine}</p>
+        )}
         {seller.email && (
           <p>Buyer inquiries about your cars go to {seller.email}.</p>
         )}
@@ -378,6 +454,11 @@ export default function CarSellerFormPage({ go }) {
         />
       ) : showAdd ? (
         <CarForm seller={seller} creds={creds} onDone={() => { setShowAdd(false); loadCars(creds) }} onCancel={() => setShowAdd(false)} />
+      ) : slotsFull ? (
+        <div>
+          <button type="button" onClick={buyAnotherSlot} style={{ marginBottom: 16 }}>{onetimeInCart ? '✓ In your cart — Go to My Cart' : `Buy another listing — $${CAR_ONETIME_PLAN_PRICE}`}</button>
+          {slotsMsg && <p className="status">{slotsMsg}</p>}
+        </div>
       ) : (
         <button onClick={() => setShowAdd(true)} style={{ marginBottom: 16 }}>+ Add a car</button>
       )}
@@ -385,25 +466,31 @@ export default function CarSellerFormPage({ go }) {
       <div className="form-card wide">
         <h3>Add many cars at once (from a list file)</h3>
         <p className="hint">Make a list of cars in a list file — one entry per car, with year, make, model, name, mileage, price, description, phone, email, country, and photos (a list of picture links). Load the file here, check the list, then upload it for approval.</p>
-        <div className="row">
-          <button type="button" onClick={downloadSample}>Download an example list file</button>
-          <label className="hint" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            Load a list file
-            <input type="file" accept=".json,application/json" onChange={e => { const f = e.target.files && e.target.files[0]; if (f) loadBatchFile(f); e.target.value = '' }} />
-          </label>
-        </div>
-        {batch.length > 0 && (
-          <div>
-            {batch.length > LIST_LIMIT && <p className="hint">{batch.length} cars in this list</p>}
-            <div style={batch.length > LIST_LIMIT ? { maxHeight: 520, overflowY: 'auto' } : undefined}>
-              <ul>
-                {batch.map((c, i) => (
-                  <li key={i}>{c.name}{c.price ? ` — $${fmtNum(c.price)}` : ''}</li>
-                ))}
-              </ul>
+        {slotsFull ? (
+          <p className="hint">You&apos;re out of listing slots — buy another $5 listing above first, then come back to upload more cars.</p>
+        ) : (
+          <>
+            <div className="row">
+              <button type="button" onClick={downloadSample}>Download an example list file</button>
+              <label className="hint" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                Load a list file
+                <input type="file" accept=".json,application/json" onChange={e => { const f = e.target.files && e.target.files[0]; if (f) loadBatchFile(f); e.target.value = '' }} />
+              </label>
             </div>
-            <button type="button" onClick={uploadBatch} disabled={uploadingBatch}>{uploadingBatch ? 'Sending...' : `Upload ${batch.length} car(s) for approval`}</button>
-          </div>
+            {batch.length > 0 && (
+              <div>
+                {batch.length > LIST_LIMIT && <p className="hint">{batch.length} cars in this list</p>}
+                <div style={batch.length > LIST_LIMIT ? { maxHeight: 520, overflowY: 'auto' } : undefined}>
+                  <ul>
+                    {batch.map((c, i) => (
+                      <li key={i}>{c.name}{c.price ? ` — $${fmtNum(c.price)}` : ''}</li>
+                    ))}
+                  </ul>
+                </div>
+                <button type="button" onClick={uploadBatch} disabled={uploadingBatch}>{uploadingBatch ? 'Sending...' : `Upload ${batch.length} car(s) for approval`}</button>
+              </div>
+            )}
+          </>
         )}
         {batchMsg && <p className="status">{batchMsg}</p>}
       </div>
