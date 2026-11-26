@@ -44,6 +44,8 @@ export const TABLE_BY_KEY = {
   'direct:website': 'direct_upload_order',
   'reports:website': 'reports_order',
   'branding:website': 'branding_order',
+  'car:onetime': 'car_order',
+  'car:monthly': 'car_order',
   'kids-math': 'kids_math_order',
   'kids-english': 'kids_english_order',
   'kids-arabic': 'kids_arabic_order',

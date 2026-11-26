@@ -17,6 +17,7 @@ import { insertCleanLinkOrder } from './cleanLinkData'
 import { insertDirectUploadOrder } from './directUploadData'
 import { insertReportsOrder } from './reportsData'
 import { insertBrandingOrder } from './brandingData'
+import { insertCarOrder } from './carOrderData'
 import { insertKidsMathOrder } from './kidsMathData'
 import { insertKidsEnglishOrder } from './kidsEnglishData'
 import { insertKidsArabicOrder } from './kidsArabicData'
@@ -51,6 +52,8 @@ import {
   DIRECT_PLAN_KEY,
   REPORTS_PLAN_KEY,
   BRANDING_PLAN_KEY,
+  CAR_ONETIME_PLAN_KEY,
+  CAR_MONTHLY_PLAN_KEY,
   isKidsPlanKey,
   isKidsExtraPlanKey,
   KIDS_BASE_PRICE,
@@ -128,6 +131,8 @@ const INSERT_BY_KEY = {
   [DIRECT_PLAN_KEY]: insertDirectUploadOrder,
   [REPORTS_PLAN_KEY]: insertReportsOrder,
   [BRANDING_PLAN_KEY]: insertBrandingOrder,
+  [CAR_ONETIME_PLAN_KEY]: insertCarOrder,
+  [CAR_MONTHLY_PLAN_KEY]: insertCarOrder,
   [KIDS_MATH_PLAN_KEY]: insertKidsMathOrder,
   [KIDS_ENGLISH_PLAN_KEY]: insertKidsEnglishOrder,
   [KIDS_ARABIC_PLAN_KEY]: insertKidsArabicOrder,
@@ -319,7 +324,21 @@ export async function placeBusinessOrder({ name, email, phone, note, items }) {
     const brandingNoteLine = isBrandingAddon
       ? `Remove Branding for ${brandingLabel} "${brandingShopSlug}" — free for the rest of this month; new monthly amount $5/month starts with the next payment. First month free.`
       : null
-    const noteLine = extraNoteLine || cleanNoteLine || directNoteLine || reportsNoteLine || tvNoteLine || chatNoteLine || brandingNoteLine
+    // A Cars selling line (one-time $5 per car, or YENTLY seller
+    // $20/month first month free): plain billable lines, not add-ons —
+    // they DO get a tracking code (see below). The note names the
+    // path so the owner knows what was bought: the $5 line covers
+    // ONE car listing (another car needs another $5 order), and the
+    // monthly line is first month free with $20/month from the next
+    // payment.
+    const isCarOnetime = item.key === CAR_ONETIME_PLAN_KEY
+    const isCarMonthly = item.key === CAR_MONTHLY_PLAN_KEY
+    const carNoteLine = isCarOnetime
+      ? 'One-time car listing — $5 per car, no monthly commitment. Covers one car listing; another car needs another $5 order.'
+      : isCarMonthly
+        ? 'YENTLY Car Seller monthly — first month free; $20/month starts with the next payment. Unlimited listings while subscribed.'
+        : null
+    const noteLine = extraNoteLine || cleanNoteLine || directNoteLine || reportsNoteLine || tvNoteLine || chatNoteLine || brandingNoteLine || carNoteLine
     const itemNote = noteLine ? (note ? `${note}\n${noteLine}` : noteLine) : note
     await insert({
       customer_name: name,
@@ -387,6 +406,10 @@ export async function placeBusinessOrder({ name, email, phone, note, items }) {
         systemLabel: brandingLabel,
         shop_slug: brandingShopSlug,
         new_monthly_total: 'New monthly amount: $5/month — starts with the next payment; free for the rest of this month. First month free.',
+      } : {}),
+      ...(isCarMonthly ? {
+        isCarMonthly: true,
+        new_monthly_total: 'New monthly amount: $20/month — starts with the next payment; first month free.',
       } : {}),
     })
     // Tracking row for this plan — EXCEPT Extra Students lines and

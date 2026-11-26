@@ -193,6 +193,26 @@ export const BRANDING_PLAN_KEY = 'branding:website'
 export const BRANDING_PLAN_NAME = 'Remove Branding'
 export const BRANDING_PLAN_PRICE = 5
 
+// Cars — two ways to sell. Path A: one-time seller (an individual
+// selling one car) — $5 per car, one time, no monthly commitment; one
+// $5 order pays for ONE car listing, and another car needs another
+// $5 order (the cart holds one of each plan max — repeat checkout
+// per car, same rule as every other plan). Path B: YENTLY seller
+// (a dealer) — $20/month, first month free, unlimited listings while
+// subscribed; ends by cancellation in Admin → Systems Orders. Both
+// are plain billable lines, so they count toward the bundle tiers
+// like the other systems. The seller record (path + country) lives on
+// car_sellers and is set by the admin when the seller is created
+// (Admin → menu 2 → Cars → Sellers) — the plan keys only carry the
+// price and the order row.
+export const CAR_ONETIME_PLAN_KEY = 'car:onetime'
+export const CAR_ONETIME_PLAN_NAME = 'One-time car listing'
+export const CAR_ONETIME_PLAN_PRICE = 5
+
+export const CAR_MONTHLY_PLAN_KEY = 'car:monthly'
+export const CAR_MONTHLY_PLAN_NAME = 'YENTLY Car Seller — monthly'
+export const CAR_MONTHLY_PLAN_PRICE = 20
+
 export const KIDS_BASE_PRICE = 5
 export const KIDS_INCLUDED_STUDENTS = 3
 export const KIDS_EXTRA_KID_PRICE = 1
@@ -376,6 +396,8 @@ export const BUSINESS_PLANS = {
   [DIRECT_PLAN_KEY]: { key: DIRECT_PLAN_KEY, name: DIRECT_PLAN_NAME, price: DIRECT_PLAN_PRICE },
   [REPORTS_PLAN_KEY]: { key: REPORTS_PLAN_KEY, name: REPORTS_PLAN_NAME, price: REPORTS_PLAN_PRICE },
   [BRANDING_PLAN_KEY]: { key: BRANDING_PLAN_KEY, name: BRANDING_PLAN_NAME, price: BRANDING_PLAN_PRICE },
+  [CAR_ONETIME_PLAN_KEY]: { key: CAR_ONETIME_PLAN_KEY, name: CAR_ONETIME_PLAN_NAME, price: CAR_ONETIME_PLAN_PRICE },
+  [CAR_MONTHLY_PLAN_KEY]: { key: CAR_MONTHLY_PLAN_KEY, name: CAR_MONTHLY_PLAN_NAME, price: CAR_MONTHLY_PLAN_PRICE },
   [KIDS_MATH_PLAN_KEY]: { key: KIDS_MATH_PLAN_KEY, name: KIDS_MATH_PLAN_NAME, price: KIDS_MATH_PLAN_PRICE },
   [KIDS_ENGLISH_PLAN_KEY]: { key: KIDS_ENGLISH_PLAN_KEY, name: KIDS_ENGLISH_PLAN_NAME, price: KIDS_ENGLISH_PLAN_PRICE },
   [KIDS_ARABIC_PLAN_KEY]: { key: KIDS_ARABIC_PLAN_KEY, name: KIDS_ARABIC_PLAN_NAME, price: KIDS_ARABIC_PLAN_PRICE },
