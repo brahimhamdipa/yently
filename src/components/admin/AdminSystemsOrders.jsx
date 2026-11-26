@@ -9,8 +9,11 @@ import CancelOrderForm, { isGateableOrderTable, systemForOrderTable } from './Ca
 //
 // One row per tracking row, newest first. The tracking row is the
 // source of truth for status — never invent one: a row shows exactly
-// the status stored on it, capitalised. Price is the plan's monthly
-// list price, shown as "$X/month" (system orders are monthly plans).
+// the status stored on it, capitalised. Price is the plan's list
+// price, shown as "$X/month" — system orders are monthly plans,
+// EXCEPT the Cars one-time listing ($5, no "/month"): Cars have two
+// plans on one order table (car_order), told apart by the plan key
+// on the tracking row — see planLabel / priceSuffix below.
 //
 // Filter definitions (chosen for this page, stated here so the choice
 // is visible): completed = status 'delivered'; not completed =
@@ -41,7 +44,7 @@ import CancelOrderForm, { isGateableOrderTable, systemForOrderTable } from './Ca
 // barbershop_order is the Barber system). Copied from
 // AdminAllOrders.jsx, which owns this map.
 const PLANS = [
-  // Systems (13)
+  // Systems (14)
   { table: 'restaurant_order', label: 'Restaurant', group: 'systems', price: 40 },
   { table: 'pos_order', label: 'Point of sale', group: 'systems', price: 50 },
   { table: 'barbershop_order', label: 'Barbershop', group: 'systems', price: 15 },
@@ -55,6 +58,7 @@ const PLANS = [
   { table: 'laundry_order', label: 'Laundry', group: 'systems', price: 20 },
   { table: 'gym_order', label: 'Gym', group: 'systems', price: 20 },
   { table: 'barber_order', label: 'Simple Website', group: 'systems', price: 10 },
+  { table: 'car_order', label: 'Cars', group: 'systems', price: 20 },
   // Add-ons (4)
   { table: 'tv_gallery_order', label: 'TV Gallery', group: 'addons', price: 2 },
   { table: 'live_chat_order', label: 'Live Chat', group: 'addons', price: 3 },
@@ -73,6 +77,14 @@ const PLANS = [
 ]
 
 const PLAN_BY_TABLE = Object.fromEntries(PLANS.map(p => [p.table, p]))
+
+// Cars have TWO plans on ONE order table (car_order): the $5 one-time
+// listing (no "/month") and the $20/month YENTLY seller. The tracking
+// row carries the plan key, so the label and the price suffix are
+// resolved from it — the table map alone cannot tell them apart.
+const CAR_PLAN_LABELS = { 'car:onetime': 'Car — one-time listing', 'car:monthly': 'Car — YENTLY seller' }
+const planLabel = (r) => CAR_PLAN_LABELS[r.plan] || PLAN_BY_TABLE[r.order_table]?.label || r.plan || r.order_table || '—'
+const priceSuffix = (r) => (r.plan === 'car:onetime' ? '' : '/month')
 
 const STATUSES = ['received', 'preparing', 'ready', 'delivered', 'cancelled']
 const STATUS_ORDER = { received: 0, preparing: 1, ready: 2, delivered: 3, cancelled: -1 }
@@ -206,7 +218,7 @@ export default function AdminSystemsOrders() {
       if (filter === 'completed' && r.status !== 'delivered') return false
       if (filter === 'not-completed' && !['received', 'preparing', 'ready'].includes(r.status)) return false
       if (q) {
-        const plan = PLAN_BY_TABLE[r.order_table]?.label || r.plan || ''
+        const plan = planLabel(r)
         const hay = [r.code, r.customer_name, r.customer_email, r.customer_phone, r.plan, plan, r.shop_slug].join(' ').toLowerCase()
         if (!hay.includes(q)) return false
       }
@@ -251,7 +263,7 @@ export default function AdminSystemsOrders() {
       {confirmDeliver && (
         <div className="form-card">
           <h3>Mark this order delivered?</h3>
-          <p>Mark “{confirmDeliver.code} — {PLAN_BY_TABLE[confirmDeliver.order_table]?.label || confirmDeliver.plan || confirmDeliver.order_table}” as delivered?</p>
+          <p>Mark “{confirmDeliver.code} — {planLabel(confirmDeliver)}” as delivered?</p>
           <p className="hint">This moves the order to the final step of tracking. The customer sees it as delivered.</p>
           <div className="store-actions">
             <button type="button" className="btn-primary" onClick={() => doSetStatus(confirmDeliver, 'delivered')} disabled={updating}>Mark delivered</button>
@@ -325,7 +337,6 @@ export default function AdminSystemsOrders() {
               {filtered.map(r => {
                 const key = r.code || (r.order_table + ':' + r.order_id)
                 const expanded = expandedKey === key
-                const plan = PLAN_BY_TABLE[r.order_table]
                 const cur = STATUS_ORDER[r.status] ?? -1
                 const canMove = r.status !== 'delivered' && r.status !== 'cancelled'
                 const src = sourceByKey[key]
@@ -335,11 +346,11 @@ export default function AdminSystemsOrders() {
                     <tr onClick={() => toggleExpand(r)} style={{ cursor: 'pointer' }}>
                       <td>{r.code || '—'}</td>
                       <td>{r.created_at ? fmtDate(r.created_at) : '—'}</td>
-                      <td>{plan?.label || r.plan || r.order_table || '—'}</td>
+                      <td>{planLabel(r)}</td>
                       <td>{r.customer_name || '—'}</td>
                       <td>{r.customer_email || '—'}</td>
                       <td>{r.customer_phone || '—'}</td>
-                      <td>{money(r.price)}/month</td>
+                      <td>{money(r.price)}{priceSuffix(r)}</td>
                       <td>{cap(r.status)}</td>
                       <td onClick={e => e.stopPropagation()}>
                         <button type="button" className="btn-mini" onClick={() => toggleExpand(r)}>{expanded ? 'Hide' : 'View'}</button>{' '}
@@ -356,7 +367,7 @@ export default function AdminSystemsOrders() {
                     {expanded && (
                       <tr>
                         <td colSpan={9}>
-                          <p><b>Order {r.code || '—'}</b> · {plan?.label || r.plan || r.order_table || '—'} · <b>Status:</b> {cap(r.status)} · <b>Price:</b> {money(r.price)}/month</p>
+                          <p><b>Order {r.code || '—'}</b> · {planLabel(r)} · <b>Status:</b> {cap(r.status)} · <b>Price:</b> {money(r.price)}{priceSuffix(r)}</p>
                           <p><b>Customer:</b> {r.customer_name || '—'}{r.customer_email ? ` · ${r.customer_email}` : ''}{r.customer_phone ? ` · ${r.customer_phone}` : ''}</p>
                           {r.shop_slug && <p><b>Shop link:</b> <a href={'https://yently.com/' + r.shop_slug} target="_blank" rel="noreferrer">yently.com/{r.shop_slug}</a></p>}
                           {Array.isArray(r.status_history) && r.status_history.length > 0 && (
@@ -371,8 +382,8 @@ export default function AdminSystemsOrders() {
                               {(src.business_name || src.system || src.shop_slug || src.clean_slug) && (
                                 <p><b>Clean link:</b> {src.clean_slug ? 'yently.com/' + src.clean_slug : '—'} · <b>System:</b> {src.system || '—'} · <b>Shop:</b> {src.shop_slug || '—'} · <b>Business name:</b> {src.business_name || '—'}</p>
                               )}
-                              <p><b>Customer on the original order:</b> {src.customer_name || '—'}{src.customer_email ? ` · ${src.customer_email}` : ''}{src.customer_phone ? ` · ${src.customer_phone}` : ''} · <b>Price:</b> {src.price !== undefined && src.price !== null ? money(src.price) + '/month' : '—'}</p>
-                              {plan?.group === 'kids' && (
+                              <p><b>Customer on the original order:</b> {src.customer_name || '—'}{src.customer_email ? ` · ${src.customer_email}` : ''}{src.customer_phone ? ` · ${src.customer_phone}` : ''} · <b>Price:</b> {src.price !== undefined && src.price !== null ? money(src.price) + priceSuffix(r) : '—'}</p>
+                              {PLAN_BY_TABLE[r.order_table]?.group === 'kids' && (
                                 <p><b>Extra kids:</b> {src.extra_kids ? `+${src.extra_kids} (limit 3 + ${src.extra_kids} = ${3 + Number(src.extra_kids)} kids)` : '0 — the 3 included kids only'}</p>
                               )}
                               <p className="hint">Ordered {src.created_at ? fmtDate(src.created_at) : '—'} · source table {r.order_table} · row #{src.id ?? r.order_id}</p>
