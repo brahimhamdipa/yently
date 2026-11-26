@@ -53,13 +53,17 @@ export const fmtNum = (v) => {
 const priceNum = (v) => Number(String(v ?? '').replace(/[^0-9.]/g, '')) || 0
 
 // Insert an inquiry; falls back to legacy columns if the car_name
-// migration hasn't been run yet in Supabase.
-export async function submitCarInquiry({ carName, name, email, phone, message }) {
-  const subject = `New inquiry: ${carName} — ${name}`
+// migration hasn't been run yet in Supabase. carId is the real
+// listing id (the owner email names the seller when sellerName is
+// given), so the owner can match an inquiry to its car and seller.
+export async function submitCarInquiry({ carId, carName, sellerName, name, email, phone, message }) {
+  const subject = sellerName
+    ? `New inquiry: ${carName} (${sellerName}) — ${name}`
+    : `New inquiry: ${carName} — ${name}`
   try {
     return await submitAndNotify({
       table: 'car_inquiries',
-      data: { car_id: null, car_name: carName, name, email, phone, message },
+      data: { car_id: carId ?? null, car_name: carName, name, email, phone, message },
       subject,
     })
   } catch (err) {
@@ -72,6 +76,18 @@ export async function submitCarInquiry({ carName, name, email, phone, message })
     }
     throw err
   }
+}
+
+// Public seller directory for the Buy a Car page: id, name, path
+// (seller_type: 'onetime' = individual, 'monthly' = dealer) and
+// country only — no logins or contact details. Served by the
+// SECURITY DEFINER RPC list_car_sellers_public; if the RPC is not
+// there yet (or errors), the page still works — cars just show
+// without a seller tag until it is.
+export async function loadSellers() {
+  const { data, error } = await supabase.rpc('list_car_sellers_public')
+  if (error) return []
+  return data || []
 }
 
 export function Lightbox({ images, start, onClose }) {
@@ -121,12 +137,13 @@ function CarSlideshow({ car, height }) {
   )
 }
 
-function CarCard({ car, onDetails, onInterested }) {
+function CarCard({ car, seller, onDetails, onInterested }) {
   return (
     <div className="card">
       <CarSlideshow car={car} />
       <div className="card-body">
         <h3>{car.name}</h3>
+        {seller && <p className="hint" style={{ margin: '2px 0' }}>{seller.seller_type === 'monthly' ? 'Dealer' : 'Individual'} • {seller.country}</p>}
         {car.mileage && <p>{fmtNum(car.mileage)} miles</p>}
         {car.description && <p className="car-desc desc-clamp">{car.description}</p>}
         {car.price && <p className="price">${fmtNum(car.price)}</p>}
@@ -141,7 +158,15 @@ function CarCard({ car, onDetails, onInterested }) {
 
 // Full details popup (like the "I'm interested" popup): all photos, every
 // field the seller shared, and the whole description — no clamp here.
-function DetailsModal({ car, onClose, onInterested }) {
+// The seller line (name • Dealer/Individual • country) is always shown
+// when the seller is known, and the "About seller" button next to
+// "I'm interested" expands the seller block: their path, country,
+// how many approved cars they have, and their other cars (tap one to
+// open it). The seller directory comes from list_car_sellers_public
+// (public fields only — no logins or contact details).
+function DetailsModal({ car, seller, otherCars, onClose, onInterested, onOpenCar }) {
+  const [showSeller, setShowSeller] = useState(false)
+  const sellerType = seller?.seller_type === 'monthly' ? 'Dealer' : 'Individual'
   const rows = [
     ['Year', car.year],
     ['Make', car.make],
@@ -164,15 +189,51 @@ function DetailsModal({ car, onClose, onInterested }) {
               <b>{label}:</b> {value}
             </p>
           ))}
+          {seller && (
+            <p style={{ margin: '4px 0', fontSize: 14 }}>
+              <b>Seller:</b> {seller.name} • {sellerType} • {seller.country}
+            </p>
+          )}
           {car.description && <p className="car-desc" style={{ marginTop: 10 }}>{car.description}</p>}
         </div>
-        <button onClick={() => onInterested(car)} style={{ width: '100%', marginTop: 14 }}>I'm interested</button>
+        {showSeller && seller && (
+          <div style={{ marginTop: 14, padding: 12, background: '#f9fafb', borderRadius: 8 }}>
+            <h4 style={{ margin: '0 0 6px' }}>About the seller</h4>
+            <p style={{ margin: '4px 0', fontSize: 14 }}><b>{seller.name}</b> — {sellerType}</p>
+            <p style={{ margin: '4px 0', fontSize: 14 }}>Country: {seller.country}</p>
+            <p style={{ margin: '4px 0', fontSize: 14 }}>
+              {sellerType === 'Dealer'
+                ? 'A YENTLY Car Seller — a dealer with unlimited listings while subscribed.'
+                : 'An individual seller — one car listed at a time.'}
+            </p>
+            {otherCars && otherCars.length > 0 ? (
+              <>
+                <p style={{ margin: '8px 0 4px', fontSize: 14 }}><b>Their other cars ({otherCars.length}):</b></p>
+                {otherCars.map(other => (
+                  <button key={other.id || other.name} onClick={() => onOpenCar(other)} style={{ display: 'block', width: '100%', textAlign: 'left', marginTop: 6, background: '#e5e7eb', color: '#111827' }}>
+                    {other.name}{other.price ? ` — $${fmtNum(other.price)}` : ''}
+                  </button>
+                ))}
+              </>
+            ) : (
+              <p style={{ margin: '8px 0 0', fontSize: 14 }}>This is their only car listed right now.</p>
+            )}
+          </div>
+        )}
+        <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
+          {seller && (
+            <button onClick={() => setShowSeller(s => !s)} style={{ flex: 1, background: '#e5e7eb', color: '#111827' }}>
+              {showSeller ? 'Hide seller' : 'About seller'}
+            </button>
+          )}
+          <button onClick={() => onInterested(car)} style={{ flex: 1 }}>I'm interested</button>
+        </div>
       </div>
     </div>
   )
 }
 
-function InterestModal({ car, onClose }) {
+function InterestModal({ car, sellerName, onClose }) {
   const [form, setForm] = useState({ name: '', email: '', phone: '', message: `I'm interested in the ${car.name}.` })
   const [status, setStatus] = useState('')
   const [sent, setSent] = useState(false)
@@ -181,7 +242,7 @@ function InterestModal({ car, onClose }) {
     e.preventDefault()
     setStatus('Sending...')
     try {
-      await submitCarInquiry({ carName: car.name, ...form })
+      await submitCarInquiry({ carId: car.id, carName: car.name, sellerName, ...form })
       setSent(true)
       setStatus('')
     } catch (err) {
@@ -217,6 +278,7 @@ function InterestModal({ car, onClose }) {
 
 export default function CarSection({ go }) {
   const [cars, setCars] = useState([])
+  const [sellers, setSellers] = useState([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState('')
   const [filterText, setFilterText] = useState('')
@@ -233,6 +295,20 @@ export default function CarSection({ go }) {
     return () => { alive = false }
   }, [])
 
+  // Public seller directory (name, path, country only). If the RPC is
+  // not there yet it resolves to [] and the page works without tags.
+  useEffect(() => {
+    let alive = true
+    loadSellers().then(list => { if (alive) setSellers(list) }).catch(() => {})
+    return () => { alive = false }
+  }, [])
+
+  const sellersById = useMemo(() => {
+    const map = {}
+    for (const s of sellers) map[s.id] = s
+    return map
+  }, [sellers])
+
   const filtered = cars.filter(c => {
     if (!matchesCountry(c.country, country)) return false
     if (filterText && !c.name.toLowerCase().includes(filterText.toLowerCase())) return false
@@ -246,7 +322,7 @@ export default function CarSection({ go }) {
 
       <div className="hero-card">
         <h2>Buy your next car, fully online</h2>
-        <p>Browse our cars below — every listing shows real photos, mileage, and price. Or sell us your car with an instant offer.</p>
+        <p>Browse our cars below — every listing shows real photos, mileage, and price.</p>
         <div className="filters">
           <input placeholder="Search cars (e.g. Camry)" value={filterText} onChange={e => setFilterText(e.target.value)} />
           <input placeholder="Max price ($)" type="number" value={maxPrice} onChange={e => setMaxPrice(e.target.value)} />
@@ -270,6 +346,7 @@ export default function CarSection({ go }) {
           <CarCard
             key={car.id || car.name}
             car={car}
+            seller={sellersById[car.seller_id]}
             onDetails={setDetailsCar}
             onInterested={setInterestCar}
           />
@@ -279,11 +356,14 @@ export default function CarSection({ go }) {
       {detailsCar && (
         <DetailsModal
           car={detailsCar}
+          seller={sellersById[detailsCar.seller_id]}
+          otherCars={cars.filter(c => c.seller_id === detailsCar.seller_id && c.id !== detailsCar.id)}
           onClose={() => setDetailsCar(null)}
           onInterested={(car) => { setDetailsCar(null); setInterestCar(car) }}
+          onOpenCar={(car) => setDetailsCar(car)}
         />
       )}
-      {interestCar && <InterestModal car={interestCar} onClose={() => setInterestCar(null)} />}
+      {interestCar && <InterestModal car={interestCar} sellerName={sellersById[interestCar.seller_id]?.name} onClose={() => setInterestCar(null)} />}
     </div>
   )
 }

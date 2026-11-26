@@ -111,7 +111,7 @@ const FAQ_SECTIONS = [
       },
       {
         q: 'Can I sell my car on Yently?',
-        a: 'Seller logins for cars are not open to everyone yet — like the Shop, we are focused on Business Systems first and will open Cars to sellers later. If you want to sell us your car now, use Sell a Car and tell us about your car \u2014 we\u2019ll email you an offer.',
+        a: 'Yes. You can sell one car for $5, one time, or become a YENTLY seller for $20 a month with unlimited listings and the first month free. Tap Become a Yently Car Seller on the Cars seller login page to get started.',
       },
     ],
   },

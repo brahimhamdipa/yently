@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabaseClient'
 import { shrinkImage } from '../lib/storeUpload'
 import { COUNTRIES, useCountryFilter, normalizeCountry } from '../lib/countryFilter'
 import { fmtNum } from './CarSection'
-import CarsMenu from './CarsMenu'
+import { CarsTopBar } from './CarsMenu'
 
 // ---------------------------------------------------------------------------
 // Seller form for Cars (2026-11-09 database rebuild).
@@ -54,13 +54,17 @@ function CarForm({ seller, creds, initial, onDone, onCancel }) {
   const [status, setStatus] = useState('')
   const [saving, setSaving] = useState(false)
 
-  // New car: default the Country field to the visitor's detected country,
-  // falling back to US. Never overwrites a country the seller already picked.
+  // New car: default the Country field to the seller's own country
+  // first (the admin sets it when the seller is created, so their
+  // cars list in the right country), then the visitor's detected
+  // country, then US. Never overwrites a country the seller already
+  // picked. (If check_car_seller doesn't return the new columns yet,
+  // seller.country is empty and the old fallback applies.)
   useEffect(() => {
     if (!initial && countryReady) {
-      setForm(f => (f.country ? f : { ...f, country: detectedCountry || 'US' }))
+      setForm(f => (f.country ? f : { ...f, country: (seller && seller.country ? normalizeCountry(seller.country) : '') || detectedCountry || 'US' }))
     }
-  }, [initial, countryReady, detectedCountry])
+  }, [initial, countryReady, detectedCountry, seller])
 
   const fillName = () => {
     const name = [form.year, form.make, form.model].filter(Boolean).join(' ')
@@ -282,7 +286,7 @@ export default function CarSellerFormPage({ go }) {
   if (!seller) {
     return (
       <div>
-        <CarsMenu go={go} />
+        <CarsTopBar go={go} />
         <div className="hero-card">
           <h2>Sell your cars on Yently</h2>
           <p>Log in with the username and password Yently gave you, then add your cars — one at a time, or many at once from a list file. Every car is checked by Yently before it shows on the Cars page.</p>
@@ -294,8 +298,8 @@ export default function CarSellerFormPage({ go }) {
           {loginMsg && <p className="status">{loginMsg}</p>}
           <p className="hint">Don't have a username yet? Ask Yently for one — the admin creates it in Admin → menu 2 → Cars → Sellers.</p>
           <div style={{ textAlign: 'center', marginTop: 16 }}>
-            <button type="button" onClick={() => go('car-seller-soon')} style={{ background: '#f5c542', color: '#161d44', fontWeight: 700 }}>Become a Yently Car Seller</button>
-            <p className="hint">Seller logins open soon — tap to see what's coming.</p>
+            <button type="button" onClick={() => go('cars-hub')} style={{ background: '#f5c542', color: '#161d44', fontWeight: 700 }}>Become a Yently Car Seller</button>
+            <p className="hint">Two ways to sell: one car for $5, or become a YENTLY Car Seller for $20/month, first month free — see both on the Cars page.</p>
           </div>
         </form>
       </div>
@@ -308,9 +312,12 @@ export default function CarSellerFormPage({ go }) {
 
   return (
     <div>
-      <CarsMenu go={go} />
+      <CarsTopBar go={go} />
       <div className="hero-card">
         <h2>Your cars — {seller.name}</h2>
+        {seller.seller_type && (
+          <p>{seller.seller_type === 'monthly' ? 'Your plan: YENTLY Car Seller — $20/month, first month free, unlimited listings.' : 'Your plan: one-time seller — $5 per car, no monthly commitment.'}</p>
+        )}
         <p>Your listings are below. "Pending" means Yently is still checking it; "Approved" means buyers can see it on the Cars page. Editing a car sends it back for approval.</p>
         <button type="button" onClick={signOut}>Sign out</button>
       </div>
