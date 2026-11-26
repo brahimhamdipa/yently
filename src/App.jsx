@@ -313,8 +313,9 @@ export default function App() {
   const inBusiness = BUSINESS_TABS.includes(tab)
   const inCars = CARS_TABS.includes(tab)
   const inFlights = ['flights', 'flights-hub', 'reserve', 'flight-pay', 'flight-contact'].includes(tab)
-  // "More" holds Help Center (Guides, Pass Recovery) + Track Order +
-  // About Us. Custom Coding moved to the Systems submenu (BusinessMenu),
+  // "More" holds Help Center (Guides, FAQ, Pass Recovery, Customer
+  // Agreement) + Track Order + FAQ + About Us + Contact Us. Custom Coding
+  // moved to the Systems submenu (BusinessMenu),
   // between More Systems and Add-ons — the Systems button stays
   // highlighted while on the Custom Coding page. Cars is a top-level
   // button now, and Yently Kids moved to Systems.
@@ -348,6 +349,7 @@ export default function App() {
                     </>
                   )}
                   <a onClick={() => go('track')}>Track Order</a>
+                  <a onClick={() => go('faq')}>FAQ</a>
                   <a onClick={() => go('about')}>About Us</a>
                   <a onClick={() => go('contact-us')}>Contact Us</a>
                 </span>
