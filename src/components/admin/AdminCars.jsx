@@ -14,12 +14,15 @@ import { fmtNum, isExpired } from '../CarSection'
 // tool for listings that break Yently's rules.
 //
 // EXPIRY (2026-11-26): a one-time listing lives 60 days from approval,
-// a dealer's listing 1 year from approval (`expires_at`, set by Approve;
-// NULL = no expiry yet, e.g. still pending). There is no server cron, so
-// the public page hides expired rows itself (lazy expiry in loadCars) —
-// an expired car simply stops showing on Buy a Car. Expired rows stay
-// here under the Expired filter until the admin renews them (one-time:
-// another $5 order; dealer: while subscribed) or deletes them.
+// a dealer's listing 1 year from approval (`expires_at`; NULL = no expiry
+// yet, e.g. still pending). Approve sets the rule date ONLY when the row
+// has no expiry yet — a manually picked expiry always wins, even a past
+// one (Approve then says so, and the car stays hidden until Renew).
+// There is no server cron, so the public page hides expired rows itself
+// (lazy expiry in loadCars) — an expired car simply stops showing on Buy
+// a Car. Expired rows stay here under the Expired filter until the admin
+// renews them (one-time: another $5 order; dealer: while subscribed) or
+// deletes them.
 // SELLERS — the people allowed to list cars. Each seller has a username
 // and password handed out by the admin, stored READABLE here BY DESIGN
 // (throwaway only, like the store provider passes). The admin creates the
@@ -84,11 +87,21 @@ export default function AdminCars() {
     setStatus('Approving...')
     const { error: err } = await supabase.rpc('approve_car_listing', { p_id: row.id })
     if (err) { setStatus(''); setError(err.message); return }
-    // One-time listings live 60 days from approval; dealers 1 year.
-    const expires = sellerIsMonthly(row.seller_id) ? oneYearOut() : sixtyDaysOut()
-    const { error: expErr } = await supabase.from('car_listings').update({ expires_at: expires }).eq('id', row.id)
-    if (expErr) { setStatus(''); setError('Approved, but the expiry could not be set: ' + expErr.message); load(); return }
-    setStatus(`✓ Approved — ${row.name} now shows on the Cars page${expires ? ` until ${fmtDate(expires)}` : ''}.`)
+    // A manually picked expiry always wins: only set the path's rule date
+    // when the row has no expiry yet. If the admin already set one (e.g.
+    // yesterday, to test expiry), Approve leaves it exactly as it is and
+    // says so in the confirmation.
+    if (!row.expires_at) {
+      // One-time listings live 60 days from approval; dealers 1 year.
+      const expires = sellerIsMonthly(row.seller_id) ? oneYearOut() : sixtyDaysOut()
+      const { error: expErr } = await supabase.from('car_listings').update({ expires_at: expires }).eq('id', row.id)
+      if (expErr) { setStatus(''); setError('Approved, but the expiry could not be set: ' + expErr.message); load(); return }
+      setStatus(`✓ Approved — ${row.name} now shows on the Cars page until ${fmtDate(expires)}.`)
+    } else if (isExpired(row)) {
+      setStatus(`✓ Approved — ${row.name} keeps its expiry of ${fmtDate(row.expires_at)}, which has already passed, so it won't show until you renew it.`)
+    } else {
+      setStatus(`✓ Approved — ${row.name} now shows on the Cars page until ${fmtDate(row.expires_at)} (your chosen expiry kept).`)
+    }
     load()
   }
 
