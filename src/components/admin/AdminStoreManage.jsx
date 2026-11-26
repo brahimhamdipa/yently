@@ -176,7 +176,7 @@ const NEW_ORDER_TABLES = ['houses_order', 'doctor_order', 'holiday_order', 'rent
 const slugify = (s) => s.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
 
 const blankDraft = (table) => {
-  if (table === 'providers') return { name: '', phone: '', email: '', address: '', city: '', country: '', zip: '', hours: '', about: '', pics: [], holdorder: false, payorder: true }
+  if (table === 'providers') return { name: '', phone: '', email: '', address: '', city: '', country: '', zip: '', hours: '', about: '', pics: [], holdorder: false, payorder: true, visible: true }
   if (table === 'items') return { provider_id: '', name: '', price: '', description: '', delivery_address: '', pickup_address: '', delivery: true, pickup: true, is_active: true, stock: '', pics: [] }
   if (table === 'forms') return { provider_id: '', f: '', u: '', p: '', comment: '' }
   if (table === 'fromdel') return { fname: '', faddress: '', fcity: '', fstate: '', fzip: '', fcountry: '', fcounty: '', ftownship: '', fcomment: '' }
@@ -569,7 +569,7 @@ export default function AdminStoreManage({ table: tableProp, onTableChange }) {
     setRows(null)
     if (!tableName) { setStatus('Unknown table — this page is not set up yet.'); setRows([]); return }
     let q = supabase.from(tableName).select('*').order('name')
-    if (table === 'items') q = supabase.from(tableName).select('*, provider:store_providers(name)').order('pending_approval', { ascending: false }).order('name')
+    if (table === 'items') q = supabase.from(tableName).select('*, provider:store_providers(name, visible)').order('pending_approval', { ascending: false }).order('name')
     if (table === 'forms') q = supabase.from(tableName).select('*').order('f')
     if (table === 'fromdel') q = supabase.from(tableName).select('*').order('fname')
     if (table === 'topick') q = supabase.from(tableName).select('*').order('tname')
@@ -626,7 +626,7 @@ export default function AdminStoreManage({ table: tableProp, onTableChange }) {
       if (error) { setStatus('Error: ' + error.message); setRows([]) }
       else setRows(data || [])
     })
-    loadProviders().then(setProviders).catch(() => {})
+    loadProviders({ visibleOnly: false }).then(setProviders).catch(() => {})
     loadItemCategories().then(setItemCategories).catch(() => {})
     loadFromDel().then(setFromdel).catch(() => {})
     loadToPick().then(setTopick).catch(() => {})
@@ -726,6 +726,28 @@ export default function AdminStoreManage({ table: tableProp, onTableChange }) {
     const { error } = await supabase.from('store_items').update({ is_active: true, pending_approval: false }).eq('id', row.id)
     if (error) { setStatus('Cannot approve: ' + error.message); return }
     setStatus(`✓ Approved "${row.name}" — now live.`)
+    reload()
+  }
+
+  // Visibility switches (2026-11-26): one tap hides/shows a row on
+  // the public Shop. Items reuse their is_active flag (the "Shown"
+  // column); stores get a visible flag (paste 7). A store's Off hides
+  // ALL its products (the products' own flags are never rewritten),
+  // so switching the store back on restores each product's own
+  // setting. Pending items have no toggle: Approve is their path.
+  const toggleItemVisible = async (row) => {
+    const next = !row.is_active
+    const { error } = await supabase.from('store_items').update({ is_active: next }).eq('id', row.id)
+    if (error) { setStatus('Cannot update: ' + error.message); return }
+    setStatus(`✓ "${row.name}" is now ${next ? 'shown' : 'hidden'} in the Shop.`)
+    reload()
+  }
+
+  const toggleProviderVisible = async (row) => {
+    const next = row.visible !== false ? false : true
+    const { error } = await supabase.from('store_providers').update({ visible: next }).eq('id', row.id)
+    if (error) { setStatus('Cannot update: ' + error.message); return }
+    setStatus(`✓ "${row.name}" is now ${next ? 'shown' : 'hidden'} in the Shop${next ? '' : ' — all its products are hidden too.'}`)
     reload()
   }
 
@@ -893,6 +915,7 @@ export default function AdminStoreManage({ table: tableProp, onTableChange }) {
     if (table === 'providers') {
       fields.holdorder = !!fields.holdorder
       fields.payorder = fields.payorder !== false
+      fields.visible = fields.visible !== false
     }
     if (table === 'forms') {
       fields.f = slugify(fields.f || '')
@@ -1520,6 +1543,7 @@ export default function AdminStoreManage({ table: tableProp, onTableChange }) {
       )}
 
       <div className="hero-card">
+        {table === 'providers' && <p className="hint">Hiding a store hides all its products from the Shop — their own Shown settings are kept, so switching the store back on restores them.</p>}
         <div className="table-wrap" style={{ maxHeight: 520, overflowY: 'auto' }}>
         <table className="admin-table">
           <thead>
@@ -1527,7 +1551,7 @@ export default function AdminStoreManage({ table: tableProp, onTableChange }) {
               <th>ID</th><th>{table === 'forms' ? 'Store' : 'Name'}</th>
               {table === 'items' &&
                 <><th>Price</th><th>Provider</th><th>Delivery</th><th>Pickup</th><th>Shown</th><th>Stock</th><th>Barcode</th></>}
-              {table === 'providers' && <><th>City</th><th>Country</th><th>Photos</th><th>Hold orders</th><th>Pay orders</th></>}
+              {table === 'providers' && <><th>City</th><th>Country</th><th>Photos</th><th>Hold orders</th><th>Pay orders</th><th>Shown</th></>}
               {table === 'forms' && <><th>Form address</th><th>Username</th><th>Comment</th></>}
               {table === 'fromdel' && <><th>Address</th><th>City</th><th>State</th><th>Zip</th><th>Country</th></>}
               {table === 'topick' && <><th>Address</th><th>City</th><th>State</th><th>Zip</th><th>Country</th></>}
@@ -1617,12 +1641,12 @@ export default function AdminStoreManage({ table: tableProp, onTableChange }) {
                     <td>{r.provider?.name || r.provider_id}</td>
                     <td>{r.delivery ? 'Yes' : 'No'}</td>
                     <td>{r.pickup ? 'Yes' : 'No'}</td>
-                    <td>{r.pending_approval ? 'Pending' : r.is_active ? 'Yes' : 'Hidden'}</td>
+                    <td>{r.pending_approval ? 'Pending' : r.is_active ? (r.provider?.visible === false ? 'Hidden (store off)' : 'Yes') : 'Hidden'}</td>
                     <td>{r.stock === null || r.stock === undefined ? '—' : r.stock}</td>
                     <td>{r.barCode || '—'}</td>
                   </>
                 )}
-                {table === 'providers' && <><td>{r.city}</td><td>{r.country}</td><td>{(r.pics || []).length}</td><td>{r.holdorder ? 'Yes' : 'No'}</td><td>{r.payorder !== false ? 'Yes' : 'No'}</td></>}
+                {table === 'providers' && <><td>{r.city}</td><td>{r.country}</td><td>{(r.pics || []).length}</td><td>{r.holdorder ? 'Yes' : 'No'}</td><td>{r.payorder !== false ? 'Yes' : 'No'}</td><td>{r.visible !== false ? 'Yes' : 'Hidden'}</td></>}
                 {table === 'forms' && <><td><a href={`/${r.f}`} target="_blank" rel="noreferrer">yently.com/{r.f}</a></td><td>{r.u}</td><td>{r.comment}</td></>}
                 {table === 'fromdel' && <><td>{r.faddress}</td><td>{r.fcity}</td><td>{r.fstate}</td><td>{r.fzip}</td><td>{r.fcountry}</td></>}
                 {table === 'topick' && <><td>{r.taddress}</td><td>{r.tcity}</td><td>{r.tstate}</td><td>{r.tzip}</td><td>{r.tcountry}</td></>}
@@ -1700,6 +1724,8 @@ export default function AdminStoreManage({ table: tableProp, onTableChange }) {
             {table === 'upload_forms' && <><td>{r.folder}</td><td>{r.u}</td></>}
                 <td>
                   {table === 'items' && r.pending_approval && <button type="button" className="btn-mini" onClick={() => approve(r)}>Approve</button>}{' '}
+                  {table === 'items' && !r.pending_approval && <button type="button" className="btn-mini" onClick={() => toggleItemVisible(r)}>{r.is_active ? 'Hide' : 'Show'}</button>}{' '}
+                  {table === 'providers' && <button type="button" className="btn-mini" onClick={() => toggleProviderVisible(r)}>{r.visible !== false ? 'Hide' : 'Show'}</button>}{' '}
                   {table === 'intake_submissions' && <><button type="button" className="btn-mini" onClick={() => { setDetail(r); setPageWord(r.payload?.page_word || '') }}>Details</button>{' '}{r.status === 'pending' && <button type="button" className="btn-mini" onClick={() => approveSubmission(r)}>Approve</button>}{' '}</>}
                   {table === 'diner_approvals' && <><button type="button" className="btn-mini" onClick={() => setDetail(r)}>Details</button>{' '}{r.draft_status === 'pending' && <button type="button" className="btn-mini" onClick={() => approveDiner(r)}>Approve</button>}{' '}</>}
                   {table === 'barbershop_approvals' && <><button type="button" className="btn-mini" onClick={() => setDetail(r)}>Details</button>{' '}{r.draft_status === 'pending' && <button type="button" className="btn-mini" onClick={() => approveBarbershop(r)}>Approve</button>}{' '}</>}

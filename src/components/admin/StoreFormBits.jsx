@@ -61,6 +61,7 @@ export function ProviderForm({ draft, setDraft, onSubmit, submitLabel, onCancel 
       <textarea placeholder="About the store" value={draft.about || ''} onChange={e => setDraft({ ...draft, about: e.target.value })} />
       <label><input type="checkbox" checked={!!draft.holdorder} onChange={e => setDraft({ ...draft, holdorder: e.target.checked })} /> Hold orders: show the gray "Hold Order / Pay at store" button in the cart for this store</label>
       <label><input type="checkbox" checked={draft.payorder !== false} onChange={e => setDraft({ ...draft, payorder: e.target.checked })} /> Pay orders: show the blue "Place order" button in the cart for this store</label>
+      <label><input type="checkbox" checked={draft.visible !== false} onChange={e => setDraft({ ...draft, visible: e.target.checked })} /> Show this store on the site (uncheck to hide it — all its products are hidden too)</label>
       <PicField pics={draft.pics || []} setPics={pics => setDraft({ ...draft, pics })} />
       <div className="store-actions">
         <button type="submit">{submitLabel}</button>

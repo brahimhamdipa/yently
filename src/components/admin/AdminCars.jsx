@@ -47,6 +47,14 @@ import { fmtNum, isExpired } from '../CarSection'
 // add a car; Approve does NOT check slots (existing cars are
 // grandfathered — Demo Cars has 1 car with 0 paid orders).
 //
+// VISIBILITY (2026-11-26): each car and each seller has a visible
+// flag (paste 7, ON by default). One tap on Hide/Show flips it; the
+// public page hides a car whose own flag is off OR whose seller's flag
+// is off (read-time, in loadCars) — a seller's Off never rewrites the
+// cars' flags, so switching the seller back on restores each car's own
+// setting. Admin sees everything here; the seller dashboard shows
+// hidden rows read-only ("Hidden by Yently").
+//
 // The public Cars page reads approved rows only, and sellers write only
 // through the password-checked RPCs, so nothing here is reachable by a
 // visitor.
@@ -65,10 +73,10 @@ export default function AdminCars() {
   const [search, setSearch] = useState('')
   const [status, setStatus] = useState('')
   const [error, setError] = useState('')
-  const [sellerForm, setSellerForm] = useState({ name: '', slug: '', username: '', password: '', email: '', phone: '', country: '', seller_type: 'onetime' })
+  const [sellerForm, setSellerForm] = useState({ name: '', slug: '', username: '', password: '', email: '', phone: '', country: '', seller_type: 'onetime', visible: true })
   const [editingSeller, setEditingSeller] = useState(null)
   // Listing edit (ethics tool): every field on any seller's car.
-  const emptyListingForm = { name: '', year: '', make: '', model: '', mileage: '', price: '', description: '', phone: '', email: '', country: '', status: 'pending', expires_at: '' }
+  const emptyListingForm = { name: '', year: '', make: '', model: '', mileage: '', price: '', description: '', phone: '', email: '', country: '', status: 'pending', expires_at: '', visible: true }
   const [listingForm, setListingForm] = useState(emptyListingForm)
   const [editingListing, setEditingListing] = useState(null)
   const [savingListing, setSavingListing] = useState(false)
@@ -128,6 +136,7 @@ export default function AdminCars() {
   // 1 year from today, as an ISO timestamp (the dealer listing life).
   const oneYearOut = () => new Date(Date.now() + 365 * 24 * 3600 * 1000).toISOString()
   const sellerIsMonthly = (sellerId) => (sellers || []).find(x => x.id === sellerId)?.seller_type === 'monthly'
+  const sellerIsHidden = (sellerId) => (sellers || []).find(x => x.id === sellerId)?.visible === false
 
   const approve = async (row) => {
     setStatus('Approving...')
@@ -163,6 +172,27 @@ export default function AdminCars() {
     load()
   }
 
+  // Visibility switches (2026-11-26): one tap hides/shows a row on
+  // the public Cars page. A seller's Off hides ALL their cars (the
+  // cars' own flags are never rewritten); a car's own Off hides just
+  // that car. Pending rows can be hidden too — Approve still approves
+  // them, they just don't show until switched back on.
+  const toggleListingVisible = async (row) => {
+    const next = row.visible !== false ? false : true
+    const { error: err } = await supabase.from('car_listings').update({ visible: next }).eq('id', row.id)
+    if (err) { setStatus(''); setError(err.message); return }
+    setStatus(`✓ "${row.name}" is now ${next ? 'shown' : 'hidden'} on the Cars page.`)
+    load()
+  }
+
+  const toggleSellerVisible = async (row) => {
+    const next = row.visible !== false ? false : true
+    const { error: err } = await supabase.from('car_sellers').update({ visible: next }).eq('id', row.id)
+    if (err) { setStatus(''); setError(err.message); return }
+    setStatus(`✓ "${row.name}" is now ${next ? 'shown' : 'hidden'} on the Cars page${next ? '' : ' — all their cars are hidden too.'}`)
+    load()
+  }
+
   const editListing = (r) => {
     setListingForm({
       name: r.name || '',
@@ -177,6 +207,7 @@ export default function AdminCars() {
       country: r.country || '',
       status: r.status || 'pending',
       expires_at: r.expires_at ? String(r.expires_at).slice(0, 10) : '',
+      visible: r.visible !== false,
     })
     setEditingListing(r.id)
     setStatus('')
@@ -204,6 +235,7 @@ export default function AdminCars() {
       country: listingForm.country,
       status: listingForm.status,
       expires_at: expires,
+      visible: listingForm.visible !== false,
     }
     const { error: err } = await supabase.from('car_listings').update(row).eq('id', editingListing)
     setSavingListing(false)
@@ -227,7 +259,7 @@ export default function AdminCars() {
     load()
   }
 
-  const emptySellerForm = { name: '', slug: '', username: '', password: '', email: '', phone: '', country: '', seller_type: 'onetime' }
+  const emptySellerForm = { name: '', slug: '', username: '', password: '', email: '', phone: '', country: '', seller_type: 'onetime', visible: true }
 
   const saveSeller = async (e) => {
     e.preventDefault()
@@ -245,6 +277,7 @@ export default function AdminCars() {
       phone: sellerForm.phone.trim() || null,
       country: sellerForm.country,
       seller_type: sellerForm.seller_type,
+      visible: sellerForm.visible !== false,
     }
     // Edit: the slug never changes (cars and photos are keyed on it).
     // New: the slug is set once, with the country and the path.
@@ -270,6 +303,7 @@ export default function AdminCars() {
       phone: s.phone || '',
       country: s.country || '',
       seller_type: s.seller_type || 'onetime',
+      visible: s.visible !== false,
     })
     setEditingSeller(s.id)
     setStatus('')
@@ -375,6 +409,7 @@ export default function AdminCars() {
                 </label>
               </div>
               <textarea placeholder="Description" value={listingForm.description} onChange={e => setListingForm({ ...listingForm, description: e.target.value })} rows={3} />
+              <label><input type="checkbox" checked={listingForm.visible !== false} onChange={e => setListingForm({ ...listingForm, visible: e.target.checked })} /> Show this car on the Cars page (uncheck to hide it)</label>
               <p className="hint">Renewal: a one-time listing needs a matching $5 order; a dealer&apos;s listings renew while subscribed.</p>
               <div className="row">
                 <button type="submit" disabled={savingListing}>{savingListing ? 'Saving...' : 'Save changes'}</button>
@@ -388,7 +423,7 @@ export default function AdminCars() {
             <div className="table-wrap" style={{ maxHeight: 520, overflowY: 'auto' }}>
               <table className="admin-table">
                 <thead>
-                  <tr><th>Car</th><th>Price</th><th>Mileage</th><th>Seller</th><th>Photos</th><th>Status</th><th>Expires</th><th>Added</th><th className="no-print"></th></tr>
+                  <tr><th>Car</th><th>Price</th><th>Mileage</th><th>Seller</th><th>Photos</th><th>Status</th><th>Expires</th><th>Shown</th><th>Added</th><th className="no-print"></th></tr>
                 </thead>
                 <tbody>
                   {shownListings.map(r => (
@@ -400,6 +435,7 @@ export default function AdminCars() {
                       <td>{Array.isArray(r.photos) ? r.photos.length : 0}</td>
                       <td>{isExpired(r) ? 'Expired' : r.status}</td>
                       <td>{isExpired(r) ? 'Expired' : (r.expires_at ? fmtDate(r.expires_at) : '—')}</td>
+                      <td>{r.visible !== false ? (sellerIsHidden(r.seller_id) ? 'Hidden (seller off)' : 'Yes') : 'Hidden'}</td>
                       <td>{fmtDate(r.created_at)}</td>
                       <td className="no-print" style={{ whiteSpace: 'nowrap' }}>
                         {r.status === 'pending' && (
@@ -408,6 +444,7 @@ export default function AdminCars() {
                         {isExpired(r) && (
                           <button type="button" className="btn-mini" onClick={() => renewListing(r)}>{sellerIsMonthly(r.seller_id) ? 'Renew 1 year' : 'Renew 60 days'}</button>
                         )}{' '}
+                        <button type="button" className="btn-mini" onClick={() => toggleListingVisible(r)}>{r.visible !== false ? 'Hide' : 'Show'}</button>{' '}
                         <button type="button" className="btn-mini" onClick={() => editListing(r)}>Edit</button>{' '}
                         <button type="button" className="btn-mini btn-danger" onClick={() => setConfirmDelete({ kind: 'listing', row: r })}>Delete</button>
                       </td>
@@ -424,7 +461,7 @@ export default function AdminCars() {
         <div>
           <form className="form-card wide" onSubmit={saveSeller}>
             <h3>{editingSeller ? `Edit seller — ${sellerForm.name || ''}` : 'Add a seller'}</h3>
-            <p className="hint">Give the seller this username and password — they use them on the seller form to add cars. Keep them throwaway-style, one per seller. Pick the selling path and the country where their cars are sold BEFORE creating the seller: one-time sellers pay $5 per car, YENTLY sellers pay $20/month (first month free) and list as many cars as they like. A wrong path or country can be fixed later with Edit — the slug never changes. The Slots column shows cars on file / $5 orders paid (cancelled orders don&apos;t count); a one-time seller with no slots left sees "Buy another listing" on their dashboard instead of "+ Add a car".</p>
+            <p className="hint">Give the seller this username and password — they use them on the seller form to add cars. Keep them throwaway-style, one per seller. Pick the selling path and the country where their cars are sold BEFORE creating the seller: one-time sellers pay $5 per car, YENTLY sellers pay $20/month (first month free) and list as many cars as they like. A wrong path or country can be fixed later with Edit — the slug never changes. The Slots column shows cars on file / $5 orders paid (cancelled orders don&apos;t count); a one-time seller with no slots left sees "Buy another listing" on their dashboard instead of "+ Add a car". Hide/Show in the table switches a seller (or a car) off the public Cars page without deleting anything — a hidden seller hides all their cars, and switching them back on restores each car&apos;s own setting.</p>
             <div className="row">
               <input required placeholder="Seller name (e.g. Demo Cars)" value={sellerForm.name} onChange={e => setSellerForm({ ...sellerForm, name: e.target.value })} />
               <input required placeholder="Slug (e.g. demo-cars)" value={sellerForm.slug} disabled={!!editingSeller} onChange={e => setSellerForm({ ...sellerForm, slug: e.target.value })} />
@@ -458,6 +495,7 @@ export default function AdminCars() {
               </div>
               <input placeholder="Phone (optional)" type="tel" value={sellerForm.phone} onChange={e => setSellerForm({ ...sellerForm, phone: e.target.value })} />
             </div>
+            <label><input type="checkbox" checked={sellerForm.visible !== false} onChange={e => setSellerForm({ ...sellerForm, visible: e.target.checked })} /> Show this seller on the Cars page (uncheck to hide them — all their cars are hidden too)</label>
             <div className="row">
               <button type="submit">{editingSeller ? 'Save changes' : 'Save seller'}</button>
               {editingSeller && <button type="button" onClick={() => { setEditingSeller(null); setSellerForm(emptySellerForm) }}>Cancel</button>}
@@ -470,7 +508,7 @@ export default function AdminCars() {
             <div className="table-wrap" style={{ maxHeight: 520, overflowY: 'auto' }}>
               <table className="admin-table">
                 <thead>
-                  <tr><th>Seller</th><th>Slug</th><th>Username</th><th>Password</th><th>Country</th><th>Path</th><th>Cars</th><th>Slots</th><th>Email</th><th>Phone</th><th className="no-print"></th></tr>
+                  <tr><th>Seller</th><th>Slug</th><th>Username</th><th>Password</th><th>Country</th><th>Path</th><th>Cars</th><th>Slots</th><th>Shown</th><th>Email</th><th>Phone</th><th className="no-print"></th></tr>
                 </thead>
                 <tbody>
                   {shownSellers.map(s => (
@@ -483,9 +521,11 @@ export default function AdminCars() {
                       <td>{s.seller_type === 'monthly' ? 'Dealer ($20/mo)' : s.seller_type === 'onetime' ? 'Individual ($5/car)' : ''}</td>
                       <td>{carCountBySeller[s.id] || 0}</td>
                       <td>{s.seller_type === 'monthly' ? 'Unlimited' : (slotMap[s.id] ? `${slotMap[s.id].used}/${slotMap[s.id].paid}` : '—')}</td>
+                      <td>{s.visible !== false ? 'Yes' : 'Hidden'}</td>
                       <td>{s.email || ''}</td>
                       <td>{s.phone || ''}</td>
                       <td className="no-print" style={{ whiteSpace: 'nowrap' }}>
+                        <button type="button" className="btn-mini" onClick={() => toggleSellerVisible(s)}>{s.visible !== false ? 'Hide' : 'Show'}</button>{' '}
                         <button type="button" className="btn-mini" onClick={() => editSeller(s)}>Edit</button>{' '}
                         <button type="button" className="btn-mini btn-danger" onClick={() => setConfirmDelete({ kind: 'seller', row: s })}>Delete</button>
                       </td>

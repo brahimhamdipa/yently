@@ -8,7 +8,7 @@ import { ProviderForm, ItemForm, ProviderFormEditor, ItemCategoryForm, SubCatego
 // Items link to categories, options and locations right here; Manage → Items is only for editing links later.
 const slugify = (s) => s.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
 
-const blankProvider = () => ({ name: '', phone: '', email: '', address: '', city: '', country: '', zip: '', hours: '', about: '', pics: [], holdorder: false, payorder: true })
+const blankProvider = () => ({ name: '', phone: '', email: '', address: '', city: '', country: '', zip: '', hours: '', about: '', pics: [], holdorder: false, payorder: true, visible: true })
 
 const blankItem = () => ({ provider_id: '', name: '', price: '', description: '', delivery_address: '', pickup_address: '', delivery: true, pickup: true, is_active: true, stock: '', pics: [] })
 
@@ -36,7 +36,7 @@ export default function AdminStoreAdd() {
   const loadForms = () => supabase.from('providersForm').select('provider_id, f').then(({ data }) => setForms(data || [])).catch(() => {})
 
   useEffect(() => {
-    loadProviders().then(setProviders).catch(() => {})
+    loadProviders({ visibleOnly: false }).then(setProviders).catch(() => {})
     loadItemCategories().then(setItemCategories).catch(() => {})
     loadForms()
     loadFromDel().then(setFromdel).catch(() => {})
@@ -63,12 +63,12 @@ export default function AdminStoreAdd() {
     const { error } = await supabase.from('store_providers').insert({
       name: p.name, phone: p.phone, email: p.email, address: p.address, city: p.city,
       country: p.country, zip: p.zip, hours: p.hours, about: p.about, pics: p.pics,
-      holdorder: !!p.holdorder, payorder: p.payorder !== false,
+      holdorder: !!p.holdorder, payorder: p.payorder !== false, visible: p.visible !== false,
     })
     if (error) { setStatus('Error: ' + error.message); return }
     setStatus(`✓ Provider "${p.name}" saved.`)
     setP(blankProvider())
-    loadProviders().then(setProviders).catch(() => {})
+    loadProviders({ visibleOnly: false }).then(setProviders).catch(() => {})
   }
 
   const saveItem = async (e) => {
