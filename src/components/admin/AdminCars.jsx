@@ -37,6 +37,16 @@ import { fmtNum, isExpired } from '../CarSection'
 // can be fixed with Edit (the slug never changes, so their cars and
 // photos keep working).
 //
+// SLOTS (2026-11-26): one $5 one-time order = one listing slot. The
+// Sellers table shows Slots as cars-on-file / $5-orders-paid (used /
+// paid) for one-time sellers, "Unlimited" for dealers. Paid counts
+// the seller's car_order rows (plan 'One-time car listing', matched
+// by email, cancelled orders excluded via order_tracking); used counts
+// their car_listings rows, any status — deleting a listing frees its
+// slot. The seller dashboard enforces the same count before they can
+// add a car; Approve does NOT check slots (existing cars are
+// grandfathered — Demo Cars has 1 car with 0 paid orders).
+//
 // The public Cars page reads approved rows only, and sellers write only
 // through the password-checked RPCs, so nothing here is reachable by a
 // visitor.
@@ -67,13 +77,49 @@ export default function AdminCars() {
   // confirmDelete is { kind: 'listing' | 'seller', row }.
   const [confirmDelete, setConfirmDelete] = useState(null)
   const [deleting, setDeleting] = useState(false)
+  // Listing slots per seller id: { paid, used } for one-time sellers
+  // (see the SLOTS note in the header comment). Empty while loading
+  // or if the count queries fail — the Slots column then shows "—"
+  // and nothing else is affected.
+  const [slotMap, setSlotMap] = useState({})
 
   const load = async () => {
     try {
       const [l, s] = await Promise.all([fetchAll('car_listings'), fetchAll('car_sellers')])
       setListings(l)
       setSellers(s)
-    } catch (e) { setError(e.message); setListings([]); setSellers([]) }
+      // Listing slots per seller (one-time path): paid $5 orders,
+      // matched to the seller by email (case-insensitive), cancelled
+      // orders excluded via order_tracking; used = cars on file.
+      // Direct reads — the admin runs authenticated as the owner.
+      // A failure here leaves the Slots column blank; it never
+      // blocks the page.
+      try {
+        const [{ data: orders }, { data: cancelled }] = await Promise.all([
+          supabase.from('car_order').select('id,customer_email').eq('plan', 'One-time car listing'),
+          supabase.from('order_tracking').select('order_id').eq('order_table', 'car_order').eq('status', 'cancelled'),
+        ])
+        const cancelledIds = new Set((cancelled || []).map(r => r.order_id))
+        const paidByEmail = {}
+        for (const o of orders || []) {
+          if (cancelledIds.has(o.id)) continue
+          const em = String(o.customer_email || '').trim().toLowerCase()
+          if (em) paidByEmail[em] = (paidByEmail[em] || 0) + 1
+        }
+        const usedBySeller = (l || []).reduce((acc, r) => {
+          if (r.seller_id != null) acc[r.seller_id] = (acc[r.seller_id] || 0) + 1
+          return acc
+        }, {})
+        const map = {}
+        for (const sl of s || []) {
+          map[sl.id] = {
+            paid: paidByEmail[String(sl.email || '').trim().toLowerCase()] || 0,
+            used: usedBySeller[sl.id] || 0,
+          }
+        }
+        setSlotMap(map)
+      } catch { setSlotMap({}) }
+    } catch (e) { setError(e.message); setListings([]); setSellers([]); setSlotMap({}) }
   }
   useEffect(() => { load() }, [])
 
@@ -378,7 +424,7 @@ export default function AdminCars() {
         <div>
           <form className="form-card wide" onSubmit={saveSeller}>
             <h3>{editingSeller ? `Edit seller — ${sellerForm.name || ''}` : 'Add a seller'}</h3>
-            <p className="hint">Give the seller this username and password — they use them on the seller form to add cars. Keep them throwaway-style, one per seller. Pick the selling path and the country where their cars are sold BEFORE creating the seller: one-time sellers pay $5 per car, YENTLY sellers pay $20/month (first month free) and list as many cars as they like. A wrong path or country can be fixed later with Edit — the slug never changes.</p>
+            <p className="hint">Give the seller this username and password — they use them on the seller form to add cars. Keep them throwaway-style, one per seller. Pick the selling path and the country where their cars are sold BEFORE creating the seller: one-time sellers pay $5 per car, YENTLY sellers pay $20/month (first month free) and list as many cars as they like. A wrong path or country can be fixed later with Edit — the slug never changes. The Slots column shows cars on file / $5 orders paid (cancelled orders don&apos;t count); a one-time seller with no slots left sees "Buy another listing" on their dashboard instead of "+ Add a car".</p>
             <div className="row">
               <input required placeholder="Seller name (e.g. Demo Cars)" value={sellerForm.name} onChange={e => setSellerForm({ ...sellerForm, name: e.target.value })} />
               <input required placeholder="Slug (e.g. demo-cars)" value={sellerForm.slug} disabled={!!editingSeller} onChange={e => setSellerForm({ ...sellerForm, slug: e.target.value })} />
@@ -424,7 +470,7 @@ export default function AdminCars() {
             <div className="table-wrap" style={{ maxHeight: 520, overflowY: 'auto' }}>
               <table className="admin-table">
                 <thead>
-                  <tr><th>Seller</th><th>Slug</th><th>Username</th><th>Password</th><th>Country</th><th>Path</th><th>Cars</th><th>Email</th><th>Phone</th><th className="no-print"></th></tr>
+                  <tr><th>Seller</th><th>Slug</th><th>Username</th><th>Password</th><th>Country</th><th>Path</th><th>Cars</th><th>Slots</th><th>Email</th><th>Phone</th><th className="no-print"></th></tr>
                 </thead>
                 <tbody>
                   {shownSellers.map(s => (
@@ -436,6 +482,7 @@ export default function AdminCars() {
                       <td>{s.country || ''}</td>
                       <td>{s.seller_type === 'monthly' ? 'Dealer ($20/mo)' : s.seller_type === 'onetime' ? 'Individual ($5/car)' : ''}</td>
                       <td>{carCountBySeller[s.id] || 0}</td>
+                      <td>{s.seller_type === 'monthly' ? 'Unlimited' : (slotMap[s.id] ? `${slotMap[s.id].used}/${slotMap[s.id].paid}` : '—')}</td>
                       <td>{s.email || ''}</td>
                       <td>{s.phone || ''}</td>
                       <td className="no-print" style={{ whiteSpace: 'nowrap' }}>
