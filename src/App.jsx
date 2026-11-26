@@ -5,7 +5,6 @@ import AboutPage from './components/AboutPage'
 import GuidesPage from './components/GuidesPage'
 import FaqPage from './components/FaqPage'
 import ContactUsPage from './components/ContactUsPage'
-import SellPage from './components/SellPage'
 import CarSellerFormPage from './components/CarSellerFormPage'
 import ContactPage from './components/ContactPage'
 import FlightReservationPage from './components/FlightReservationPage'
@@ -92,7 +91,7 @@ const DEEP_LINK_SYSTEMS = new Set([
   'kids-hub', 'kids-math', 'kids-english', 'kids-arabic', 'kids-french',
   'kids-spanish', 'kids-science', 'kids-geography', 'kids-coding',
   'kids-reading',
-  'flights', 'flights-hub', 'shop-hub', 'cars-hub', 'reserve', 'flight-pay', 'flight-contact', 'services',
+  'flights', 'flights-hub', 'shop-hub', 'cars-hub', 'cars', 'car-seller', 'car-seller-soon', 'reserve', 'flight-pay', 'flight-contact', 'services',
 ])
 
 // Reads ?add=<plan key> once, adds that plan to the shared Business
@@ -204,8 +203,9 @@ export default function App() {
   // The admin page has no visible link anywhere: it opens only by
   // typing yently.com/admin (see vercel.json rewrite). A provider
   // form opens the same way, at yently.com/<form name>. The seller
-  // logins open the same way too, at yently.com/shop and
-  // yently.com/cars — no visible link anywhere.
+  // logins have buttons too — Seller login on the Shop hub and menu,
+  // and on the Cars hub and menu — and they also open directly at
+  // yently.com/shop and yently.com/cars.
   const [tab, setTab] = useState(() => {
     const path = window.location.pathname.replace(/\/$/, '')
     if (path === '/admin') return 'admin'
@@ -305,8 +305,13 @@ export default function App() {
   const GROCERY_TABS = ['grocery-cart', 'lunches', 'meats', 'grocery-contact', 'stores', 'store-detail', 'store-order', 'category', 'products', 'bags', 'item-detail', 'shop-seller', 'shop-seller-soon', 'shop-hub']
   const BUSINESS_TABS = ['business-hub', 'restaurants', 'pos', 'barbers', 'dealer', 'employee', 'bodyshop', 'houses', 'doctor', 'holiday', 'rentals', 'laundry', 'gym', 'simple-barbershop', 'tv-gallery', 'live-chat', 'clean-link', 'direct-upload', 'reports', 'branding', 'demo-live-chat', 'business-cart', 'services']
   const KIDS_TABS = ['kids-hub', 'kids-math', 'kids-english', 'kids-arabic', 'kids-french', 'kids-spanish', 'kids-science', 'kids-geography', 'kids-coding', 'kids-reading']
+  // Cars tabs render inside a BusinessCartProvider (like the business
+  // and Kids tabs), because the Cars hub sells the two Cars plans
+  // (car:onetime $5, car:monthly $20/month) through the business cart
+  // and the Cars top bar shows the cart icon with its live count.
+  const CARS_TABS = ['cars', 'contact', 'car-seller', 'car-seller-soon', 'cars-hub']
   const inBusiness = BUSINESS_TABS.includes(tab)
-  const inCars = ['cars', 'sell', 'contact', 'car-seller', 'car-seller-soon', 'cars-hub'].includes(tab)
+  const inCars = CARS_TABS.includes(tab)
   const inFlights = ['flights', 'flights-hub', 'reserve', 'flight-pay', 'flight-contact'].includes(tab)
   // "More" holds Help Center (Guides, Pass Recovery) + Track Order +
   // About Us. Custom Coding moved to the Systems submenu (BusinessMenu),
@@ -364,12 +369,16 @@ export default function App() {
         <div className="announce-bar">Business systems, flight tickets, and shopping — all in one place.</div>
       </header>
       <main className="main">
-        {tab === 'cars' && <CarSection go={go} />}
-        {tab === 'cars-hub' && <CarHubPage go={go} />}
-        {tab === 'sell' && <SellPage go={go} />}
-        {tab === 'car-seller' && <CarSellerFormPage go={go} />}
-        {tab === 'car-seller-soon' && <CarSellerSoonPage go={go} />}
-        {tab === 'contact' && <ContactPage go={go} />}
+        {CARS_TABS.includes(tab) && (
+          <BusinessCartProvider>
+            <DeepLinkCartAdder go={go} />
+            {tab === 'cars' && <CarSection go={go} />}
+            {tab === 'cars-hub' && <CarHubPage go={go} />}
+            {tab === 'car-seller' && <CarSellerFormPage go={go} />}
+            {tab === 'car-seller-soon' && <CarSellerSoonPage go={go} />}
+            {tab === 'contact' && <ContactPage go={go} />}
+          </BusinessCartProvider>
+        )}
         {tab === 'flights' && <FlightSection go={go} />}
         {tab === 'flights-hub' && <FlightsHubPage go={go} />}
         {tab === 'reserve' && <FlightReservationPage go={go} />}
