@@ -44,6 +44,11 @@ export default function AdminCars() {
   const [error, setError] = useState('')
   const [sellerForm, setSellerForm] = useState({ name: '', slug: '', username: '', password: '', email: '', phone: '', country: '', seller_type: 'onetime' })
   const [editingSeller, setEditingSeller] = useState(null)
+  // Delete asks in-page first (never window.confirm — the test browser
+  // auto-dismisses window.confirm, so the buttons did nothing there).
+  // confirmDelete is { kind: 'listing' | 'seller', row }.
+  const [confirmDelete, setConfirmDelete] = useState(null)
+  const [deleting, setDeleting] = useState(false)
 
   const load = async () => {
     try {
@@ -62,11 +67,16 @@ export default function AdminCars() {
     load()
   }
 
-  const deleteListing = async (row) => {
-    if (!window.confirm(`Delete "${row.name}"? This cannot be undone.`)) return
-    const { error: err } = await supabase.from('car_listings').delete().eq('id', row.id)
+  const doDelete = async () => {
+    const target = confirmDelete
+    if (!target) return
+    setDeleting(true)
+    const table = target.kind === 'seller' ? 'car_sellers' : 'car_listings'
+    const { error: err } = await supabase.from(table).delete().eq('id', target.row.id)
+    setDeleting(false)
     if (err) { setError(err.message); return }
-    setStatus(`Deleted ${row.name}.`)
+    setStatus(target.kind === 'seller' ? `Deleted seller ${target.row.name}.` : `Deleted ${target.row.name}.`)
+    setConfirmDelete(null)
     load()
   }
 
@@ -74,12 +84,17 @@ export default function AdminCars() {
 
   const saveSeller = async (e) => {
     e.preventDefault()
+    // The email is required: it is where the seller gets buyer
+    // inquiries about their cars (see the hint under the field).
+    const email = sellerForm.email.trim()
+    if (!email) { setStatus(''); setError('Email is required — buyer inquiries about this seller\'s cars are emailed here.'); return }
+    if (!email.includes('@') || !email.includes('.')) { setStatus(''); setError('That email doesn\'t look right — buyer inquiries about this seller\'s cars are emailed here.'); return }
     setStatus('Saving seller...')
     const row = {
       name: sellerForm.name.trim(),
       username: sellerForm.username.trim(),
       password: sellerForm.password,
-      email: sellerForm.email.trim() || null,
+      email,
       phone: sellerForm.phone.trim() || null,
       country: sellerForm.country,
       seller_type: sellerForm.seller_type,
@@ -114,14 +129,6 @@ export default function AdminCars() {
     setError('')
   }
 
-  const deleteSeller = async (row) => {
-    if (!window.confirm(`Delete seller "${row.name}"? Their cars stay listed (seller becomes blank). This cannot be undone.`)) return
-    const { error: err } = await supabase.from('car_sellers').delete().eq('id', row.id)
-    if (err) { setError(err.message); return }
-    setStatus(`Deleted seller ${row.name}.`)
-    load()
-  }
-
   const shown = (listings || []).filter(r => filter === 'all' ? true : r.status === filter)
   const pendingCount = (listings || []).filter(r => r.status === 'pending').length
 
@@ -149,6 +156,20 @@ export default function AdminCars() {
 
       {status && <p className="status">{status}</p>}
       {error && <p className="status">Error: {error}</p>}
+
+      {confirmDelete && (
+        <div className="form-card">
+          <h3>Delete {confirmDelete.kind === 'seller' ? 'this seller' : 'this car'}?</h3>
+          <p>{confirmDelete.kind === 'seller'
+            ? `Delete seller "${confirmDelete.row.name}"? Their cars stay listed (seller becomes blank).`
+            : `Delete "${confirmDelete.row.name}"?`}</p>
+          <p className="hint">This removes the row forever. It cannot be undone.</p>
+          <div className="store-actions">
+            <button type="button" className="btn-primary" onClick={doDelete} disabled={deleting}>Delete</button>
+            <button type="button" className="btn-soft" onClick={() => setConfirmDelete(null)}>Cancel</button>
+          </div>
+        </div>
+      )}
 
       <input placeholder={view === 'listings' ? 'Search listings — car, seller, status…' : 'Search sellers — name, username, email…'} style={{ fontSize: 16 }} value={search} onChange={e => setSearch(e.target.value)} />
       <p className="hint">{view === 'listings' ? (search.trim() ? `${shownListings.length} of ${shown.length} listings match` : `${shown.length} listings`) : (search.trim() ? `${shownSellers.length} of ${(sellers || []).length} sellers match` : `${(sellers || []).length} sellers`)}</p>
@@ -183,7 +204,7 @@ export default function AdminCars() {
                         {r.status === 'pending' && (
                           <button type="button" className="btn-mini" onClick={() => approve(r)}>Approve</button>
                         )}{' '}
-                        <button type="button" className="btn-mini btn-danger" onClick={() => deleteListing(r)}>Delete</button>
+                        <button type="button" className="btn-mini btn-danger" onClick={() => setConfirmDelete({ kind: 'listing', row: r })}>Delete</button>
                       </td>
                     </tr>
                   ))}
@@ -226,7 +247,10 @@ export default function AdminCars() {
               </label>
             </div>
             <div className="row">
-              <input placeholder="Email (optional)" type="email" value={sellerForm.email} onChange={e => setSellerForm({ ...sellerForm, email: e.target.value })} />
+              <div style={{ flex: 1 }}>
+                <input required placeholder="Email *" type="email" value={sellerForm.email} onChange={e => setSellerForm({ ...sellerForm, email: e.target.value })} style={{ width: '100%' }} />
+                <p className="hint" style={{ margin: '4px 0 0' }}>This is the email where the seller gets buyer inquiries about their cars.</p>
+              </div>
               <input placeholder="Phone (optional)" type="tel" value={sellerForm.phone} onChange={e => setSellerForm({ ...sellerForm, phone: e.target.value })} />
             </div>
             <div className="row">
@@ -257,7 +281,7 @@ export default function AdminCars() {
                       <td>{s.phone || ''}</td>
                       <td className="no-print" style={{ whiteSpace: 'nowrap' }}>
                         <button type="button" className="btn-mini" onClick={() => editSeller(s)}>Edit</button>{' '}
-                        <button type="button" className="btn-mini btn-danger" onClick={() => deleteSeller(s)}>Delete</button>
+                        <button type="button" className="btn-mini btn-danger" onClick={() => setConfirmDelete({ kind: 'seller', row: s })}>Delete</button>
                       </td>
                     </tr>
                   ))}

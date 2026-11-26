@@ -4,6 +4,13 @@ import { money } from '../../lib/storeData'
 import { supabase } from '../../lib/supabaseClient'
 import ReplyEmailModal from './ReplyEmailModal'
 
+// The Cars one-time listing is a single $5 payment, not a monthly
+// plan — its price shows with no "/month" (or "/mo") anywhere on this
+// page. Order rows store the plan NAME, so match on the name, not the
+// key.
+const CAR_ONETIME_PLAN_NAME = 'One-time car listing'
+const priceSuffix = (r) => (r && r.plan === CAR_ONETIME_PLAN_NAME ? '' : '/month')
+
 // All Orders: every order the Business cart ever wrote, in one place —
 // one row per plan ordered, newest first. Edit and delete live here:
 // Edit turns the row's expanded details into an in-page form, Delete
@@ -282,7 +289,7 @@ export default function AdminAllOrders() {
 
   // ----- Delete -----
 
-  const deleteLabel = (r) => `${r.label} order — ${r.customer_name || r.customer_email || 'no name'} (${money(r.price)}/mo)`
+  const deleteLabel = (r) => `${r.label} order — ${r.customer_name || r.customer_email || 'no name'} (${money(r.price)}${priceSuffix(r) === '/month' ? '/mo' : ''})`
 
   const doDelete = async () => {
     const r = confirmDelete
@@ -318,7 +325,7 @@ export default function AdminAllOrders() {
     phone: r.customer_phone,
     source: `${r.label} order`,
     table: r.table,
-    summary: `${r.label} — ${money(r.price)}/month${r.note ? ` — ${truncate(r.note, 60)}` : ''}`,
+    summary: `${r.label} — ${money(r.price)}${priceSuffix(r)}${r.note ? ` — ${truncate(r.note, 60)}` : ''}`,
     planKey: r.plan || '',
     planPrice: r.price,
     serviceLabel: r.label,
@@ -593,7 +600,7 @@ export default function AdminAllOrders() {
                                   as changed — it is skipped for Kids
                                   rows, where the order price is
                                   supposed to vary with extra_kids. */}
-                              <p><b>Plan ordered:</b> {r.plan || r.label} · <b>Price:</b> {money(r.price)}/month (list price){r.group !== 'kids' && listPrice !== undefined && r.price !== listPrice && <> — the plan's list price is {money(listPrice)}/month, so this order's price was changed</>}</p>
+                              <p><b>Plan ordered:</b> {r.plan || r.label} · <b>Price:</b> {money(r.price)}{priceSuffix(r)} (list price){r.group !== 'kids' && listPrice !== undefined && r.price !== listPrice && <> — the plan's list price is {money(listPrice)}{priceSuffix(r)}, so this order's price was changed</>}</p>
                               {r.group === 'kids' && <p><b>Extra kids:</b> {Number(r.extra_kids) > 0 ? `+${Number(r.extra_kids)} — the school's kid limit is ${3 + Number(r.extra_kids)} (3 included + ${Number(r.extra_kids)} paid extra)` : '0 — the 3 included kids only'}</p>}
                               <p><b>Customer:</b> {r.customer_name || '—'}{r.customer_email ? ` · ${r.customer_email}` : ''}{r.customer_phone ? ` · ${r.customer_phone}` : ''}</p>
                               <p><b>Note:</b> {r.note || '—'}</p>

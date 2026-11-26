@@ -2,6 +2,7 @@ import { Fragment, useEffect, useMemo, useState } from 'react'
 import { fmtDate } from '../../lib/admin'
 import { money } from '../../lib/storeData'
 import { supabase } from '../../lib/supabaseClient'
+import { CAR_ONETIME_PLAN_NAME, CAR_MONTHLY_PLAN_NAME } from '../../lib/BusinessCartContext'
 import CancelOrderForm, { isGateableOrderTable, systemForOrderTable } from './CancelOrderForm'
 
 // Systems Orders: the fulfilment view of every Business-cart plan
@@ -12,8 +13,9 @@ import CancelOrderForm, { isGateableOrderTable, systemForOrderTable } from './Ca
 // the status stored on it, capitalised. Price is the plan's list
 // price, shown as "$X/month" — system orders are monthly plans,
 // EXCEPT the Cars one-time listing ($5, no "/month"): Cars have two
-// plans on one order table (car_order), told apart by the plan key
-// on the tracking row — see planLabel / priceSuffix below.
+// plans on one order table (car_order), told apart by the plan NAME
+// on the tracking row (order rows store the plan NAME, not the key —
+// see placeBusinessOrder) — see planLabel / priceSuffix below.
 //
 // Filter definitions (chosen for this page, stated here so the choice
 // is visible): completed = status 'delivered'; not completed =
@@ -80,11 +82,12 @@ const PLAN_BY_TABLE = Object.fromEntries(PLANS.map(p => [p.table, p]))
 
 // Cars have TWO plans on ONE order table (car_order): the $5 one-time
 // listing (no "/month") and the $20/month YENTLY seller. The tracking
-// row carries the plan key, so the label and the price suffix are
-// resolved from it — the table map alone cannot tell them apart.
-const CAR_PLAN_LABELS = { 'car:onetime': 'Car — one-time listing', 'car:monthly': 'Car — YENTLY seller' }
+// row carries the plan NAME (not the key), so the label and the price
+// suffix are resolved from it — the table map alone cannot tell them
+// apart.
+const CAR_PLAN_LABELS = { [CAR_ONETIME_PLAN_NAME]: 'Car — one-time listing', [CAR_MONTHLY_PLAN_NAME]: 'Car — YENTLY seller' }
 const planLabel = (r) => CAR_PLAN_LABELS[r.plan] || PLAN_BY_TABLE[r.order_table]?.label || r.plan || r.order_table || '—'
-const priceSuffix = (r) => (r.plan === 'car:onetime' ? '' : '/month')
+const priceSuffix = (r) => (r.plan === CAR_ONETIME_PLAN_NAME ? '' : '/month')
 
 const STATUSES = ['received', 'preparing', 'ready', 'delivered', 'cancelled']
 const STATUS_ORDER = { received: 0, preparing: 1, ready: 2, delivered: 3, cancelled: -1 }
