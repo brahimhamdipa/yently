@@ -403,6 +403,9 @@ export default function CarSellerFormPage({ go }) {
         {seller.email && (
           <p>Buyer inquiries about your cars go to {seller.email}.</p>
         )}
+        {seller.visible === false && (
+          <p>Your seller account is currently hidden by Yently — none of your cars show on the Cars page until it is switched back on.</p>
+        )}
         <p>Your listings are below. "Pending" means Yently is still checking it; "Approved" means buyers can see it on the Cars page. Editing a car sends it back for approval.</p>
         <button type="button" onClick={signOut}>Sign out</button>
       </div>
@@ -424,7 +427,7 @@ export default function CarSellerFormPage({ go }) {
                     <td>{car.name}</td>
                     <td>{car.price ? `$${fmtNum(car.price)}` : ''}</td>
                     <td>{car.country || ''}</td>
-                    <td>{isExpired(car) ? 'Expired' : car.status}</td>
+                    <td>{isExpired(car) ? 'Expired' : car.status}{car.visible === false ? ' — Hidden by Yently' : ''}</td>
                     <td>{isExpired(car) ? (seller.seller_type === 'monthly' ? 'Expired — renews while subscribed' : 'Expired — renew with another $5 order') : (car.expires_at ? fmtDate(car.expires_at) : '—')}</td>
                     <td className="no-print" style={{ whiteSpace: 'nowrap' }}>
                       <button type="button" className="btn-mini" onClick={() => { setEditing(car); setShowAdd(false) }}>Edit</button>{' '}

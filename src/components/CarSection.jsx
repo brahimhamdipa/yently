@@ -16,6 +16,8 @@ import { CarsTopBar } from './CarsMenu'
 // One car row, shaped for the listing: `images` is the photos array.
 // `expires_at` is carried through so the seller dashboard and admin
 // can show it (public expiry is enforced in loadCars, below).
+// `visible` is the row's own On/Off flag (paste 7); the seller's flag
+// is applied in loadCars, not here.
 function shapeCar(row) {
   return {
     id: row.id,
@@ -31,6 +33,7 @@ function shapeCar(row) {
     email: row.email,
     country: row.country,
     expires_at: row.expires_at || null,
+    visible: row.visible !== false,
     images: Array.isArray(row.photos) ? row.photos : [],
   }
 }
@@ -46,6 +49,16 @@ function shapeCar(row) {
 // the public list. Expired rows stay in the table (visible in Admin
 // and on the seller dashboard as "Expired") until the admin renews
 // or deletes them.
+//
+// VISIBILITY (2026-11-26): effective visibility is read-time — a car
+// shows iff its own visible flag is on AND its seller's visible flag
+// is on. The seller list comes from list_car_sellers_public (the same
+// RPC the page already loads for the seller tags); a missing seller
+// row — an orphan car — leaves the car's own flag to decide. A
+// seller's Off never rewrites the cars' flags, so switching the seller
+// back on restores each car's own setting. An RPC failure fails OPEN —
+// the seller check is skipped, never the cars. A row with no visible
+// value yet (paste 7 not landed) counts as shown.
 export async function loadCars() {
   const { data, error } = await supabase
     .from('car_listings')
@@ -54,9 +67,16 @@ export async function loadCars() {
     .order('created_at', { ascending: false })
   if (error) throw error
   const now = new Date()
-  return (data || [])
+  const cars = (data || [])
     .filter(r => !r.expires_at || new Date(r.expires_at) > now)
     .map(shapeCar)
+  let sellerVisible = null
+  try {
+    const sellers = await loadSellers()
+    sellerVisible = new Map((sellers || []).map(s => [s.id, s.visible !== false]))
+  } catch { sellerVisible = null }
+  if (!sellerVisible) return cars
+  return cars.filter(c => c.visible && (sellerVisible.get(c.seller_id) ?? true))
 }
 
 // True when a listing's expiry has passed (approved rows only reach

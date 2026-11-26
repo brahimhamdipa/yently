@@ -76,10 +76,10 @@ export default function ItemDetailPage({ itemId, go, goBack }) {
         <div className="hero-card"><p>Couldn't load this item: {error}</p></div>
       )}
       {!error && !item && <div className="hero-card"><p>Loading item...</p></div>}
-      {!error && item && !item.is_active && (
+      {!error && item && (!item.is_active || item.provider?.visible === false) && (
         <div className="hero-card"><p>This item is not available.</p></div>
       )}
-      {!error && item && item.is_active && (
+      {!error && item && item.is_active && item.provider?.visible !== false && (
         <div>
           <div className="hero-card">
             {goBack && <button className="link-btn" onClick={goBack}>← Back</button>}

@@ -283,6 +283,10 @@ export default function ShopSellerFormPage({ go }) {
   const [subcats, setSubcats] = useState([])
   const [items, setItems] = useState(null)
   const [itemsMsg, setItemsMsg] = useState('')
+  // The store's own visible flag (for the "hidden by Yently" banner):
+  // true = shown (fail-open when unknown), false = the store is Off
+  // and none of its items show in the Shop.
+  const [storeVisible, setStoreVisible] = useState(true)
   const [editing, setEditing] = useState(null)
   const [showAdd, setShowAdd] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(null)
@@ -311,7 +315,10 @@ export default function ShopSellerFormPage({ go }) {
 
   const loadItemsFor = async (s) => {
     try {
-      const data = await loadItems({ providerId: s.providerId, activeOnly: false })
+      // The dashboard sees every item, hidden ones included —
+      // visibleOnly: false — so the seller knows why an item is not
+      // showing. The public Shop filters them out instead.
+      const data = await loadItems({ providerId: s.providerId, activeOnly: false, visibleOnly: false })
       setItems(data || [])
     } catch (err) {
       setItemsMsg('Error: ' + err.message)
@@ -334,9 +341,11 @@ export default function ShopSellerFormPage({ go }) {
       // The store's provider id is what the items list needs. The
       // login answer carries it when the DB side returns it; otherwise
       // fall back to the public stores list, matched on the store name.
+      // Hidden stores included (visibleOnly: false) — a hidden store's
+      // seller must still be able to log in and see why nothing shows.
       let providerId = s.provider_id || null
       if (!providerId) {
-        const providers = await loadProviders()
+        const providers = await loadProviders({ visibleOnly: false })
         const match = (providers || []).find(p => p.name === s.name)
         providerId = match ? match.id : null
       }
@@ -347,6 +356,14 @@ export default function ShopSellerFormPage({ go }) {
       const c = { username: creds.username.trim(), password: creds.password }
       setSeller({ ...s, providerId })
       setLoginMsg('')
+      // The store's own visible flag (for the banner below): the login
+      // answer doesn't carry it, so read the stores list once, hidden
+      // stores included. Unknown = shown (fail-open).
+      try {
+        const providers = await loadProviders({ visibleOnly: false })
+        const match = (providers || []).find(p => p.id === providerId)
+        setStoreVisible(match ? match.visible !== false : true)
+      } catch { setStoreVisible(true) }
       // Restore the seller's saved list now, in the same login step,
       // so the save effect above never sees an empty list first.
       try {
@@ -365,6 +382,7 @@ export default function ShopSellerFormPage({ go }) {
     setSeller(null)
     setCreds({ username: '', password: '' })
     setItems(null)
+    setStoreVisible(true)
     setEditing(null)
     setShowAdd(false)
     setBatch([])
@@ -528,7 +546,10 @@ export default function ShopSellerFormPage({ go }) {
       <GroceryTopBar go={go} />
       <div className="hero-card">
         <h2>Your items — {seller.name}</h2>
-        <p>Your items are below. "Live" means customers can see it in the Shop; "Waiting for approval" means Yently is still checking it. Editing an item sends it back for approval — unless your Direct Upload is on, then it stays live.</p>
+        <p>Your items are below. "Live" means customers can see it in the Shop; "Waiting for approval" means Yently is still checking it; "Hidden by Yently" means Yently switched this item off — it does not show in the Shop. Editing an item sends it back for approval — unless your Direct Upload is on, then it stays live.</p>
+        {storeVisible === false && (
+          <p>Your store is currently hidden by Yently — none of your items show in the Shop until it is switched back on.</p>
+        )}
         <button type="button" onClick={signOut}>Sign out</button>
       </div>
 
@@ -548,7 +569,7 @@ export default function ShopSellerFormPage({ go }) {
                   <tr key={item.id}>
                     <td>{item.name}</td>
                     <td>{item.price !== null && item.price !== undefined && item.price !== '' ? `$${fmtNum(item.price)}` : ''}</td>
-                    <td>{item.is_active ? 'Live' : 'Waiting for approval'}</td>
+                    <td>{item.pending_approval ? 'Waiting for approval' : item.is_active ? 'Live' : 'Hidden by Yently'}</td>
                     <td className="no-print" style={{ whiteSpace: 'nowrap' }}>
                       <button type="button" className="btn-mini" onClick={() => startEdit(item)}>Edit</button>{' '}
                       <button
