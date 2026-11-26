@@ -3,6 +3,8 @@ import CarSection from './components/CarSection'
 import FlightSection from './components/FlightSection'
 import AboutPage from './components/AboutPage'
 import GuidesPage from './components/GuidesPage'
+import FaqPage from './components/FaqPage'
+import ContactUsPage from './components/ContactUsPage'
 import SellPage from './components/SellPage'
 import CarSellerFormPage from './components/CarSellerFormPage'
 import ContactPage from './components/ContactPage'
@@ -68,7 +70,6 @@ import KidsSciencePage from './components/KidsSciencePage'
 import KidsGeographyPage from './components/KidsGeographyPage'
 import KidsCodingPage from './components/KidsCodingPage'
 import KidsReadingPage from './components/KidsReadingPage'
-import BooksForKidsPage from './components/BooksForKidsPage'
 import logoUrl from './assets/logo-com.webp'
 import './index.css'
 
@@ -90,7 +91,7 @@ const DEEP_LINK_SYSTEMS = new Set([
   'direct-upload', 'reports', 'branding', 'demo-live-chat', 'business-cart',
   'kids-hub', 'kids-math', 'kids-english', 'kids-arabic', 'kids-french',
   'kids-spanish', 'kids-science', 'kids-geography', 'kids-coding',
-  'kids-reading', 'kids-books',
+  'kids-reading',
   'flights', 'flights-hub', 'shop-hub', 'cars-hub', 'reserve', 'flight-pay', 'flight-contact', 'services',
 ])
 
@@ -202,7 +203,9 @@ function DeepLinkCartAdder({ go }) {
 export default function App() {
   // The admin page has no visible link anywhere: it opens only by
   // typing yently.com/admin (see vercel.json rewrite). A provider
-  // form opens the same way, at yently.com/<form name>.
+  // form opens the same way, at yently.com/<form name>. The seller
+  // logins open the same way too, at yently.com/shop and
+  // yently.com/cars — no visible link anywhere.
   const [tab, setTab] = useState(() => {
     const path = window.location.pathname.replace(/\/$/, '')
     if (path === '/admin') return 'admin'
@@ -212,6 +215,8 @@ export default function App() {
     if (path === '/extra-students') return 'extra-students'
     if (path === '/pass-recovery') return 'pass-recovery'
     if (path === '/agreement') return 'agreement'
+    if (path === '/shop') return 'shop-seller'
+    if (path === '/cars') return 'car-seller'
     if (path !== '' && path !== '/') return 'provider-form'
     const system = new URLSearchParams(window.location.search).get('system')
     if (system && DEEP_LINK_SYSTEMS.has(system)) return system
@@ -219,7 +224,7 @@ export default function App() {
   })
   const [formSlug, setFormSlug] = useState(() => {
     const path = window.location.pathname.replace(/\/$/, '')
-    if (path !== '' && path !== '/' && path !== '/admin' && path !== '/track' && path !== '/demo-live-chat' && path !== '/demo-chat' && path !== '/direct-upload' && path !== '/extra-students' && path !== '/pass-recovery' && path !== '/agreement') return decodeURIComponent(path.slice(1))
+    if (path !== '' && path !== '/' && path !== '/admin' && path !== '/track' && path !== '/demo-live-chat' && path !== '/demo-chat' && path !== '/direct-upload' && path !== '/extra-students' && path !== '/pass-recovery' && path !== '/agreement' && path !== '/shop' && path !== '/cars') return decodeURIComponent(path.slice(1))
     return null
   })
   const [providerId, setProviderId] = useState(null)
@@ -257,7 +262,9 @@ export default function App() {
     // admin shows /admin, entering a provider form shows /<name>,
     // entering the live-chat demo shows /demo-live-chat, entering
     // order tracking shows /track, entering pass recovery shows
-    // /pass-recovery, and leaving any of them returns to /.
+    // /pass-recovery, entering the shop seller login shows /shop,
+    // entering the car seller login shows /cars, and leaving any
+    // of them returns to /.
     const path = window.location.pathname.replace(/\/$/, '')
     const onAdmin = path === '/admin'
     const onTrack = path === '/track'
@@ -266,7 +273,9 @@ export default function App() {
     const onExtra = path === '/extra-students'
     const onPass = path === '/pass-recovery'
     const onAgreement = path === '/agreement'
-    const onForm = path !== '' && path !== '/' && !onAdmin && !onTrack && !onDemo && !onDirect && !onExtra && !onPass && !onAgreement
+    const onShop = path === '/shop'
+    const onCars = path === '/cars'
+    const onForm = path !== '' && path !== '/' && !onAdmin && !onTrack && !onDemo && !onDirect && !onExtra && !onPass && !onAgreement && !onShop && !onCars
     if (t === 'admin' && !onAdmin) window.history.replaceState(null, '', '/admin')
     else if (t === 'track' && !onTrack) window.history.replaceState(null, '', '/track')
     else if (t === 'demo-live-chat' && !onDemo) window.history.replaceState(null, '', '/demo-live-chat')
@@ -274,8 +283,10 @@ export default function App() {
     else if (t === 'extra-students' && !onExtra) window.history.replaceState(null, '', '/extra-students')
     else if (t === 'pass-recovery' && !onPass) window.history.replaceState(null, '', '/pass-recovery')
     else if (t === 'agreement' && !onAgreement) window.history.replaceState(null, '', '/agreement')
+    else if (t === 'shop-seller' && !onShop) window.history.replaceState(null, '', '/shop')
+    else if (t === 'car-seller' && !onCars) window.history.replaceState(null, '', '/cars')
     else if (t === 'provider-form' && param && !onForm) window.history.replaceState(null, '', '/' + param)
-    else if (t !== 'admin' && t !== 'track' && t !== 'provider-form' && t !== 'demo-live-chat' && t !== 'direct-upload' && t !== 'extra-students' && t !== 'pass-recovery' && t !== 'agreement' && (onAdmin || onTrack || onForm || onDemo || onDirect || onExtra || onPass || onAgreement)) window.history.replaceState(null, '', '/')
+    else if (t !== 'admin' && t !== 'track' && t !== 'provider-form' && t !== 'demo-live-chat' && t !== 'direct-upload' && t !== 'extra-students' && t !== 'pass-recovery' && t !== 'agreement' && t !== 'shop-seller' && t !== 'car-seller' && (onAdmin || onTrack || onForm || onDemo || onDirect || onExtra || onPass || onAgreement || onShop || onCars)) window.history.replaceState(null, '', '/')
   }
   // Back to the page the customer actually came from (or nowhere on a
   // fresh load, in which case pages hide their back link).
@@ -293,7 +304,7 @@ export default function App() {
 
   const GROCERY_TABS = ['grocery-cart', 'lunches', 'meats', 'grocery-contact', 'stores', 'store-detail', 'store-order', 'category', 'products', 'bags', 'item-detail', 'shop-seller', 'shop-seller-soon', 'shop-hub']
   const BUSINESS_TABS = ['business-hub', 'restaurants', 'pos', 'barbers', 'dealer', 'employee', 'bodyshop', 'houses', 'doctor', 'holiday', 'rentals', 'laundry', 'gym', 'simple-barbershop', 'tv-gallery', 'live-chat', 'clean-link', 'direct-upload', 'reports', 'branding', 'demo-live-chat', 'business-cart', 'services']
-  const KIDS_TABS = ['kids-hub', 'kids-math', 'kids-english', 'kids-arabic', 'kids-french', 'kids-spanish', 'kids-science', 'kids-geography', 'kids-coding', 'kids-reading', 'kids-books']
+  const KIDS_TABS = ['kids-hub', 'kids-math', 'kids-english', 'kids-arabic', 'kids-french', 'kids-spanish', 'kids-science', 'kids-geography', 'kids-coding', 'kids-reading']
   const inBusiness = BUSINESS_TABS.includes(tab)
   const inCars = ['cars', 'sell', 'contact', 'car-seller', 'car-seller-soon', 'cars-hub'].includes(tab)
   const inFlights = ['flights', 'flights-hub', 'reserve', 'flight-pay', 'flight-contact'].includes(tab)
@@ -302,7 +313,7 @@ export default function App() {
   // between More Systems and Add-ons — the Systems button stays
   // highlighted while on the Custom Coding page. Cars is a top-level
   // button now, and Yently Kids moved to Systems.
-  const inMore = ['about', 'guides', 'pass-recovery', 'agreement', 'track', 'clothes'].includes(tab)
+  const inMore = ['about', 'guides', 'faq', 'contact-us', 'pass-recovery', 'agreement', 'track', 'clothes'].includes(tab)
 
   return (
     <div className="app">
@@ -326,12 +337,14 @@ export default function App() {
                   {helpOpen && (
                     <>
                       <a style={{ paddingLeft: 28 }} onClick={() => go('guides')}>Guides</a>
+                      <a style={{ paddingLeft: 28 }} onClick={() => go('faq')}>FAQ</a>
                       <a style={{ paddingLeft: 28 }} onClick={() => go('pass-recovery')}>Pass Recovery</a>
                       <a style={{ paddingLeft: 28 }} onClick={() => go('agreement')}>Customer Agreement</a>
                     </>
                   )}
                   <a onClick={() => go('track')}>Track Order</a>
                   <a onClick={() => go('about')}>About Us</a>
+                  <a onClick={() => go('contact-us')}>Contact Us</a>
                 </span>
               )}
             </span>
@@ -429,7 +442,6 @@ export default function App() {
             {tab === 'kids-geography' && <KidsGeographyPage go={go} />}
             {tab === 'kids-coding' && <KidsCodingPage go={go} />}
             {tab === 'kids-reading' && <KidsReadingPage go={go} />}
-            {tab === 'kids-books' && <BooksForKidsPage go={go} />}
           </BusinessCartProvider>
         )}
         {tab === 'extra-students' && (
@@ -440,6 +452,8 @@ export default function App() {
         {tab === 'clothes' && <ClothesPage />}
         {tab === 'about' && <AboutPage />}
         {tab === 'guides' && <GuidesPage go={go} />}
+        {tab === 'faq' && <FaqPage go={go} />}
+        {tab === 'contact-us' && <ContactUsPage />}
         {tab === 'admin' && <AdminPage />}
         {tab === 'track' && <TrackingPage go={go} />}
         {tab === 'pass-recovery' && <PassRecoveryPage go={go} />}
