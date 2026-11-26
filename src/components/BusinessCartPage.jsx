@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useBusinessCart, bundleFor, isKidsPlanKey, isKidsExtraPlanKey, KIDS_BASE_PRICE, KIDS_EXTRA_KID_PRICE, KIDS_INCLUDED_STUDENTS } from '../lib/BusinessCartContext'
+import { useBusinessCart, bundleFor, isKidsPlanKey, isKidsExtraPlanKey, KIDS_BASE_PRICE, KIDS_EXTRA_KID_PRICE, KIDS_INCLUDED_STUDENTS, CAR_ONETIME_PLAN_KEY } from '../lib/BusinessCartContext'
 import { placeBusinessOrder } from '../lib/businessData'
 import { storeTrackingCodes } from '../lib/orderTracking'
 import { BusinessTopBar } from './BusinessMenu'
@@ -41,6 +41,21 @@ function cleanLinkAddress(key, cleanSlug) {
   return 'yently.com/' + slug
 }
 
+// The Cars one-time listing is a single $5 payment, not a monthly
+// plan — its price never shows "/month" anywhere on this page (cart
+// line, order confirmation, totals). Split a bundle's totals when the
+// cart holds a one-time line: the same bundle rate applies to each
+// part, and the parts sum to the bundle total exactly — the monthly
+// total is derived from the total, so rounding can never drift.
+function splitBundleTotals(bundle, items) {
+  const oneTimeList = (Array.isArray(items) ? items : [])
+    .filter(i => i.key === CAR_ONETIME_PLAN_KEY)
+    .reduce((s, i) => s + (Number(i.price) || 0), 0)
+  const oneTimeTotal = Math.round(oneTimeList * (1 - bundle.rate) * 100) / 100
+  const monthlyTotal = Math.round((bundle.total - oneTimeTotal) * 100) / 100
+  return { hasOneTime: oneTimeList > 0, oneTimeTotal, monthlyTotal }
+}
+
 export default function BusinessCartPage({ go }) {
   const { cart, count, removePlan, updateExtraKids, clearCart, lastOrder, setLastOrder } = useBusinessCart()
   const [name, setName] = useState('')
@@ -66,6 +81,8 @@ export default function BusinessCartPage({ go }) {
 
   const bundle = bundleFor(cart)
   const orderBundle = lastOrder ? bundleFor(lastOrder) : null
+  const cartSplit = splitBundleTotals(bundle, cart)
+  const orderSplit = orderBundle ? splitBundleTotals(orderBundle, lastOrder) : null
   const hasExtras = cart.some(i => isKidsExtraPlanKey(i.key))
   const hasCleanAddon = cart.some(i => CLEAN_LINK_KEYS.includes(i.key) && i.isAddon === true)
   const hasDirectAddon = cart.some(i => i.key === 'direct:website' && i.isAddon === true)
@@ -147,7 +164,7 @@ export default function BusinessCartPage({ go }) {
           <h3>✓ Order placed — thank you, {lastOrder[0].customer_name}!</h3>
           {lastOrder.map(i => (
             <div key={i.key}>
-              <p>{i.name} — ${Number(i.price).toFixed(2)}/month.
+              <p>{i.name} — {i.key === CAR_ONETIME_PLAN_KEY ? `$${Number(i.price).toFixed(2)}, one time.` : `$${Number(i.price).toFixed(2)}/month.`}
                 {isKidsPlanKey(i.key) && Number(i.extraKids) > 0 && (
                   <> Includes {i.extraKids} extra student{Number(i.extraKids) === 1 ? '' : 's'} beyond the first {KIDS_INCLUDED_STUDENTS} (${KIDS_BASE_PRICE.toFixed(2)} base + ${Number(i.extraKids) * KIDS_EXTRA_KID_PRICE}.00).</>
                 )}
@@ -172,7 +189,16 @@ export default function BusinessCartPage({ go }) {
             </div>
           ))}
           {orderBundle && orderBundle.rate > 0 && (
-            <p><b>Monthly total after bundle discount: ${orderBundle.total.toFixed(2)}/month</b> — you're saving ${orderBundle.savings.toFixed(2)}/month.</p>
+            <p>
+              {orderSplit && orderSplit.hasOneTime ? (
+                <>
+                  {orderSplit.monthlyTotal > 0 && (<><b>Monthly total after bundle discount: ${orderSplit.monthlyTotal.toFixed(2)}/month</b> — </>)}
+                  <b>One-time total: ${orderSplit.oneTimeTotal.toFixed(2)}</b> — you're saving ${orderBundle.savings.toFixed(2)} with the bundle.
+                </>
+              ) : (
+                <><b>Monthly total after bundle discount: ${orderBundle.total.toFixed(2)}/month</b> — you're saving ${orderBundle.savings.toFixed(2)}/month.</>
+              )}
+            </p>
           )}
           <p>Yently will be in touch to set up your pages.</p>
           {agreementMsg && <p>{agreementMsg}</p>}
@@ -227,7 +253,7 @@ export default function BusinessCartPage({ go }) {
                   )}
                 </div>
                 <div style={{ textAlign: 'right' }}>
-                  <b>${Number(i.price).toFixed(2)}/month</b>
+                  <b>{i.key === CAR_ONETIME_PLAN_KEY ? `$${Number(i.price).toFixed(2)}` : `$${Number(i.price).toFixed(2)}/month`}</b>
                   <div><button type="button" className="btn-mini" onClick={() => removePlan(i.key)}>Remove</button></div>
                 </div>
               </div>
@@ -249,13 +275,25 @@ export default function BusinessCartPage({ go }) {
               <textarea placeholder="Your business name, city, anything that helps us set up your pages — or a web address word you would prefer for your page, for example: my-shop" value={note} onChange={e => setNote(e.target.value)} />
               <span className="hint" style={{ fontWeight: 400 }}>If you have a preferred web address word for your page (for example: my-shop), list it here — we will use one if it is available, but we cannot guarantee it.</span>
             </label>
-            <p>List total: ${bundle.listTotal.toFixed(2)}/month</p>
-            {bundle.rate > 0 && (
-              <p>Bundle discount ({Math.round(bundle.rate * 100)}% off): −${bundle.savings.toFixed(2)}/month</p>
-            )}
-            <p><b>Total: ${bundle.total.toFixed(2)}/month</b></p>
-            {bundle.rate > 0 && (
-              <p>You're saving ${bundle.savings.toFixed(2)}/month with the bundle.</p>
+            {cartSplit.hasOneTime ? (
+              <>
+                {cartSplit.monthlyTotal > 0 && <p><b>Monthly total: ${cartSplit.monthlyTotal.toFixed(2)}/month</b></p>}
+                <p><b>One-time total: ${cartSplit.oneTimeTotal.toFixed(2)}</b></p>
+                {bundle.rate > 0 && (
+                  <p>You're saving ${bundle.savings.toFixed(2)} with the bundle.</p>
+                )}
+              </>
+            ) : (
+              <>
+                <p>List total: ${bundle.listTotal.toFixed(2)}/month</p>
+                {bundle.rate > 0 && (
+                  <p>Bundle discount ({Math.round(bundle.rate * 100)}% off): −${bundle.savings.toFixed(2)}/month</p>
+                )}
+                <p><b>Total: ${bundle.total.toFixed(2)}/month</b></p>
+                {bundle.rate > 0 && (
+                  <p>You're saving ${bundle.savings.toFixed(2)}/month with the bundle.</p>
+                )}
+              </>
             )}
             {hasExtras && (
               <p className="hint">Extra student places are added in full — they don't count toward the bundle discount.</p>

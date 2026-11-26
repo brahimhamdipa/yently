@@ -318,6 +318,9 @@ export default function CarSellerFormPage({ go }) {
         {seller.seller_type && (
           <p>{seller.seller_type === 'monthly' ? 'Your plan: YENTLY Car Seller — $20/month, first month free, unlimited listings.' : 'Your plan: one-time seller — $5 per car, no monthly commitment.'}</p>
         )}
+        {seller.email && (
+          <p>Buyer inquiries about your cars go to {seller.email}.</p>
+        )}
         <p>Your listings are below. "Pending" means Yently is still checking it; "Approved" means buyers can see it on the Cars page. Editing a car sends it back for approval.</p>
         <button type="button" onClick={signOut}>Sign out</button>
       </div>

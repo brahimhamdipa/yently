@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { submitAndNotify } from '../lib/notify'
 import { fmtDate } from '../lib/admin'
-import { BUSINESS_PLANS } from '../lib/BusinessCartContext'
+import { BUSINESS_PLANS, CAR_ONETIME_PLAN_NAME } from '../lib/BusinessCartContext'
 
 // Public order tracking — /track.
 // Looks an order up by its YEN- code (track_order RPC) or by email
@@ -287,14 +287,16 @@ export default function TrackingPage({ go }) {
   // System orders are monthly plans — show "$X/month" from the order
   // row's recorded price when the RPC carries one (a Kids order with
   // extra students is more than the plan's base price), else the known
-  // list price. Shop orders are one-off totals and the RPC carries no
-  // price, so they show no price line at all.
+  // list price. EXCEPT the Cars one-time listing: a single $5 payment,
+  // so it shows "$5" with no "/month". Shop orders are one-off totals
+  // and the RPC carries no price, so they show no price line at all.
   const priceText = () => {
     if (!order || isShop) return null
-    if (order.price != null) return `$${Number(order.price)}/month`
+    const suffix = order.plan === CAR_ONETIME_PLAN_NAME ? '' : '/month'
+    if (order.price != null) return `$${Number(order.price)}${suffix}`
     const known = PLAN_BY_NAME[order.plan]
     if (!known) return null
-    return `$${known.price}/month`
+    return `$${known.price}${suffix}`
   }
 
   return (
