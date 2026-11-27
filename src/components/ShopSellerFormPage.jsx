@@ -222,7 +222,7 @@ function ItemForm({ seller, creds, categories, subcats, initial, onDone, onCance
         p_password: creds.password,
         p_category_ids: [Number(form.category_id)],
         p_subcategory_ids: form.subcategoryIds || [],
-        p_name: form.name.trim(),
+        p_name: form.name.trim() + ' [price=' + JSON.stringify(form.price) + ' p_price=' + Number(form.price) + ']', // TEMP DIAGNOSTIC for price bug — remove after test
         p_price: Number(form.price),
         p_description: form.description.trim() || null,
         p_delivery_address: form.delivery_address.trim() || null,
