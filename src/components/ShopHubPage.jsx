@@ -38,7 +38,7 @@ export default function ShopHubPage({ go }) {
             <b>Track your order.</b> Track your orders at yently.com — from the “Track your order” link in the footer at the bottom of every page, or from More → Track Order.
           </li>
         </ol>
-        <p className="hint">This year only, as an exception, Shop is closed in June and July.</p>
+        //<p className="hint">This year only, as an exception, Shop is closed in June and July.</p>
       </div>
 
       <div aria-hidden="true" style={{ height: 1, background: '#e5e7eb', margin: '36px 0 28px' }} />
