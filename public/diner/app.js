@@ -604,6 +604,24 @@
     kc.hidden = active === 0;
     kc.textContent = active;
   }
+  /* System kill switch (Admin menu 4 -> Systems On/Off): when Yently
+     switches this system off, visitors see it as unavailable and the
+     shop data is never loaded, while the Setup tab stays reachable.
+     Any error, missing row, or missing RPC means the system stays ON
+     (fail open). */
+  var systemOff = false;
+  function checkSystemOff() {
+    try {
+      if (typeof rpc !== 'function') return Promise.resolve(false);
+      return rpc('list_system_switches', {}).then(function (rows) {
+        if (!rows || !rows.length) return false;
+        for (var i = 0; i < rows.length; i++) {
+          if (rows[i] && rows[i].system === 'diner') return rows[i].visible === false;
+        }
+        return false;
+      }).catch(function () { return false; });
+    } catch (e) { return Promise.resolve(false); }
+  }
   function rpc(name, body) {
     return fetch(SUPABASE_URL + '/rest/v1/rpc/' + name, {
       method: 'POST',
@@ -1436,7 +1454,7 @@
       return;
     }
     var el = $('view-setup');
-    el.innerHTML = '<h2>Setup</h2><div class="card"><p class="info">Loading your draft…</p></div>';
+    el.innerHTML = (systemOff ? '<p class="error">This system is currently switched off in Yently Admin — visitors see it as unavailable. Your data is still here.</p>' : '') + '<h2>Setup</h2><div class="card"><p class="info">Loading your draft…</p></div>';
     rpc('get_diner_draft', { p_slug: SLUG, p_username: staffCreds.u, p_password: staffCreds.p }).then(function (res) {
       draft = res.data || {};
       draft.menu = draft.menu || [];
@@ -1608,7 +1626,7 @@
     function field(label, id, value, type) {
       return '<label>' + label + '</label><input id="' + id + '" type="' + (type || 'text') + '" value="' + esc(value == null ? '' : value) + '">';
     }
-    var html = '<h2>Setup</h2>' +
+    var html = (systemOff ? '<p class="error">This system is currently switched off in Yently Admin — visitors see it as unavailable. Your data is still here.</p>' : '') + '<h2>Setup</h2>' +
       '<div class="note">' + esc(statusLine()) + '</div>' +
       '<div class="card" id="setup-addons">' +
       '<h3>Add-ons</h3>' +
@@ -1799,8 +1817,17 @@
     $('site-name').textContent = 'Restaurant not found';
     $('view-menu').innerHTML = '<div class="error">This link doesn\'t point to a restaurant. Check the link and try again — ask Yently for your restaurant link.</div>';
   } else {
-    resolveSlug().then(function () { return rpc('get_diner_live', { p_slug: SLUG }); }).then(function (json) {
-      if (!json || !json.name) throw new Error('not found');
+    resolveSlug().then(function () { return checkSystemOff(); }).then(function (off) {
+      if (off) {
+        systemOff = true;
+        $('site-name').textContent = 'Restaurant';
+        $('view-menu').innerHTML = '<div class="error">This system is currently unavailable. Yently has switched it off for now — please check back later, or contact Yently if you need help.</div>';
+        return null;
+      }
+      return rpc('get_diner_live', { p_slug: SLUG });
+    }).then(function (json) {
+      if (!json) return; /* system switched off — the notice above is already shown */
+      if (!json.name) throw new Error('not found');
       data = json;
       data.menu = data.menu || [];
       document.title = data.name || 'Restaurant';
