@@ -606,6 +606,24 @@
     var p = function (n) { return ('0' + n).slice(-2); };
     return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
   }
+  /* System kill switch (Admin menu 4 -> Systems On/Off): when Yently
+     switches this system off, visitors see it as unavailable and the
+     shop data is never loaded, while the Setup tab stays reachable.
+     Any error, missing row, or missing RPC means the system stays ON
+     (fail open). */
+  var systemOff = false;
+  function checkSystemOff() {
+    try {
+      if (typeof rpc !== 'function') return Promise.resolve(false);
+      return rpc('list_system_switches', {}).then(function (rows) {
+        if (!rows || !rows.length) return false;
+        for (var i = 0; i < rows.length; i++) {
+          if (rows[i] && rows[i].system === 'employee') return rows[i].visible === false;
+        }
+        return false;
+      }).catch(function () { return false; });
+    } catch (e) { return Promise.resolve(false); }
+  }
   function rpc(name, body) {
     return fetch(SUPABASE_URL + '/rest/v1/rpc/' + name, {
       method: 'POST',
@@ -1149,6 +1167,14 @@
   function renderSetup() {
     stopShopChat(); // re-render destroys the inbox container; stop its poll first
     var el = $('view-setup');
+    if (systemOff) {
+      /* System switched off in Yently Admin (see checkSystemOff):
+         the business was never loaded, so there is no login form or
+         draft to show — the tab stays reachable and shows only
+         this notice. */
+      el.innerHTML = '<p class="error">This system is currently switched off in Yently Admin — visitors see it as unavailable. Your data is still here.</p>';
+      return;
+    }
     if (!biz) { el.innerHTML = '<p class="info">Loading…</p>'; return; }
     if (!ownerCreds) {
       el.innerHTML = '<h2>Setup</h2><div class="card">' +
@@ -1473,8 +1499,17 @@
   if (!SLUG) {
     notFound();
   } else {
-    resolveSlug().then(function () { return loadBiz(); }).then(function (d) {
-      if (!d || !d.name) { notFound(); return; }
+    resolveSlug().then(function () { return checkSystemOff(); }).then(function (off) {
+      if (off) {
+        systemOff = true;
+        $('site-name').textContent = 'Employee';
+        $('view-employees').innerHTML = '<div class="error">This system is currently unavailable. Yently has switched it off for now — please check back later, or contact Yently if you need help.</div>';
+        return null;
+      }
+      return loadBiz();
+    }).then(function (d) {
+      if (!d) return; /* system switched off — the notice above is already shown */
+      if (!d.name) { notFound(); return; }
       mountShopChatBubble(d.name, '');
       return rpc('employee_pass_status', { p_slug: SLUG }).then(function (st) {
         passLocked = st === 'locked';
