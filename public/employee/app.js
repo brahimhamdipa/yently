@@ -612,6 +612,19 @@
      Any error, missing row, or missing RPC means the system stays ON
      (fail open). */
   var systemOff = false;
+  var shopOff = false;
+  /* Per-shop switch (Admin → menu 4 → Shops On/Off): true when this
+     shop alone is switched off. Same fail-open shape as
+     checkSystemOff — an RPC error or a missing row means On. */
+  function checkShopOff() {
+    try {
+      if (typeof rpc !== 'function' || !SLUG) return Promise.resolve(false);
+      return rpc('shop_is_visible', { p_system: 'employee', p_slug: SLUG }).then(function (v) {
+        return v === false;
+      }).catch(function () { return false; });
+    } catch (e) { return Promise.resolve(false); }
+  }
+
   function checkSystemOff() {
     try {
       if (typeof rpc !== 'function') return Promise.resolve(false);
@@ -1167,17 +1180,30 @@
   function renderSetup() {
     stopShopChat(); // re-render destroys the inbox container; stop its poll first
     var el = $('view-setup');
-    if (systemOff) {
-      /* System switched off in Yently Admin (see checkSystemOff):
-         the business was never loaded, so there is no login form or
-         draft to show — the tab stays reachable and shows only
-         this notice. */
-      el.innerHTML = '<p class="error">This system is currently switched off in Yently Admin — visitors see it as unavailable. Your data is still here.</p>';
+    /* Setup while Off (2026-11-26): Setup stays reachable while the
+       system or this shop is switched off — the other 17 apps
+       already worked this way; these 4 showed only a notice
+       because the shop was never loaded at boot. Load it now, for
+       Setup only: the boot gate is untouched, init() never runs
+       while off, and customer pages stay down. The login still
+       gates every edit. */
+    var offNotice = shopOff ? '<p class="error">This shop is currently switched off in Yently Admin — visitors see it as unavailable. Your data is still here.</p>' : systemOff ? '<p class="error">This system is currently switched off in Yently Admin — visitors see it as unavailable. Your data is still here.</p>' : '';
+    if ((systemOff || shopOff) && !biz) {
+      el.innerHTML = offNotice + '<p class="info">Loading your setup…</p>';
+      loadBiz().then(function (d) {
+        if (!d || !d.name) {
+          el.innerHTML = offNotice + '<p class="error">Business not found.</p>';
+          return;
+        }
+        renderSetup();
+      }).catch(function (e) {
+        el.innerHTML = offNotice + '<p class="error">Error: ' + esc(e.message) + '</p>';
+      });
       return;
     }
     if (!biz) { el.innerHTML = '<p class="info">Loading…</p>'; return; }
     if (!ownerCreds) {
-      el.innerHTML = '<h2>Setup</h2><div class="card">' +
+      el.innerHTML = offNotice + '<h2>Setup</h2><div class="card">' +
         '<p class="info">Enter the username and password Yently gave this business.</p>' +
         '<label>Username</label><input id="st-user" type="text" autocomplete="username">' +
         '<label>Password</label><input id="st-pass" type="password" autocomplete="current-password">' +
@@ -1208,7 +1234,7 @@
       loadDraft();
       return;
     }
-    var h = '<h2>Setup — ' + esc(biz.name) + '</h2>' +
+    var h = offNotice + '<h2>Setup — ' + esc(biz.name) + '</h2>' +
       '<div class="card" id="setup-addons">' +
       '<h3>Add-ons</h3>' +
       '<p class="info">Add-ons add more to your page — a short link, a TV gallery, live chat, uploads that go live right away, or a clear view of your orders, or a page without the Yently banner. Pick one below to see what it does and what it costs. Add-ons join the payment you already have — free for the rest of this month, charged from your next payment.</p>' +
@@ -1499,16 +1525,16 @@
   if (!SLUG) {
     notFound();
   } else {
-    resolveSlug().then(function () { return checkSystemOff(); }).then(function (off) {
+    resolveSlug().then(function () { return Promise.all([checkSystemOff(), checkShopOff()]); }).then(function (res) { var off = res[0] || res[1];
       if (off) {
-        systemOff = true;
+        systemOff = res[0]; shopOff = res[1];
         $('site-name').textContent = 'Employee';
-        $('view-employees').innerHTML = '<div class="error">This system is currently unavailable. Yently has switched it off for now — please check back later, or contact Yently if you need help.</div>';
+        $('view-employees').innerHTML = shopOff ? '<div class="error">This shop is currently unavailable. Yently has switched it off for now — please check back later, or contact Yently if you need help.</div>' : '<div class="error">This system is currently unavailable. Yently has switched it off for now — please check back later, or contact Yently if you need help.</div>';
         return null;
       }
       return loadBiz();
     }).then(function (d) {
-      if (!d) return; /* system switched off — the notice above is already shown */
+      if (!d) return; /* system or shop switched off — the notice above is already shown */
       if (!d.name) { notFound(); return; }
       mountShopChatBubble(d.name, '');
       return rpc('employee_pass_status', { p_slug: SLUG }).then(function (st) {
