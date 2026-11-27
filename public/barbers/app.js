@@ -592,6 +592,19 @@
      Any error, missing row, or missing RPC means the system stays ON
      (fail open). */
   var systemOff = false;
+  var shopOff = false;
+  /* Per-shop switch (Admin → menu 4 → Shops On/Off): true when this
+     shop alone is switched off. Same fail-open shape as
+     checkSystemOff — an RPC error or a missing row means On. */
+  function checkShopOff() {
+    try {
+      if (typeof rpc !== 'function' || !SLUG) return Promise.resolve(false);
+      return rpc('shop_is_visible', { p_system: 'barbers', p_slug: SLUG }).then(function (v) {
+        return v === false;
+      }).catch(function () { return false; });
+    } catch (e) { return Promise.resolve(false); }
+  }
+
   function checkSystemOff() {
     try {
       if (typeof rpc !== 'function') return Promise.resolve(false);
@@ -1138,7 +1151,7 @@
       return;
     }
     var el = $('view-setup');
-    el.innerHTML = (systemOff ? '<p class="error">This system is currently switched off in Yently Admin — visitors see it as unavailable. Your data is still here.</p>' : '') + '<h2>Setup</h2><div class="card"><p class="info">Loading your draft…</p></div>';
+    el.innerHTML = (systemOff ? '<p class="error">This system is currently switched off in Yently Admin — visitors see it as unavailable. Your data is still here.</p>' : shopOff ? '<p class="error">This shop is currently switched off in Yently Admin — visitors see it as unavailable. Your data is still here.</p>' : '') + '<h2>Setup</h2><div class="card"><p class="info">Loading your draft…</p></div>';
     rpc('get_barbershop_draft', { p_slug: SLUG, p_username: staffCreds.u, p_password: staffCreds.p }).then(function (res) {
       draft = res.data || {};
       draft.services = draft.services || [];
@@ -1310,7 +1323,7 @@
     function field(label, id, value, type) {
       return '<label>' + label + '</label><input id="' + id + '" type="' + (type || 'text') + '" value="' + esc(value == null ? '' : value) + '">';
     }
-    var html = (systemOff ? '<p class="error">This system is currently switched off in Yently Admin — visitors see it as unavailable. Your data is still here.</p>' : '') + '<h2>Setup</h2>' +
+    var html = (systemOff ? '<p class="error">This system is currently switched off in Yently Admin — visitors see it as unavailable. Your data is still here.</p>' : shopOff ? '<p class="error">This shop is currently switched off in Yently Admin — visitors see it as unavailable. Your data is still here.</p>' : '') + '<h2>Setup</h2>' +
       '<div class="note">' + esc(statusLine()) + '</div>' +
       '<div class="card" id="setup-addons">' +
       '<h3>Add-ons</h3>' +
@@ -1465,16 +1478,16 @@
     $('site-name').textContent = 'Shop not found';
     $('view-book').innerHTML = '<div class="error">This link doesn\'t point to a barber shop. Check the link and try again — ask Yently for your shop link.</div>';
   } else {
-    resolveSlug().then(function () { return checkSystemOff(); }).then(function (off) {
+    resolveSlug().then(function () { return Promise.all([checkSystemOff(), checkShopOff()]); }).then(function (res) { var off = res[0] || res[1];
       if (off) {
-        systemOff = true;
+        systemOff = res[0]; shopOff = res[1];
         $('site-name').textContent = 'Barber shop';
-        $('view-book').innerHTML = '<div class="error">This system is currently unavailable. Yently has switched it off for now — please check back later, or contact Yently if you need help.</div>';
+        $('view-book').innerHTML = shopOff ? '<div class="error">This shop is currently unavailable. Yently has switched it off for now — please check back later, or contact Yently if you need help.</div>' : '<div class="error">This system is currently unavailable. Yently has switched it off for now — please check back later, or contact Yently if you need help.</div>';
         return null;
       }
       return rpc('get_barbershop_live', { p_slug: SLUG });
     }).then(function (json) {
-      if (!json) return; /* system switched off — the notice above is already shown */
+      if (!json) return; /* system or shop switched off — the notice above is already shown */
       if (!json.name) throw new Error('not found');
       data = json;
       data.services = data.services || [];
