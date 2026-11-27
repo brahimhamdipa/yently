@@ -60,6 +60,8 @@ import AgreementPage from './components/AgreementPage'
 import BusinessCartPage from './components/BusinessCartPage'
 import BusinessSystemsPage from './components/BusinessSystemsPage'
 import KidsHubPage from './components/KidsHubPage'
+import SystemUnavailable from './components/SystemUnavailable'
+import { loadSystemSwitches, SYSTEM_LABELS } from './lib/systemSwitches'
 import KidsMathPage from './components/KidsMathPage'
 import KidsEnglishPage from './components/KidsEnglishPage'
 import KidsArabicPage from './components/KidsArabicPage'
@@ -237,6 +239,16 @@ export default function App() {
   const [moreOpen, setMoreOpen] = useState(false)
   const [helpOpen, setHelpOpen] = useState(false)
   const [formAuthed, setFormAuthed] = useState(false)
+  // System kill switches (Admin → menu 4 → Systems On/Off): null =
+  // not loaded yet — fail open, so a slow or failed load never takes
+  // a working system down.
+  const [systemSwitches, setSystemSwitches] = useState(null)
+  useEffect(() => { loadSystemSwitches().then(setSystemSwitches) }, [])
+  // An ad page for a system that is Off shows the unavailable notice
+  // instead of the system. Plain function, not a component — no hooks.
+  const sysPage = (key, el) => (systemSwitches && systemSwitches[key] === false)
+    ? <SystemUnavailable name={SYSTEM_LABELS[key]} go={go} />
+    : el
   const moreRef = useRef(null)
 
   useEffect(() => {
@@ -416,18 +428,18 @@ export default function App() {
           <BusinessCartProvider>
             <DeepLinkCartAdder go={go} />
             {tab === 'business-hub' && <BusinessSystemsPage go={go} />}
-            {tab === 'restaurants' && <RestaurantsPage go={go} />}
-            {tab === 'pos' && <PosPage go={go} />}
-            {tab === 'barbers' && <BarbersPage go={go} />}
-            {tab === 'dealer' && <DealerPage go={go} />}
-            {tab === 'employee' && <EmployeePage go={go} />}
-            {tab === 'bodyshop' && <BodyshopPage go={go} />}
-            {tab === 'houses' && <HousesPage go={go} />}
-            {tab === 'doctor' && <DoctorPage go={go} />}
-            {tab === 'holiday' && <HolidayPage go={go} />}
-            {tab === 'rentals' && <RentalsPage go={go} />}
-            {tab === 'laundry' && <LaundryPage go={go} />}
-            {tab === 'gym' && <GymPage go={go} />}
+            {tab === 'restaurants' && sysPage('diner', <RestaurantsPage go={go} />)}
+            {tab === 'pos' && sysPage('pos', <PosPage go={go} />)}
+            {tab === 'barbers' && sysPage('barbers', <BarbersPage go={go} />)}
+            {tab === 'dealer' && sysPage('dealer', <DealerPage go={go} />)}
+            {tab === 'employee' && sysPage('employee', <EmployeePage go={go} />)}
+            {tab === 'bodyshop' && sysPage('bodyshop', <BodyshopPage go={go} />)}
+            {tab === 'houses' && sysPage('houses', <HousesPage go={go} />)}
+            {tab === 'doctor' && sysPage('doctor', <DoctorPage go={go} />)}
+            {tab === 'holiday' && sysPage('holiday', <HolidayPage go={go} />)}
+            {tab === 'rentals' && sysPage('rentals', <RentalsPage go={go} />)}
+            {tab === 'laundry' && sysPage('laundry', <LaundryPage go={go} />)}
+            {tab === 'gym' && sysPage('gym', <GymPage go={go} />)}
             {tab === 'simple-barbershop' && <SimpleBarbershopPage go={go} />}
             {tab === 'tv-gallery' && <TvGalleryPage go={go} />}
             {tab === 'live-chat' && <LiveChatPage go={go} />}
@@ -444,15 +456,15 @@ export default function App() {
           <BusinessCartProvider>
             <DeepLinkCartAdder go={go} />
             {tab === 'kids-hub' && <KidsHubPage go={go} />}
-            {tab === 'kids-math' && <KidsMathPage go={go} />}
-            {tab === 'kids-english' && <KidsEnglishPage go={go} />}
-            {tab === 'kids-arabic' && <KidsArabicPage go={go} />}
-            {tab === 'kids-french' && <KidsFrenchPage go={go} />}
-            {tab === 'kids-spanish' && <KidsSpanishPage go={go} />}
-            {tab === 'kids-science' && <KidsSciencePage go={go} />}
-            {tab === 'kids-geography' && <KidsGeographyPage go={go} />}
-            {tab === 'kids-coding' && <KidsCodingPage go={go} />}
-            {tab === 'kids-reading' && <KidsReadingPage go={go} />}
+            {tab === 'kids-math' && sysPage('kids-math', <KidsMathPage go={go} />)}
+            {tab === 'kids-english' && sysPage('kids-english', <KidsEnglishPage go={go} />)}
+            {tab === 'kids-arabic' && sysPage('kids-arabic', <KidsArabicPage go={go} />)}
+            {tab === 'kids-french' && sysPage('kids-french', <KidsFrenchPage go={go} />)}
+            {tab === 'kids-spanish' && sysPage('kids-spanish', <KidsSpanishPage go={go} />)}
+            {tab === 'kids-science' && sysPage('kids-science', <KidsSciencePage go={go} />)}
+            {tab === 'kids-geography' && sysPage('kids-geography', <KidsGeographyPage go={go} />)}
+            {tab === 'kids-coding' && sysPage('kids-coding', <KidsCodingPage go={go} />)}
+            {tab === 'kids-reading' && sysPage('kids-reading', <KidsReadingPage go={go} />)}
           </BusinessCartProvider>
         )}
         {tab === 'extra-students' && (
