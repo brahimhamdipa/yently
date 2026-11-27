@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { BusinessTopBar } from './BusinessMenu'
+import { loadSystemSwitches, isSystemOff } from '../lib/systemSwitches'
 
 // Business Systems hub page — the first nav button and the default
 // tab. Every system and add-on in one place, each row linking to its
@@ -16,18 +17,18 @@ import { BusinessTopBar } from './BusinessMenu'
 // Kids menu row except My Cart, with the same destinations and the
 // same "More Subjects" branch opening in place.
 const SYSTEMS = [
-  { name: 'Restaurant', price: 40, blurb: 'Your own ordering page — menu, live kitchen, and orders.', tab: 'restaurants', video: true },
-  { name: 'POS', price: 50, blurb: 'Your own register — stock, sales, and receipts.', tab: 'pos', video: true },
-  { name: 'Barber', price: 20, blurb: 'Your own booking page — live queue and a stopwatch for every cut.', tab: 'barbers', video: true },
-  { name: 'Dealer', price: 20, blurb: 'Your own dealer page — vehicles, test drives, and trade-ins.', tab: 'dealer', video: true },
-  { name: 'Employee', price: 20, blurb: 'Your own employee time page — log time and keep records.', tab: 'employee', video: true },
-  { name: 'Bodyshop', price: 20, blurb: 'Your own bodyshop page — estimates, jobs, and loan cars.', tab: 'bodyshop', video: true },
-  { name: 'Houses', price: 20, blurb: 'Your own houses page — listings, photos, and a mortgage calculator.', tab: 'houses', video: true },
-  { name: 'Doctor', price: 20, blurb: 'Your own clinic page — doctors, prices, and appointments.', tab: 'doctor', video: true },
-  { name: 'Holiday', price: 20, blurb: 'Your own holiday rentals page — properties, dates, and bookings.', tab: 'holiday', video: true },
-  { name: 'Car Rental', price: 20, blurb: 'Your own car rental page — cars, drivers, and bookings.', tab: 'rentals', video: true },
-  { name: 'Laundry', price: 20, blurb: 'Your own laundry page — services, prices, and orders with pickup or delivery.', tab: 'laundry', video: true },
-  { name: 'Gym', price: 20, blurb: 'Your own gym page — memberships, classes, trainers, and check-ins.', tab: 'gym', video: true },
+  { key: 'diner', name: 'Restaurant', price: 40, blurb: 'Your own ordering page — menu, live kitchen, and orders.', tab: 'restaurants', video: true },
+  { key: 'pos', name: 'POS', price: 50, blurb: 'Your own register — stock, sales, and receipts.', tab: 'pos', video: true },
+  { key: 'barbers', name: 'Barber', price: 20, blurb: 'Your own booking page — live queue and a stopwatch for every cut.', tab: 'barbers', video: true },
+  { key: 'dealer', name: 'Dealer', price: 20, blurb: 'Your own dealer page — vehicles, test drives, and trade-ins.', tab: 'dealer', video: true },
+  { key: 'employee', name: 'Employee', price: 20, blurb: 'Your own employee time page — log time and keep records.', tab: 'employee', video: true },
+  { key: 'bodyshop', name: 'Bodyshop', price: 20, blurb: 'Your own bodyshop page — estimates, jobs, and loan cars.', tab: 'bodyshop', video: true },
+  { key: 'houses', name: 'Houses', price: 20, blurb: 'Your own houses page — listings, photos, and a mortgage calculator.', tab: 'houses', video: true },
+  { key: 'doctor', name: 'Doctor', price: 20, blurb: 'Your own clinic page — doctors, prices, and appointments.', tab: 'doctor', video: true },
+  { key: 'holiday', name: 'Holiday', price: 20, blurb: 'Your own holiday rentals page — properties, dates, and bookings.', tab: 'holiday', video: true },
+  { key: 'rentals', name: 'Car Rental', price: 20, blurb: 'Your own car rental page — cars, drivers, and bookings.', tab: 'rentals', video: true },
+  { key: 'laundry', name: 'Laundry', price: 20, blurb: 'Your own laundry page — services, prices, and orders with pickup or delivery.', tab: 'laundry', video: true },
+  { key: 'gym', name: 'Gym', price: 20, blurb: 'Your own gym page — memberships, classes, trainers, and check-ins.', tab: 'gym', video: true },
   { name: 'Simple Website', price: 10, blurb: 'Any website, built for you — your name, logo, services, and pictures.', tab: 'simple-barbershop' },
 ]
 
@@ -63,6 +64,11 @@ const MORE_SUBJECTS = [
 function LearningSystems({ go }) {
   const [open, setOpen] = useState(false)
   const [moreOpen, setMoreOpen] = useState(false)
+  // A Kids subject switched Off in Admin disappears from this list too.
+  const [switches, setSwitches] = useState(null)
+  useEffect(() => { loadSystemSwitches().then(setSwitches) }, [])
+  const visibleRows = LEARNING_ROWS.filter(r => !isSystemOff(switches, r.tab))
+  const visibleMore = MORE_SUBJECTS.filter(r => !isSystemOff(switches, r.tab))
   const rowStyle = { display: 'block', width: '100%', background: 'white', color: '#111827', textAlign: 'left', padding: '12px 16px', borderRadius: 0, fontSize: '14.5px', fontWeight: 400, borderTop: '1px solid #f1f2f5' }
   const subRowStyle = { ...rowStyle, padding: '12px 16px 12px 32px' }
   return (
@@ -78,11 +84,13 @@ function LearningSystems({ go }) {
       </button>
       {open && (
         <div>
-          {LEARNING_ROWS.map(r => (
+          {visibleRows.map(r => (
             <button key={r.tab} type="button" onClick={() => go && go(r.tab)} style={rowStyle}>{r.label}</button>
           ))}
-          <button type="button" onClick={() => setMoreOpen(o => !o)} aria-expanded={moreOpen} style={rowStyle}>More Subjects {moreOpen ? '▾' : '▸'}</button>
-          {moreOpen && MORE_SUBJECTS.map(r => (
+          {visibleMore.length > 0 && (
+            <button type="button" onClick={() => setMoreOpen(o => !o)} aria-expanded={moreOpen} style={rowStyle}>More Subjects {moreOpen ? '▾' : '▸'}</button>
+          )}
+          {moreOpen && visibleMore.map(r => (
             <button key={r.tab} type="button" onClick={() => go && go(r.tab)} style={subRowStyle}>{r.label}</button>
           ))}
         </div>
@@ -115,6 +123,11 @@ function SystemRow({ item, first, go }) {
 }
 
 export default function BusinessSystemsPage({ go }) {
+  // A system switched Off in Admin disappears from this hub (Simple
+  // Website has no switch — it is not a folder-app system).
+  const [switches, setSwitches] = useState(null)
+  useEffect(() => { loadSystemSwitches().then(setSwitches) }, [])
+  const visibleSystems = SYSTEMS.filter(s => !s.key || !isSystemOff(switches, s.key))
   return (
     <div>
       <BusinessTopBar go={go} />
@@ -126,7 +139,7 @@ export default function BusinessSystemsPage({ go }) {
 
       <div className="hero-card">
         <h3>Systems</h3>
-        {SYSTEMS.map((s, i) => (
+        {visibleSystems.map((s, i) => (
           <SystemRow key={s.tab} item={s} first={i === 0} go={go} />
         ))}
       </div>

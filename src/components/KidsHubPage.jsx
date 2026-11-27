@@ -1,4 +1,6 @@
+import { useEffect, useState } from 'react'
 import { KidsTopBar } from './KidsMenu'
+import { loadSystemSwitches, isSystemOff } from '../lib/systemSwitches'
 
 // Yently Kids hub page — reached from Systems → Yently Kids Systems. Same
 // shape as the Business Systems hub: every subject in one place,
@@ -38,6 +40,11 @@ function SubjectRow({ item, first, go }) {
 }
 
 export default function KidsHubPage({ go }) {
+  // A subject switched Off in Admin disappears from this hub (its ad
+  // page shows "currently unavailable" instead).
+  const [switches, setSwitches] = useState(null)
+  useEffect(() => { loadSystemSwitches().then(setSwitches) }, [])
+  const visibleSubjects = SUBJECTS.filter(s => !isSystemOff(switches, s.tab))
   return (
     <div>
       <KidsTopBar go={go} />
@@ -52,7 +59,7 @@ export default function KidsHubPage({ go }) {
 
       <div className="hero-card">
         <h3>Subjects</h3>
-        {SUBJECTS.map((s, i) => (
+        {visibleSubjects.map((s, i) => (
           <SubjectRow key={s.tab} item={s} first={i === 0} go={go} />
         ))}
       </div>

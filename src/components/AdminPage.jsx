@@ -25,6 +25,7 @@ import AdminCancellations from './admin/AdminCancellations'
 import AdminBarcodeGenerator from './admin/AdminBarcodeGenerator'
 import AdminBags from './admin/AdminBags'
 import AdminCars from './admin/AdminCars'
+import AdminSystemSwitches from './admin/AdminSystemSwitches'
 import AdminDirectUpload from './admin/AdminDirectUpload'
 import AdminReports from './admin/AdminReports'
 import AdminTvGallery from './admin/AdminTvGallery'
@@ -65,6 +66,7 @@ const MENUS = [
   ] },
   { n: 3, name: 'Flights', items: [] },
   { n: 4, name: 'Systems', items: [
+    { label: 'Systems On/Off', section: 'system-switches' },
     { label: 'Diner', children: [
       { label: 'Diner Passes', table: 'diner_restaurants' },
       { label: 'Diner Approvals', table: 'diner_approvals' },
@@ -192,7 +194,6 @@ const MENUS = [
       { label: 'Website PrePasses -Domain', table: 'website_domains' },
       { label: 'Website Add.Edit Pass', table: 'intake_forms' },
       { label: 'Website Submission.Approval', table: 'intake_submissions' },
-      { label: 'Upload Forms', table: 'upload_forms' },
       { label: 'Website Types', table: 'website_types' },
       { label: 'Header1', table: 'website_headers' },
       { label: 'Header2', table: 'barber_stores' },
@@ -411,6 +412,7 @@ export default function AdminPage() {
         </div>
       </div>
       {section === 'cars' && <AdminCars />}
+      {section === 'system-switches' && <AdminSystemSwitches />}
       {section === 'direct-upload' && <AdminDirectUpload />}
       {section === 'reports' && <AdminReports />}
       {section === 'branding' && <AdminBranding />}

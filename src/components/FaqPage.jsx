@@ -247,35 +247,37 @@ export default function FaqPage({ go }) {
         <p>Everything people ask us about Yently — the systems, Kids, the shop, cars, flights, orders and more. Tap a question to see the answer.</p>
       </div>
 
-      {FAQ_SECTIONS.map((section, si) => (
-        <div className="form-card wide" key={section.title}>
-          <h3>{section.title}</h3>
-          {section.items.map((item, qi) => {
-            const key = `${si}-${qi}`
-            const isOpen = open === key
-            return (
-              <div key={item.q}>
-                <button type="button" style={qStyle} onClick={() => toggle(key)} aria-expanded={isOpen}>
-                  <span>{item.q}</span>
-                  <span style={signStyle}>{isOpen ? '−' : '+'}</span>
-                </button>
-                {isOpen && (
-                  <div style={{ padding: '4px 2px 14px' }}>
-                    {(Array.isArray(item.a) ? item.a : [item.a]).map((para, pi) => (
-                      <p key={pi} style={{ margin: '10px 0 0' }}>{para}</p>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )
-          })}
-        </div>
-      ))}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+        {FAQ_SECTIONS.map((section, si) => (
+          <div className="form-card wide" key={section.title}>
+            <h3>{section.title}</h3>
+            {section.items.map((item, qi) => {
+              const key = `${si}-${qi}`
+              const isOpen = open === key
+              return (
+                <div key={item.q}>
+                  <button type="button" style={qStyle} onClick={() => toggle(key)} aria-expanded={isOpen}>
+                    <span>{item.q}</span>
+                    <span style={signStyle}>{isOpen ? '−' : '+'}</span>
+                  </button>
+                  {isOpen && (
+                    <div style={{ padding: '4px 2px 14px' }}>
+                      {(Array.isArray(item.a) ? item.a : [item.a]).map((para, pi) => (
+                        <p key={pi} style={{ margin: '10px 0 0' }}>{para}</p>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        ))}
 
-      <div className="form-card wide">
-        <h3>Still have a question?</h3>
-        <p>Ask us anything — feedback, a problem, or just a question. We read every message and usually reply by email within 24 hours.</p>
-        <button type="button" onClick={() => go && go('contact-us')}>Contact Us</button>
+        <div className="form-card wide">
+          <h3>Still have a question?</h3>
+          <p>Ask us anything — feedback, a problem, or just a question. We read every message and usually reply by email within 24 hours.</p>
+          <button type="button" onClick={() => go && go('contact-us')}>Contact Us</button>
+        </div>
       </div>
     </div>
   )

@@ -10,6 +10,8 @@ import BarberTemplatePage from './BarberTemplatePage'
 import { PicField } from './admin/StoreFormBits'
 import EmployeeChatView from './EmployeeChatView'
 import UploadFormPage from './UploadFormPage'
+import SystemUnavailable from './SystemUnavailable'
+import { loadSystemSwitches, SYSTEM_LABELS } from '../lib/systemSwitches'
 import { TV_GALLERY_SYSTEMS } from '../lib/tvGalleryData'
 
 // Public provider form page, reached at yently.com/<form name>.
@@ -187,6 +189,10 @@ export default function ProviderFormPage({ slug, goBack, onAuthedChange, go }) {
   // failed) — fail open to the login, so a bad connection never locks a
   // real store owner out. false = no such form, show the Yently
   // not-found page instead of the Store Setup login.
+  // System kill switches (Admin → menu 4 → Systems On/Off): null =
+  // not loaded yet — fail open, so a TV gallery never goes down on a
+  // slow or failed load.
+  const [systemSwitches, setSystemSwitches] = useState(null)
   const [providerForm, setProviderForm] = useState(null)
   const [slugChecking, setSlugChecking] = useState(true)
 
@@ -199,10 +205,12 @@ export default function ProviderFormPage({ slug, goBack, onAuthedChange, go }) {
       loadBarberDomain(slug).catch(() => null),
       supabase.rpc('upload_form_exists', { p_f: slug }).then(({ data }) => !!data).catch(() => false),
       supabase.rpc('provider_form_exists', { p_f: slug }).then(({ data }) => !!data).catch(() => null),
-    ]).then(([d, isUpload, isProvider]) => {
+      loadSystemSwitches().catch(() => ({})),
+    ]).then(([d, isUpload, isProvider, sw]) => {
       setBarberDomain(d)
       setUploadForm(isUpload)
       setProviderForm(isProvider)
+      setSystemSwitches(sw)
       // The template and upload pages need no categories — skip those
       // loads when this slug is one of them.
       if (!d && !isUpload && isProvider !== false) {
@@ -380,6 +388,13 @@ export default function ProviderFormPage({ slug, goBack, onAuthedChange, go }) {
   // its seeded form row; routing it here too opens the same page.
   const isTvGallery = slug === 'demo-tv-gallery' || TV_GALLERY_SYSTEMS.some(sys => slug.startsWith('tv-' + sys + '-'))
   if (isTvGallery) {
+    // A TV gallery belongs to one system: if that system is switched
+    // Off in Admin, the gallery is down too. The demo gallery has no
+    // system and is never gated.
+    const tvSystem = slug === 'demo-tv-gallery' ? null : TV_GALLERY_SYSTEMS.find(sys => slug.startsWith('tv-' + sys + '-'))
+    if (tvSystem && systemSwitches && systemSwitches[tvSystem] === false) {
+      return <SystemUnavailable name={SYSTEM_LABELS[tvSystem]} go={go} />
+    }
     return <UploadFormPage slug={slug} goBack={goBack} go={go} />
   }
   if (barberDomain) {
