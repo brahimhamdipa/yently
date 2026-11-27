@@ -612,8 +612,23 @@
      Setup stays reachable. Fails open -- any error, missing row, or
      missing RPC means the system stays on. */
   var systemOff = false;
+  var shopOff = false;
   var SYSTEM_OFF_NOTICE = '<p class="error">This system is currently unavailable. Yently has switched it off for now — please check back later, or contact Yently if you need help.</p>';
   var SYSTEM_OFF_SETUP_NOTICE = '<p class="error">This system is currently switched off in Yently Admin — visitors see it as unavailable. Your data is still here.</p>';
+  var SHOP_OFF_NOTICE = '<div class="error">This shop is currently unavailable. Yently has switched it off for now — please check back later, or contact Yently if you need help.</div>';
+  var SHOP_OFF_SETUP_NOTICE = '<p class="error">This shop is currently switched off in Yently Admin — visitors see it as unavailable. Your data is still here.</p>';
+  /* Per-shop switch (Admin → menu 4 → Shops On/Off): true when this
+     shop alone is switched off. Same fail-open shape as
+     checkSystemOff — an RPC error or a missing row means On. */
+  function checkShopOff() {
+    try {
+      if (typeof rpc !== 'function' || !SLUG) return Promise.resolve(false);
+      return rpc('shop_is_visible', { p_system: 'rentals', p_slug: SLUG }).then(function (v) {
+        return v === false;
+      }).catch(function () { return false; });
+    } catch (e) { return Promise.resolve(false); }
+  }
+
   function checkSystemOff() {
     try {
       if (typeof rpc !== 'function') return Promise.resolve(false);
@@ -1383,9 +1398,9 @@
   function renderSetup() {
     stopShopChat(); // re-render destroys the inbox container; stop its poll first
     var el = $('view-setup');
-    if (!rental && !systemOff) { el.innerHTML = '<p class="info">Loading…</p>'; return; }
+    if (!rental && !systemOff && !shopOff) { el.innerHTML = '<p class="info">Loading…</p>'; return; }
     if (!ownerCreds) {
-      el.innerHTML = (systemOff ? SYSTEM_OFF_SETUP_NOTICE : '') + '<h2>Setup</h2><div class="card">' +
+      el.innerHTML = (shopOff ? SHOP_OFF_SETUP_NOTICE : systemOff ? SYSTEM_OFF_SETUP_NOTICE : '') + '<h2>Setup</h2><div class="card">' +
         '<p class="info">Enter the username and password Yently gave this rental company.</p>' +
         '<label>Username</label><input id="st-user" type="text" autocomplete="username">' +
         '<label>Password</label><input id="st-pass" type="password" autocomplete="current-password">' +
@@ -1412,11 +1427,11 @@
       return;
     }
     if (!draft) {
-      el.innerHTML = (systemOff ? SYSTEM_OFF_SETUP_NOTICE : '') + '<p class="info">Loading your setup…</p>';
+      el.innerHTML = (shopOff ? SHOP_OFF_SETUP_NOTICE : systemOff ? SYSTEM_OFF_SETUP_NOTICE : '') + '<p class="info">Loading your setup…</p>';
       loadDraft();
       return;
     }
-    var h = (systemOff ? SYSTEM_OFF_SETUP_NOTICE : '') + '<h2>Setup — ' + esc(rental ? rental.name : 'Car Rental') + '</h2>' +
+    var h = (shopOff ? SHOP_OFF_SETUP_NOTICE : systemOff ? SYSTEM_OFF_SETUP_NOTICE : '') + '<h2>Setup — ' + esc(rental ? rental.name : 'Car Rental') + '</h2>' +
       '<div class="card" id="setup-addons">' +
       '<h3>Add-ons</h3>' +
       '<p class="info">Add-ons add more to your page — a short link, a TV gallery, live chat, uploads that go live right away, or a clear view of your orders, or a page without the Yently banner. Pick one below to see what it does and what it costs. Add-ons join the payment you already have — free for the rest of this month, charged from your next payment.</p>' +
@@ -1835,11 +1850,11 @@
       $('view-cars').innerHTML = '<div class="card"><h2>Car rental not found</h2><p class="info">This car rental page needs your own rental link — ask Yently for it.</p></div>';
       return;
     }
-    checkSystemOff().then(function (off) {
+    Promise.all([checkSystemOff(), checkShopOff()]).then(function (res) { var off = res[0] || res[1];
       if (off) {
-        systemOff = true;
+        systemOff = res[0]; shopOff = res[1];
         $('site-name').textContent = 'Car Rental';
-        $('view-cars').innerHTML = SYSTEM_OFF_NOTICE;
+        $('view-cars').innerHTML = shopOff ? SHOP_OFF_NOTICE : SYSTEM_OFF_NOTICE;
         return;
       }
       loadRental().then(function (d) {
