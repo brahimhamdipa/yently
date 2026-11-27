@@ -79,6 +79,7 @@
   var EMOJIS = ['📚', '⛵', '🐱', '🐶', '🦁', '🐸', '🚀', '🌈', '🐘', '🦋', '🌙', '⭐', '🐳', '🍎', '🏰', '🚂'];
 
   var data = null; // live name/about/students/books (visitors)
+  var systemOff = false; // Yently Admin kill switch (menu 4 → Systems On/Off): true while this system is switched off
   var draft = null; // owner draft (Setup)
   var draftStatus = 'editing';
   /* Direct Upload: when Yently has switched it on for this shop,
@@ -178,6 +179,25 @@
         return j;
       });
     });
+  }
+  /* System kill switch (Admin menu 4 → Systems On/Off): true only
+     when list_system_switches has a row for this system with
+     visible === false. Any error, missing row, or missing RPC
+     means false (On) — the school stays up rather than going
+     dark on a lookup failure. */
+  function checkSystemOff() {
+    try {
+      if (typeof rpc !== 'function') return Promise.resolve(false);
+      return rpc('list_system_switches', {}).then(function (rows) {
+        try {
+          rows = rows || [];
+          for (var i = 0; i < rows.length; i++) {
+            if (rows[i] && rows[i].system === 'kids-reading' && rows[i].visible === false) return true;
+          }
+        } catch (e) {}
+        return false;
+      }).catch(function () { return false; });
+    } catch (e) { return Promise.resolve(false); }
   }
   function notifyEmail(subject, record) {
     try {
@@ -851,7 +871,7 @@
   }
   function renderSetup() {
     var el = $('view-setup');
-    var html = '<h2>Setup</h2>' +
+    var html = (systemOff ? '<div class="error">This system is currently switched off in Yently Admin — visitors see it as unavailable. Your data is still here.</div>' : '') + '<h2>Setup</h2>' +
       '<div class="note">' + esc(statusLine()) + '</div>' +
       '<div class="card">' +
       '<label>School name</label><input id="setup-name" type="text" value="' + esc(draft.name || '') + '">' +
@@ -1152,7 +1172,16 @@
     $('site-name').textContent = 'Reading page not found';
     $('view-play').innerHTML = '<div class="error">This link doesn\'t point to a school yet. Check the link and try again — ask Yently for your reading link.</div>';
   } else {
-    resolveSlug().then(function () { return rpc('get_kids_reading_live', { p_slug: SLUG }); }).then(function (json) {
+    resolveSlug().then(function () { return checkSystemOff(); }).then(function (off) {
+      if (off) {
+        systemOff = true;
+        $('site-name').textContent = 'Kids Reading';
+        $('view-play').innerHTML = '<div class="error">This system is currently unavailable. Yently has switched it off for now — please check back later, or contact Yently if you need help.</div>';
+        return null;
+      }
+      return rpc('get_kids_reading_live', { p_slug: SLUG });
+    }).then(function (json) {
+      if (!json) return; // system switched off — nothing to load
       if (!json || !json.name) throw new Error('not found');
       data = json;
       /* Per-shop live chat: visitor bubble. ShopChat checks the
