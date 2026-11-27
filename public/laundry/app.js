@@ -601,6 +601,28 @@
   function refOf(id) {
     return 'LA-' + String(id).padStart(6, '0');
   }
+  /* System kill switch (Admin menu 4 -> Systems On/Off): when Yently
+     switches this system off, visitors see it as unavailable while
+     Setup stays reachable. Fails open -- any error, missing row, or
+     missing RPC means the system stays on. */
+  var systemOff = false;
+  var SYSTEM_OFF_NOTICE = '<p class="error">This system is currently unavailable. Yently has switched it off for now — please check back later, or contact Yently if you need help.</p>';
+  var SYSTEM_OFF_SETUP_NOTICE = '<p class="error">This system is currently switched off in Yently Admin — visitors see it as unavailable. Your data is still here.</p>';
+  function checkSystemOff() {
+    try {
+      if (typeof rpc !== 'function') return Promise.resolve(false);
+      return rpc('list_system_switches', {}).then(function (rows) {
+        try {
+          var list = Array.isArray(rows) ? rows : [];
+          for (var i = 0; i < list.length; i++) {
+            if (list[i] && list[i].system === 'laundry' && list[i].visible === false) return true;
+          }
+        } catch (e) {}
+        return false;
+      }).catch(function () { return false; });
+    } catch (e) { return Promise.resolve(false); }
+  }
+
   function rpc(name, body) {
     return fetch(SUPABASE_URL + '/rest/v1/rpc/' + name, {
       method: 'POST',
@@ -828,7 +850,7 @@
     return hay.indexOf(q) !== -1;
   }
   function sortedServices() {
-    var list = (laundry.services || []).slice();
+    var list = ((laundry && laundry.services) || []).slice();
     list.sort(function (a, b) { return Number(a.price || 0) - Number(b.price || 0); });
     return list;
   }
@@ -1423,9 +1445,9 @@
   function renderSetup() {
     stopShopChat(); // re-render destroys the inbox container; stop its poll first
     var el = $('view-setup');
-    if (!laundry) { el.innerHTML = '<p class="info">Loading…</p>'; return; }
+    if (!laundry && !systemOff) { el.innerHTML = '<p class="info">Loading…</p>'; return; }
     if (!ownerCreds) {
-      el.innerHTML = '<h2>Setup</h2><div class="card">' +
+      el.innerHTML = (systemOff ? SYSTEM_OFF_SETUP_NOTICE : '') + '<h2>Setup</h2><div class="card">' +
         '<p class="info">Enter the username and password Yently gave this laundry.</p>' +
         '<label>Username</label><input id="st-user" type="text" autocomplete="username">' +
         '<label>Password</label><input id="st-pass" type="password" autocomplete="current-password">' +
@@ -1452,11 +1474,11 @@
       return;
     }
     if (!draft) {
-      el.innerHTML = '<p class="info">Loading your setup…</p>';
+      el.innerHTML = (systemOff ? SYSTEM_OFF_SETUP_NOTICE : '') + '<p class="info">Loading your setup…</p>';
       loadDraft();
       return;
     }
-    var h = '<h2>Setup — ' + esc(laundry.name) + '</h2>' +
+    var h = (systemOff ? SYSTEM_OFF_SETUP_NOTICE : '') + '<h2>Setup — ' + esc(laundry ? laundry.name : 'Laundry') + '</h2>' +
       '<div class="card" id="setup-addons">' +
       '<h3>Add-ons</h3>' +
       '<p class="info">Add-ons add more to your page — a short link, a TV gallery, live chat, uploads that go live right away, or a clear view of your orders, or a page without the Yently banner. Pick one below to see what it does and what it costs. Add-ons join the payment you already have — free for the rest of this month, charged from your next payment.</p>' +
@@ -1776,20 +1798,28 @@
       $('view-services').innerHTML = '<div class="card"><h2>Laundry not found</h2><p class="info">This laundry page needs your own laundry link — ask Yently for it.</p></div>';
       return;
     }
-    loadLaundry().then(function (d) {
-      if (!d) {
+    checkSystemOff().then(function (off) {
+      if (off) {
+        systemOff = true;
         $('site-name').textContent = 'Laundry';
-        $('view-services').innerHTML = '<div class="card"><h2>Laundry not found</h2><p class="info">No laundry with this link yet. Ask Yently to set it up.</p></div>';
+        $('view-services').innerHTML = SYSTEM_OFF_NOTICE;
         return;
       }
-      mountShopChatBubble(d.name, '');
-      return rpc('laundry_pass_status', { p_slug: SLUG }).then(function (st) {
-        passLocked = st === 'locked';
-        empUnlocked = !passLocked;
-        renderServices();
+      loadLaundry().then(function (d) {
+        if (!d) {
+          $('site-name').textContent = 'Laundry';
+          $('view-services').innerHTML = '<div class="card"><h2>Laundry not found</h2><p class="info">No laundry with this link yet. Ask Yently to set it up.</p></div>';
+          return;
+        }
+        mountShopChatBubble(d.name, '');
+        return rpc('laundry_pass_status', { p_slug: SLUG }).then(function (st) {
+          passLocked = st === 'locked';
+          empUnlocked = !passLocked;
+          renderServices();
+        });
+      }).catch(function (e) {
+        $('view-services').innerHTML = '<p class="error">Error: ' + esc(e.message) + '</p>';
       });
-    }).catch(function (e) {
-      $('view-services').innerHTML = '<p class="error">Error: ' + esc(e.message) + '</p>';
     });
   }
   resolveSlug().then(function () { init(); });
