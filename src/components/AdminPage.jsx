@@ -26,6 +26,7 @@ import AdminBarcodeGenerator from './admin/AdminBarcodeGenerator'
 import AdminBags from './admin/AdminBags'
 import AdminCars from './admin/AdminCars'
 import AdminSystemSwitches from './admin/AdminSystemSwitches'
+import AdminShopSwitches from './admin/AdminShopSwitches'
 import AdminDirectUpload from './admin/AdminDirectUpload'
 import AdminReports from './admin/AdminReports'
 import AdminTvGallery from './admin/AdminTvGallery'
@@ -67,6 +68,7 @@ const MENUS = [
   { n: 3, name: 'Flights', items: [] },
   { n: 4, name: 'Systems', items: [
     { label: 'Systems On/Off', section: 'system-switches' },
+    { label: 'Shops On/Off', section: 'shop-switches' },
     { label: 'Diner', children: [
       { label: 'Diner Passes', table: 'diner_restaurants' },
       { label: 'Diner Approvals', table: 'diner_approvals' },
@@ -413,6 +415,7 @@ export default function AdminPage() {
       </div>
       {section === 'cars' && <AdminCars />}
       {section === 'system-switches' && <AdminSystemSwitches />}
+      {section === 'shop-switches' && <AdminShopSwitches />}
       {section === 'direct-upload' && <AdminDirectUpload />}
       {section === 'reports' && <AdminReports />}
       {section === 'branding' && <AdminBranding />}

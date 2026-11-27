@@ -12,6 +12,7 @@ import EmployeeChatView from './EmployeeChatView'
 import UploadFormPage from './UploadFormPage'
 import SystemUnavailable from './SystemUnavailable'
 import { loadSystemSwitches, SYSTEM_LABELS } from '../lib/systemSwitches'
+import { loadShopSwitches, isShopOff } from '../lib/shopSwitches'
 import { TV_GALLERY_SYSTEMS } from '../lib/tvGalleryData'
 
 // Public provider form page, reached at yently.com/<form name>.
@@ -193,6 +194,10 @@ export default function ProviderFormPage({ slug, goBack, onAuthedChange, go }) {
   // not loaded yet — fail open, so a TV gallery never goes down on a
   // slow or failed load.
   const [systemSwitches, setSystemSwitches] = useState(null)
+  // Per-shop switches (Admin → menu 4 → Shops On/Off): same fail-open
+  // shape, keyed 'system:slug' — a TV gallery goes down when its own
+  // shop is switched Off, even while its system stays On.
+  const [shopSwitches, setShopSwitches] = useState(null)
   const [providerForm, setProviderForm] = useState(null)
   const [slugChecking, setSlugChecking] = useState(true)
 
@@ -206,11 +211,13 @@ export default function ProviderFormPage({ slug, goBack, onAuthedChange, go }) {
       supabase.rpc('upload_form_exists', { p_f: slug }).then(({ data }) => !!data).catch(() => false),
       supabase.rpc('provider_form_exists', { p_f: slug }).then(({ data }) => !!data).catch(() => null),
       loadSystemSwitches().catch(() => ({})),
-    ]).then(([d, isUpload, isProvider, sw]) => {
+      loadShopSwitches().catch(() => ({})),
+    ]).then(([d, isUpload, isProvider, sw, sh]) => {
       setBarberDomain(d)
       setUploadForm(isUpload)
       setProviderForm(isProvider)
       setSystemSwitches(sw)
+      setShopSwitches(sh)
       // The template and upload pages need no categories — skip those
       // loads when this slug is one of them.
       if (!d && !isUpload && isProvider !== false) {
@@ -394,6 +401,16 @@ export default function ProviderFormPage({ slug, goBack, onAuthedChange, go }) {
     const tvSystem = slug === 'demo-tv-gallery' ? null : TV_GALLERY_SYSTEMS.find(sys => slug.startsWith('tv-' + sys + '-'))
     if (tvSystem && systemSwitches && systemSwitches[tvSystem] === false) {
       return <SystemUnavailable name={SYSTEM_LABELS[tvSystem]} go={go} />
+    }
+    // A TV gallery belongs to one shop too: if that shop is switched
+    // Off in Admin (menu 4 → Shops On/Off), its gallery is down even
+    // while its system stays On. The demo gallery has no shop and is
+    // never gated. The shop slug is the tail after 'tv-<system>-'.
+    if (tvSystem && shopSwitches) {
+      const tvSlug = slug.slice(('tv-' + tvSystem + '-').length)
+      if (isShopOff(shopSwitches, tvSystem, tvSlug)) {
+        return <SystemUnavailable title="This shop is currently unavailable" detail="Yently has switched this shop off for now — please check back later, or contact Yently if you need help." go={go} />
+      }
     }
     return <UploadFormPage slug={slug} goBack={goBack} go={go} />
   }
