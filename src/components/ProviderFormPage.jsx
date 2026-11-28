@@ -199,6 +199,12 @@ export default function ProviderFormPage({ slug, goBack, onAuthedChange, go }) {
   // shop is switched Off, even while its system stays On.
   const [shopSwitches, setShopSwitches] = useState(null)
   const [providerForm, setProviderForm] = useState(null)
+  // Does an employee pass exist for this word? null = unknown (or the
+  // check failed) — fail open to the login, so a bad connection never
+  // locks an employee out. true = an employee pass (fPasses) exists for
+  // this form name, so the login form opens even though there is no
+  // store form for it.
+  const [employeePass, setEmployeePass] = useState(null)
   const [slugChecking, setSlugChecking] = useState(true)
 
   const [status, setStatus] = useState('')
@@ -210,12 +216,14 @@ export default function ProviderFormPage({ slug, goBack, onAuthedChange, go }) {
       loadBarberDomain(slug).catch(() => null),
       supabase.rpc('upload_form_exists', { p_f: slug }).then(({ data }) => !!data).catch(() => false),
       supabase.rpc('provider_form_exists', { p_f: slug }).then(({ data }) => !!data).catch(() => null),
+      supabase.rpc('employee_pass_exists', { p_f: slug }).then(({ data }) => !!data).catch(() => null),
       loadSystemSwitches().catch(() => ({})),
       loadShopSwitches().catch(() => ({})),
-    ]).then(([d, isUpload, isProvider, sw, sh]) => {
+    ]).then(([d, isUpload, isProvider, isEmployee, sw, sh]) => {
       setBarberDomain(d)
       setUploadForm(isUpload)
       setProviderForm(isProvider)
+      setEmployeePass(isEmployee)
       setSystemSwitches(sw)
       setShopSwitches(sh)
       // The template and upload pages need no categories — skip those
@@ -420,10 +428,11 @@ export default function ProviderFormPage({ slug, goBack, onAuthedChange, go }) {
   if (uploadForm) {
     return <UploadFormPage slug={slug} goBack={goBack} go={go} />
   }
-  // No barber page, no upload form, no store form for this word — the
-  // link itself doesn't exist. Say so plainly, as Yently, instead of
-  // showing a Store Setup login for a form that was never made.
-  if (providerForm === false) {
+  // No barber page, no upload form, no store form and no employee pass
+  // for this word — the link itself doesn't exist. Say so plainly, as
+  // Yently, instead of showing a Store Setup login for a form that was
+  // never made.
+  if (providerForm === false && employeePass === false) {
     return (
       <div>
         <div className="hero-card" style={{ textAlign: 'center' }}>
